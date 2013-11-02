@@ -1,11 +1,13 @@
+#include <QDateTime>
+
 #include "DialogRouteComparator.h"
 #include "settings.h"
 #include "mycentralwidget.h"
 #include "route.h"
 #include "boat.h"
-#include <QDateTime>
 #include "Orthodromie.h"
 #include "POI.h"
+#include "Util.h"
 
 DialogRouteComparator::DialogRouteComparator(myCentralWidget *parent) : QDialog(parent)
 {
@@ -14,31 +16,34 @@ DialogRouteComparator::DialogRouteComparator(myCentralWidget *parent) : QDialog(
     this->mcw=parent;
     connect(this->closeButton,SIGNAL(clicked()),this,SLOT(close()));
     model= new QStandardItemModel(this);
-    model->setColumnCount(20);
+    model->setColumnCount(22);
     int c=0;
     model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Color"));
     model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Name"));
-    model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Start Date"));
+    model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Start\nDate"));
     model->setHeaderData(c++,Qt::Horizontal,QObject::tr("ETA"));
     model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Duration"));
-    model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Ortho Distance"));
-    model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Sailed Distance"));
+    model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Ortho\nDistance"));
+    model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Sailed\nDistance"));
     model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Avg BS"));
     model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Max BS"));
     model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Min BS"));
     model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Avg TWS"));
     model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Max TWS"));
     model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Min TWS"));
-    model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Nb Tacks/Gybes"));
-    model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Beating time"));
-    model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Downwind time"));
-    model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Reaching time"));
-    model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Motor time"));
-    model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Night navigation"));
-    model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Under rain navigation"));
+    model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Nb Tacks\nand Gybes"));
+    model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Beating\ntime"));
+    model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Downwind\ntime"));
+    model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Reaching\ntime"));
+    model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Motor\ntime"));
+    model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Night\nnavigation"));
+    model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Under rain\nnavigation"));
+    model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Max waves\nheight"));
+    model->setHeaderData(c++,Qt::Horizontal,QObject::tr("Max combined\nwaves height"));
     model->setSortRole(Qt::UserRole);
     routesTable->header()->setAlternatingRowColors(true);
     routesTable->header()->setDefaultAlignment(Qt::AlignCenter|Qt::AlignVCenter);
+    routesTable->setWordWrap(true);
     this->routesTable->setModel(model);
     routesCombo->addItem(tr("Add a route to comparator"));
     for (int n=0;n<parent->getRouteList().size();++n)
@@ -314,8 +319,16 @@ void DialogRouteComparator::insertRoute(const int &n)
     items[x]->setData(n,Qt::UserRole+1);
     if(x%2!=0) items[x]->setData(QColor(240,240,240),Qt::BackgroundRole);
     items[x++]->setTextAlignment(Qt::AlignRight| Qt::AlignVCenter);
+    items.append(new QStandardItem(QString( "%L1" ).arg(qMax(0.0,stats.maxWaveHeight),0,'f',2)+tr(" m")));
+    items[x]->setData(qMax(0.0,stats.maxWaveHeight),Qt::UserRole);
+    items[x]->setData(n,Qt::UserRole+1);
+    items[x++]->setTextAlignment(Qt::AlignRight| Qt::AlignVCenter);
+    items.append(new QStandardItem(QString( "%L1" ).arg(qMax(0.0,stats.combWaveHeight),0,'f',2)+tr(" m")));
+    items[x]->setData(qMax(0.0,stats.combWaveHeight),Qt::UserRole);
+    items[x]->setData(n,Qt::UserRole+1);
+    items[x++]->setTextAlignment(Qt::AlignRight| Qt::AlignVCenter);
     model->appendRow(items);
-    for(x=0;x<20;++x)
+    for(x=0;x<model->columnCount();++x)
         routesTable->resizeColumnToContents(x);
 }
 

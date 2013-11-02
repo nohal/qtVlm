@@ -25,28 +25,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <cmath>
 
 #include "mapcompass.h"
+#include "DataManager.h"
 #include "Util.h"
 #include "Orthodromie.h"
 #include "settings.h"
 #include "mycentralwidget.h"
 #include "orthoSegment.h"
 #include "MainWindow.h"
-#include "Grib.h"
 #include "Projection.h"
 #include "boatVLM.h"
 #include "GshhsReader.h"
+
 #define COMPASS_MARGIN 30
 #define CROSS_SIZE 8
 #define MARK_SIZE 12
 #define DELTA 4
 
-mapCompass::mapCompass(Projection * proj,MainWindow * main,myCentralWidget *parent) : QGraphicsWidget()
+mapCompass::mapCompass(Projection * proj,MainWindow * main,myCentralWidget *centralWidget) : QGraphicsWidget()
 {
     busy=false;
     isMoving=false;
     drawCompassLine=false;
     this->proj=proj;
-    this->parent=parent;
+    this->centralWidget=centralWidget;
     this->main=main;
 
     setPos(200,200);
@@ -54,9 +55,9 @@ mapCompass::mapCompass(Projection * proj,MainWindow * main,myCentralWidget *pare
     setData(0,COMPASS_WTYPE);
 
     /* compassLine */
-    compassLine = new orthoSegment(proj,parent->getScene(),Z_VALUE_COMPASS);
-    connect(parent,SIGNAL(stopCompassLine()),this,SLOT(slot_stopCompassLine()));
-    connect(this,SIGNAL(compassLineToggle(bool)),parent,SIGNAL(compassLineToggle(bool)));
+    compassLine = new orthoSegment(proj,centralWidget->getScene(),Z_VALUE_COMPASS);
+    connect(centralWidget,SIGNAL(stopCompassLine()),this,SLOT(slot_stopCompassLine()));
+    connect(this,SIGNAL(compassLineToggle(bool)),centralWidget,SIGNAL(compassLineToggle(bool)));
     connect(proj,SIGNAL(projectionUpdated()),this,SLOT(slot_projectionUpdated()));
     penLine.setColor(QColor(Qt::white));
     penLine.setWidthF(1.6);
@@ -69,7 +70,7 @@ mapCompass::mapCompass(Projection * proj,MainWindow * main,myCentralWidget *pare
     QFont fnt=hdg_label->font();
     fnt.setBold(true);
     hdg_label->setFont(fnt);
-    parent->getScene()->addItem(hdg_label);
+    centralWidget->getScene()->addItem(hdg_label);
 
     windAngle_label = new QGraphicsTextItem();
     windAngle_label->setZValue(Z_VALUE_COMPASS);
@@ -77,7 +78,7 @@ mapCompass::mapCompass(Projection * proj,MainWindow * main,myCentralWidget *pare
     windAngle_label->setAcceptHoverEvents(false);
     windAngle_label->hide();
     windAngle_label->setFont(fnt);
-    parent->getScene()->addItem(windAngle_label);
+    centralWidget->getScene()->addItem(windAngle_label);
 
     //   size = 310;
     size = 620;
@@ -112,7 +113,7 @@ QRectF mapCompass::boundingRect() const
 QPainterPath mapCompass::shape() const
 {
     QPainterPath path;
-    if((Settings::getSetting("compassCenterBoat","0")=="1") || parent->getCompassFollow()!=NULL)
+    if((Settings::getSetting("compassCenterBoat","0")=="1") || centralWidget->getCompassFollow()!=NULL)
         path.addEllipse(QRectF(size/10,size/10,size/10,size/10));
     else
         path.addEllipse(QRectF(size/4,size/4,size/2,size/2));
@@ -212,9 +213,9 @@ void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
         /* internal numbers */
         /*compute start angle = wind angle*/
         wind_angle=0;
-        Grib * grib = parent->getGrib();
-        if(grib)
-            grib->getInterpolatedValue_byDates(lon,lat,grib->getCurrentDate(),&wind_speed,&wind_angle);
+        DataManager * dataManager=centralWidget->get_dataManager();
+        if(dataManager)
+            dataManager->getInterpolatedWind(lon,lat,dataManager->get_currentDate(),&wind_speed,&wind_angle);
         wind_angle=radToDeg(wind_angle);
         main->getBoatBvmg(&bvmg_up,&bvmg_down,wind_speed);
         pen.setColor(Qt::black);
@@ -287,10 +288,9 @@ void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
     {
         if(Settings::getSetting("showCompass",0).toInt()==0)
         {
-            Grib * grib = parent->getGrib();
-            if(grib)
-            {
-                grib->getInterpolatedValue_byDates(lon,lat,grib->getCurrentDate(),&wind_speed,&wind_angle);
+            DataManager * dataManager=centralWidget->get_dataManager();
+            if(dataManager) {
+                dataManager->getInterpolatedWind(lon,lat,dataManager->get_currentDate(),&wind_speed,&wind_angle);
                 wind_angle=radToDeg(wind_angle);
             }
         }
@@ -324,7 +324,7 @@ void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
         Util::computePos(proj,lat1,lon1, &Y1, &X1);
 
         double oneMile=QLineF(X,Y,X1,Y1).length()/10.0;
-        double vacLen=parent->getSelectedBoat()->getVacLen()/60.0;
+        double vacLen=centralWidget->getSelectedBoat()->getVacLen()/60.0;
         for(int i=0;i<=180;i++)
         {
             double temp=0;
@@ -444,7 +444,7 @@ void  mapCompass::mousePressEvent(QGraphicsSceneMouseEvent * e)
 {
     if (e->button() == Qt::LeftButton)
     {
-        if(!drawCompassLine && !(Settings::getSetting("compassCenterBoat","0")=="1") && parent->getCompassFollow()==NULL)
+        if(!drawCompassLine && !(Settings::getSetting("compassCenterBoat","0")=="1") && centralWidget->getCompassFollow()==NULL)
         {
             isMoving=true;
             mouseEvt=false;
@@ -469,7 +469,7 @@ void mapCompass::slot_shCom()
     {
         myLon=proj->getCX();
         myLat=proj->getCY();
-        parent->setCompassFollow(NULL);
+        centralWidget->setCompassFollow(NULL);
         this->compassCenter(myLon,myLat);
         shCom=true;
     }
@@ -484,7 +484,7 @@ void mapCompass::slot_shCom()
         {
             myLon=proj->getCX();
             myLat=proj->getCY();
-            parent->setCompassFollow(NULL);
+            centralWidget->setCompassFollow(NULL);
             this->compassCenter(myLon,myLat);
         }*/
         show();
@@ -498,7 +498,7 @@ void mapCompass::slot_shPol()
     {
         myLon=proj->getCX();
         myLat=proj->getCY();
-        parent->setCompassFollow(NULL);
+        centralWidget->setCompassFollow(NULL);
         this->compassCenter(myLon,myLat);
         shPol=true;
     }
@@ -514,7 +514,7 @@ void mapCompass::slot_shPol()
         {
             myLon=proj->getCX();
             myLat=proj->getCY();
-            parent->setCompassFollow(NULL);
+            centralWidget->setCompassFollow(NULL);
             this->compassCenter(myLon,myLat);
         }*/
         show();
@@ -540,7 +540,7 @@ void mapCompass::slot_projectionUpdated()
 void mapCompass::slot_compassCenterBoat()
 {
     if(Settings::getSetting("compassCenterBoat","0")=="0") return;
-    parent->slot_releaseCompassFollow();
+    centralWidget->slot_releaseCompassFollow();
     double lat,lon;
     main->get_selectedBoatPos(&lat,&lon);
     if(lat==-1 && lon==-1) return;
@@ -572,7 +572,7 @@ void mapCompass::slot_compassCenterWp()
 {
         double lat,lon;
         main->getBoatWP(&lat,&lon);
-        parent->slot_releaseCompassFollow();
+        centralWidget->slot_releaseCompassFollow();
         if(lat==-1 && lon==-1) return;
         myLon=lon;
         myLat=lat;
@@ -619,10 +619,10 @@ bool mapCompass::tryMoving(int x, int y)
 //            new_x=-size/2;
 //        if(new_y<=-size/2)
 //            new_y=-size/2;
-//        if(new_x>=parent->width()-size/2)
-//            new_x=parent->width()-size/2;
-//        if(new_y>=parent->height()-size/2)
-//            new_y=parent->height()-size/2;
+//        if(new_x>=centralWidget->width()-size/2)
+//            new_x=centralWidget->width()-size/2;
+//        if(new_y>=centralWidget->height()-size/2)
+//            new_y=centralWidget->height()-size/2;
         proj->screen2map(new_x+size/2,new_y+size/2, &myLon, &myLat);
         prepareGeometryChange();
         setPos(new_x,new_y);
@@ -646,7 +646,7 @@ void mapCompass::updateCompassLineLabels(int x, int y)
     pos_angle=orth.getAzimutDeg();
     pos_distance=orth.getDistance();
     bool drawWindAngle=true;
-    GshhsReader *map=parent->get_gshhsReader();
+    GshhsReader *map=centralWidget->get_gshhsReader();
     if(this->isVisible())
     {
 //        if(map && map->crossing(QLineF(XX,YY,x,y),QLineF(xa,ya,xb,yb)))
@@ -717,7 +717,8 @@ void mapCompass::updateCompassLineLabels(int x, int y)
         }
         drawWindAngle=false;
     }
-    if(!parent->getGrib())
+    DataManager * dataManager=centralWidget->get_dataManager();
+    if(!dataManager || !dataManager->isOk())
         drawWindAngle=false;
 
     if(drawWindAngle)
@@ -816,7 +817,7 @@ void mapCompass::updateCompassLineLabels(int x, int y)
 void mapCompass::slot_stopCompassLine(void)
 {
     //qWarning()<<"slot_stopCompassLine";
-    parent->slot_resetGestures();
+    centralWidget->slot_resetGestures();
     drawCompassLine=false;
     windAngle_label->hide();
     hdg_label->hide();
@@ -827,7 +828,7 @@ void mapCompass::slot_stopCompassLine(void)
 
 void mapCompass::slot_compassLine(double click_x, double click_y)
 {
-    parent->slot_resetGestures();
+    centralWidget->slot_resetGestures();
     drawCompassLine=!drawCompassLine;
     //qWarning()<<"slot_compassLine with"<<drawCompassLine;
     if(drawCompassLine)

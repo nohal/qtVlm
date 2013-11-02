@@ -49,8 +49,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //==========================================================
 class GshhsPoint {
     public:
-        double lon, lat;    // longitude, latitude
-        GshhsPoint(double lo, double la) {
+       float lon, lat;    // longitude, latitude
+        GshhsPoint(const float &lo, const float &la) {
             lon = lo;
             lat = la;
         }
@@ -75,7 +75,7 @@ class GshhsPolygon
         int id;				/* Unique polygon id number, starting at 0 */
         int n;				/* Number of points in this polygon */
         int flag;			/* level + version << 8 + greenwich << 16 + source << 24 */
-        double west, east, south, north;	/* min/max extent in DEGREES */
+        float west, east, south, north;	/* min/max extent in DEGREES */
         int area;			/* Area of polygon in 1/10 km^2 */
         int areaFull,container,ancestor;
         //----------------------
@@ -124,13 +124,15 @@ class GshhsReader
         bool gshhsFilesExists(int quality);
         int  getQuality()   {return quality;}
 
-        bool crossing(QLineF traject, QLineF trajectWorld) const;
+        bool crossing(const QLineF &traject, const QLineF &trajectWorld) const;
         void setProj(Projection * p){this->gshhsPoly_reader->setProj(p);}
         int  getPolyVersion();
+        void clearCells(){this->gshhsPoly_reader->clearCells();}
 
     private:
+        void clearLists();
         int quality;  // 5 levels: 0=low ... 4=full
-        void setQuality(int quality);
+        void setQuality(const int &quality);
         void selectBestQuality(Projection *proj);
 
         std::string fpath;     // directory containing gshhs files
@@ -160,9 +162,12 @@ class GshhsReader
         void GsshDrawLines(QPainter &pnt, std::list<GshhsPolygon*> &lst,
                                 Projection *proj, bool isClosed
         );
-        void clearLists();
-    
 
+
+        void clearBoundaries();
+        void clearRivers();
+        void loadBoundaries();
+        void loadRivers();
 };
 Q_DECLARE_TYPEINFO(GshhsReader,Q_MOVABLE_TYPE);
 
@@ -208,7 +213,7 @@ inline int GshhsPolygon_WDB::readInt2() {
     }
     return ((int)tab[0]<<8)+((int)tab[1]);
 }
-inline bool GshhsReader::crossing(QLineF traject, QLineF trajectWorld) const
+inline bool GshhsReader::crossing(const QLineF &traject, const QLineF &trajectWorld) const
 {
     return this->gshhsPoly_reader->crossing(traject, trajectWorld);
 }

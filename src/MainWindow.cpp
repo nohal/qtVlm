@@ -48,10 +48,9 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "opponentBoat.h"
 #include "mycentralwidget.h"
 #include "MenuBar.h"
-#include "GshhsReader.h"
+//#include "GshhsReader.h"
 #include "Polar.h"
 #include "boatVLM.h"
-#include "Grib.h"
 #include "GribRecord.h"
 #include "POI.h"
 #include "Projection.h"
@@ -68,6 +67,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "BoardReal.h"
 #include "MapDataDrawer.h"
 #include "DataColors.h"
+#include "DataManager.h"
 
 #include "DialogPoiDelete.h"
 #include "DialogPoi.h"
@@ -114,7 +114,8 @@ void MainWindow::connectSignals()
     connect(mb->acFile_Load_GRIB, SIGNAL(triggered()), my_centralWidget, SLOT(slot_fileLoad_GRIB()));
     connect(mb->acFile_Load_VLM_GRIB, SIGNAL(triggered()), this, SLOT(slotLoadVLMGrib()));
     connect(mb->acFile_Load_SAILSDOC_GRIB, SIGNAL(triggered()), my_centralWidget, SLOT(slotLoadSailsDocGrib()));
-    connect(mb->acFile_Info_GRIB, SIGNAL(triggered()), my_centralWidget, SLOT(slot_fileInfo_GRIB()));
+    connect(mb->acFile_Info_GRIB_main, SIGNAL(triggered()), my_centralWidget, SLOT(slot_fileInfo_GRIB_main()));
+    connect(mb->acFile_Info_GRIB_current, SIGNAL(triggered()), my_centralWidget, SLOT(slot_fileInfo_GRIB_current()));
     connect(mb->acFile_Quit, SIGNAL(triggered()), this, SLOT(slotFile_Quit()));
     connect(mb->acFile_Lock, SIGNAL(triggered()), this, SLOT(slotFile_Lock()));
     connect(this,SIGNAL(updateLockIcon(QIcon)),mb,SLOT(slot_updateLockIcon(QIcon)));
@@ -131,7 +132,7 @@ void MainWindow::connectSignals()
 
     //-------------------------------------------------------
 
-    connect(mb->acOptions_Proxy, SIGNAL(triggered()), dialogProxy, SLOT(exec()));
+    connect(mb->acOptions_Proxy, SIGNAL(triggered()), this, SLOT(slot_execDialogProxy()));
 
     connect(mb->acOptions_GroupLanguage, SIGNAL(triggered(QAction *)),
             this, SLOT(slotOptions_Language()));
@@ -184,7 +185,6 @@ void MainWindow::connectSignals()
     connect(mb->acPOIimport, SIGNAL(triggered()), my_centralWidget, SLOT(slot_POIimport()));
     connect(mb->acPOIgeoData, SIGNAL(triggered()), my_centralWidget, SLOT(slot_POIimportGeoData()));
 
-    connect(dialogProxy, SIGNAL(proxyUpdated()), this, SLOT(slotInetUpdated()));
 
     connect(mb->acPOISave, SIGNAL(triggered()), my_centralWidget, SLOT(slot_POISave()));
     connect(mb->acPOIRestore, SIGNAL(triggered()), my_centralWidget, SLOT(slot_POIRestore()));
@@ -202,12 +202,22 @@ void MainWindow::connectSignals()
 
     connect(this,SIGNAL(setChangeStatus(bool,bool,bool)),mb,SLOT(slot_setChangeStatus(bool,bool,bool)));
 }
+void MainWindow::slot_execDialogProxy()
+{
+    dialogProxy = new DialogProxy();
+    connect(dialogProxy, SIGNAL(proxyUpdated()), this, SLOT(slotInetUpdated()));
+    dialogProxy->exec();
+    delete dialogProxy;
+}
+
+
 
 //----------------------------------------------------
 void MainWindow::slot_gribFileReceived(QString fileName)
 {
     bool zoom =  (Settings::getSetting("gribZoomOnLoad",0).toInt()==1);
     openGribFile(fileName, zoom);
+    if(my_centralWidget) my_centralWidget->fileInfo_GRIB(DataManager::GRIB_GRIB);
     updateTitle();
 }
 
@@ -394,7 +404,6 @@ void MainWindow::continueSetup()
     if(!QFile(appFolder.value("img")+"skin_compas.png").exists())
         QMessageBox::critical (this,
            "Error","File 'skin_compas.png' cannot be find in img directory<br>Please check your installation"); /*untranslated on purpose*/
-    dialogProxy = new DialogProxy();
 
 //--------------------------------------------------
     progress->newStep(5,tr("Initializing menus"));
@@ -446,18 +455,9 @@ void MainWindow::continueSetup()
     toolBar->load_settings();
 
 
-    param = new DialogParamVlm(this,my_centralWidget);
-    if(use_old_board)
-        connect(param,SIGNAL(paramVLMChanged()),myBoard,SLOT(paramChanged()));
-
-    connect(param,SIGNAL(paramVLMChanged()),this,SLOT(slot_updateGribMono()));
-    connect(param,SIGNAL(paramVLMChanged()),toolBar,SLOT(slot_loadEstimeParam()));
 
     connect(toolBar,SIGNAL(estimeParamChanged()),this,SIGNAL(paramVLMChanged()));
-    connect(toolBar,SIGNAL(estimeParamChanged()),param,SLOT(slot_changeParam()));
 
-    progress->setLabelText(tr("Preparing coffee"));
-    progress->setValue(35);
 #ifdef __MAC_QTVLM
     progress->raise();
 #endif
@@ -481,8 +481,6 @@ void MainWindow::continueSetup()
 #endif
 
 
-
-
 #ifdef __REAL_BOAT_ONLY
     if(players.count()==0) {
         Player * newPlayer = new Player("MyBoat","",BOAT_REAL,0,"MyBoat",proj,this,my_centralWidget,my_centralWidget->getInet());
@@ -491,7 +489,6 @@ void MainWindow::continueSetup()
     }
 
 #endif
-
 
     QList<Player*> players=my_centralWidget->getPlayers();
     if(players.count()==1)
@@ -568,6 +565,8 @@ void MainWindow::continueSetup()
     closeProgress();
     Util::setFontDialog(menuBar);
 }
+
+
 void MainWindow::loadBoard()
 {
     qWarning()<<"loading board";
@@ -663,9 +662,9 @@ MainWindow::~MainWindow()
     Settings::setSetting("projectionCX", proj->getCX());
     Settings::setSetting("projectionCY", proj->getCY());
     Settings::setSetting("projectionScale",  proj->getScale());
-    Settings::setSetting("gribFileName",  gribFileName);
-    Settings::setSetting("gribFileNameCurrent",  gribFileNameCurrent);
-    Settings::setSetting("gribFilePath",  gribFilePath);   
+    //Settings::setSetting("gribFileName",  gribFileName);
+    //Settings::setSetting("gribFileNameCurrent",  gribFileNameCurrent);
+    //Settings::setSetting("gribFilePath",  gribFilePath);
     /*freeze all routes*/
     if(selectedBoat) /* save the zoom factor */
         selectedBoat->setZoom(proj->getScale());
@@ -717,18 +716,18 @@ void MainWindow::closeProgress(void)
     {
         progress->newStep(80,tr("Calibrating grib display"));
         QApplication::processEvents();
-        Grib * grib=new Grib();
-        grib->loadGribFile(appFolder.value("img")+"benchmark.grb");
+        DataManager * dataManager=my_centralWidget->get_dataManager();
         MapDataDrawer * mapDataDrawer=my_centralWidget->get_mapDataDrawer();
-        if(grib && grib->isOk() && mapDataDrawer)
+        if(dataManager && dataManager->load_data(appFolder.value("img")+"benchmark.grb",DataManager::GRIB_GRIB)
+                && dataManager->isOk(DataManager::GRIB_GRIB) && mapDataDrawer)
         {
-            grib->setCurrentDate(grib->getMinDate()+3650); //not to be on a gribrecord;
+            dataManager->set_currentDate(dataManager->get_minDate()+3650); //not to be on a gribrecord;
             proj->blockSignals(true);
             double xW=proj->getXmin();
             double xE=proj->getXmax();
             double yS=proj->getYmin();
             double yN=proj->getYmax();
-            my_centralWidget->zoomOnGrib(grib);
+            my_centralWidget->zoomOnGrib(DataManager::GRIB_GRIB);
             QPixmap * imgAll = new QPixmap(my_centralWidget->getTerre()->getSize());
             imgAll->fill(Qt::transparent);
             QPainter pnt(imgAll);
@@ -736,15 +735,17 @@ void MainWindow::closeProgress(void)
             pnt.setRenderHint(QPainter::SmoothPixmapTransform, true);
             QTime calibration;
             calibration.start();
-            mapDataDrawer->draw_WIND_Color(grib,pnt,proj,true,true,true);
-            int cal1=calibration.elapsed();
+            mapDataDrawer->draw_WIND_Color_OLD(pnt,proj,true,true,true);
+            int cal2=calibration.elapsed();
             pnt.end();
             //imgAll->save("calib1.jpg");
             imgAll->fill(Qt::transparent);
             pnt.begin(imgAll);
+            pnt.setRenderHint(QPainter::Antialiasing, true);
+            pnt.setRenderHint(QPainter::SmoothPixmapTransform, true);
             calibration.start();
-            mapDataDrawer->draw_WIND_Color_old(grib,pnt,proj,true,true,true);
-            int cal2=calibration.elapsed();
+            mapDataDrawer->draw_WIND_Color(pnt,proj,true,true,true);
+            int cal1=calibration.elapsed();
             pnt.end();
             //imgAll->save("calib2.jpg");
             delete imgAll;
@@ -755,8 +756,9 @@ void MainWindow::closeProgress(void)
             Settings::setSetting("gribBench2",cal2);
 
             /** **/
+            dataManager->close_data(DataManager::GRIB_GRIB);
         }
-        delete grib;
+
     }
     else
     {
@@ -840,38 +842,47 @@ void MainWindow::closeProgress(void)
 //-------------------------------------------------
 void MainWindow::openGribFile(QString fileName, bool zoom, bool current)
 {
-    Grib * myGrib;
+    bool badFile=false;
     bool badCurrent=false;
-    if(current)
+
+    DataManager * dataManager = my_centralWidget->get_dataManager();
+    if(!dataManager) {
+        qWarning() << "No data manager present !!";
+        return;
+    }
+
+    if(current) /*if current tries to open it as a current file */
     {
         my_centralWidget->loadGribFileCurrent(fileName, zoom);
-        myGrib=my_centralWidget->getGribCurrent();
-        if(myGrib && myGrib->getNumberOfGribRecords(GRB_CURRENT_VX,LV_MSL,0)==0)
+
+        if(!dataManager->isOk(DataManager::GRIB_CURRENT))
+            badFile=true;
+        else if(!dataManager->hasData(DATA_CURRENT_VX,DATA_LV_MSL,0,DataManager::GRIB_CURRENT))
         {
-            slotFile_Close_Current();
+            slotFile_Close_Current();            
             badCurrent=true;
-            myGrib=NULL;
         }
     }
     else
     {
         my_centralWidget->loadGribFile(fileName, zoom);
-        myGrib=my_centralWidget->getGrib();
+        if(!dataManager->isOk(DataManager::GRIB_GRIB))
+            badFile=false;
     }
-    if (myGrib && !badCurrent)
+
+    if (!badFile && !badCurrent)
     {
         slot_updateGribMono();
         slotDateGribChanged_now();
+
         if(!current)
         {
-            gribFileName = fileName;
-            Settings::setSetting("gribFileName",  gribFileName);
+            Settings::setSetting("gribFileName",  fileName);
             Settings::setSetting("gribFilePath",  gribFilePath);
         }
         else
         {
-            gribFileNameCurrent = fileName;
-            Settings::setSetting("gribFileNameCurrent",  gribFileNameCurrent);
+            Settings::setSetting("gribFileNameCurrent",  fileName);
             Settings::setSetting("gribFilePath",  gribFilePath);
         }
     }
@@ -901,6 +912,7 @@ void MainWindow::openGribFile(QString fileName, bool zoom, bool current)
 
     updateTitle();
 }
+
 void MainWindow::updateTitle()
 {
     QString ver="qtVlm "+QString().setNum(sizeof(int*)*8)+" bits "+Version::getVersion();
@@ -910,33 +922,36 @@ void MainWindow::updateTitle()
         return;
     }
 
-    Grib * g=my_centralWidget->getGrib();
-    Grib * gc=my_centralWidget->getGribCurrent();
+    DataManager * dataManager = my_centralWidget->get_dataManager();
+    if(!dataManager) {
+        setWindowTitle(ver);
+        return;
+    }
 
-    QString g1,g2;
-    if(g && g->isOk())
-    {
-        QFileInfo i(gribFileName);
-        QDateTime startGribDate=QDateTime().fromTime_t(g->getMinDate()).toUTC();
+    QString dateStr="";
+
+    if(dataManager->isOk()) {
+        QDateTime startGribDate=QDateTime().fromTime_t(dataManager->get_minDate()).toUTC();
         startGribDate.setTimeSpec(Qt::UTC);
-        QDateTime endGribDate=QDateTime().fromTime_t(g->getMaxDate()).toUTC();
+        QDateTime endGribDate=QDateTime().fromTime_t(dataManager->get_maxDate()).toUTC();
         endGribDate.setTimeSpec(Qt::UTC);
-        g1 = " grib: "+ i.fileName() +tr(" (du ")+
-                   startGribDate.toString(tr("dd/MM/yyyy hh:mm"))+tr(" au ")+
-                   endGribDate.toString(tr("dd/MM/yyyy hh:mm"))+")";
+        dateStr = tr(" (du ")+
+                startGribDate.toString(tr("dd/MM/yyyy hh:mm"))+tr(" au ")+
+                endGribDate.toString(tr("dd/MM/yyyy hh:mm"))+")";
     }
-    if(gc && gc->isOk())
-    {
-        QFileInfo i(gribFileNameCurrent);
-        QDateTime startGribDate=QDateTime().fromTime_t(gc->getMinDate()).toUTC();
-        startGribDate.setTimeSpec(Qt::UTC);
-        QDateTime endGribDate=QDateTime().fromTime_t(gc->getMaxDate()).toUTC();
-        endGribDate.setTimeSpec(Qt::UTC);
-        g2 = tr(" courant: ")+ i.fileName() +tr(" (du ")+
-                   startGribDate.toString(tr("dd/MM/yyyy hh:mm"))+tr(" au ")+
-                   endGribDate.toString(tr("dd/MM/yyyy hh:mm"))+")";
+
+    QString gribStr="",currentStr="";
+
+    if(dataManager->isOk(DataManager::GRIB_GRIB)) {
+        QFileInfo i(dataManager->get_fileName(DataManager::GRIB_GRIB));
+        gribStr = tr(" grib: ")+ i.fileName();
     }
-    setWindowTitle(ver+g1+g2);
+
+    if(dataManager->isOk(DataManager::GRIB_CURRENT)) {
+        QFileInfo i(dataManager->get_fileName(DataManager::GRIB_CURRENT));
+        currentStr = tr(" courant: ")+ i.fileName();
+    }
+    setWindowTitle(ver+gribStr+currentStr+dateStr);
 }
 
 //-------------------------------------------------
@@ -1113,7 +1128,7 @@ void MainWindow::slotFile_QuitNoSave() {
 void MainWindow::slotFile_Open()
 {
     QString filter;
-    filter =  tr("Fichiers GRIB (*.grb *.grib *.grb.bz2 *.grib.bz2 *.grb.gz *.grib.gz)")
+    filter =  tr("Fichiers GRIB (*.grb *.grib *.grb.bz2 *.grib.bz2 *.grb.gz *.grib.gz *.grb2)")
             + tr(";;Autres fichiers (*)");
     QDir dirGrib(gribFilePath);
     if(!dirGrib.exists())
@@ -1133,18 +1148,20 @@ void MainWindow::slotFile_Open()
         gribFilePath = finfo.absolutePath();
         bool zoom =  (Settings::getSetting("gribZoomOnLoad",0).toInt()==1);
         openGribFile(fileName, zoom);
+        if(my_centralWidget) my_centralWidget->fileInfo_GRIB(DataManager::GRIB_GRIB);
     }
     updateTitle();
 }
 void MainWindow::slotFile_Reopen()
 {
-   openGribFile (gribFileName, (Settings::getSetting("gribZoomOnLoad",0).toInt() == 1));
+   if(!my_centralWidget->get_dataManager()->get_grib(DataManager::GRIB_GRIB)) return;
+   openGribFile (my_centralWidget->get_dataManager()->get_grib(DataManager::GRIB_GRIB)->get_fileName(), (Settings::getSetting("gribZoomOnLoad",0).toInt() == 1));
    updateTitle();
 }
 void MainWindow::slotFile_Open_Current()
 {
     QString filter;
-    filter =  tr("Fichiers GRIB (*.grb *.grib *.grb.bz2 *.grib.bz2 *.grb.gz *.grib.gz)")
+    filter =  tr("Fichiers GRIB (*.grb *.grib *.grb.bz2 *.grib.bz2 *.grb.gz *.grib.gz *.grb2)")
             + tr(";;Autres fichiers (*)");
     QDir dirGrib(gribFilePath);
     if(!dirGrib.exists())
@@ -1164,13 +1181,14 @@ void MainWindow::slotFile_Open_Current()
         gribFilePath = finfo.absolutePath();
         bool zoom =  (Settings::getSetting("gribZoomOnLoad",0).toInt()==1);
         openGribFile(fileName, zoom, true);
+        if(my_centralWidget) my_centralWidget->fileInfo_GRIB(DataManager::GRIB_CURRENT);
     }
     updateTitle();
 }
 //-------------------------------------------------
 void MainWindow::slotFile_Close_Current() {
     gribFileNameCurrent = "";
-    my_centralWidget->loadGribFileCurrent("", false);
+    my_centralWidget->closeGribFileCurrent();
     toolBar->update_gribBtn();
     updateTitle();
     my_centralWidget->emitUpdateRoute(NULL);
@@ -1179,7 +1197,7 @@ void MainWindow::slotFile_Close_Current() {
 void MainWindow::slotFile_Close()
 {
     gribFileName = "";
-    my_centralWidget->loadGribFile("", false);
+    my_centralWidget->closeGribFile();
     toolBar->update_gribBtn();
     updateTitle();
     my_centralWidget->emitUpdateRoute(NULL);
@@ -1201,11 +1219,10 @@ void MainWindow::updatePrevNext(void)
 void MainWindow::slotDateGribChanged_now(bool b)
 {
     time_t tps=QDateTime::currentDateTime().toUTC().toTime_t();
-    Grib * grib = my_centralWidget->getGrib();
-    if(grib)
-    {
-        time_t min=grib->getMinDate();
-        time_t max=grib->getMaxDate();
+    DataManager * dataManager=my_centralWidget->get_dataManager();
+    if(dataManager && dataManager->isOk()) {
+        time_t min=dataManager->get_minDate();
+        time_t max=dataManager->get_maxDate();
         if(tps<min) tps=min;
         if(tps>max) tps=max;
         my_centralWidget->setCurrentDate( tps, b );
@@ -1224,11 +1241,10 @@ void MainWindow::slotDateGribChanged_sel()
 void MainWindow::slotDateGribChanged_next()
 {
     QApplication::processEvents();
-    Grib * grib = my_centralWidget->getGrib();
-    if(grib)
-    {
-        time_t tps=my_centralWidget->getCurrentDate();
-        time_t max=grib->getMaxDate();
+    DataManager * dataManager=my_centralWidget->get_dataManager();
+    if(dataManager && dataManager->isOk()) {
+        time_t tps=dataManager->get_currentDate();
+        time_t max=dataManager->get_maxDate();
         int step=toolBar->get_gribStep();
         if((tps+step)<=max)
         {
@@ -1242,10 +1258,10 @@ void MainWindow::slotDateGribChanged_next()
 
 //-------------------------------------------------
 void MainWindow::slotDateGribChanged_prev() {
-    Grib * grib = my_centralWidget->getGrib();
-    if(grib) {
-        time_t tps=my_centralWidget->getCurrentDate();
-        time_t min=grib->getMinDate();
+    DataManager * dataManager=my_centralWidget->get_dataManager();
+    if(dataManager && dataManager->isOk()) {
+        time_t tps=dataManager->get_currentDate();
+        time_t min=dataManager->get_minDate();
         int step=toolBar->get_gribStep();
         if((tps-step)>=min)
             my_centralWidget->setCurrentDate(tps-step);
@@ -1254,17 +1270,13 @@ void MainWindow::slotDateGribChanged_prev() {
 }
 
 void MainWindow::slotSetGribDate(time_t tps) {
-    Grib * grib = my_centralWidget->getGrib();
-    if(grib) {
-        time_t min=grib->getMinDate();
-        time_t max=grib->getMaxDate();
+    DataManager * dataManager=my_centralWidget->get_dataManager();
+    if(dataManager && dataManager->isOk()) {
+        time_t min=dataManager->get_minDate();
+        time_t max=dataManager->get_maxDate();
         if(tps>=min && tps <=max)
             my_centralWidget->setCurrentDate(tps);
     }
-}
-//-------------------------------------------------
-Grib * MainWindow::getGrib() {
-    return my_centralWidget->getGrib();
 }
 
 void MainWindow::slotWindArrows(bool b)
@@ -1669,8 +1681,15 @@ void MainWindow::slotCompassCenterWp(void)
 
 void MainWindow::slotVLM_Param(void)
 {
+    param = new DialogParamVlm(this,my_centralWidget);
+    if(use_old_board)
+        connect(param,SIGNAL(paramVLMChanged()),myBoard,SLOT(paramChanged()));
+
+    connect(param,SIGNAL(paramVLMChanged()),this,SLOT(slot_updateGribMono()));
+    connect(param,SIGNAL(paramVLMChanged()),toolBar,SLOT(slot_loadEstimeParam()));
     param->slot_changeParam();
     param->exec();
+    delete param;
 }
 
 void MainWindow::slotVLM_Sync(void)

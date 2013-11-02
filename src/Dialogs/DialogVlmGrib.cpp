@@ -61,7 +61,7 @@ void DialogVlmGrib::done(int res)
     if(res == QDialog::Accepted)
     {        
         if(!doRequest(VLM_REQUEST_GET_FILE))
-            QDialog::done(QDialog::Rejected);
+            res=QDialog::Rejected;
     }
 
     QDialog::done(res);
@@ -153,8 +153,7 @@ bool DialogVlmGrib::gribFileReceived(QByteArray * content)
         if (saveFile->open(QIODevice::WriteOnly))
         {
             int nb=saveFile->write(*content);
-            if(nb>0)
-                saveFile->close();
+            saveFile->close();
             qWarning() << nb << " bytes saved in " << filename;
             return true;
         }

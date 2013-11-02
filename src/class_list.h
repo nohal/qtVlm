@@ -80,12 +80,18 @@ class DialogFinePosit;
 class GisReader;
 
 /* Grib.h */
-class Grib;
 class MapDataDrawer;
+class DataManager;
+class Grib;
+class GribV2;
 class GribRecord;
+class GribV1Record;
+class GribV2Record;
 class DataColors;
 class ColorElement;
 class DataCode;
+class grb2DataType;
+
 
 /* GshhsReader.h */
 class GshhsReader;
@@ -245,4 +251,6 @@ class dialogLoadImg;
 
 /*magnifier*/
 class Magnifier;
+
+class Util;
 #endif // CLASS_LIST_H

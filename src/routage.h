@@ -33,11 +33,10 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include "class_list.h"
 
-#include "Polygon.h"
-#include "vlmpointgraphic.h"
 #include "vlmPoint.h"
-#include "GshhsReader.h"
+#include "DataManager.h"
 #include "vlmLine.h"
+
 #define NO_CROSS 1
 #define BOUNDED_CROSS 2
 #define L1_CROSS 3
@@ -48,7 +47,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 struct datathread
 {
     time_t Eta;
-    Grib *GriB;
+    DataManager *dataManager;
     bool whatIfUsed;
     time_t whatIfJour;
     int whatIfTime;
@@ -65,7 +64,7 @@ class ROUTAGE : public QObject
 { Q_OBJECT
     public:
         /* constructeurs, destructeurs */
-        ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScene, myCentralWidget *parentWindow);
+        ROUTAGE(QString name, Projection *proj, DataManager * dataManager, QGraphicsScene * myScene, myCentralWidget *parentWindow);
 
         ~ROUTAGE();
         void setName(const QString &name){this->name=name;}
@@ -139,7 +138,7 @@ class ROUTAGE : public QObject
         int  pruneWakeAngle;
         bool useConverge;
         time_t getEta() const {return eta;}
-        Grib * getGrib() const {return grib;}
+        FCT_GET(DataManager*,dataManager)
         time_t getWhatIfJour() const {return whatIfJour;}
         static int calculateTimeRoute(const vlmPoint &RouteFrom,const vlmPoint &routeTo, const datathread *dataThread,double * lastLonFound=NULL, double * lastLatFound=NULL, const int &limit=-1);
         static int routeFunction(const double &x,const vlmPoint &from, double * lastLonFound, double * lastLatFound, const datathread *dataThread);
@@ -185,7 +184,8 @@ class ROUTAGE : public QObject
         void calculateAlternative();
         void deleteAlternative(){while(!alternateRoutes.isEmpty())
                 delete alternateRoutes.takeFirst();}
-        QList<vlmLine*> getIsochrones(){return isochrones;}
+        QList<vlmLine*>  * getIsochrones(){return &isochrones;}
+        QList<vlmLine*> * getI_Isochrones(){return &i_isochrones;}
         void setColorGrib(const bool &b){this->colorGrib=b;}
         bool getColorGrib(){return this->colorGrib;}
         bool getArrived() const {return this->arrived;}
@@ -203,11 +203,21 @@ class ROUTAGE : public QObject
         QList<bool> * getPreviousIsoLand(){return &previousIsoLand;}
         QList<QLineF> * getForbidZone(){return &forbidZone;}
         QPolygonF * getShapeIso(){return &shapeIso;}
+        QPolygonF * getShapeMiddle(){return &shapeMiddle;}
         FCT_SETGET(bool,multiRoutage)
         FCT_SETGET(int,multiDays)
         FCT_SETGET(int,multiHours)
         FCT_SETGET(int,multiMin)
         FCT_SETGET(int,multiNb)
+        FCT_GET_CST(double,maxDist)
+        FCT_SETGET_CST(double,maxWaveHeight)
+        static vlmPoint multiThreadedContains(const vlmPoint &p);
+        static QList<vlmPoint> finalEpuration(const QList<vlmPoint> &listPoints);
+        static QList<vlmPoint> findPointThreaded(const QList<vlmPoint> &list);
+        static QList<vlmPoint> findRoute(const QList<vlmPoint> &pointList);
+        static vlmPoint checkCoastCollision(const vlmPoint &point);
+        static bool checkCoastCollision2(const vlmPoint &point1, const vlmPoint &point2);
+        static QList<vlmPoint> pruneWakeThreaded(const QList<vlmPoint> &list);
 public slots:
         void calculate();
         void slot_edit();
@@ -240,7 +250,7 @@ public slots:
         POI * fromPOI;
         POI * toPOI;
         boat *myBoat;
-        Grib *grib;
+        DataManager * dataManager;
         double angleRange;
         double angleStep;
         double timeStepMore24;
@@ -269,7 +279,7 @@ public slots:
         void drawResult(vlmPoint P);
         bool intersects(QList<vlmPoint> *iso,int nn,int mm,int * toBeKilled);
         bool converted;
-        void pruneWake(int wakeAngle);
+        void pruneWake(const int &wakeAngle);
         //int calculateTimeRoute(vlmPoint RouteFrom,vlmPoint routeTo,int limit=-1);
         //int routeFunction(double x,vlmPoint from);
         //int routeFunctionDeriv(double x,vlmPoint from);
@@ -328,6 +338,7 @@ public slots:
         int highlightedIso;
         double maxPres,maxPortant;
         double minPres,minPortant;
+        double maxWaveHeight;
         bool visibleOnly;
         QTimer * timerTempo;
         bool approaching;
@@ -362,12 +373,15 @@ public slots:
         bool routageOrtho;
         bool showBestLive;
         QPolygonF shapeIso;
-        void calculateShapeIso(bool drawIt=false);
+        QPolygonF shapeMiddle;
+        void calculateShapeIso();
         bool multiRoutage;
         int multiNb;
         int multiDays;
         int multiHours;
         int multiMin;
-    };
+        double maxDist;
+        void calculateMaxDist();
+};
 Q_DECLARE_TYPEINFO(ROUTAGE,Q_MOVABLE_TYPE);
 #endif // ROUTAGE_H

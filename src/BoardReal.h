@@ -49,7 +49,7 @@ class boardReal: public QWidget , public Ui::boardReal_ui
         void resetWp(){this->setWp(0,0,-1);}
         void gribUpdated();
 
-    signals:
+signals:
         void showMessage(QString,int);
 
     protected:

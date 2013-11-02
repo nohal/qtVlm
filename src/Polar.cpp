@@ -353,9 +353,13 @@ double Polar::getBvmgUp(double windSpeed, bool engine)
 {
     if(!loaded)
         return 0;
+    if(windSpeed<0) return 0;
     double angle=0;
-    if ( qRound(windSpeed*10) <= best_vmg_up.count()-1 )
+    int val=qRound(windSpeed*10);
+    if ( val>0 && val<= best_vmg_up.count()-1 )
         angle=best_vmg_up[qRound(windSpeed*10)];
+    else if(val<0)
+        angle=best_vmg_up.first();
     else
         angle=best_vmg_up.last();
     if(engine && this->mainWindow->getSelectedBoat() && this->mainWindow->getSelectedBoat()->getMinSpeedForEngine()>0)
@@ -366,13 +370,18 @@ double Polar::getBvmgUp(double windSpeed, bool engine)
     }
     return angle;
 }
+
 double Polar::getBvmgDown(double windSpeed, bool engine)
 {
     if(!loaded)
         return 0;
+    if(windSpeed<0) return 0;
     double angle=0;
-    if ( qRound(windSpeed*10) <= best_vmg_down.count()-1 )
+    int val=qRound(windSpeed*10);
+    if ( val > 0 && val <= best_vmg_down.count()-1 )
         angle=best_vmg_down[qRound(windSpeed*10)];
+    else if(val <0)
+        angle=best_vmg_up.first();
     else
         angle=best_vmg_down.last();
     if(engine && this->mainWindow->getSelectedBoat() && this->mainWindow->getSelectedBoat()->getMinSpeedForEngine()>0)
@@ -386,6 +395,7 @@ double Polar::getBvmgDown(double windSpeed, bool engine)
 
 double Polar::getSpeed(double windSpeed, double angle, bool engine,bool * engineUsed)
 {
+    if(windSpeed<0) return 0;
     double bs=myGetSpeed(windSpeed,angle,false);
     if(engineUsed!=NULL)
         *engineUsed=false;

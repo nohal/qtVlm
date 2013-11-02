@@ -43,6 +43,7 @@ class ZeroOneActionGroup : public QObject
                 ZeroOneActionGroup(QWidget *parent) : QObject(parent) {}
                 void addAction(QAction *);
                 void  setCheckedAction(QAction *act, bool b);
+                void clear(void);
 
         public slots:
                 void slot_actionTrigerred(bool);
@@ -126,10 +127,12 @@ public:
     QAction *acFile_Load_GRIB;
     QAction *acFile_Load_VLM_GRIB;
     QAction *acFile_Load_SAILSDOC_GRIB;
-    QAction *acFile_Info_GRIB;
+    QAction *acFile_Info_GRIB_main;
+    QAction *acFile_Info_GRIB_current;
     QAction *acFile_Quit;
     QAction *acFile_Lock;
     QAction *separator1;
+    QAction *separator2;
     QAction *acFile_QuitNoSave;
     QMenu   *mn_img;
     QAction *acImg_Open;
@@ -167,6 +170,14 @@ public:
     QAction *acView_FrzRainCateg;
     QAction *acView_CAPEsfc;
     QAction *acView_CINsfc;
+    QMenu   *menuGroupWaves;
+    //ZeroOneActionGroup *acView_GroupWaves;
+    QAction * acView_WavesSigHgtComb;
+    QAction * acView_WavesWnd;
+    QAction * acView_WavesSwl;
+    QAction * acView_WavesMax;
+    QAction * acView_WavesWhiteCap;
+    QAction * acView_WavesArrow;
 
     QMap<int,QAction*> gribDataActionMap;
 
@@ -206,7 +217,11 @@ public:
     QAction *acView_Barbules;
 
     QMenu * menuAltitude;
-    QActionGroup *acAlt_GroupAltitude;
+    ZeroOneActionGroup *acAlt_GroupAltitude;
+    QStringList levelTypes;
+    QStringList levelTypesUnit;
+
+    /*
                 QAction *acAlt_MSL;
                 QAction *acAlt_sigma995;
                 QAction *acAlt_GND;
@@ -238,7 +253,7 @@ public:
         QAction *acAlt_GeopotStep_50;
         QAction *acAlt_GeopotStep_100;
     QAction *acAlt_GeopotLabels;
-
+*/
     QAction *acMap_Orthodromie;
     QAction *acMap_Rivers;
     QAction *acMap_CountriesBorders;
@@ -313,11 +328,13 @@ public:
     QAction *acShowPolar;
     QAction *acRace;
 
+    void setPlayerType(const int &type);
 public slots:
     void slot_updateLockIcon(QIcon ic);
     void slot_setChangeStatus(bool status,bool pilototo,bool syncBtn);
     void slot_showViewMenu(void);
     void slot_showBarrierMenu(void);
+    void slot_showAltitudeMenu(void);
 
 
     //-------------------------------------
@@ -326,6 +343,14 @@ public slots:
 
 
     void setMCW(myCentralWidget * mcw){my_CentralWidget=mcw;}
+
+    QAction* addAction(QWidget *menu,
+                    QString title, QString shortcut, QString statustip,
+                    QString iconFileName = "");
+
+    QAction* addActionCheck(QWidget *menu,
+                    QString title, QString shortcut, QString statustip,
+                    QString iconFileName = "");
 
 //------------------------------------------------------------------------
 private:
@@ -347,13 +372,7 @@ private:
 
     //std::vector<time_t> listGribDates;
 
-    QAction* addAction(QWidget *menu,
-                    QString title, QString shortcut, QString statustip,
-                    QString iconFileName = "");
 
-    QAction* addActionCheck(QWidget *menu,
-                    QString title, QString shortcut, QString statustip,
-                    QString iconFileName = "");
     myCentralWidget * my_CentralWidget;
 
 

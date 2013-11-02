@@ -42,6 +42,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include "class_list.h"
 #include "dataDef.h"
+
 #include <QLineF>
 
 #ifdef __QTVLM_WITH_TEST
@@ -106,7 +107,7 @@ class Util
     static void computePos(Projection * proj, const double &lat, const double &lon, int * x, int * y);
     static void computePosDouble(Projection * proj, const double &lat, const double &lon, double * x, double * y);
     static void computePosDouble(Projection * proj, const QPointF &position, QPointF * screenCoord);
-    static void addAgent(QNetworkRequest & request);
+    static void addAgent(QNetworkRequest & request, bool overrideForce=false);
     static bool lineIsCrossingRect(const QLineF &line, const QRectF &rect);
     static double myDiffAngle(const double &a1, const double &a2);
     static double A360(const double &hdg);
@@ -121,6 +122,7 @@ class Util
     static double distToSegment(const QPointF point,const QLineF line);
 
     static QString formatElapsedTime(int elapsed);
+    static QString currentPath();
     //-------------------------------------------------
     template <typename T>
         static bool isInRange(T v, T min, T max)

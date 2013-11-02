@@ -30,6 +30,7 @@ class DialogWp: public QDialog, public Ui::WP_dialog_ui
         DialogWp(QWidget * parent=0);
         void show_WPdialog(boat * boat);
         void setLocked(const bool &locked);
+        void show_WPdialog(POI * poi, boat * boat);
 
     public slots:
         void chgLat();
@@ -39,7 +40,6 @@ class DialogWp: public QDialog, public Ui::WP_dialog_ui
         void done(int result);
         void doClearWP();
         void doSelPOI();
-        void show_WPdialog(POI * poi);
 
     signals:
         void selectPOI(void);

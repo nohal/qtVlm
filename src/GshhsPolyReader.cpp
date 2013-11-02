@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "GshhsPolyReader.h"
 #include "Projection.h"
 #include "dataDef.h"
+#include "zuFile.h"
+#include "Util.h"
 
 
 GshhsPolyCell::GshhsPolyCell(FILE *fpoly_, int x0_, int y0_,Projection *proj_,PolygonFileHeader *header_)
@@ -71,8 +73,8 @@ for (int c= 0; c < num_contours; ++c) \
 }
 
 void GshhsPolyCell::ReadPolygonFile (FILE *polyfile,
-                        int x, int y,
-                        int pas_x, int pas_y,
+                        const int &x, const int &y,
+                        const int &pas_x, const int &pas_y,
                         contour_list *p1, contour_list *p2, contour_list *p3, contour_list *p4, contour_list *p5)
 {
     int pos_data;
@@ -91,7 +93,7 @@ void GshhsPolyCell::ReadPolygonFile (FILE *polyfile,
     READ_POLY(p5)
 }
 
-void  GshhsPolyCell::DrawPolygonFilled(QPainter &pnt,contour_list * p,double dx,Projection *proj,QColor color)
+void  GshhsPolyCell::DrawPolygonFilled(QPainter &pnt, contour_list * p, const double &dx, Projection *proj, const QColor &color)
 {
     double x, y;
     double c, v;
@@ -131,7 +133,7 @@ void  GshhsPolyCell::DrawPolygonFilled(QPainter &pnt,contour_list * p,double dx,
 
             if(v==0 || x!=x_old || y!=y_old)
             {
-                poly_pt.append(QPoint(x,y));
+                poly_pt.append(QPointF(x,y).toPoint());
                 x_old=x;
                 y_old=y;
             }
@@ -143,8 +145,8 @@ void  GshhsPolyCell::DrawPolygonFilled(QPainter &pnt,contour_list * p,double dx,
 
 #define DRAW_POLY_FILLED(POLY,COL) if(POLY) DrawPolygonFilled(pnt,POLY,dx,proj,COL);
 
-void  GshhsPolyCell::drawMapPlain(QPainter &pnt, double dx, Projection *proj,
-            QColor seaColor, QColor landColor )
+void  GshhsPolyCell::drawMapPlain(QPainter &pnt, const double &dx, Projection *proj,
+            const QColor &seaColor, const QColor &landColor )
 {
     pnt.setRenderHint(QPainter::Antialiasing, true);
 
@@ -155,7 +157,7 @@ void  GshhsPolyCell::drawMapPlain(QPainter &pnt, double dx, Projection *proj,
     DRAW_POLY_FILLED(&poly5,landColor)
 }
 
-void GshhsPolyCell::DrawPolygonContour(QPainter &pnt,contour_list * p, double dx, Projection *proj)
+void GshhsPolyCell::DrawPolygonContour(QPainter &pnt, contour_list * p, const double &dx, Projection *proj)
 {
     double x1, y1, x2, y2;
     double long_max, lat_max, long_min, lat_min;
@@ -218,7 +220,7 @@ void GshhsPolyCell::DrawPolygonContour(QPainter &pnt,contour_list * p, double dx
 
 #define DRAW_POLY_CONTOUR(POLY) if(POLY) DrawPolygonContour(pnt,POLY,dx,proj);
 
-void GshhsPolyCell::drawSeaBorderLines(QPainter &pnt, double dx, Projection *proj)
+void GshhsPolyCell::drawSeaBorderLines(QPainter &pnt, const double &dx, Projection *proj)
 {
     coasts.clear();
     DRAW_POLY_CONTOUR(&poly1)
@@ -284,7 +286,7 @@ int GshhsPolyReader::getPolyVersion()
     return polyHeader.version;
 }
 
-void GshhsPolyReader::setQuality(int quality)  // 5 levels: 0=low ... 4=full
+void GshhsPolyReader::setQuality(const int &quality)  // 5 levels: 0=low ... 4=full
 {
     if (currentQuality != quality || fpoly==NULL)
     {
@@ -327,13 +329,19 @@ void GshhsPolyReader::setQuality(int quality)  // 5 levels: 0=low ... 4=full
         if(fpoly)
             readPolygonFileHeader(fpoly,&polyHeader);
 
-        for (int i=0; i<360; ++i) {
-            for (int j=0; j<180; ++j) {
-                if (allCells[i][j] != NULL)
-                {
-                    delete allCells[i][j];
-                    allCells[i][j] = NULL;
-                }
+        this->clearCells();
+    }
+}
+void GshhsPolyReader::clearCells()
+{
+    for (int i=0; i<360; ++i)
+    {
+        for (int j=0; j<180; ++j)
+        {
+            if (allCells[i][j] != NULL)
+            {
+                delete allCells[i][j];
+                allCells[i][j] = NULL;
             }
         }
     }
@@ -349,12 +357,11 @@ void GshhsPolyReader::readPolygonFileHeader(FILE *polyfile, PolygonFileHeader *h
 }
 
 //-------------------------------------------------------------------------
-void GshhsPolyReader::drawGshhsPolyMapPlain( QPainter &pnt, Projection *proj,
-                    QColor seaColor, QColor landColor )
+void GshhsPolyReader::drawGshhsPolyMapPlain(QPainter &pnt, Projection *proj,
+                    const QColor &seaColor, const QColor &landColor )
 {
     if (!fpoly)
         return;
-
     int cxmin, cxmax, cymax, cymin;  // cellules visibles
     cxmin = (int) floor (proj->getXmin());
     cxmax = (int) ceil  (proj->getXmax());

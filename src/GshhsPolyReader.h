@@ -28,9 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "class_list.h"
 
-#include "zuFile.h"
-#include "Util.h"
 #include "Projection.h"
+
 
 #define GSHHS_SCL    1.0e-6    /* Convert micro-degrees to degrees */
 #  define INTER_MAX_LIMIT 1.0000001
@@ -64,11 +63,11 @@ class GshhsPolyCell
          GshhsPolyCell(FILE *fpoly, int x0, int y0, Projection *proj, PolygonFileHeader *header);
         ~GshhsPolyCell();
 
-        void  drawMapPlain(QPainter &pnt, double dx,Projection *proj,
-                    QColor seaColor, QColor landColor );
+        void  drawMapPlain(QPainter &pnt, const double &dx,Projection *proj,
+                    const QColor &seaColor, const QColor &landColor );
 
-        void  drawSeaBorderLines(QPainter &pnt, double dx, Projection *proj);
-        QList<QLineF> * getCoasts(){return & coasts;}
+        void  drawSeaBorderLines(QPainter &pnt, const double &dx, Projection *proj);
+        const QList<QLineF> * getCoasts() const {return & coasts;}
     private:
         int nbpoints;
         int x0cell, y0cell;
@@ -80,12 +79,12 @@ class GshhsPolyCell
         PolygonFileHeader *header;
         contour_list poly1,poly2,poly3,poly4,poly5;
 
-        void DrawPolygonFilled(QPainter &pnt,contour_list * poly,double dx,Projection *proj,QColor color);
-        void DrawPolygonContour(QPainter &pnt,contour_list * poly, double dx, Projection *proj);
+        void DrawPolygonFilled(QPainter &pnt,contour_list * poly,const double &dx,Projection *proj,const QColor &color);
+        void DrawPolygonContour(QPainter &pnt,contour_list * poly, const double &dx, Projection *proj);
 
         void ReadPolygonFile (FILE *polyfile,
-                                int x, int y,
-                                int pas_x, int pas_y,
+                                const int &x, const int &y,
+                                const int &pas_x, const int &pas_y,
                                 contour_list *p1, contour_list *p2, contour_list *p3, contour_list *p4, contour_list *p5);
 
 };
@@ -98,15 +97,16 @@ class GshhsPolyReader
         ~GshhsPolyReader();
 
         void drawGshhsPolyMapPlain( QPainter &pnt, Projection *proj,
-                    QColor seaColor, QColor landColor );
+                    const QColor &seaColor, const QColor &landColor );
 
         void drawGshhsPolyMapSeaBorders( QPainter &pnt, Projection *proj);
 
-        void setQuality(int quality); // 5 levels: 0=low ... 4=full
-        bool crossing(QLineF traject, QLineF trajectWorld) const;
+        void setQuality(const int &quality); // 5 levels: 0=low ... 4=full
+        bool crossing(const QLineF &traject, const QLineF &trajectWorld) const;
         int currentQuality;
         void setProj(Projection * p){this->proj=p;}
         int  getPolyVersion();
+        void clearCells();
     private:
         std::string path;
         FILE *fpoly;
@@ -116,13 +116,14 @@ class GshhsPolyReader
 #if 0
         bool vlm_intersects(QLineF line1,QLineF line2) const;
 #endif
-        bool my_intersects(QLineF line1,QLineF line2) const;
+        bool my_intersects(const QLineF &line1,const QLineF &line2) const;
         void readPolygonFileHeader(FILE *polyfile, PolygonFileHeader *header);
         bool abortRequested;
         Projection * proj;
+        QList<QLineF>coasts;
 };
 Q_DECLARE_TYPEINFO(GshhsPolyReader,Q_MOVABLE_TYPE);
-inline bool GshhsPolyReader::crossing(QLineF traject, QLineF trajectWorld) const
+inline bool GshhsPolyReader::crossing(const QLineF &traject, const QLineF &trajectWorld) const
 {
     if(proj==NULL) return false;
     if(!proj->isInBounderies(traject.p1().x(),traject.p1().y()) &&
@@ -153,7 +154,7 @@ inline bool GshhsPolyReader::crossing(QLineF traject, QLineF trajectWorld) const
                 if(this->abortRequested) return false;
                 if (allCells[cxx][cy+90] == NULL) continue;
                 cel = allCells[cxx][cy+90];
-                QList<QLineF> *coasts=cel->getCoasts();
+                const QList<QLineF> *coasts=cel->getCoasts();
                 if (coasts->isEmpty()) continue;
                 for(int cs=0;cs<coasts->count();cs++)
                 {
@@ -174,7 +175,7 @@ inline bool GshhsPolyReader::crossing(QLineF traject, QLineF trajectWorld) const
     }
     return false;
 }
-inline bool GshhsPolyReader::my_intersects(QLineF line1,QLineF line2) const
+inline bool GshhsPolyReader::my_intersects(const QLineF &line1, const QLineF &line2) const
 {
 
     // implementation is based on Graphics Gems III's "Faster Line Segment Intersection"

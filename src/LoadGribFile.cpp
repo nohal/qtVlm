@@ -95,52 +95,52 @@ void LoadGribFile::getGribFile(
 
     QString parameters = "";
     if (wind) {
-        parameters += "W";
+        parameters += "W;";
     }
     if (pressure) {
-        parameters += "P";
+        parameters += "P;";
     }
     if (rain) {
-        parameters += "R";
+        parameters += "R;";
     }
     if (cloud) {
-        parameters += "C";
+        parameters += "C;";
     }
     if (temp) {
-        parameters += "T";
+        parameters += "T;";
     }
     if (humid) {
-        parameters += "H";
+        parameters += "H;";
     }
-        if (isotherm0) {
-                parameters += "I";
+    if (isotherm0) {
+        parameters += "I;";
     }
     if (tempPot) {
-        parameters += "t";
+        parameters += "t;";
     }
     if (tempMin) {
-        parameters += "m";
+        parameters += "m;";
     }
     if (tempMax) {
-        parameters += "M";
+        parameters += "M;";
     }    
     if (snowCateg) {
-        parameters += "s";
+        parameters += "s;";
     }
     if (frzRainCateg) {
-        parameters += "Z";
+        parameters += "Z;";
     }
     if (CAPEsfc) {
         parameters += "c";
     }
     if (CINsfc)
-        parameters += "i";
+        parameters += "i;";
 
-    if (altitudeData200) parameters += "2";
-    if (altitudeData300) parameters += "3";
-    if (altitudeData500) parameters += "5";
-    if (altitudeData700) parameters += "7";
-    if (altitudeData850) parameters += "8";
+    if (altitudeData200) parameters += "2;";
+    if (altitudeData300) parameters += "3;";
+    if (altitudeData500) parameters += "5;";
+    if (altitudeData700) parameters += "7;";
+    if (altitudeData850) parameters += "8;";
 
 //parameters += "r";	// PRATE
 
@@ -152,7 +152,7 @@ void LoadGribFile::getGribFile(
         emit signalGribSendMessage(tr("Preparation du fichier sur le serveur"));
         QTextStream(&page)
                 << host
-                << "/noaa/getzygribfile2.php?"
+                << "/noaa/getzygribfile3.php?"
                 << "but=prepfile"
                 << "&la1=" << floor(y0)
                 << "&la2=" << ceil(y1)
@@ -164,14 +164,19 @@ void LoadGribFile::getGribFile(
                 << "&par=" << parameters
                 << "&l=" << zygriblog
                 << "&m=" << zygribpwd
-                << "&client=" << "zyGrib-3.9.2"
+                << "&runGFS=last"
+                << "&client=" << "zyGrib-6.1.4"
+                   //Version::getName()
                 ;
+        // missing param compared to zygrib: runGFS
+
+        qWarning() << "zygrib request: " << page;
 
         step1_InetReply=step2_InetReply=step3_InetReply=step_checkVersion=NULL;
         QNetworkRequest request;
         request.setUrl(QUrl(page));
         request.setAttribute(QNetworkRequest::CacheLoadControlAttribute,QNetworkRequest::AlwaysNetwork);
-        Util::addAgent(request);
+        Util::addAgent(request,true);
         step1_InetReply=inetManager->get(request);
     }
 
@@ -194,7 +199,7 @@ void LoadGribFile::requestFinished ( QNetworkReply* inetReply)
         vers.append(".");
         vers.append(QTVLM_SUB_VERSION_NUM);
         vers.remove("+");
-        if(vers.contains("beta") && strbuf=="3.4.0") return;
+        if(vers.contains("beta") && strbuf=="3.4.2") return;
         if(vers.left(strbuf.size())!=strbuf)
         {
             QString m=tr("Vous n'utilisez pas la derniere version de qtVlm: ")+strbuf;
@@ -235,12 +240,19 @@ gfs_run_hour:6
             if (lsval.size() == 2) {
                 if (lsval.at(0) == "status")
                     status = lsval.at(1);
-                else if (lsval.at(0) == "file")
+                else if (lsval.at(0) == "file") {
                     fileName = QString(lsval.at(1)).replace(".grb","%20");
+                    //qWarning() << "zygrib fname= " << lsval.at(1);
+                }
                 else if (lsval.at(0) == "size")
                     fileSize = lsval.at(1).toInt();
                 else if (lsval.at(0) == "checksum")
                     checkSumSHA1 = lsval.at(1);
+                else if(lsval.at(0) == "message") {
+                    QString m = QUrl::fromPercentEncoding (lsval.at(1).toUtf8());
+                    qWarning() << m;
+                }
+
             }
         }
 
@@ -264,7 +276,7 @@ gfs_run_hour:6
             QNetworkRequest request;
             request.setUrl(QUrl(page));
             request.setAttribute(QNetworkRequest::CacheLoadControlAttribute,QNetworkRequest::AlwaysNetwork);
-            Util::addAgent(request);
+            Util::addAgent(request,true);
             step2_InetReply=inetManager->get(request);
             connect(step2_InetReply,SIGNAL(downloadProgress(qint64,qint64)),this,SIGNAL(progress(qint64,qint64)));
         }
@@ -321,7 +333,7 @@ void LoadGribFile::getServerStatus()
     QNetworkRequest request;
     request.setUrl(QUrl(host+"/noaa/getServerStatus.php"));
     request.setAttribute(QNetworkRequest::CacheLoadControlAttribute,QNetworkRequest::AlwaysNetwork);
-    Util::addAgent(request);
+    Util::addAgent(request,true);
     step3_InetReply=inetManager->get(request);
 }
 void LoadGribFile::checkQtvlmVersion()

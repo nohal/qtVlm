@@ -97,6 +97,7 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent, POI *endP
     this->maxPres->setValue(routage->getMaxPres());
     this->minPortant->setValue(routage->getMinPortant());
     this->minPres->setValue(routage->getMinPres());
+    this->maxWaveHeight->setValue(routage->get_maxWaveHeight());
     if(!routage->isDone())
         this->convRoute->setChecked(Settings::getSetting("autoConvertToRoute","0").toInt()==1);
     if(routage->getFinalEta().isNull())
@@ -217,6 +218,7 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent, POI *endP
         this->multi->setDisabled(true);
         this->maxPortant->setDisabled(true);
         this->maxPres->setDisabled(true);
+        this->maxWaveHeight->setDisabled(true);
         this->minPortant->setDisabled(true);
         this->minPres->setDisabled(true);
         this->Default->setDisabled(true);
@@ -248,6 +250,7 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent, POI *endP
         this->whatIfTime->setDisabled(false);
         this->multi->setDisabled(false);
         this->maxPres->setDisabled(false);
+        this->maxWaveHeight->setDisabled(false);
         this->maxPortant->setDisabled(false);
         this->minPres->setDisabled(false);
         this->minPortant->setDisabled(false);
@@ -271,6 +274,7 @@ DialogRoutage::~DialogRoutage()
 void DialogRoutage::slot_default()
 {
     this->maxPres->setValue(70);
+    this->maxWaveHeight->setValue(100);
     this->minPres->setValue(0);
     this->maxPortant->setValue(70);
     this->minPortant->setValue(0);
@@ -287,7 +291,7 @@ void DialogRoutage::slot_default()
     this->zoomLevel->setValue(2);
     this->pruneWakeAngle->setValue(30);
     this->showBestLive->setChecked(true);
-    this->RoutageOrtho->setChecked(false);
+    this->RoutageOrtho->setChecked(true);
     this->colorIso->setChecked(false);
     this->explo->setValue(40);
     this->log->setChecked(true);
@@ -344,6 +348,7 @@ void DialogRoutage::done(int result)
         routage->setSpeedLossOnTack((double)this->speedLossOnTack->value()/100.00);
         routage->setMaxPortant(this->maxPortant->value());
         routage->setMaxPres(this->maxPres->value());
+        routage->set_maxWaveHeight(this->maxWaveHeight->value());
         routage->setMinPortant(this->minPortant->value());
         routage->setMinPres(this->minPres->value());
         routage->set_multiRoutage(this->multi_routage->isChecked());

@@ -79,6 +79,11 @@ selectionWidget::selectionWidget(myCentralWidget *centralWidget, Projection * pr
 }
 
 void selectionWidget::contextMenuEvent(QGraphicsSceneContextMenuEvent * e) {
+    if(centralWidget->getRouteToClipboard()!=NULL)
+    {
+        e->ignore();
+        return;
+    }
     int compassMode = centralWidget->getCompassMode(e->scenePos().x(),e->scenePos().y());
 
     if(compassMode==0)

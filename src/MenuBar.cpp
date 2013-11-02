@@ -47,6 +47,9 @@ MenuBar::MenuBar(MainWindow *parent)
 {
     mainWindow=parent;
     this->setAccessibleName("mainMenuQtvlm");
+
+     menuAltitude=NULL;
+     acAlt_GroupAltitude=NULL;
     //-------------------------------------
     // Menu + Actions
     //-------------------------------------
@@ -65,7 +68,7 @@ MenuBar::MenuBar(MainWindow *parent)
         mn_img=new QMenu(tr("Gestion des fichiers KAP"));
         acImg_Open = addAction(mn_img, tr("Ouvrir un fichier KAP"), "K", tr(""));
         mn_img->addAction(acImg_Open);
-        acImg_Close = addAction(mn_img, tr("Fermer le fichier KAP"), "", tr(""));
+        acImg_Close = addAction(mn_img, tr("Fermer le fichier KAP"), "Shift+K", tr(""));
         mn_img->addAction(acImg_Close);
         menuFile->addMenu(mn_img);
         menuFile->addSeparator();
@@ -93,12 +96,12 @@ MenuBar::MenuBar(MainWindow *parent)
         acOptions_SH_Boa = addAction(boatPoiSH, tr("Centrer sur le bateau actif"), "B", tr(""));
         acKeep=addAction(boatPoiSH,tr("Conserver la position du bateau dans l'ecran lors de zoom +/-"),"Z","",tr(""));
         acKeep->setCheckable(true);
-        boatPoiSH->addSeparator();
+        separator2=boatPoiSH->addSeparator();
         acOptions_SH_Fla = addAction(boatPoiSH, tr("Montrer les pavillons sur la carte"), "F", tr(""));
         acOptions_SH_Fla->setCheckable(true);
-        boatPoiSH->addSeparator();
         acOptions_SH_Opp = addAction(boatPoiSH, tr("Montrer les bateaux opposants"), "O", tr(""));
         acOptions_SH_Opp->setCheckable(true);
+        boatPoiSH->addSeparator();
         acOptions_SH_Por = addAction(boatPoiSH, tr("Montrer les portes et WPs"), "W", tr(""));
         acOptions_SH_Por->setCheckable(true);
         acOptions_SH_Poi = addAction(boatPoiSH, tr("Montrer les POIs"), "P", tr(""));
@@ -148,6 +151,9 @@ MenuBar::MenuBar(MainWindow *parent)
         acFile_Load_SAILSDOC_GRIB = addAction(menuGrib, tr("Telechargement SailsDoc"),
                                                 tr(""),
                                                 tr("Telechargement SailsDoc"), appFolder.value("img")+"kmail.png");
+        acFile_Info_GRIB_main = addAction(menuGrib, tr("Informations sur le fichier"),
+                    tr("Ctrl+I"),
+                    tr("Informations sur le fichier GRIB"), appFolder.value("img")+"info.png");
         menuGrib->addSeparator();
         acFile_Open_Current = addAction(menuGrib, tr("Ouvrir un GRIB Courants"),
                     tr(""),
@@ -155,9 +161,8 @@ MenuBar::MenuBar(MainWindow *parent)
         acFile_Close_Current = addAction(menuGrib, tr("Fermer le GRIB Courants"),
                     tr(""),
                     tr("Fermer le GRIB Courants"), appFolder.value("img")+"fileclose.png");
-        menuGrib->addSeparator();
-        acFile_Info_GRIB = addAction(menuGrib, tr("Informations sur le fichier"),
-                    tr("Ctrl+I"),
+        acFile_Info_GRIB_current = addAction(menuGrib, tr("Informations sur le fichier"),
+                    tr(""),
                     tr("Informations sur le fichier GRIB"), appFolder.value("img")+"info.png");
         menuGrib->addSeparator();
 
@@ -165,110 +170,109 @@ MenuBar::MenuBar(MainWindow *parent)
         acView_GroupColorMap = new ZeroOneActionGroup (menuGroupColorMap);
                 acView_WindColors = addActionCheck(menuGroupColorMap, tr("Carte du vent"), "", "");
                 gribDataActionMap.insert(MapDataDrawer::drawWind,acView_WindColors);
+                acView_GroupColorMap->addAction(acView_WindColors);
                 acView_CurrentColors = addActionCheck(menuGroupColorMap, tr("Carte du courant"), "", "");
                 gribDataActionMap.insert(MapDataDrawer::drawCurrent,acView_CurrentColors);
+                acView_GroupColorMap->addAction(acView_CurrentColors);
                 acView_RainColors = addActionCheck(menuGroupColorMap, tr("Carte des preecipitations"),"","");
                 gribDataActionMap.insert(MapDataDrawer::drawRain,acView_RainColors);
+                acView_GroupColorMap->addAction(acView_RainColors);
                 acView_CloudColors = addActionCheck(menuGroupColorMap, tr("Couverture nuageuse"), "","");
                 gribDataActionMap.insert(MapDataDrawer::drawCloud,acView_CloudColors);
+                acView_GroupColorMap->addAction(acView_CloudColors);
                 acView_HumidColors = addActionCheck(menuGroupColorMap, tr("Carte de l'humidite relative"),"","");
                 gribDataActionMap.insert(MapDataDrawer::drawHumid,acView_HumidColors);
+                acView_GroupColorMap->addAction(acView_HumidColors);
                 acView_TempColors = addActionCheck(menuGroupColorMap, tr("Carte de la temperature"),"","");
                 gribDataActionMap.insert(MapDataDrawer::drawTemp,acView_TempColors);
+                acView_GroupColorMap->addAction(acView_TempColors);
                 acView_TempPotColors = addActionCheck(menuGroupColorMap, tr("Carte de la temperature potentielle"),"","");
                 gribDataActionMap.insert(MapDataDrawer::drawTempPot,acView_TempPotColors);
+                acView_GroupColorMap->addAction(acView_TempPotColors);
                 acView_DeltaDewpointColors = addActionCheck(menuGroupColorMap, tr("Ecart temperature-point de rosee"), "", "");
                 gribDataActionMap.insert(MapDataDrawer::drawDeltaDewpoint,acView_DeltaDewpointColors);
+                acView_GroupColorMap->addAction(acView_DeltaDewpointColors);
                 acView_SnowCateg = addActionCheck(menuGroupColorMap, tr("Neige (chute possible)"), "", "");
                 gribDataActionMap.insert(MapDataDrawer::drawSnowCateg,acView_SnowCateg);
+                acView_GroupColorMap->addAction(acView_SnowCateg);
                 //acView_SnowDepth = addActionCheck(menuGroupColorMap, tr("Neige (Epaisseur)"), "", "");
+                //acView_GroupColorMap->addAction(acView_SnowDepth);
                 acView_FrzRainCateg = addActionCheck(menuGroupColorMap, tr("Pluie verglacante (chute possible)"), "", "");
                 gribDataActionMap.insert(MapDataDrawer::drawFrzRainCateg,acView_FrzRainCateg);
+                acView_GroupColorMap->addAction(acView_FrzRainCateg);
                 acView_CAPEsfc = addActionCheck(menuGroupColorMap, tr("CAPE (surface)"), "", "");
                 gribDataActionMap.insert(MapDataDrawer::drawCAPEsfc,acView_CAPEsfc);
+                acView_GroupColorMap->addAction(acView_CAPEsfc);
                 acView_CINsfc = addActionCheck(menuGroupColorMap, tr("CIN (surface)"), "", "");
                 gribDataActionMap.insert(MapDataDrawer::drawCINsfc,acView_CINsfc);
-                acView_GroupColorMap->addAction(acView_WindColors);
-                acView_GroupColorMap->addAction(acView_CurrentColors);
-                acView_GroupColorMap->addAction(acView_RainColors);
-                acView_GroupColorMap->addAction(acView_CloudColors);
-                acView_GroupColorMap->addAction(acView_HumidColors);
-                acView_GroupColorMap->addAction(acView_TempColors);
-                acView_GroupColorMap->addAction(acView_TempPotColors);
-                acView_GroupColorMap->addAction(acView_DeltaDewpointColors);
-                acView_GroupColorMap->addAction(acView_SnowCateg);
-                //acView_GroupColorMap->addAction(acView_SnowDepth);
-                acView_GroupColorMap->addAction(acView_FrzRainCateg);
-                acView_GroupColorMap->addAction(acView_CAPEsfc);
                 acView_GroupColorMap->addAction(acView_CINsfc);
+                // Waves
+                menuGroupWaves = new QMenu(tr("Waves"));
+                //acView_GroupWaves = new ZeroOneActionGroup (menuGroupWaves);
+                acView_WavesSigHgtComb = addActionCheck(menuGroupWaves, tr("Waves combined"), "", "");
+                gribDataActionMap.insert(MapDataDrawer::drawWavesSigHgtComb,acView_WavesSigHgtComb);
+                acView_GroupColorMap->addAction(acView_WavesSigHgtComb);
+                acView_WavesWnd = addActionCheck(menuGroupWaves, tr("Wind waves"), "", "");
+                gribDataActionMap.insert(MapDataDrawer::drawWavesWnd,acView_WavesWnd);
+                acView_GroupColorMap->addAction(acView_WavesWnd);
+                acView_WavesSwl = addActionCheck(menuGroupWaves, tr("Swell waves"), "", "");
+                gribDataActionMap.insert(MapDataDrawer::drawWavesSwl,acView_WavesSwl);
+                acView_GroupColorMap->addAction(acView_WavesSwl);
+                acView_WavesMax = addActionCheck(menuGroupWaves, tr("Max waves"), "", "");
+                gribDataActionMap.insert(MapDataDrawer::drawWavesMax,acView_WavesMax);
+                acView_GroupColorMap->addAction(acView_WavesMax);
+                acView_WavesWhiteCap = addActionCheck(menuGroupWaves, tr("White cap prob"), "", "");
+                gribDataActionMap.insert(MapDataDrawer::drawWavesWhiteCap,acView_WavesWhiteCap);
+                acView_GroupColorMap->addAction(acView_WavesWhiteCap);
+                menuGroupWaves->addSeparator();
+                acView_WavesArrow = addActionCheck(menuGroupWaves, tr("Waves arrow"), tr(""),
+                            tr("Show arrox for wave direction"));
+                acView_WavesArrow->setChecked(Settings::getSetting("showWavesArrows", true).toBool());
+
+
+                menuGroupColorMap->addMenu(menuGroupWaves);
+
         menuGrib->addMenu(menuGroupColorMap);
         menuGrib->addSeparator();
 
-        setMenubarColorMapMode(Settings::getSetting("colorMapMode", MapDataDrawer::drawWind).toInt());
+        // init string list for levelTypes and units
+        /*
+        DATA_LV_GND_SURF=0,
+        DATA_LV_ISOTHERM0,
+        DATA_LV_ISOBARIC,
+        DATA_LV_MSL,
+        DATA_LV_ABOV_GND,
+        DATA_LV_SIGMA,
+        DATA_LV_ATMOS_ALL,
+        DATA_LV_ORDERED_SEQUENCE_DATA
+        */
+
+        levelTypes.append(tr("Surface"));
+        levelTypesUnit.append("unit ?");
+        levelTypes.append(tr("Isotherm 0C"));
+        levelTypesUnit.append("unit ?");
+        levelTypes.append(tr("Isobaric"));
+        levelTypesUnit.append("hPa");
+        levelTypes.append(tr("Mean Sea Level"));
+        levelTypesUnit.append("unit ?");
+        levelTypes.append(tr("Above ground"));
+        levelTypesUnit.append("m");
+        levelTypes.append(tr("Sigma"));
+        levelTypesUnit.append("?");
+        levelTypes.append(tr("Entire atmosphere"));
+        levelTypesUnit.append("unit ?");
+        levelTypes.append(tr("Ordered sequence"));
+        levelTypesUnit.append("?");
 
         //-------------------------------------
         menuAltitude = new QMenu(tr("Altitude"));
-                    acAlt_GroupAltitude = new QActionGroup (menuAltitude);
-                            acAlt_MSL = addActionCheck(menuAltitude, tr("Sea level"), "", "");
-                            acAlt_GND = addActionCheck(menuAltitude, tr("Surface"), "", "");
-                            acAlt_sigma995 = addActionCheck(menuAltitude, tr("Sigma 995"), "", "");
-                            acAlt_GND_1m = addActionCheck(menuAltitude, tr("1 m above ground"), "", "");
-                            acAlt_GND_2m = addActionCheck(menuAltitude, tr("2 m above ground"), "", "");
-                            acAlt_GND_3m = addActionCheck(menuAltitude, tr("3 m above ground"), "", "");
-                            acAlt_GND_10m = addActionCheck(menuAltitude, tr("10 m above ground"), "", "");
-                            acAlt_850hpa = addActionCheck(menuAltitude, tr("850 hPa (? 1460 m)"), "", "");
-                            acAlt_700hpa = addActionCheck(menuAltitude, tr("700 hPa (? 3000 m)"), "", "");
-                            acAlt_500hpa = addActionCheck(menuAltitude, tr("500 hPa (? 5600 m)"), "", "");
-                            acAlt_300hpa = addActionCheck(menuAltitude, tr("300 hPa (? 9200 m)"), "", "");
-                            acAlt_200hpa = addActionCheck(menuAltitude, tr("200 hPa (? 11800 m)"), "", "");
-                            acAlt_Atmosphere = addActionCheck(menuAltitude, tr("Atmosphere"), "", "");
-                            acAlt_GroupAltitude->addAction (acAlt_MSL);
-                            acAlt_GroupAltitude->addAction (acAlt_GND);
-                            acAlt_GroupAltitude->addAction (acAlt_sigma995);
-                            acAlt_GroupAltitude->addAction (acAlt_GND_1m);
-                            acAlt_GroupAltitude->addAction (acAlt_GND_2m);
-                            acAlt_GroupAltitude->addAction (acAlt_GND_3m);
-                            acAlt_GroupAltitude->addAction (acAlt_GND_10m);
-                            acAlt_GroupAltitude->addAction (acAlt_850hpa);
-                            acAlt_GroupAltitude->addAction (acAlt_700hpa);
-                            acAlt_GroupAltitude->addAction (acAlt_500hpa);
-                            acAlt_GroupAltitude->addAction (acAlt_300hpa);
-                            acAlt_GroupAltitude->addAction (acAlt_200hpa);
-                            acAlt_GroupAltitude->addAction (acAlt_Atmosphere);
-            menuAltitude->addSeparator();
-                    acAlt_GroupGeopotLine = new ZeroOneActionGroup (menuAltitude);
-                            acAlt_GeopotLine_850hpa = addActionCheck (menuAltitude, tr("Geopotential altitude 850 hpa"), "", "");
-                            acAlt_GeopotLine_700hpa = addActionCheck (menuAltitude, tr("Geopotential altitude 700 hpa"), "", "");
-                            acAlt_GeopotLine_500hpa = addActionCheck (menuAltitude, tr("Geopotential altitude 500 hpa"), "", "");
-                            acAlt_GeopotLine_300hpa = addActionCheck(menuAltitude, tr("Geopotential altitude 300 hpa"), "", "");
-                            acAlt_GeopotLine_200hpa = addActionCheck(menuAltitude, tr("Geopotential altitude 200 hpa"), "", "");
-                            acAlt_GroupGeopotLine->addAction (acAlt_GeopotLine_850hpa);
-                            acAlt_GroupGeopotLine->addAction (acAlt_GeopotLine_700hpa);
-                            acAlt_GroupGeopotLine->addAction (acAlt_GeopotLine_500hpa);
-                            acAlt_GroupGeopotLine->addAction (acAlt_GeopotLine_300hpa);
-                            acAlt_GroupGeopotLine->addAction (acAlt_GeopotLine_200hpa);
+        acAlt_GroupAltitude = new ZeroOneActionGroup (menuAltitude);
+        //connect(menuAltitude,SIGNAL(aboutToShow()),this,SLOT(slot_showAltitudeMenu()));
 
-                menuGeopotStep = new QMenu(tr("Spacing (m)"));
-                acAlt_GroupGeopotStep = new QActionGroup (menuGeopotStep);
-                    acAlt_GeopotStep_1  = addActionCheck(menuGeopotStep, tr("1"), "", "");
-                    acAlt_GeopotStep_2  = addActionCheck(menuGeopotStep, tr("2"), "", "");
-                    acAlt_GeopotStep_5  = addActionCheck(menuGeopotStep, tr("5"), "", "");
-                    acAlt_GeopotStep_10 = addActionCheck(menuGeopotStep, tr("10"), "", "");
-                    acAlt_GeopotStep_20 = addActionCheck(menuGeopotStep, tr("20"), "", "");
-                    acAlt_GeopotStep_50 = addActionCheck(menuGeopotStep, tr("50"), "", "");
-                    acAlt_GeopotStep_100 = addActionCheck(menuGeopotStep, tr("100"), "", "");
-                    acAlt_GroupGeopotStep->addAction (acAlt_GeopotStep_1);
-                    acAlt_GroupGeopotStep->addAction (acAlt_GeopotStep_2);
-                    acAlt_GroupGeopotStep->addAction (acAlt_GeopotStep_5);
-                    acAlt_GroupGeopotStep->addAction (acAlt_GeopotStep_10);
-                    acAlt_GroupGeopotStep->addAction (acAlt_GeopotStep_20);
-                    acAlt_GroupGeopotStep->addAction (acAlt_GeopotStep_50);
-                    acAlt_GroupGeopotStep->addAction (acAlt_GeopotStep_100);
-                menuAltitude->addMenu(menuGeopotStep);
-                acAlt_GeopotLabels = addActionCheck(menuAltitude, tr("Geopotentials labels"), "","");
+       //menuGrib->addMenu(menuAltitude);
+       menuGrib->addSeparator();
 
-                //menuGrib->addMenu(menuAltitude);
-                //menuGrib->addSeparator();
+       setMenubarColorMapMode(Settings::getSetting("colorMapMode", MapDataDrawer::drawWind).toInt());
 
         acView_ColorMapSmooth = addActionCheck(menuGrib, tr("Degrades de couleurs"), tr(""),
                     tr(""));
@@ -737,6 +741,41 @@ void MenuBar::slot_showBarrierMenu(void) {
 
 }
 
+void MenuBar::slot_showAltitudeMenu(void) {
+    int colorMapMode=Settings::getSetting("colorMapMode", MapDataDrawer::drawWind).toInt();
+
+    if(acAlt_GroupAltitude)
+        acAlt_GroupAltitude->clear();
+    if(menuAltitude)
+        menuAltitude->clear();
+
+    MapDataDrawer * mapDataDrawer = my_CentralWidget->get_mapDataDrawer();
+    DataManager * dataManager = my_CentralWidget->get_dataManager();
+    if(!dataManager || !mapDataDrawer) return;
+
+    QMap<int,DataCode> *dataMap=mapDataDrawer->get_dataCodeMap();
+    if(!dataMap) return;
+
+    int curType = dataMap->value(colorMapMode).dataType;
+    QMap<int,QList<int>*> * levelList = dataManager->get_levelList(curType);
+
+    if(levelList) {
+        QMapIterator<int,QList<int>*> j(*levelList);
+        while (j.hasNext()) {
+            j.next();
+            QList<int>* lst = j.value();
+            if(!lst) continue;
+
+            for(int i=0;i<lst->count();++i) {
+                QAction * act = addActionCheck(menuAltitude,
+                                               levelTypes[j.key()] + " - " +
+                        QString().setNum(lst->at(i)) + " " + levelTypesUnit[j.key()], "", "");
+                acAlt_GroupAltitude->addAction(act);
+            }
+        }
+    }
+
+}
 
 
 
@@ -752,6 +791,33 @@ void MenuBar::setMenubarColorMapMode(int colorMapMode,bool withoutEvent)
         ptr->setChecked(colorMapMode == i.key());
         if(withoutEvent)
             ptr->blockSignals(false);
+    }
+}
+void MenuBar::setPlayerType(const int &type)
+{
+    bool real=type!=BOAT_VLM;
+    ac_moveBoat->setVisible(real);
+    ac_moveBoatSep->setVisible(real);
+    acRace->setVisible(!real);
+    acVLMSync->setVisible(!real);
+    acPilototo->setVisible(!real);
+    acShowPolar->setVisible(!real);
+    acFile_Lock->setEnabled(!real);
+    acFile_Lock->setVisible(!real);
+    separator1->setVisible(!real);
+    separator2->setVisible(!real);
+    acOptions_SH_Opp->setVisible(!real);
+    acOptions_SH_Fla->setVisible(!real);
+    acOptions_SH_Por->setVisible(!real);
+    acShowLog->setVisible(!real);
+    acGetTrack->setVisible(!real);
+}
+
+void ZeroOneActionGroup::clear(void) {
+    while(!lsactions.isEmpty()) {
+        QAction * act = lsactions.takeFirst();
+        disconnect(act,SIGNAL(triggered(bool)),
+                   this,  SLOT(slot_actionTrigerred(bool)));
     }
 }
 

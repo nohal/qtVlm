@@ -30,13 +30,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QFileDialog>
 #include <QColorDialog>
 #endif
+#include <QDebug>
 #include "DialogParamVlm.h"
 #include "settings.h"
 #include "MainWindow.h"
+#include "DataManager.h"
 #include "mycentralwidget.h"
 #include "GshhsReader.h"
 #include "Util.h"
-#include "Grib.h"
+#include "Player.h"
 
 DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDialog(parent)
 {
@@ -269,7 +271,7 @@ void DialogParamVlm::done(int result)
         {
             QString mapDir = mapsFolder->text();
             QDir dir(mapDir);
-            QDir appDir=QDir::currentPath();
+            QDir appDir=Util::currentPath();
             if(dir.rootPath()==appDir.rootPath())
                 mapDir=appDir.relativeFilePath(mapDir);
             else
@@ -345,8 +347,8 @@ void DialogParamVlm::done(int result)
         Settings::setSetting("forceCurrents",forceCurrents->isChecked()?1:0);
         Settings::setSetting("forcedCS",forcedCS->value());
         Settings::setSetting("forcedCD",forcedCD->value());
-        if(centralWidget->getGrib()) centralWidget->getGrib()->load_forcedParam();
-        if(centralWidget->getGribCurrent()) centralWidget->getGribCurrent()->load_forcedParam();
+        DataManager * dataManager=centralWidget->get_dataManager();
+        if(dataManager) dataManager->load_forcedParam();
 
         /* advanced */
         Settings::setSetting("gpsEmulEnable",chk_activateEmulation->checkState()==Qt::Checked?"1":"0");
@@ -550,6 +552,25 @@ void DialogParamVlm::slot_changeParam()
 {
     initEstime();
     chk_showCompass->setCheckState(Settings::getSetting("showCompass",0).toInt()==1?Qt::Checked:Qt::Unchecked);
+    bool real=centralWidget->getPlayer()->getType()!=BOAT_VLM;
+    concurrent_box->setVisible(!real);
+    classicalBoard->setVisible(!real);
+    label_skin->setVisible(!real);
+    edt_skinFile->setVisible(!real);
+    btn_browseSkin->setVisible(!real);
+    label_4->setVisible(!real);
+    pushButton_2->setVisible(!real);
+    label_6->setVisible(!real);
+    pushButton_4->setVisible(!real);
+    chk_centerOnSynch->setVisible(!real);
+    chk_centerOnBoatChange->setVisible(!real);
+    chk_askConfirm->setVisible(!real);
+    autoRemove->setVisible(!real);
+    chkHideRoute->setVisible(!real);
+    label_21->setVisible(!real);
+    speedLossOnTackVlm->setVisible(!real);
+    label_22->setVisible(!real);
+    chk_oppTrace->setVisible(!real);
 }
 
 void DialogParamVlm::on_chk_scaleEstime_toggled(bool checked)

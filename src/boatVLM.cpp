@@ -32,9 +32,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Polar.h"
 #include "settings.h"
 #include "orthoSegment.h"
-#include <Grib.h>
 #include "Orthodromie.h"
 #include "inetConnexion.h"
+#include "DataManager.h"
 
 
 boatVLM::boatVLM(QString        pseudo, bool activated, int boatId, int playerId,Player * player, int isOwn,
@@ -908,8 +908,9 @@ void boatVLM::updateHint(void)
         desc=desc+"<br>"+tr("Bateau echoue, pour encore ")+QString().setNum(secs)+" "+tr("secondes");
     }
     double windSpeed,windAngle;
-    if(parent->getGrib() && parent->getGrib()->isOk() &&
-       parent->getGrib()->getInterpolatedValue_byDates(this->lon,this->lat,
+    DataManager * dataManager=parent->get_dataManager();
+    if(dataManager && dataManager->isOk() &&
+       dataManager->getInterpolatedWind(this->lon,this->lat,
                            this->getPrevVac(),&windSpeed,&windAngle,INTERPOLATION_DEFAULT))
     {
         windAngle=radToDeg(windAngle);
@@ -930,7 +931,7 @@ void boatVLM::updateHint(void)
         }
         double previousTWA=twa;
         double previousTWS=windSpeed;
-        parent->getGrib()->getInterpolatedValue_byDates(this->lon,this->lat,
+        dataManager->getInterpolatedWind(this->lon,this->lat,
                             this->getPrevVac()+this->getVacLen(),&windSpeed,&windAngle,INTERPOLATION_DEFAULT);
         windAngle=radToDeg(windAngle);
         desc=desc+"<br><b>"+tr("Donnees GRIB a la prochaine vac:")+"</b><br>"+
@@ -1119,7 +1120,10 @@ void boatVLM::exportBoatInfoLog(QString fileName)
     QVariantMap boatInfoRecord;
     QList<QString> recordKeys;
     QStringList textOutput;
-    QString key,gribFileName=QString::fromStdString((parent->getGrib())->getFileName());
+    QString key,gribFileName="";
+    DataManager * dataManager=parent->get_dataManager();
+    if(dataManager)
+        gribFileName=dataManager->get_fileName(DataManager::GRIB_GRIB);
     if (!boatInfoLog.isEmpty()) {
         int logIndex;
         for( logIndex=0;logIndex<boatInfoLog.count();++logIndex) {

@@ -38,6 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Orthodromie.h"
 #include "Polar.h"
 #include "orthoSegment.h"
+#include "Projection.h"
 
 
 //#define GPS_FILE
@@ -54,7 +55,7 @@ boatReal::boatReal(QString pseudo, bool activated, Projection * proj,MainWindow 
     setFont(QApplication::font());
 
     /* init thread */
-    gpsReader = new ReceiverThread(this);
+    gpsReader = NULL;
     nmea_zero_INFO(&info);
     this->lat=0;
     this->lon=0;
@@ -89,6 +90,8 @@ boatReal::boatReal(QString pseudo, bool activated, Projection * proj,MainWindow 
     connect(this->popup,SIGNAL(aboutToShow()),parent,SLOT(slot_resetGestures()));
     connect(this->popup,SIGNAL(aboutToHide()),parent,SLOT(slot_resetGestures()));
     this->lastUpdateTime=QDateTime().currentDateTimeUtc().toTime_t();
+    this->displayNMEA=false;
+    this->pause=true;
 }
 
 boatReal::~boatReal()
@@ -96,8 +99,8 @@ boatReal::~boatReal()
     if(gpsReader && gpsReader->isRunning())
     {
         this->stopRead();
-        delete gpsReader;
     }
+    if(gpsReader) delete gpsReader;
     if( !parent->getAboutToQuit() )
     {
         if(trace)
@@ -144,29 +147,26 @@ void boatReal::myCreatePopUpMenu(void)
 
 void boatReal::startRead()
 {
-    /* if running stop */
-    stopRead();
 
     /* start loop */
     cnt=0;
-    if(gpsReader)
-        delete gpsReader;
-    gpsReader = new ReceiverThread(this);
-    if(!gpsReader->initPort())
-        return;
-    gpsReader->start();
+    if(!gpsReader)
+        gpsReader = new ReceiverThread(this);
+    if(!gpsReader->isRunning())
+    {
+        if(!gpsReader->initPort())
+            return;
+    }
+    this->pause=false;
+    if(!gpsReader->isRunning())
+        gpsReader->start();
 }
 
 void boatReal::stopRead()
 {
+    this->pause=true;
     if(gpsReader)
-    {
-        if(gpsReader->isRunning())
-        {
-            qWarning() << "gpsThread running => kill it (this should not happened)";
-            emit terminateThread();
-        }
-    }
+        gpsReader->wait();
 }
 void boatReal::slot_threadStartedOrFinished()
 {
@@ -382,11 +382,6 @@ void boatReal::unSelectBoat(bool needUpdate)
     }
 }
 
-void boatReal::paramUpdated()
-{
-    if(gpsReader->initPort())
-        startRead();
-}
 
 void boatReal::setPolar(QString polarName)
 {
@@ -407,7 +402,6 @@ void boatReal::slot_chgPos(void)
 ReceiverThread::ReceiverThread(boatReal * parent)
 {
     qRegisterMetaType<nmeaINFO>("nmeaINFO");
-    connect(parent,SIGNAL(terminateThread()),this,SLOT(terminateMe()));
     connect(this,SIGNAL(updateBoat(nmeaINFO)),parent,SLOT(updateBoat(nmeaINFO)));
     connect(this,SIGNAL(finished()),parent,SLOT(slot_threadStartedOrFinished()));
     connect(this,SIGNAL(started()),parent,SLOT(slot_threadStartedOrFinished()));
@@ -415,7 +409,6 @@ ReceiverThread::ReceiverThread(boatReal * parent)
     port=NULL;
     //initPort();
     this->parent=parent;
-    stop=false;
     nmea_zero_INFO(&info);
     nmea_parser_init(&parser);
     if(parser.buff_size==0)
@@ -431,6 +424,7 @@ ReceiverThread::~ReceiverThread(void)
     }
     if(port)
         delete port;
+    port=NULL;
 }
 
 bool ReceiverThread::initPort(void)
@@ -489,16 +483,26 @@ void ReceiverThread::copyClipBoard()
 
 void ReceiverThread::run()
 {
+    //qWarning() << "Starting thread loop (1)";
     int numBytes = 0;
     int l = 512;
 #ifndef GPS_FILE
-    if(!port || !port->isOpen())
+    if(!port ||(port && !port->isOpen()))
     {
+        qWarning()<<"anomaly 1";
+        if(port)
+        {
+            delete port;
+            port=NULL;
+        }
         /*retry to open the port*/
-        if(!this->initPort()) return;
-        if(!port || !port->isOpen())
+        if(!this->initPort())
         {
             qWarning() << "Port not open => not starting GPS thread";
+            if(port) port->close();
+            delete port;
+            port=NULL;
+            exit();
             return;
         }
     }
@@ -510,12 +514,11 @@ void ReceiverThread::run()
         return;
     }
 #endif
-    qWarning() << "Starting thread loop";
+    //qWarning() << "Starting thread loop (2)";
 
-    stop=false;
     /*clear port*/
     //port->readAll();
-    while (!stop)
+    while (!parent->getPause() && port && port->isOpen())
     {
 #ifndef GPS_FILE
         numBytes = port->bytesAvailable();
@@ -542,9 +545,9 @@ void ReceiverThread::run()
             buffer=fakeGPS.readLine();
 #endif
             QList<QByteArray> lines=buffer.split('\n');
-            for (int n=0;n<lines.count();n++)
+            for (int n=0;n<lines.count();++n)
             {
-                if(lines.at(n).count()!=0)
+                if(lines.at(n).count()>1)
                 {
 #ifndef GPS_FILE
                     QString temp=QString(lines.at(n).left(lines.at(n).length()-1));
@@ -574,22 +577,18 @@ void ReceiverThread::run()
         }
 #endif
         }
-//        qWarning()<<"sleeping";
-//#warning a mettre en parametre
         this->msleep(3000);
-//        qWarning()<<"waking up";
     }
-    if(port && port->isOpen())
+    if(port)
     {
-        port->close();
+        if(port->isOpen())
+            port->close();
+        //qWarning()<<"deleting port";
+        delete port;
+        port=NULL;
     }
-    qWarning() << "Exiting thread loop";
+    //qWarning() << "Exiting thread loop";
     this->exit();
-}
-
-void ReceiverThread::terminateMe()
-{
-    stop=true;
 }
 
 

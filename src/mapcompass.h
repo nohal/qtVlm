@@ -75,7 +75,7 @@ class mapCompass : public QGraphicsWidget
         QPen penLine;
         bool mouseEvt;
         Projection * proj;
-        myCentralWidget * parent;
+        myCentralWidget * centralWidget;
         MainWindow * main;
         QCursor enterCursor;
         double wind_angle;

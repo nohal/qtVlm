@@ -29,6 +29,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 QMap<QString,ColorElement*> colorMap;
 
+#define MAX_CACHE 1000
+#define DEFAULT_CACHE_COEF 10
+
 /**********************************************************************
  * Datacolors
  *********************************************************************/
@@ -38,7 +41,7 @@ QRgb DataColors::get_color(QString type,double v, bool smooth) {
     if(elem)
         return elem->get_color(v,smooth);
     else {
-        //qWarning() << "Missing data: " << type;
+        qWarning() << "Missing data: " << type;
         return qRgb(120,120,120);
     }
 }
@@ -52,6 +55,7 @@ ColorElement * DataColors::get_colorElement(QString type) {
 #define COLOR_TYPENAME     "name"
 #define COLOR_DATAPARAM    "param"
 #define COLOR_DATA         "color"
+#define COLOR_CACHECOEF    "cacheCoef"
 
 
 void DataColors::load_colors(int transparence) {
@@ -98,7 +102,7 @@ void DataColors::load_colors(int transparence) {
                             {
                                 QString name = dataNode.toText().data();
                                 if(!colorMap.contains(name)) {
-                                    curElement = new ColorElement(transparence);
+                                    curElement = new ColorElement(name,transparence);
                                     colorMap.insert(name,curElement);
                                 }
                                 else {
@@ -129,6 +133,14 @@ void DataColors::load_colors(int transparence) {
                                 }
                             }
                         }
+                        if(node.toElement().tagName() == COLOR_CACHECOEF) {
+                            if(!curElement) continue;
+                            QDomNode dataNode = node.firstChild();
+                            if(dataNode.nodeType() == QDomNode::TextNode)
+                            {
+                                curElement->set_cacheCoef(dataNode.toText().data().toInt());
+                            }
+                        }
                         node=node.nextSibling();
                     }
                 }
@@ -138,7 +150,7 @@ void DataColors::load_colors(int transparence) {
         mainNode = mainNode.nextSibling();
     }
 
-    DataColors::print_data();
+    //DataColors::print_data();
 }
 
 QRgb DataColors::get_color_windColorScale(double v, double min, double max, bool smooth) {
@@ -168,8 +180,13 @@ void DataColors::print_data(void) {
  * Color Element
  *********************************************************************/
 
-ColorElement::ColorElement(int transparence) {
+ColorElement::ColorElement(QString name, int transparence) {
+    this->name=name;
     this->transparence=transparence;
+    cacheCoef=DEFAULT_CACHE_COEF;
+    colorCache=NULL;
+    cacheLoaded=false;
+    cacheLoadedSmooth=false;
 }
 
 QRgb ColorElement::get_color(double v, bool smooth) {
@@ -187,7 +204,7 @@ QRgb ColorElement::get_color(double v, bool smooth) {
         double fact=(v-(it-1).key())/((it).key()-(it-1).key());
         double fact2=1-fact;
         QRgb minVal=(it-1).value();
-        QRgb maxVal=(it).value();
+        QRgb maxVal=it.value();
         int r,g,b;
         r=(int)(fact2*qRed(minVal)+fact*qRed(maxVal)+0.5);
         g=(int)(fact2*qGreen(minVal)+fact*qGreen(maxVal)+0.5);
@@ -204,20 +221,46 @@ QRgb ColorElement::get_color(double v, bool smooth) {
     }
 
 }
+
 void ColorElement::loadCache(const bool &smooth)
 {
+#if 0
     colorCache=new QRgb[1000];
     for (double i=0;i<1000;++i)
         colorCache[qRound(i)]=get_color(i/10.0,smooth);
+#else
+    //qWarning()<<"loading colorElement cache";
+    int nbVal = maxVal-minVal;
+    curCacheCoef=cacheCoef;
+    if(nbVal*cacheCoef>MAX_CACHE) {
+        curCacheCoef=(int)(MAX_CACHE/nbVal);
+        qWarning() << "Load cache: needed cache too small: color= " << name << ", size=" << nbVal*curCacheCoef << " (MAX=" << MAX_CACHE << ")";
+    }
+    colorCache=new QRgb[nbVal*(int)curCacheCoef+1];
+    for (double i=minVal;i<(nbVal*curCacheCoef+1);++i)
+        colorCache[qRound(i)]=get_color(i/((double)curCacheCoef),smooth);
+    cacheLoadedSmooth=false;
+    cacheLoaded=false;
+    if(smooth)
+        cacheLoadedSmooth=true;
+    else
+        cacheLoaded=true;
+
+
+#endif
 }
+
 void ColorElement::clearCache()
 {
-    delete[] colorCache;
+    if(colorCache)
+        delete[] colorCache;
     colorCache=NULL;
+    cacheLoaded=false;
+    cacheLoadedSmooth=false;
 }
 
 QRgb ColorElement::get_colorCached(const double &v) const {
-    int key=qRound(v*10.0);
+    int key=qRound(v*curCacheCoef);
     return colorCache[key];
 }
 

@@ -581,6 +581,7 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
         while(j.hasNext())
         {
             ROUTE * ptr_route = j.next();
+            if(Settings::getSetting("autoHideRoute",1).toInt()==1 && (ptr_route->getBoat()==NULL || !ptr_route->getBoat()->getIsSelected())) continue;
             iconI.fill(ptr_route->getColor());
             QIcon icon(iconI);
             ptr=new QAction(ptr_route->getName(),ac_routeList);

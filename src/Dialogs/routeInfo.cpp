@@ -21,9 +21,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "routeInfo.h"
 #include "ui_routeInfo.h"
 #include "Util.h"
-#include "Grib.h"
 #include "settings.h"
 #include "MapDataDrawer.h"
+#include "Terrain.h"
 
 
 routeInfo::routeInfo(myCentralWidget *parent, ROUTE *route) :
@@ -41,7 +41,8 @@ routeInfo::routeInfo(myCentralWidget *parent, ROUTE *route) :
     drawBoat.quadTo(28,22,20,10);
     //qWarning()<<"end of roadInfo init";
 }
-void routeInfo::setValues(double twd, double tws, double twa, double bs, double hdg, double cnm, double dnm, bool engineUsed, bool south, double cog, double sog, double cs, double cd)
+void routeInfo::setValues(double twd, double tws, double twa, double bs, double hdg, double cnm, double dnm, bool engineUsed,
+                          bool south, double cog, double sog, double cs, double cd, double wh, double wd, bool night, double wsh)
 {
     //qWarning()<<"inside routeInfo::setValues()";
     TWD->setValue(twd);
@@ -53,6 +54,9 @@ void routeInfo::setValues(double twd, double tws, double twa, double bs, double 
     DNM->setValue(dnm);
     COG->setValue(cog);
     SOG->setValue(sog);
+    wave_dir->setValue(wd);
+    wave_height->setValue(wh);
+    sig_wave_height->setValue(wsh);
     if(cs<0)
     {
         CS->setValue(-1);
@@ -88,7 +92,12 @@ void routeInfo::setValues(double twd, double tws, double twa, double bs, double 
         img.load(appFolder.value("img")+"propeller.png");
     }
     else
-        img.fill(Qt::white);
+    {
+        if(night)
+            img.fill(QColor(238,241,125));
+        else
+            img.fill(QColor(105,109,124));
+    }
     QPainter pnt(&img);
     pnt.setRenderHint(QPainter::Antialiasing);
     QPen pen(Qt::gray);

@@ -44,7 +44,6 @@ class ReceiverThread : public QThread
 
         bool initPort(void);
     public slots:
-        void terminateMe();
         void copyClipBoard();
 
     signals:
@@ -54,7 +53,6 @@ class ReceiverThread : public QThread
     private:
         QextSerialPort * port;
         boatReal *parent;
-        bool stop;
         nmeaINFO info;
         nmeaPARSER parser;
         QListWidget * listNMEA;
@@ -73,7 +71,6 @@ class boatReal : public boat
 
         void updateAll(void);
 
-        void paramUpdated();
 
         bool gpsIsRunning();
         void setPolar(QString polarName);
@@ -93,6 +90,7 @@ class boatReal : public boat
         void emitMoveBoat(){emit boatUpdated(this,false,false);}
         bool getDisplayNMEA(){return this->displayNMEA;}
         void setDisplayNMEA(bool b){this->displayNMEA=b;}
+        bool getPause(){return pause;}
 
     public slots:
         void slot_selectBoat(void) { boat::slot_selectBoat(); }
@@ -101,7 +99,6 @@ class boatReal : public boat
         void updateBoat(nmeaINFO info);
 
     signals:
-        void terminateThread();
 
     protected:
         void  mousePressEvent(QGraphicsSceneMouseEvent * e);
@@ -133,6 +130,7 @@ class boatReal : public boat
         double  pdop;
         time_t eta;
         bool displayNMEA;
+        bool pause;
 };
 
 Q_DECLARE_TYPEINFO(boatReal,Q_MOVABLE_TYPE);

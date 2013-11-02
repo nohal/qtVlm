@@ -25,6 +25,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "vlmLine.h"
 #include "settings.h"
 #include "Util.h"
+#include "GshhsReader.h"
+#include "mycentralwidget.h"
+
 
 vlmLine::vlmLine(Projection * proj, QGraphicsScene * myScene,double z_level) :
    QGraphicsWidget(),

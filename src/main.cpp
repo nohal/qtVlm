@@ -32,7 +32,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QDir>
 #include <QMap>
 #include <QStyleFactory>
-
+#include "Util.h"
 #include "MainWindow.h"
 #include "settings.h"
 
@@ -52,9 +52,12 @@ void crashingMessageHandler(QtMsgType type, const QMessageLogContext &context, c
         fprintf(stderr,"Critical: %s\n", localMsg.constData());
         break;
     case QtFatalMsg:
+    {
         fprintf(stderr,"Fatal: %s\n", localMsg.constData());
-        __asm("int3");
+        int a=0;
+        a=a/a;
         abort();
+    }
     }
 }
 int main(int argc, char *argv[])
@@ -82,7 +85,7 @@ int main(int argc, char *argv[])
         qWarning() << "currentPath modified: " << curDir << "applicationDirPath returns: " << appExeFolder;
     }
 #endif
-    appExeFolder=QDir::currentPath();
+    appExeFolder=Util::currentPath();
     qWarning()<<"Current app path"<<appExeFolder;
     // home folder
     QString homeDir="";
@@ -98,12 +101,11 @@ int main(int argc, char *argv[])
 #elif defined(Q_WS_MAC)
     homeDir = QDir::homePath();
 #endif
-
-    homeDir += "/qtVlm";
-    qWarning() << "Home :" << homeDir;
-
+    qWarning()<<"home dir"<<homeDir;
     //checks tree
-
+#ifdef __MAC_QTVLM
+    QDir::setCurrent(appExeFolder);
+#endif
     /* setting dataDir to app exe dir */
     QString dataDir = appExeFolder;
 

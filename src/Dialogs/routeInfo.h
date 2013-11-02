@@ -33,7 +33,7 @@ class routeInfo : public QDialog, public Ui::routeInfo
 public:
     routeInfo(myCentralWidget *parent, ROUTE *route);
     ~routeInfo();
-    void setValues(double twd, double tws, double twa, double bs, double hdg, double cnm, double dnm, bool engineUsed, bool south, double cog, double sog, double cs, double cd);
+    void setValues(double twd, double tws, double twa, double bs, double hdg, double cnm, double dnm, bool engineUsed, bool south, double cog, double sog, double cs, double cd, double wh, double wd, bool night, double wsh);
 protected:
     void closeEvent(QCloseEvent *event);
     void resizeEvent(QResizeEvent *event);

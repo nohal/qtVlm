@@ -60,7 +60,7 @@ public slots:
     void slot_vibrate();
     void slot_updateBtnWP();
     void slot_selectPOI(bool doSelect);
-    void slot_selectPOI(POI *);
+    void slot_selectPOI(POI *poi);
     void slot_selectWP_POI();
     void slot_lock();
     void slot_reloadSkin();

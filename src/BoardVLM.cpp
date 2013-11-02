@@ -117,7 +117,7 @@ boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) :
 //    connect(wpDialog,SIGNAL(confirmAndSendCmd(QString,QString,int,double,double,double)),
 //            this,SLOT(confirmAndSendCmd(QString,QString,int,double,double,double)));
     connect(wpDialog,SIGNAL(selectPOI()),mainWin,SLOT(slotSelectWP_POI()));
-    connect(mainWin,SIGNAL(editWP_POI(POI*)),wpDialog,SLOT(show_WPdialog(POI *)));
+    connect(mainWin,SIGNAL(editWP_POI(POI*)),this,SLOT(show_WPdialog(POI *)));
 
     /* edit field keyPress */
     connect(editHeading,SIGNAL(hasEvent()),this,SLOT(edtSpinBox_key()));
@@ -719,6 +719,10 @@ void boardVLM::update_btnWP(void)
 void boardVLM::doWP_edit()
 {
     wpDialog->show_WPdialog(currentBoat());
+}
+void boardVLM::show_WPdialog(POI * poi)
+{
+    wpDialog->show_WPdialog(poi,currentBoat());
 }
 
 void boardVLM::chgAngle()

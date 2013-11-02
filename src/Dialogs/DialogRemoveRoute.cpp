@@ -24,11 +24,13 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include <QListWidget>
 #include <QMessageBox>
+#include <QDebug>
 
 #include "mycentralwidget.h"
 #include "dataDef.h"
 #include "route.h"
 #include "settings.h"
+#include "Util.h"
 
 #include "DialogRemoveRoute.h"
 

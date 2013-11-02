@@ -1,0 +1,751 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DialogGribDrawing_ui</class>
+ <widget class="QDialog" name="DialogGribDrawing_ui">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>408</width>
+    <height>293</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_4">
+   <item>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>Affichage</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Fond de carte</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="bgDataType"/>
+         </item>
+         <item>
+          <widget class="QComboBox" name="bgDataAlt"/>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QCheckBox" name="chkShowTemp">
+           <property name="text">
+            <string>Température</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="chkSmooth">
+           <property name="text">
+            <string>Dégradé de couleur</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="Line" name="line">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Flèche principale</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="frstArwType"/>
+         </item>
+         <item>
+          <widget class="QComboBox" name="frstArwAlt"/>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QCheckBox" name="chkShowBarbule">
+           <property name="text">
+            <string>Barbule</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="Line" name="line_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>Flèche secondaire</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="secArwType"/>
+         </item>
+         <item>
+          <widget class="QComboBox" name="secArwAlt"/>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>Isobar /Isotherme</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Isobar</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <item>
+          <widget class="QCheckBox" name="chkShowIsoBar">
+           <property name="text">
+            <string>Afficher</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_4">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_8">
+         <item>
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string>Espacement (hPa)</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="isoBarSpacing">
+           <item>
+            <property name="text">
+             <string>1</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>3</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>4</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>5</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>6</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>8</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>10</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_3">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_9">
+         <item>
+          <widget class="QCheckBox" name="chkShowIsoBarLabel">
+           <property name="text">
+            <string>Etiquettes</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_5">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="chkShowIsoBarMinMAx">
+           <property name="text">
+            <string>Min/Max</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="Line" name="line_3">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>Isotherme 0°C</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_20">
+         <item>
+          <widget class="QCheckBox" name="chlShowIsoTherm">
+           <property name="text">
+            <string>Afficher</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_12">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_21">
+         <item>
+          <widget class="QLabel" name="label_13">
+           <property name="text">
+            <string>Espacement (m)</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="isoThermSpacing">
+           <item>
+            <property name="text">
+             <string>10</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>20</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>50</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>100</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>200</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>500</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>1000</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_6">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_19">
+         <item>
+          <widget class="QCheckBox" name="chkShowIsoThermLabel">
+           <property name="text">
+            <string>Etiquettes</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_11">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_22">
+     <item>
+      <spacer name="horizontalSpacer_13">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton">
+       <property name="text">
+        <string>Fermer</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>DialogGribDrawing_ui</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>338</x>
+     <y>274</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>247</x>
+     <y>267</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>bgDataType</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>DialogGribDrawing_ui</receiver>
+   <slot>bgDataType(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>206</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>4</x>
+     <y>92</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>bgDataAlt</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>DialogGribDrawing_ui</receiver>
+   <slot>bgDataAlt(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>325</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>406</x>
+     <y>72</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkShowTemp</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>DialogGribDrawing_ui</receiver>
+   <slot>slot_showTemp(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>44</x>
+     <y>82</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>3</x>
+     <y>80</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkSmooth</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>DialogGribDrawing_ui</receiver>
+   <slot>slot_smooth(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>180</x>
+     <y>81</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>406</x>
+     <y>102</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>frstArwType</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>DialogGribDrawing_ui</receiver>
+   <slot>slot_frstArwType(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>196</x>
+     <y>118</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>404</x>
+     <y>145</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>frstArwAlt</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>DialogGribDrawing_ui</receiver>
+   <slot>slot_frstArwAlt(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>319</x>
+     <y>115</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>404</x>
+     <y>171</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>secArwType</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>DialogGribDrawing_ui</receiver>
+   <slot>slot_secArwType(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>213</x>
+     <y>181</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>405</x>
+     <y>204</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>secArwAlt</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>DialogGribDrawing_ui</receiver>
+   <slot>slot_secArwAlt(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>342</x>
+     <y>188</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>405</x>
+     <y>238</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkShowBarbule</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>DialogGribDrawing_ui</receiver>
+   <slot>slot_showBarbule(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>50</x>
+     <y>147</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1</x>
+     <y>174</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkShowIsoBar</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>DialogGribDrawing_ui</receiver>
+   <slot>slot_showIsoBar(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>52</x>
+     <y>73</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>402</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>isoBarSpacing</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>DialogGribDrawing_ui</receiver>
+   <slot>slot_isoBarSpacing(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>135</x>
+     <y>98</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>405</x>
+     <y>56</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkShowIsoBarLabel</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>DialogGribDrawing_ui</receiver>
+   <slot>slot_isoBarShowLabel(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>30</x>
+     <y>125</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>5</x>
+     <y>138</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkShowIsoBarMinMAx</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>DialogGribDrawing_ui</receiver>
+   <slot>slot_isoBarShowMinMax(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>336</x>
+     <y>126</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>405</x>
+     <y>5</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chlShowIsoTherm</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>DialogGribDrawing_ui</receiver>
+   <slot>slot_showIsoTherm(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>49</x>
+     <y>183</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>4</x>
+     <y>202</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>isoThermSpacing</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>DialogGribDrawing_ui</receiver>
+   <slot>slot_isoThermSpacing(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>118</x>
+     <y>211</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>147</x>
+     <y>268</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkShowIsoThermLabel</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>DialogGribDrawing_ui</receiver>
+   <slot>slot_isoThermShowLabel(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>43</x>
+     <y>238</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>66</x>
+     <y>267</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>slot_bgDataType(int)</slot>
+  <slot>slot_bgDataAlt(int)</slot>
+  <slot>slot_frstArwType(int)</slot>
+  <slot>slot_showTemp(bool)</slot>
+  <slot>slot_smooth(bool)</slot>
+  <slot>slot_frstArwAlt(int)</slot>
+  <slot>slot_secArwType(int)</slot>
+  <slot>slot_secArwAlt(int)</slot>
+  <slot>slot_showBarbule(bool)</slot>
+  <slot>slot_showIsoBar(bool)</slot>
+  <slot>slot_showIsoTherm(bool)</slot>
+  <slot>slot_isoBarSpacing(int)</slot>
+  <slot>slot_isoThermSpacing(int)</slot>
+  <slot>slot_isoBarShowLabel(bool)</slot>
+  <slot>slot_isoThermShowLabel(bool)</slot>
+  <slot>slot_isoBarShowMinMax(bool)</slot>
+ </slots>
+</ui>

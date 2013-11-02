@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "BarrierSet.h"
 #include "boat.h"
 #include "settings.h"
-
+#include "Util.h"
 #include "DialogChooseMultipleBoat.h"
 
 DialogChooseMultipleBoat::DialogChooseMultipleBoat(QWidget *parent): QDialog(parent) {

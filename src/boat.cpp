@@ -32,10 +32,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "GshhsReader.h"
 #include "boat.h"
 #include "boatVLM.h"
-#include "Grib.h"
 #include "Orthodromie.h"
 #include "DialogChooseMultipleBarrierSet.h"
 #include "BarrierSet.h"
+#include "Projection.h"
 
 boat::boat(QString      pseudo, bool activated,
            Projection * proj,MainWindow * main,myCentralWidget * parent):
@@ -382,17 +382,18 @@ void boat::updateTraceColor(void)
 void boat::drawEstime(void)
 {
     bool getStartEstimeSpeedFromGrib = Settings::getSetting("startSpeedEstime", 1).toInt()==1;
-    if( getStartEstimeSpeedFromGrib && parent->getGrib() && parent->getGrib()->isOk() && this->getPolarData())
+    DataManager * dataManager = parent->get_dataManager();
+    if( getStartEstimeSpeedFromGrib && dataManager && dataManager->isOk() && this->getPolarData())
     {
         double wind_speed=0;
         double wind_angle=0;
         double current_speed=-1;
         double current_angle=0;
-        if(parent->getGrib()->getInterpolatedValue_byDates(lon,lat,this->getPrevVac()+this->getVacLen(),&wind_speed,&wind_angle) &&
+        if(dataManager->getInterpolatedWind(lon,lat,this->getPrevVac()+this->getVacLen(),&wind_speed,&wind_angle) &&
                 !(this->get_boatType()==BOAT_REAL && getSpeed()==0 && getHeading()==0))
         {
             wind_angle=radToDeg(wind_angle);
-            if(parent->getGrib()->getInterpolatedValueCurrent_byDates(lon,lat,this->getPrevVac()+this->getVacLen(),&current_speed,&current_angle))
+            if(dataManager->getInterpolatedCurrent(lon,lat,this->getPrevVac()+this->getVacLen(),&current_speed,&current_angle))
             {
                 current_angle=radToDeg(current_angle);
                 QPointF p=Util::calculateSumVect(wind_angle,wind_speed,current_angle,current_speed);
@@ -469,10 +470,11 @@ void boat::drawEstime(double myHeading, double mySpeed)
 
         Util::getCoordFromDistanceAngle(lat,lon,estime,myHeading,&tmp_lat,&tmp_lon);
         time_t estime_time=0;
-        if(mySpeed>0.001 && parent->getGrib() && parent->getGrib()->isOk())
+        DataManager * dataManager=parent->get_dataManager();
+        if(mySpeed>0.001 && dataManager && dataManager->isOk())
         {
             estime_time=(estime/mySpeed)*3600;
-            parent->getGrib()->getInterpolatedValue_byDates(lon,lat,this->getPrevVac()+this->getVacLen()+estime_time,&windEstimeSpeed,&windEstimeDir);
+            dataManager->getInterpolatedWind(lon,lat,this->getPrevVac()+this->getVacLen()+estime_time,&windEstimeSpeed,&windEstimeDir);
             windEstimeDir=radToDeg(windEstimeDir);
         }
         else

@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QMessageBox>
 #include <QStyleFactory>
 #include <QGraphicsDropShadowEffect>
+#include <QFile>
 
 #include "BoardVlmNew.h"
 #include "ui_BoardVlmNew.h"
@@ -32,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "vlmLine.h"
 #include "boatVLM.h"
 #include "MapDataDrawer.h"
+#include "Util.h"
 
 BoardVlmNew::BoardVlmNew(MainWindow *main)
     : QDialog(main)
@@ -80,9 +82,7 @@ BoardVlmNew::BoardVlmNew(MainWindow *main)
     connect(main,SIGNAL(updateLockIcon(QIcon)),this,SLOT(slot_lock()));
     wpDialog = new DialogWp();
     connect(wpDialog,SIGNAL(selectPOI()),this,SLOT(slot_selectWP_POI()));
-    connect(wpDialog,SIGNAL(selectPOI()),main,SLOT(slotSelectWP_POI()));
     connect(main,SIGNAL(editWP_POI(POI*)),this,SLOT(slot_selectPOI(POI*)));
-    connect(main,SIGNAL(editWP_POI(POI*)),wpDialog,SLOT(show_WPdialog(POI *)));
     connect(tabWidget,SIGNAL(currentChanged(int)),this,SLOT(slot_tabChanged(int)));
     connect(btn_wp,SIGNAL(clicked()),this,SLOT(slot_editWP()));
     timer=new QTimer(this);
@@ -229,7 +229,7 @@ void BoardVlmNew::slot_reloadSkin()
     this->lab_backTab3->setPixmap(imgBack2);
     pnt.end();
     slot_tabChanged(tabWidget->currentIndex());
-    this->windAngle->loadSkin();
+    this->windAngle->loadSkin(skinName);
     this->slot_updateData();
 }
 void BoardVlmNew::slot_flipAngle()
@@ -417,7 +417,7 @@ void BoardVlmNew::slot_updateData()
     this->blocking=true;
     updateLcds();
     QPointF position=myBoat->getPosition();
-    det_POS->setText(Util::formatLongitude(position.x())+"-"+Util::formatLatitude(position.y()));
+    det_POS->setText(Util::formatLatitude(position.y())+"-"+Util::formatLongitude(position.x()));
     if(qRound(myBoat->getDnm())<100)
         det_DNM->setText(QString().sprintf("%.2f",myBoat->getDnm())+tr("nm"));
     else
@@ -779,6 +779,7 @@ void BoardVlmNew::set_style(QPushButton * button, QColor color, QColor color2)
 }
 void BoardVlmNew::slot_editWP()
 {
+    if(!myBoat) return;
     if(main->get_selPOI_instruction())
         main->slot_POIselected(NULL);
     else
@@ -898,6 +899,7 @@ void BoardVlmNew::slot_clearWP()
 }
 void BoardVlmNew::slot_selectPOI(bool doSelect)
 {
+    //qWarning()<<"inside slot_selectPOI with"<<doSelect;
     if(doSelect)
     {
         btn_pilototo->setText(tr("Annuler"));
@@ -910,18 +912,25 @@ void BoardVlmNew::slot_selectPOI(bool doSelect)
         update_btnPilototo();
         this->set_enabled(true);
     }
+    //qWarning()<<"exit slot_selectPOI with"<<doSelect;
 }
-void BoardVlmNew::slot_selectPOI(POI *)
+void BoardVlmNew::slot_selectPOI(POI * poi)
 {
+    //qWarning()<<"inside slot_selectPOI";
     this->set_enabled(true);
     slot_updateBtnWP();
+    wpDialog->show_WPdialog(poi, myBoat);
+    //qWarning()<<"exit slot_selectPOI";
 }
 void BoardVlmNew::slot_selectWP_POI()
 {
+    //qWarning()<<"inside slot_selectWP_POI";
     btn_wp->setText(tr("Annuler"));
     set_style(btn_wp,QColor(151,179,210));/*blue*/
     this->set_enabled(false);
     btn_wp->setEnabled(true);
+    main->slotSelectWP_POI();
+    //qWarning()<<"exit slot_selectWP_POI";
 }
 void BoardVlmNew::set_enabled(const bool &b)
 {
@@ -1072,12 +1081,16 @@ VlmCompass::VlmCompass(QWidget * parent):QWidget(parent)
     newHeading=-1;
     rotation=0;
 }
-void VlmCompass::loadSkin()
+void VlmCompass::loadSkin(const QString &SkinName)
 {
     QPixmap skin;
-    QString skinName=Settings::getSetting("defaultSkin",QFileInfo("img/skin_compas.png").absoluteFilePath()).toString();
-    if(!QFile(skinName).exists())
-        skinName=QFileInfo("img/skin_compas.png").absoluteFilePath();
+    QString skinName=SkinName;
+    if(skinName.isEmpty())
+    {
+        skinName=Settings::getSetting("defaultSkin",QFileInfo("img/skin_compas.png").absoluteFilePath()).toString();
+        if(!QFile(skinName).exists())
+            skinName=QFileInfo("img/skin_compas.png").absoluteFilePath();
+    }
     skin.load(skinName);
     img_fond=QPixmap(200,200);
     img_fond.fill(Qt::transparent);

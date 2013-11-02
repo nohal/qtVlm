@@ -39,6 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "selectionWidget.h"
 #include "MainWindow.h"
 #include "Magnifier.h"
+#include "DataManager.h"
 
 #include <qdatetime.h>
 
@@ -117,8 +118,6 @@ class myCentralWidget : public QWidget
         ~myCentralWidget();
 
         /* access to pointer & data */
-        Grib * getGrib(bool calibrate=false);
-        Grib * getGribCurrent(void);
         myScene * getScene(void) { return scene; }
         bool compassHasLine(void);
         int getCompassMode(int m_x,int m_y);
@@ -171,7 +170,6 @@ class myCentralWidget : public QWidget
         void setCompassFollow(ROUTE * route);
         ROUTE * getCompassFollow(){return this->compassRoute;}
         void centerCompass(double lon,double lat);
-        void update_menuRoute();
         void simpAllPOIs(bool b);
         void setRouteToClipboard(ROUTE * route){this->routeClipboard=route;}
         ROUTE * getRouteToClipboard(){return this->routeClipboard;}
@@ -185,7 +183,6 @@ class myCentralWidget : public QWidget
         void deleteRoutage(ROUTAGE * routage, ROUTE * route=NULL);
 /*Other*/
         Projection * getProj(void){return proj;}
-        void update_menuRoutage();
 
         void send_redrawAll() { emit redrawAll(); }
 
@@ -195,8 +192,13 @@ class myCentralWidget : public QWidget
         void showGribDate_dialog(void);
         void loadGribFile(QString fileName, bool zoom);
         void loadGribFileCurrent(QString fileName, bool zoom);
+        void closeGribFile(void);
+        void closeGribFileCurrent(void);
         void updateGribMenu(void);
         FCT_GET(MapDataDrawer*,mapDataDrawer)
+        FCT_GET(DataManager*,dataManager)
+        void fileInfo_GRIB(int grbType);
+        void fileInfo_GRIB(Grib * grib);
 
         /* events */
         void mouseMove(int x, int y, QGraphicsItem * item);
@@ -292,11 +294,13 @@ public slots :
         void slot_deleteRoute();
         void withdrawRouteFromBank(QString routeName,QList<QVariant> details);
         void slot_routeTimer();
+        void update_menuRoute();
 
         /*Routages */
         void slot_addRoutageFromMenu();
         void slot_editRoutage(ROUTAGE * routage,bool createMode=false,POI * endPOI=NULL);
         void slot_deleteRoutage();
+        void update_menuRoutage();
 
         /* Players */
         void slot_addPlayer_list(Player* player);
@@ -317,13 +321,14 @@ public slots :
 
         /* Grib */
         void slot_fileLoad_GRIB(void);
-        void slot_fileInfo_GRIB(void);
+        void slot_fileInfo_GRIB_main(void);
+        void slot_fileInfo_GRIB_current(void);
         void slotLoadSailsDocGrib(void);
         void slotFax_open();
         void slotFax_close();
         void slotImg_open();
         void slotImg_close();
-        void zoomOnGrib(Grib * gr=NULL);
+        void zoomOnGrib(int grbType=DataManager::GRIB_NONE);
 
         /* Dialogs */
         void slot_boatDialog(void);
@@ -414,12 +419,8 @@ signals:
         vlmLine * NSZ;
 
         /* Grib */
-        Grib *grib;
-        Grib *gribCurrent;
-        QString  dataPresentInGrib(Grib* grib,
-                                   int dataType,int levelType,int levelValue,
-                                   bool *ok=NULL);
         MapDataDrawer * mapDataDrawer;
+        DataManager * dataManager;
 
         /* other child */        
         GshhsReader *gshhsReader;
@@ -432,7 +433,6 @@ signals:
 
         /* Dialogs */
         DialogGribDate * gribDateDialog;
-        DialogPoi * poi_editor;
         DialogBoatAccount * boatAcc;
         DialogPlayerAccount * playerAcc;
         DialogRace * raceDialog;

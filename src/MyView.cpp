@@ -29,6 +29,7 @@ MyView::MyView(Projection *proj, myScene *scene, myCentralWidget * mcp) :
 void MyView::startPaning(const QGraphicsSceneMouseEvent *e)
 {
     if(scene->getPinching()) return;
+    if(proj->getFrozen()) return;
     px=e->scenePos().x();
     py=e->scenePos().y();
     QPixmap pix(proj->getW(),proj->getH());

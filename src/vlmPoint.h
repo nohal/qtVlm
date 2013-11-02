@@ -6,7 +6,7 @@
 class vlmPoint
 {
     public:
-        vlmPoint(double lon,double lat);
+        vlmPoint(const double &lon, const double &lat);
         vlmPoint(){vlmPoint(0,0);}
         QPointF getPointF() {return QPointF(lon,lat);}
         double  lon;
@@ -32,8 +32,6 @@ class vlmPoint
         int    originNb;
         double lonProj;
         double latProj;
-        bool   needRoute;
-        double  vmgSpeed;
         bool   isBroken;
         double  x;
         double  y;
@@ -45,7 +43,6 @@ class vlmPoint
         bool   operator!=(const vlmPoint &other) const
                {return qRound(this->lon*10e6)!=qRound(other.lon*10e6) ||
                        qRound(this->lat*10e6)!=qRound(other.lat*10e6);}
-        double  maxDistIso;
         ROUTAGE * routage;
         bool    isPOI;
         double  xP1,yP1,xM1,yM1;

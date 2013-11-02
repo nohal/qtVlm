@@ -57,7 +57,7 @@ GshhsPolygon::GshhsPolygon(ZUFILE *file_)
 }*/
         }
 
-    	// force l'Antarctic �  être un "rectangle" qui passe par le pôle
+        // force l'Antarctic a être un "rectangle" qui passe par le pole
         if (antarctic) {
             lsPoints.push_front(new GshhsPoint(360, y));
             lsPoints.push_front(new GshhsPoint(360,-90));
@@ -187,6 +187,30 @@ void GshhsReader::clearLists() {
         lsPoly_rivers[qual]->clear();
     }
 }
+void GshhsReader::clearBoundaries()
+{
+    std::list<GshhsPolygon*>::iterator itp;
+    for (int qual=0; qual<5; ++qual)
+    {
+        for (itp=lsPoly_boundaries[qual]->begin(); itp != lsPoly_boundaries[qual]->end(); ++itp) {
+            delete *itp;
+            *itp = NULL;
+        }
+        lsPoly_boundaries[qual]->clear();
+    }
+}
+void GshhsReader::clearRivers()
+{
+    std::list<GshhsPolygon*>::iterator itp;
+    for (int qual=0; qual<5; ++qual)
+    {
+        for (itp=lsPoly_rivers[qual]->begin(); itp != lsPoly_rivers[qual]->end(); ++itp) {
+            delete *itp;
+            *itp = NULL;
+        }
+        lsPoly_rivers[qual]->clear();
+    }
+}
 //-----------------------------------------------------------------------
 // extension du nom de fichier gshhs selon la qualite
 std::string GshhsReader::getNameExtension(int quality)
@@ -235,12 +259,9 @@ bool GshhsReader::gshhsFilesExists(int quality)
 //-----------------------------------------------------------------------
 
 //-----------------------------------------------------------------------
-void GshhsReader::setQuality(int quality_) // 5 levels: 0=low ... 4=full
+void GshhsReader::setQuality(const int &quality_) // 5 levels: 0=low ... 4=full
 {
     if(quality==quality_ && gshhsPoly_reader->currentQuality==quality_) return;
-    std::string fname;
-    ZUFILE *file;
-    bool   ok;
 
     quality = quality_;
     if (quality < 0) quality = 0;
@@ -249,10 +270,15 @@ void GshhsReader::setQuality(int quality_) // 5 levels: 0=low ... 4=full
     //gshhsRangsReader->setQuality(quality);
     gshhsPoly_reader->setQuality(quality);
 
-    // Frontieres politiques
-    if (lsPoly_boundaries[quality]->size() == 0) { // on ne lit qu'une fois le fichier
-        fname = getFileName_boundaries(quality);
-        file = zu_open(fname.c_str(), "rb");
+}
+// Frontieres politiques
+void GshhsReader::loadBoundaries()
+{
+    if (lsPoly_boundaries[quality]->size() == 0)
+    {
+        std::string fname = getFileName_boundaries(qMin(2,quality));
+        ZUFILE * file = zu_open(fname.c_str(), "rb");
+        bool ok;
         if (file != NULL) {
             ok = true;
             while (ok)
@@ -272,10 +298,14 @@ void GshhsReader::setQuality(int quality_) // 5 levels: 0=low ... 4=full
             zu_close(file);
         }
     }
-    // Rivieres
-    if (lsPoly_rivers[quality]->size() == 0) { // on ne lit qu'une fois le fichier
-        fname = getFileName_rivers(quality);
-        file = zu_open(fname.c_str(), "rb");
+}
+// Rivieres
+void GshhsReader::loadRivers()
+{
+    if (lsPoly_rivers[quality]->size() == 0) {
+        std::string fname = getFileName_rivers(qMin(1,quality));
+        ZUFILE * file = zu_open(fname.c_str(), "rb");
+        bool ok;
         if (file != NULL) {
             ok = true;
             while (ok) {
@@ -293,7 +323,6 @@ void GshhsReader::setQuality(int quality_) // 5 levels: 0=low ... 4=full
         }
     }
 }
-
 //-----------------------------------------------------------------------
 std::list<GshhsPolygon*> & GshhsReader::getList_boundaries() {
     return * lsPoly_boundaries[quality];
@@ -470,14 +499,19 @@ void GshhsReader::drawSeaBorders( QPainter &pnt, Projection *proj)
 void GshhsReader::drawBoundaries( QPainter &pnt, Projection *proj)
 {
     // Frontieres
+    loadBoundaries();
     GsshDrawLines(pnt, getList_boundaries(), proj, false);
+    clearBoundaries();
 }
 
 //-----------------------------------------------------------------------
 void GshhsReader::drawRivers( QPainter &pnt, Projection *proj)
 {
     // Rivieres
+    if(quality<2) return;
+    loadRivers();
     GsshDrawLines(pnt, getList_rivers(), proj, false);
+    clearRivers();
 }
 
 //-----------------------------------------------------------------------

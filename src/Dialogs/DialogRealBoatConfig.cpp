@@ -39,8 +39,7 @@ DialogRealBoatConfig::DialogRealBoatConfig(myCentralWidget *parent) : QDialog(pa
 void DialogRealBoatConfig::launch(boatReal * boat)
 {
     curBoat=boat;
-    if(curBoat)
-        curBoat->stopRead();
+    if(!curBoat) return;
     /* init dialog */
     serialName->setText(Settings::getSetting("gpsPortName","COM1").toString());
     int idx = baudRate->findText(Settings::getSetting("gpsBaudRate",BAUD4800).toString(),Qt::MatchExactly);
@@ -103,13 +102,14 @@ void DialogRealBoatConfig::done(int result)
             curBoat->setPolar(polarList->currentIndex()==0?QString():polarList->currentText());
         }
         Settings::setSetting("declinaison",QString().sprintf("%.1f",this->declinaison->value()));
+        curBoat->setDisplayNMEA(this->displayNMEA->isChecked());
+        curBoat->setDeclinaison(declinaison->value());
+        if(!curBoat->gpsIsRunning())
+            curBoat->emitMoveBoat();
+        curBoat->setMinSpeedForEngine(minSpeedForEngine->value());
+        curBoat->setSpeedWithEngine(speedWithEngine->value());
+        this->parent->emitUpdateRoute(curBoat);
     }
-    curBoat->setDisplayNMEA(this->displayNMEA->isChecked());
-    curBoat->setDeclinaison(declinaison->value());
-    curBoat->emitMoveBoat();
-    curBoat->setMinSpeedForEngine(minSpeedForEngine->value());
-    curBoat->setSpeedWithEngine(speedWithEngine->value());
-    this->parent->emitUpdateRoute(curBoat);
     QDialog::done(result);
 }
 

@@ -45,6 +45,7 @@ class DialogGribValidation: public QDialog, public Ui::gribValidation
 private:
         myCentralWidget * my_centralWidget;
         MainWindow * mainWindow;
+        DataManager * dataManager;
         int curMode;
 
 };

@@ -48,7 +48,6 @@ void DialogWp::setLocked(const bool &locked)
     this->btn_clear->setEnabled(locked);
     this->btn_paste->setEnabled(locked);
     this->btn_selectPOI->setEnabled(locked);
-    this->btn_selectPOI->setEnabled(locked);
     this->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(locked);
 }
 
@@ -61,10 +60,13 @@ void DialogWp::show_WPdialog(boat * boat)
     exec();
 }
 
-void DialogWp::show_WPdialog(POI * poi)
+void DialogWp::show_WPdialog(POI * poi, boat * boat)
 {
+    currentBoat=boat;
     if(poi)
         initDialog(poi->getLatitude(),poi->getLongitude(),poi->getWph());
+    else
+        initDialog(currentBoat->getWPLat(),currentBoat->getWPLon(),currentBoat->getWPHd());
     exec();
 }
 

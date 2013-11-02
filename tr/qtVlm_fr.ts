@@ -744,6 +744,260 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
     </message>
 </context>
 <context>
+    <name>DialogGribDrawing</name>
+    <message>
+        <source>Aucun</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Carte du vent</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Carte du courant</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Couverture nuageuse</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Carte des preecipitations</source>
+        <translation>Carte des précipitations</translation>
+    </message>
+    <message>
+        <source>Carte de l&apos;humidite relative</source>
+        <translation>Carte de l&apos;humidité relative</translation>
+    </message>
+    <message>
+        <source>Carte de la temperature</source>
+        <translation>Carte de la température</translation>
+    </message>
+    <message>
+        <source>Carte de la temperature potentielle</source>
+        <translation>Carte de la température potentielle</translation>
+    </message>
+    <message>
+        <source>Point de rosee</source>
+        <translation>Point de rosée</translation>
+    </message>
+    <message>
+        <source>Ecart temperature-point de rosee</source>
+        <translation>Ecart température-point de rosée</translation>
+    </message>
+    <message>
+        <source>Neige (chute possible)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Pluie verglacante (chute possible)</source>
+        <translation>Pluie verglaçante (chute possible)</translation>
+    </message>
+    <message>
+        <source>CAPE (surface)</source>
+        <translation>CAPE (surface)</translation>
+    </message>
+    <message>
+        <source>CIN (surface)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Waves combined</source>
+        <translation>Vagues combinées</translation>
+    </message>
+    <message>
+        <source>Wind waves</source>
+        <translation>Vagues du vent</translation>
+    </message>
+    <message>
+        <source>Swell waves</source>
+        <translation>Vagues de la houle</translation>
+    </message>
+    <message>
+        <source>Max waves</source>
+        <translation>Vagues max</translation>
+    </message>
+    <message>
+        <source>White cap prob</source>
+        <translation>Probabilité de déferlantes</translation>
+    </message>
+    <message>
+        <source>Vent</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Courant</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Primary waves</source>
+        <translation>Vagues primaires</translation>
+    </message>
+    <message>
+        <source>Secondary waves</source>
+        <translation>Vagues secondaires</translation>
+    </message>
+    <message>
+        <source>Surface</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Isotherm 0C</source>
+        <translation>Isotherme 0 C</translation>
+    </message>
+    <message>
+        <source>Isobaric</source>
+        <translation>Isobarique</translation>
+    </message>
+    <message>
+        <source>Mean Sea Level</source>
+        <translation>Pression au niveau de la mer</translation>
+    </message>
+    <message>
+        <source>Above ground</source>
+        <translation>Au dessus du sol</translation>
+    </message>
+    <message>
+        <source>Sigma</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Entire atmosphere</source>
+        <translation>Atmosphère entière</translation>
+    </message>
+    <message>
+        <source>Ordered sequence</source>
+        <translation>Sequence ordonnée</translation>
+    </message>
+</context>
+<context>
+    <name>DialogGribDrawing_ui</name>
+    <message>
+        <source>Dialog</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Affichage</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Fond de carte</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Température</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Dégradé de couleur</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Flèche principale</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Barbule</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Flèche secondaire</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Isobar /Isotherme</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Isobar</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Afficher</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Espacement (hPa)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>1</source>
+        <translation>1</translation>
+    </message>
+    <message>
+        <source>2</source>
+        <translation>2</translation>
+    </message>
+    <message>
+        <source>3</source>
+        <translation>3</translation>
+    </message>
+    <message>
+        <source>4</source>
+        <translation>4</translation>
+    </message>
+    <message>
+        <source>5</source>
+        <translation>5</translation>
+    </message>
+    <message>
+        <source>6</source>
+        <translation>6</translation>
+    </message>
+    <message>
+        <source>8</source>
+        <translation>8</translation>
+    </message>
+    <message>
+        <source>10</source>
+        <translation>10</translation>
+    </message>
+    <message>
+        <source>Etiquettes</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Min/Max</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Isotherme 0°C</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Espacement (m)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>20</source>
+        <translation>20</translation>
+    </message>
+    <message>
+        <source>50</source>
+        <translation>50</translation>
+    </message>
+    <message>
+        <source>100</source>
+        <translation>100</translation>
+    </message>
+    <message>
+        <source>200</source>
+        <translation>200</translation>
+    </message>
+    <message>
+        <source>500</source>
+        <translation>500</translation>
+    </message>
+    <message>
+        <source>1000</source>
+        <translation>1000</translation>
+    </message>
+    <message>
+        <source>Fermer</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
     <name>DialogHorn</name>
     <message>
         <source>Parametres de la corne de brume</source>
@@ -1645,6 +1899,10 @@ Etes-vous sur ?</source>
         <source>Pour utiliser cette action il faut que la route parte du bateau</source>
         <translation></translation>
     </message>
+    <message>
+        <source>m</source>
+        <translation>m</translation>
+    </message>
 </context>
 <context>
     <name>DialogRouteComparator</name>
@@ -1691,6 +1949,10 @@ Etes-vous sur ?</source>
     <message>
         <source> kts</source>
         <translation> nds</translation>
+    </message>
+    <message>
+        <source> m</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -1907,6 +2169,88 @@ Etes-vous sur ?</source>
     </message>
 </context>
 <context>
+    <name>Grib</name>
+    <message>
+        <source>Fichier grib version %1
+</source>
+        <translation type="obsolete">Fichier grib version %1</translation>
+    </message>
+    <message>
+        <source>Taille : %1 octets
+</source>
+        <translation type="obsolete">Taille: %1 octets</translation>
+    </message>
+    <message>
+        <source>%1 types de données</source>
+        <translation>%1 types de données</translation>
+    </message>
+    <message>
+        <source> - %1 dates :
+</source>
+        <translation type="obsolete"> - %1 dates:</translation>
+    </message>
+    <message>
+        <source>    du %1
+</source>
+        <translation type="obsolete">    du %1</translation>
+    </message>
+    <message>
+        <source>    au %1
+</source>
+        <translation type="obsolete">    au %1</translation>
+    </message>
+    <message>
+        <source>Grille : %1 points (%2x%3)
+</source>
+        <translation type="obsolete">Grille : %1 points (%2x%3)
+</translation>
+    </message>
+    <message>
+        <source>Resolution : %1x%2
+</source>
+        <translation type="obsolete">Résolution : %1x%2
+</translation>
+    </message>
+    <message>
+        <source>Zone de couverture :
+</source>
+        <translation type="obsolete">Zone de couverture:
+</translation>
+    </message>
+    <message>
+        <source>Fichier grib version %1</source>
+        <translation>Fichier grib version %1</translation>
+    </message>
+    <message>
+        <source>Taille : %1 octets</source>
+        <translation>Taille: %1 octets</translation>
+    </message>
+    <message>
+        <source> - %1 dates :</source>
+        <translation> - %1 dates:</translation>
+    </message>
+    <message>
+        <source>    du %1</source>
+        <translation>    du %1</translation>
+    </message>
+    <message>
+        <source>    au %1</source>
+        <translation>    au %1</translation>
+    </message>
+    <message>
+        <source>Grille : %1 points (%2x%3)</source>
+        <translation>Grille : %1 points (%2x%3)</translation>
+    </message>
+    <message>
+        <source>Resolution : %1x%2</source>
+        <translation>Résolution : %1x%2</translation>
+    </message>
+    <message>
+        <source>Zone de couverture :</source>
+        <translation>Zone de couverture:</translation>
+    </message>
+</context>
+<context>
     <name>GshhsDwnload</name>
     <message>
         <source>Sauvegarde des cartes</source>
@@ -2089,10 +2433,6 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Grib part is originaly from zygrib project</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Fichiers GRIB (*.grb *.grib *.grb.bz2 *.grib.bz2 *.grb.gz *.grib.gz)</source>
         <translation></translation>
     </message>
     <message>
@@ -2405,6 +2745,18 @@ Etes-vous sur ?</source>
         <source>Barrier not in edit mode</source>
         <translation type="obsolete">La barrière n&apos;est pas en mode édition</translation>
     </message>
+    <message>
+        <source>Opening kap</source>
+        <translation>Ouverture du KAP</translation>
+    </message>
+    <message>
+        <source> grib: </source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Fichiers GRIB (*.grb *.grib *.grb.bz2 *.grib.bz2 *.grb.gz *.grib.gz *.grb2)</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>MenuBar</name>
@@ -2451,18 +2803,6 @@ Etes-vous sur ?</source>
     <message>
         <source>Telechargement VLM</source>
         <translation>Téléchargement VLM</translation>
-    </message>
-    <message>
-        <source>Informations sur le fichier</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Ctrl+I</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Informations sur le fichier GRIB</source>
-        <translation></translation>
     </message>
     <message>
         <source>Carte du vent</source>
@@ -2818,83 +3158,19 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Sea level</source>
-        <translation>Niveau de la mer</translation>
+        <translation type="obsolete">Niveau de la mer</translation>
     </message>
     <message>
         <source>Surface</source>
         <translation></translation>
     </message>
     <message>
-        <source>Sigma 995</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>1 m above ground</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>2 m above ground</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>3 m above ground</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>10 m above ground</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>850 hPa (? 1460 m)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>700 hPa (? 3000 m)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>500 hPa (? 5600 m)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>300 hPa (? 9200 m)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>200 hPa (? 11800 m)</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Atmosphere</source>
-        <translation>Atmosphère</translation>
-    </message>
-    <message>
-        <source>Geopotential altitude 850 hpa</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Geopotential altitude 700 hpa</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Geopotential altitude 500 hpa</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Geopotential altitude 300 hpa</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Geopotential altitude 200 hpa</source>
-        <translation></translation>
+        <translation type="obsolete">Atmosphère</translation>
     </message>
     <message>
         <source>Spacing (m)</source>
-        <translation>Espacement (m)</translation>
-    </message>
-    <message>
-        <source>Geopotentials labels</source>
-        <translation></translation>
+        <translation type="obsolete">Espacement (m)</translation>
     </message>
     <message>
         <source>Gestion des comptes</source>
@@ -3343,6 +3619,78 @@ Etes-vous sur ?</source>
     <message>
         <source>Montrer le tableau de bord</source>
         <translation>Montrer le tableau de bord</translation>
+    </message>
+    <message>
+        <source>Waves</source>
+        <translation>Vagues</translation>
+    </message>
+    <message>
+        <source>Waves combined</source>
+        <translation>Vagues combinées</translation>
+    </message>
+    <message>
+        <source>Wind waves</source>
+        <translation>Vagues du vent</translation>
+    </message>
+    <message>
+        <source>Swell waves</source>
+        <translation>Vagues de la houle</translation>
+    </message>
+    <message>
+        <source>Max waves</source>
+        <translation>Vagues max</translation>
+    </message>
+    <message>
+        <source>White cap prob</source>
+        <translation>Probabilité de déferlantes</translation>
+    </message>
+    <message>
+        <source>Waves arrow</source>
+        <translation>Flèches de la mer</translation>
+    </message>
+    <message>
+        <source>Show arrox for wave direction</source>
+        <translation>Montrer les flèches de direction des vagues</translation>
+    </message>
+    <message>
+        <source>Isotherm 0C</source>
+        <translation>Isotherme 0 C</translation>
+    </message>
+    <message>
+        <source>Isobaric</source>
+        <translation>Isobarique</translation>
+    </message>
+    <message>
+        <source>Mean Sea Level</source>
+        <translation>Pression au niveau de la mer</translation>
+    </message>
+    <message>
+        <source>Above ground</source>
+        <translation>Au dessus du sol</translation>
+    </message>
+    <message>
+        <source>Sigma</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Entire atmosphere</source>
+        <translation>Atmosphère entière</translation>
+    </message>
+    <message>
+        <source>Ordered sequence</source>
+        <translation>Sequence ordonnée</translation>
+    </message>
+    <message>
+        <source>Informations sur le fichier</source>
+        <translation>Informations sur le fichier</translation>
+    </message>
+    <message>
+        <source>Ctrl+I</source>
+        <translation>Ctrl+I</translation>
+    </message>
+    <message>
+        <source>Informations sur le fichier GRIB</source>
+        <translation>Informations sur le fichier GRIB</translation>
     </message>
 </context>
 <context>
@@ -4321,7 +4669,7 @@ VMG %.2f nds</translation>
     </message>
     <message>
         <source>Start Date</source>
-        <translation>Date départ</translation>
+        <translation type="obsolete">Date départ</translation>
     </message>
     <message>
         <source>ETA</source>
@@ -4333,11 +4681,11 @@ VMG %.2f nds</translation>
     </message>
     <message>
         <source>Ortho Distance</source>
-        <translation>Distance ortho</translation>
+        <translation type="obsolete">Distance ortho</translation>
     </message>
     <message>
         <source>Sailed Distance</source>
-        <translation>Distance parcourue</translation>
+        <translation type="obsolete">Distance parcourue</translation>
     </message>
     <message>
         <source>Avg BS</source>
@@ -4365,27 +4713,27 @@ VMG %.2f nds</translation>
     </message>
     <message>
         <source>Nb Tacks/Gybes</source>
-        <translation>Nb de virements/empannages</translation>
+        <translation type="obsolete">Nb de virements/empannages</translation>
     </message>
     <message>
         <source>Beating time</source>
-        <translation>Temps au près</translation>
+        <translation type="obsolete">Temps au près</translation>
     </message>
     <message>
         <source>Downwind time</source>
-        <translation>Temps au portant</translation>
+        <translation type="obsolete">Temps au portant</translation>
     </message>
     <message>
         <source>Reaching time</source>
-        <translation>Temps vent de travers</translation>
+        <translation type="obsolete">Temps vent de travers</translation>
     </message>
     <message>
         <source>Motor time</source>
-        <translation>Temps au moteur</translation>
+        <translation type="obsolete">Temps au moteur</translation>
     </message>
     <message>
         <source>Night navigation</source>
-        <translation>Navigation de nuit</translation>
+        <translation type="obsolete">Navigation de nuit</translation>
     </message>
     <message>
         <source>Reading XML file %1</source>
@@ -4410,7 +4758,7 @@ VMG %.2f nds</translation>
     </message>
     <message>
         <source>Under rain navigation</source>
-        <translation>Navigation sous la pluie</translation>
+        <translation type="obsolete">Navigation sous la pluie</translation>
     </message>
     <message>
         <source>Barrier set choice</source>
@@ -4419,6 +4767,78 @@ VMG %.2f nds</translation>
     <message>
         <source>No barrier set define, create one before doing this action</source>
         <translation>Pas d&apos;ensemble de barrières défini, veuillez en créer un avant de faire cette action</translation>
+    </message>
+    <message>
+        <source>COMB WAVES HGT</source>
+        <translation>HAUTEUR VAGUES COMBINEES</translation>
+    </message>
+    <message>
+        <source>MAX WAVES HGT</source>
+        <translation>HAUTEUR DES VAGUES MAX</translation>
+    </message>
+    <message>
+        <source>MAX WAVES DIR</source>
+        <translation>DIRECTION VAGUES MAX</translation>
+    </message>
+    <message>
+        <source>Start
+Date</source>
+        <translation>Date départ</translation>
+    </message>
+    <message>
+        <source>Ortho
+Distance</source>
+        <translation>Distance ortho</translation>
+    </message>
+    <message>
+        <source>Sailed
+Distance</source>
+        <translation>Loch</translation>
+    </message>
+    <message>
+        <source>Nb Tacks
+and Gybes</source>
+        <translation>Nb de virements/empannages</translation>
+    </message>
+    <message>
+        <source>Beating
+time</source>
+        <translation>Temps au près</translation>
+    </message>
+    <message>
+        <source>Downwind
+time</source>
+        <translation>Temps au portant</translation>
+    </message>
+    <message>
+        <source>Reaching
+time</source>
+        <translation>Temps vent de travers</translation>
+    </message>
+    <message>
+        <source>Motor
+time</source>
+        <translation>Temps au moteur</translation>
+    </message>
+    <message>
+        <source>Night
+navigation</source>
+        <translation>Navigation de nuit</translation>
+    </message>
+    <message>
+        <source>Under rain
+navigation</source>
+        <translation>Navigation sous la pluie</translation>
+    </message>
+    <message>
+        <source>Max waves
+height</source>
+        <translation>Hauteur maximale des vagues</translation>
+    </message>
+    <message>
+        <source>Max combined
+waves height</source>
+        <translation>Hauteur des vagues combinées</translation>
     </message>
 </context>
 <context>
@@ -4842,6 +5262,18 @@ inversés</translation>
     </message>
     <message>
         <source> minutes</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Waves</source>
+        <translation>Vagues</translation>
+    </message>
+    <message>
+        <source>Waves max height</source>
+        <translation>Hauteur maximale des vagues</translation>
+    </message>
+    <message>
+        <source> m</source>
         <translation></translation>
     </message>
 </context>
@@ -6968,7 +7400,31 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Fichier Kap ne contient pas de polynomiaux, desole</source>
-        <translation>Le fichier KAP ne contient pas de polynomiaux, désolé</translation>
+        <translation type="obsolete">Le fichier KAP ne contient pas de polynomiaux, désolé</translation>
+    </message>
+    <message>
+        <source>Name </source>
+        <translation>Nom: </translation>
+    </message>
+    <message>
+        <source>Projection: </source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>No polynomials found in kap file, using internal solution</source>
+        <translation>Pas de polynomiaux, utilisation d&apos;une solution interne</translation>
+    </message>
+    <message>
+        <source>Polynomials found in kap file</source>
+        <translation>Polynomiaux présents</translation>
+    </message>
+    <message>
+        <source>Pixel size: </source>
+        <translation>Taille en pixels: </translation>
+    </message>
+    <message>
+        <source>Error while loading</source>
+        <translation>Erreur au chargement de </translation>
     </message>
 </context>
 <context>
@@ -7000,6 +7456,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Afficher au dessus du KAP</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Map information</source>
+        <translation>Informations carte</translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Show at nominal resolution</source>
+        <translation>Afficher à la résolution nominale</translation>
     </message>
 </context>
 <context>
@@ -7250,18 +7718,6 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>myCentralWidget</name>
     <message>
-        <source>oui</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>non</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Informations sur le fichier GRIB</source>
-        <translation></translation>
-    </message>
-    <message>
         <source></source>
         <translation></translation>
     </message>
@@ -7335,11 +7791,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>oui (calcule par la formule de Magnus-Tetens)</source>
-        <translation>oui (calculé par la formule de Magnus-Tetens)</translation>
+        <translation type="obsolete">oui (calculé par la formule de Magnus-Tetens)</translation>
     </message>
     <message>
         <source>Aucun fichir GRIB n&apos;est charge.</source>
-        <translation>Aucun fichier GRIB n&apos;est chargé.</translation>
+        <translation type="obsolete">Aucun fichier GRIB n&apos;est chargé.</translation>
     </message>
     <message>
         <source>Donnees disponibles :</source>
@@ -7390,88 +7846,39 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Date de référence : %1</translation>
     </message>
     <message>
-        <source>Fichier : %1
-</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Taille : %1 octets
-</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>
-</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>%1 enregistrements, </source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>%1 dates :
-</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>    du %1
-</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>    au %1
-</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Donnees disponibles :
 </source>
-        <translation>Données disponibles:
+        <translation type="obsolete">Données disponibles:
 </translation>
     </message>
     <message>
         <source>    Temperature : %1
 </source>
-        <translation>   Température : %1
+        <translation type="obsolete">   Température : %1
 </translation>
-    </message>
-    <message>
-        <source>    Pression : %1
-</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>    Vent  : %1
-</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>    Cumul de précipitations : %1
-</source>
-        <translation></translation>
     </message>
     <message>
         <source>    Nebulosite : %1
 </source>
-        <translation>    Nébulosité: %1
+        <translation type="obsolete">    Nébulosité: %1
 </translation>
     </message>
     <message>
         <source>    Humidite relative : %1
 </source>
-        <translation>    Humidité relative: %1
+        <translation type="obsolete">    Humidité relative: %1
 </translation>
     </message>
     <message>
         <source>    Isotherme 0degC : %1
 </source>
-        <translation>    Isotherme 0°C : %1
+        <translation type="obsolete">    Isotherme 0°C : %1
 </translation>
     </message>
     <message>
         <source>    Point de rosee : %1
 </source>
-        <translation>    Point de rosée : %1
+        <translation type="obsolete">    Point de rosée : %1
 </translation>
     </message>
     <message>
@@ -7489,13 +7896,8 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>    Temperature (pot) : %1
 </source>
-        <translation>    Température (pot): %1
+        <translation type="obsolete">    Température (pot): %1
 </translation>
-    </message>
-    <message>
-        <source>    Neige (risque) : %1
-</source>
-        <translation></translation>
     </message>
     <message>
         <source>    Neige (epaisseur) : %1
@@ -7506,53 +7908,13 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>    Humidite specifique :
 </source>
-        <translation>    Humidité spécifique:
+        <translation type="obsolete">    Humidité spécifique:
 </translation>
-    </message>
-    <message>
-        <source>        - 200: %1
-</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>        - 300: %1
-</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>        - 500: %1
-</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>        - 700: %1
-</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>        - 850: %1
-</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Grille : %1 points (%2x%3)
-</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Etendue :
-</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>%1  -&gt;  %2
-</source>
-        <translation></translation>
     </message>
     <message>
         <source>Date de reference : %1
 </source>
-        <translation>Date de référence : %1
+        <translation type="obsolete">Date de référence : %1
 </translation>
     </message>
     <message>
@@ -7724,18 +8086,9 @@ Voulez-vous la remplacer?</source>
         <translation>Cette route existe déjà. Voulez-vous la remplacer?</translation>
     </message>
     <message>
-        <source>    Courant  : %1
-</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>oui (GRIB Courants)</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Resolution : %1x%2
 </source>
-        <translation>Résolution : %1x%2
+        <translation type="obsolete">Résolution : %1x%2
 </translation>
     </message>
     <message>
@@ -7820,14 +8173,20 @@ Please select another point or press esc to exit barrier creation mode</source>
         <translation>Le point doit être sur la carte\nVeuillez choisir un autre point ou &lt;echap&gt; pour sortir du mode création</translation>
     </message>
     <message>
-        <source>    CAPE (surface) : %1
-</source>
-        <translation></translation>
+        <source>Informations sur le fichier GRIB</source>
+        <translation>Informations sur le fichier GRIB</translation>
     </message>
     <message>
-        <source>    CIN (surface) : %1
-</source>
-        <translation></translation>
+        <source>Aucun fichier GRIB n&apos;est charge.</source>
+        <translation>Aucun fichier GRIB n&apos;est charge</translation>
+    </message>
+    <message>
+        <source>Informations sur le fichier GRIB courant</source>
+        <translation>Informations sur le fichier GRIB courant</translation>
+    </message>
+    <message>
+        <source>Show grib info after grib loading</source>
+        <translation>Afficher les infos grib après le chargement du grib</translation>
     </message>
 </context>
 <context>
@@ -8598,6 +8957,22 @@ Please select another point or press esc to exit barrier creation mode</source>
     <message>
         <source>SOG</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Max waves direction</source>
+        <translation>Direction des vagues maximales</translation>
+    </message>
+    <message>
+        <source>Max waves height</source>
+        <translation>Hauteur des vagues maximales</translation>
+    </message>
+    <message>
+        <source> m</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Significant waves height (combined)</source>
+        <translation>Hauteur des vagues combinées</translation>
     </message>
 </context>
 <context>

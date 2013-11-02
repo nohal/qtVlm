@@ -27,7 +27,6 @@ Original code: virtual-winds.com
 #include "Orthodromie.h"
 #include "Projection.h"
 #include "routage.h"
-#include "Grib.h"
 #include "mycentralwidget.h"
 #include "vlmLine.h"
 #include "POI.h"
@@ -40,6 +39,12 @@ Original code: virtual-winds.com
 #include "Util.h"
 #include "Polygon.h"
 #include "route.h"
+
+#include "Polygon.h"
+#include "vlmpointgraphic.h"
+#include "GshhsReader.h"
+
+
 #include <QDebug>
 #ifdef QT_V5
 #include <QtConcurrent/QtConcurrentMap>
@@ -57,229 +62,314 @@ Original code: virtual-winds.com
 
 //#define HAS_ICEGATE
 #define USE_SHAPEISO
-
-inline vlmPoint findPointThreaded(const vlmPoint &point)
+QList<vlmPoint> ROUTAGE::findPointThreaded(const QList<vlmPoint> &list)
 {
-    vlmPoint pt=point;
-    double cap=pt.capOrigin;
-    double windAngle=pt.wind_angle;
-    double windSpeed=pt.wind_speed;
-    double lat=pt.origin->lat;
-    double lon=pt.origin->lon;
-    cap=Util::A360(cap);
-    double angle,newSpeed;
-    time_t workEta;
-    double res_lon,res_lat;
-    double distanceParcourue=0;
-    double current_speed=pt.current_speed;
-    double current_angle=pt.current_angle;
-    for(int a=0;a<=1;++a)
+    QList<vlmPoint> result;
+    for(int g=0;g<list.size();++g)
     {
-        angle=cap-(double)windAngle;
-        if(qAbs(angle)>180)
+        vlmPoint pt=list.at(g);
+        double cap=pt.capOrigin;
+        double windAngle=pt.wind_angle;
+        double windSpeed=pt.wind_speed;
+        double lat=pt.origin->lat;
+        double lon=pt.origin->lon;
+        cap=Util::A360(cap);
+        double angle,newSpeed;
+        double res_lon,res_lat;
+        double distanceParcourue=0;
+        double current_speed=pt.current_speed;
+        double current_angle=pt.current_angle;
+        bool bad=false;
+        for(int a=0;a<=1;++a)
         {
-            if(angle<0)
-                angle=360+angle;
-            else
-                angle=angle-360;
-        }
-        double limit=pt.routage->getBoat()->getPolarData()->getBvmgUp(windSpeed);
-        if(qAbs(angle)<limit && angle!=90) //if too close to wind then use VB-VMG technique
-        {
-            newSpeed=pt.routage->getBoat()->getPolarData()->getSpeed(windSpeed,limit);
-            newSpeed=newSpeed*qAbs(cos(degToRad(limit))/cos(degToRad(qAbs(angle))));
-        }
-        else
-        {
-            limit=pt.routage->getBoat()->getPolarData()->getBvmgDown(windSpeed);
-            if(qAbs(angle)>limit && angle!=90)
+            angle=cap-(double)windAngle;
+            if(qAbs(angle)>180)
+            {
+                if(angle<0)
+                    angle=360+angle;
+                else
+                    angle=angle-360;
+            }
+            double limit=pt.routage->getBoat()->getPolarData()->getBvmgUp(windSpeed);
+            if(qAbs(angle)<limit && angle!=90) //if too close to wind then use VB-VMG technique
             {
                 newSpeed=pt.routage->getBoat()->getPolarData()->getSpeed(windSpeed,limit);
                 newSpeed=newSpeed*qAbs(cos(degToRad(limit))/cos(degToRad(qAbs(angle))));
             }
             else
-                newSpeed=pt.routage->getBoat()->getPolarData()->getSpeed(windSpeed,angle);
-        }
-        if(current_speed>0)
-        {
-            QPointF p=Util::calculateSumVect(cap,newSpeed,Util::A360(current_angle+180.0),current_speed);
-            newSpeed=p.x(); //in this case newSpeed is SOG
-            cap=p.y(); //in this case cap is COG
-        }
-        distanceParcourue=newSpeed*pt.routage->getTimeStep()/60.0;
-        Util::getCoordFromDistanceAngle(lat, lon, distanceParcourue, cap, &res_lat, &res_lon);
-        pt.lon=res_lon;
-        pt.lat=res_lat;
-        pt.distOrigin=distanceParcourue;
-        pt.capOrigin=cap;
-        //if(!pt.routage->getUseRouteModule()) break;
-        if(a==0)
-        {
-            double newWindAngle,newWindSpeed;
-            workEta=pt.eta;
-            if(pt.routage->getWhatIfUsed() && pt.routage->getWhatIfJour()<=pt.eta)
-                workEta=workEta+pt.routage->getWhatIfTime()*3600;
-            if(!pt.routage->getGrib()->getInterpolatedValue_byDates(res_lon,res_lat,
-                   workEta+pt.routage->getTimeStep()*60,&newWindSpeed,&newWindAngle,INTERPOLATION_DEFAULT)||workEta+pt.routage->getTimeStep()*60>pt.routage->getGrib()->getMaxDate())
             {
-                pt.isDead=true;
-                return pt;
+                limit=pt.routage->getBoat()->getPolarData()->getBvmgDown(windSpeed);
+                if(qAbs(angle)>limit && angle!=90)
+                {
+                    newSpeed=pt.routage->getBoat()->getPolarData()->getSpeed(windSpeed,limit);
+                    newSpeed=newSpeed*qAbs(cos(degToRad(limit))/cos(degToRad(qAbs(angle))));
+                }
+                else
+                    newSpeed=pt.routage->getBoat()->getPolarData()->getSpeed(windSpeed,angle);
             }
-            newWindAngle=radToDeg(newWindAngle);
-            if(pt.routage->getGrib()->getInterpolatedValueCurrent_byDates(res_lon,res_lat,
-                   workEta+pt.routage->getTimeStep()*60,&current_speed,&current_angle,INTERPOLATION_DEFAULT))
+            if(current_speed>0)
             {
-                current_angle=radToDeg(current_angle);
-                QPointF p=Util::calculateSumVect(newWindAngle,newWindSpeed,current_angle,current_speed);
-                newWindSpeed=p.x();
-                newWindAngle=p.y();
+                QPointF p=Util::calculateSumVect(cap,newSpeed,Util::A360(current_angle+180.0),current_speed);
+                newSpeed=p.x(); //in this case newSpeed is SOG
+                cap=p.y(); //in this case cap is COG
+            }
+            distanceParcourue=newSpeed*pt.routage->getTimeStep()/60.0;
+            Util::getCoordFromDistanceAngle(lat, lon, distanceParcourue, cap, &res_lat, &res_lon);
+            pt.lon=res_lon;
+            pt.lat=res_lat;
+            pt.distOrigin=distanceParcourue;
+            pt.capOrigin=cap;
+            time_t isoStep=pt.routage->getTimeStep()*60;
+            if(pt.routage->getI_iso())
+            {
+                isoStep=-isoStep;
+            }
+            pt.eta+=isoStep;
+            //if(!pt.routage->getUseRouteModule()) break;
+            if(a==0)
+            {
+                double newWindAngle,newWindSpeed;
+                if(pt.routage->getWhatIfUsed() && pt.routage->getWhatIfJour()<=pt.eta)
+                    pt.eta+=pt.routage->getWhatIfTime()*3600;
+                if(!pt.routage->get_dataManager()->getInterpolatedWind(res_lon,res_lat,
+                       pt.eta,&newWindSpeed,&newWindAngle,INTERPOLATION_DEFAULT)||pt.eta>pt.routage->get_dataManager()->get_maxDate())
+                {
+                    bad=true;
+                    break;
+                }
+                newWindAngle=radToDeg(newWindAngle);
+                if(pt.routage->get_dataManager()->hasData(DATA_CURRENT_VX,DATA_LV_MSL,0) && pt.routage->get_dataManager()->getInterpolatedCurrent(res_lon,res_lat,
+                       pt.eta,&current_speed,&current_angle,INTERPOLATION_DEFAULT))
+                {
+                    current_angle=radToDeg(current_angle);
+                    QPointF p=Util::calculateSumVect(newWindAngle,newWindSpeed,current_angle,current_speed);
+                    newWindSpeed=p.x();
+                    newWindAngle=p.y();
+                }
+                else
+                {
+                    current_speed=-1;
+                    current_angle=0;
+                }
+                if(pt.routage->getI_iso())
+                {
+                    newWindAngle=Util::A360(newWindAngle+180.0);
+                    current_angle=Util::A360(current_angle+180.0);
+                }
+                if(pt.routage->getWhatIfUsed() && pt.routage->getWhatIfJour()<=pt.eta)
+                    windSpeed=windSpeed*pt.routage->getWhatIfWind()/100.00;
+                windAngle=Util::A360((windAngle+newWindAngle)/2.0);
+                windSpeed=(windSpeed+newWindSpeed)/2.0;
+                if(current_speed!=-1 && pt.current_speed!=-1)
+                {
+                    current_speed=(pt.current_speed+current_speed)/2.0;
+                    current_angle=Util::A360((current_angle+pt.current_angle)/2.0);
+                }
+            }
+        }
+        if(bad) continue;
+        if(qAbs(pt.lat)>=89.9)
+        {
+            continue;
+        }
+        double x,y;
+        pt.routage->getProj()->map2screenDouble(pt.lon,pt.lat,&x,&y);
+        pt.x=x;
+        pt.y=y;
+        if(pt.routage->getVisibleOnly() && !pt.routage->getProj()->isInBounderies_strict(pt.x,pt.y))
+        {
+            continue;
+        }
+    #if 1
+        vlmPoint * O=pt.origin;
+    //    int nbCheck=0;
+    //    for (nbCheck=0;nbCheck<10;++nbCheck)
+    //    {
+    //        if(O->isStart)
+    //            break;
+    //        if(!O->isBroken)
+    //            break;
+    //        O=O->origin;
+    //    }
+        if(!O->isBroken)
+        {
+            if(pt.xM1<10e4)
+            {
+                Triangle t(Point(pt.origin->x,pt.origin->y),
+                           Point(pt.x,pt.y),
+                           Point(pt.xM1,pt.yM1));
+                if (t.orientation()==right_turn)
+                {
+                    continue;
+                }
+            }
+            if(pt.xP1<10e4)
+            {
+                Triangle t(Point(pt.origin->x,pt.origin->y),
+                           Point(pt.x,pt.y),
+                           Point(pt.xP1,pt.yP1));
+                if (t.orientation()==left_turn)
+                {
+                    continue;
+                }
+            }
+        }
+    #endif
+    #ifdef HAS_ICEGATE
+        if(!pt.routage->checkIceGate(pt))
+        {
+            pt.isDead=true;
+            return pt;
+        }
+    #endif
+
+
+    #ifndef USE_SHAPEISO
+        QPolygonF * previousIso=pt.routage->getPreviousIso();
+        QList<QLineF> * previousSegments=pt.routage->getPreviousSegments();
+        if(!pt.origin->isStart && previousIso->size()>1)
+        {
+            QLineF temp1(pt.origin->x,pt.origin->y,pt.x,pt.y);
+            QPointF dummy(0,0);
+            for (int i=0;i<previousIso->size()-1;++i)
+            {
+                QLineF s(previousIso->at(i),previousIso->at(i+1));
+                if(pt.originNb!=i && pt.originNb!=i+1)
+                {
+                    //if(temp1.intersect(s,&dummy)==QLineF::BoundedIntersection)
+                    if(temp1.intersect(s,&dummy)==QLineF::BoundedIntersection)
+                    {
+                        bad=true;
+                        break;
+                    }
+                    if(temp1.intersect(previousSegments->at(i),&dummy)==QLineF::BoundedIntersection)
+                    {
+                        bad=true;
+                        break;
+                    }
+                }
+            }
+        }
+    #else
+    #ifndef debugCount
+        if(!list.at(g).isStart)
+        {
+            QPolygonF * shape=pt.routage->getShapeIso();
+            QPointF p=QPointF(pt.x,pt.y);
+            if(shape->containsPoint(p,Qt::OddEvenFill))
+            {
+                bad=true;
+            }
+        }
+    #endif
+    #endif
+        if (bad) continue;
+        pt.convertionLat=pt.lat;
+        pt.convertionLon=pt.lon;
+        Orthodromie orth(pt.origin->lon,pt.origin->lat,pt.lon,pt.lat);
+        pt.distOrigin=orth.getDistance();
+        if(pt.routage->getRoutageOrtho())
+        {
+            orth.setPoints(pt.routage->getStart().x(),pt.routage->getStart().y(),pt.lon,pt.lat);
+            pt.distStart=orth.getDistance();
+            pt.capStart=orth.getAzimutDeg();
+            orth.setPoints(pt.lon,pt.lat,pt.routage->getArrival().x(),pt.routage->getArrival().y());
+            pt.distArrival=orth.getDistance();
+            pt.capArrival=orth.getAzimutDeg();
+        }
+        else
+        {
+            QLineF tempLine(pt.x,pt.y,pt.routage->getXs(),pt.routage->getYs());
+            pt.distStart=tempLine.length();
+            pt.capStart=Util::A360(-tempLine.angle()+90.0+180.0);
+            tempLine.setP2(QPointF(pt.routage->getXa(),pt.routage->getYa()));
+            pt.distArrival=tempLine.length();
+            pt.capArrival=Util::A360(-tempLine.angle()+90);
+        }
+        if(pt.origin->isStart)
+            pt.distIso=QLineF(pt.x,pt.y,pt.origin->x,pt.origin->y).length();
+        else
+        {
+#if 0
+            const double max=pt.routage->get_maxDist();
+            vlmPoint O=*(pt.origin);
+            QPointF ptO(O.x,O.y);
+            QPolygonF * iso=pt.routage->getShapeMiddle();
+            QPolygonF isoProche;
+            int pointNb=iso->indexOf(ptO);
+            bool shapeReturned=false;
+            if(pointNb<0)
+            {
+                //qWarning()<<"anomaly with distIso calculation!";
+                shapeReturned=true;
             }
             else
             {
-                current_speed=-1;
-                current_angle=0;
-            }
-            if(pt.routage->getI_iso())
-            {
-                newWindAngle=Util::A360(newWindAngle+180.0);
-                current_angle=Util::A360(current_angle+180.0);
-            }
-            if(pt.routage->getWhatIfUsed() && pt.routage->getWhatIfJour()<=pt.eta)
-                windSpeed=windSpeed*pt.routage->getWhatIfWind()/100.00;
-            windAngle=Util::A360((windAngle+newWindAngle)/2.0);
-            windSpeed=(windSpeed+newWindSpeed)/2.0;
-            if(current_speed!=-1 && pt.current_speed!=-1)
-            {
-                current_speed=(pt.current_speed+current_speed)/2.0;
-                current_angle=Util::A360((current_angle+pt.current_angle)/2.0);
-            }
-        }
-    }
-    if(qAbs(pt.lat)>=89.9)
-    {
-        pt.isDead=true;
-        return pt;
-    }
-    double x,y;
-    pt.routage->getProj()->map2screenDouble(pt.lon,pt.lat,&x,&y);
-    pt.x=x;
-    pt.y=y;
-    if(pt.routage->getVisibleOnly() && !pt.routage->getProj()->isInBounderies_strict(pt.x,pt.y))
-    {
-        pt.isDead=true;
-        return pt;
-    }
-#if 1
-    if(pt.xM1<10e4)
-    {
-        Triangle t(Point(pt.origin->x,pt.origin->y),
-                   Point(pt.x,pt.y),
-                   Point(pt.xM1,pt.yM1));
-        if (t.orientation()==right_turn)
-        {
-            pt.isDead=true;
-            return pt;
-        }
-    }
-    if(pt.xP1<10e4)
-    {
-        Triangle t(Point(pt.origin->x,pt.origin->y),
-                   Point(pt.x,pt.y),
-                   Point(pt.xP1,pt.yP1));
-        if (t.orientation()==left_turn)
-        {
-            pt.isDead=true;
-            return pt;
-        }
-    }
-#endif
-#ifdef HAS_ICEGATE
-    if(!pt.routage->checkIceGate(pt))
-    {
-        pt.isDead=true;
-        return pt;
-    }
-#endif
-    if(pt.origin->isStart)
-        pt.distIso=pt.distStart;
-    else
-    {
-        pt.distIso=ROUTAGE::findDistancePreviousIso(pt, pt.routage->getShapeIso());
-    }
-
-
-    bool bad=false;
-#ifndef USE_SHAPEISO
-    QPolygonF * previousIso=pt.routage->getPreviousIso();
-    QList<QLineF> * previousSegments=pt.routage->getPreviousSegments();
-    if(!pt.origin->isStart && previousIso->size()>1)
-    {
-        QLineF temp1(pt.origin->x,pt.origin->y,pt.x,pt.y);
-        QPointF dummy(0,0);
-        for (int i=0;i<previousIso->size()-1;++i)
-        {
-            QLineF s(previousIso->at(i),previousIso->at(i+1));
-            if(pt.originNb!=i && pt.originNb!=i+1)
-            {
-                //if(temp1.intersect(s,&dummy)==QLineF::BoundedIntersection)
-                if(temp1.intersect(s,&dummy)==QLineF::BoundedIntersection)
+                int work=pointNb;
+                isoProche.append(ptO);
+                bool stopped=false;
+                while(true)
                 {
-                    bad=true;
-                    break;
+                    if(work>=iso->size()-1) break;
+                    ptO=iso->at(++work);
+                    if(!stopped)
+                        isoProche.append(ptO);
+                    if (QLineF(pt.x,pt.y,ptO.x(),ptO.y()).length()>max)
+                    {
+                        stopped=true;
+                    }
+                    else if (stopped)
+                    {
+                        shapeReturned=true;
+                        break;
+                    }
                 }
-                if(temp1.intersect(previousSegments->at(i),&dummy)==QLineF::BoundedIntersection)
+                if(!shapeReturned)
                 {
-                    bad=true;
-                    break;
+                    stopped=false;
+                    ptO=iso->at(pointNb);
+                    work=pointNb;
+                    while(true)
+                    {
+                        if(work<=0) break;
+                        ptO=iso->at(--work);
+                        if(!stopped)
+                            isoProche.prepend(ptO);
+                        if (QLineF(pt.x,pt.y,ptO.x(),ptO.y()).length()>max)
+                        {
+                            stopped=true;
+                        }
+                        else if (stopped)
+                        {
+                            shapeReturned=true;
+                            break;
+                        }
+                    }
                 }
             }
-        }
-    }
+            if(!shapeReturned)
+            {
+                pt.distIso=ROUTAGE::findDistancePreviousIso(pt, &isoProche);
+                //qWarning()<<"isoProche size="<<isoProche.size()<<"against"<<pt.routage->getShapeMiddle()->size();
+            }
+            else
+                pt.distIso=ROUTAGE::findDistancePreviousIso(pt, pt.routage->getShapeMiddle());
+//            double diff=pt.distIso-ROUTAGE::findDistancePreviousIso(pt, pt.routage->getShapeMiddle());
+//            if(qRound(diff*10e8)!=0)
+//                qWarning()<<"erreur disIso"<<diff<<"max="<<max<<isoProche.size();
 #else
-    if(!point.isStart)
-    {
-        QPolygonF * shape=pt.routage->getShapeIso();
-        QPointF p=QPointF(pt.x,pt.y);
-        if(shape->containsPoint(p,Qt::OddEvenFill))
-        {
-            bad=true;
-        }
-    }
+            pt.distIso=ROUTAGE::findDistancePreviousIso(pt, pt.routage->getShapeMiddle());
 #endif
-    if (bad)
-    {
-        pt.isDead=true;
-        return pt;
+        }
+        result.append(pt);
     }
-    pt.convertionLat=pt.lat;
-    pt.convertionLon=pt.lon;
-    Orthodromie orth(pt.origin->lon,pt.origin->lat,pt.lon,pt.lat);
-    pt.distOrigin=orth.getDistance();
-    if(pt.routage->getRoutageOrtho())
-    {
-        orth.setPoints(pt.routage->getStart().x(),pt.routage->getStart().y(),pt.lon,pt.lat);
-        pt.distStart=orth.getDistance();
-        pt.capStart=orth.getAzimutDeg();
-        orth.setPoints(pt.lon,pt.lat,pt.routage->getArrival().x(),pt.routage->getArrival().y());
-        pt.distArrival=orth.getDistance();
-        pt.capArrival=orth.getAzimutDeg();
-    }
-    else
-    {
-        QLineF tempLine(pt.x,pt.y,pt.routage->getXs(),pt.routage->getYs());
-        pt.distStart=tempLine.length();
-        pt.capStart=Util::A360(-tempLine.angle()+90.0+180.0);
-        tempLine.setP2(QPointF(pt.routage->getXa(),pt.routage->getYa()));
-        pt.distArrival=tempLine.length();
-        pt.capArrival=Util::A360(-tempLine.angle()+90);
-    }
-    return pt;
+    return result;
 }
 
 
 /*threadable functions*/
 
-inline vlmPoint checkCoastCollision(const vlmPoint &point)
+vlmPoint ROUTAGE::checkCoastCollision(const vlmPoint &point)
 {
     vlmPoint newPoint=point;
     double x1,y1,x2,y2;
@@ -291,10 +381,21 @@ inline vlmPoint checkCoastCollision(const vlmPoint &point)
                  || (newPoint.routage->getCheckLine() && newPoint.routage->crossBarriere(QLineF(x1,y1,x2,y2)));
     return newPoint;
 }
-inline QList<vlmPoint> finalEpuration(const QList<vlmPoint> &listPoints)
+bool ROUTAGE::checkCoastCollision2(const vlmPoint &point1, const vlmPoint &point2)
+{
+    double x1,y1,x2,y2;
+    x1=point1.x;
+    y1=point1.y;
+    x2=point2.x;
+    y2=point2.y;
+    return (point1.routage->getCheckCoast() && (point1.routage->getMap() && point1.routage->getMap()->crossing(QLineF(x1,y1,x2,y2),QLineF(point1.lon,point1.lat,point2.lon,point2.lat))))
+                 || (point1.routage->getCheckLine() && point1.routage->crossBarriere(QLineF(x1,y1,x2,y2)));
+}
+QList<vlmPoint> ROUTAGE::finalEpuration(const QList<vlmPoint> &listPoints)
 {
     if(listPoints.isEmpty()) return listPoints;
     if(listPoints.first().origin->isStart) return listPoints;
+    double maxDist=listPoints.at(0).routage->get_maxDist();
     int toBeRemoved=listPoints.at(0).internal_1;
     double initialDist=listPoints.at(0).internal_2;
     if(toBeRemoved<=0) return listPoints;
@@ -303,11 +404,16 @@ inline QList<vlmPoint> finalEpuration(const QList<vlmPoint> &listPoints)
     QList<bool> deadStatus;
     quint32 s;
     double critere=0;
+    double xa=listPoints.at(0).routage->getXa();
+    double ya=listPoints.at(0).routage->getYa();
     for(int n=0;n<listPoints.size()-1;++n)
     {
+        QLineF line1(xa,ya,listPoints.at(n).x,listPoints.at(n).y);
+        QLineF line2(xa,ya,listPoints.at(n+1).x,listPoints.at(n+1).y);
         if(listPoints.at(n).originNb!=listPoints.at(n+1).originNb && (listPoints.at(n).origin->isBroken || listPoints.at(n+1).origin->isBroken))
             critere=179;
-        else if(Util::myDiffAngle(listPoints.at(n).capArrival,listPoints.at(n+1).capArrival) > 60)
+        else if(qAbs(Util::A180(qAbs(line1.angleTo(line2)))) > 60 ||
+                qAbs(listPoints.at(n).distArrival-listPoints.at(n+1).distArrival)>maxDist)
             critere=179;
         else
         {
@@ -399,9 +505,12 @@ inline QList<vlmPoint> finalEpuration(const QList<vlmPoint> &listPoints)
             {
                 critere=360-critere;
             }
+            QLineF line1(xa,ya,listPoints.at(previous).x,listPoints.at(previous).y);
+            QLineF line2(xa,ya,listPoints.at(next).x,listPoints.at(next).y);
             if(listPoints.at(previous).originNb!=listPoints.at(next).originNb && (listPoints.at(previous).origin->isBroken || listPoints.at(next).origin->isBroken))
                 critere=179;
-            else if(Util::myDiffAngle(listPoints.at(previous).capArrival,listPoints.at(next).capArrival) > 60)
+            else if(qAbs(Util::A180(qAbs(line1.angleTo(line2)))) > 60 ||
+                    qAbs(listPoints.at(previous).distArrival-listPoints.at(next).distArrival)>maxDist)
                 critere=179;
             byCriteres.insert(critere,QPoint(previous,next));
             s=previous*10e6+next;
@@ -430,7 +539,7 @@ inline QList<vlmPoint> finalEpuration(const QList<vlmPoint> &listPoints)
     }
     return result;
 }
-inline QList<vlmPoint> findRoute(const QList<vlmPoint> & pointList)
+QList<vlmPoint> ROUTAGE::findRoute(const QList<vlmPoint> & pointList)
 {
     if(pointList.isEmpty()) return pointList;
     ROUTAGE * routage=pointList.at(0).routage;
@@ -441,7 +550,7 @@ inline QList<vlmPoint> findRoute(const QList<vlmPoint> & pointList)
     else
         dataThread.Eta=routage->getEta();
     dataThread.Eta=pointList.first().origin->eta;
-    dataThread.GriB=routage->getGrib();
+    dataThread.dataManager=routage->get_dataManager();
     dataThread.whatIfJour=routage->getWhatIfJour();
     dataThread.whatIfUsed=routage->getWhatIfUsed();
     dataThread.whatIfTime=routage->getWhatIfTime();
@@ -586,7 +695,7 @@ inline int ROUTAGE::calculateTimeRoute(const vlmPoint &routeFrom,const vlmPoint 
     int vacLen=dataThread->Boat->getVacLen();
     double newSpeed,distanceParcourue,remaining_distance,res_lon,res_lat,cap1,cap2,diff1,diff2;
     double windAngle,windSpeed,cap,angle;
-    time_t maxDate=dataThread->GriB->getMaxDate();
+    time_t maxDate=dataThread->dataManager->get_maxDate();
     newSpeed=0;
     distanceParcourue=0;
     res_lon=0;
@@ -604,10 +713,10 @@ inline int ROUTAGE::calculateTimeRoute(const vlmPoint &routeFrom,const vlmPoint 
         workEta=etaRoute;
         if(dataThread->whatIfUsed && dataThread->whatIfJour<=dataThread->Eta)
             workEta=workEta+dataThread->whatIfTime*3600;
-        if(dataThread->GriB->getInterpolatedValue_byDates(lon, lat, workEta,&windSpeed,&windAngle,INTERPOLATION_DEFAULT && workEta<=maxDate && (!hasLimit || etaRoute<=etaLimit)))
+        if(dataThread->dataManager->getInterpolatedWind(lon, lat, workEta,&windSpeed,&windAngle,INTERPOLATION_DEFAULT && workEta<=maxDate && (!hasLimit || etaRoute<=etaLimit)))
         {
             windAngle=radToDeg(windAngle);
-            if (dataThread->GriB->getInterpolatedValueCurrent_byDates(lon, lat, workEta,&current_speed,&current_angle,INTERPOLATION_DEFAULT))
+            if (dataThread->dataManager->hasData(DATA_CURRENT_VX,DATA_LV_MSL,0) && dataThread->dataManager->getInterpolatedCurrent(lon, lat, workEta,&current_speed,&current_angle,INTERPOLATION_DEFAULT))
             {
                 current_angle=radToDeg(current_angle);
                 QPointF p=Util::calculateSumVect(windAngle,windSpeed,current_angle,current_speed);
@@ -716,7 +825,7 @@ inline int ROUTAGE::calculateTimeRoute(const vlmPoint &routeFrom,const vlmPoint 
     return qAbs(etaRoute-dataThread->Eta);
 }
 
-ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScene, myCentralWidget *parentWindow)
+ROUTAGE::ROUTAGE(QString name, Projection *proj, DataManager *dataManager, QGraphicsScene * myScene, myCentralWidget *parentWindow)
         : QObject()
 {
     timerTempo=new QTimer(this);
@@ -734,7 +843,7 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     else
         this->useMultiThreading=true;
     connect(myScene,SIGNAL(eraseWay()),this,SLOT(eraseWay()));
-    this->grib=grib;
+    this->dataManager=dataManager;
     this->parent=parentWindow;
     map=parent->get_gshhsReader();
     QList<QColor> colorsList;
@@ -782,6 +891,7 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, Grib *grib, QGraphicsScene * my
     this->zoomLevel=Settings::getSetting("autoZoomLevel",2).toInt();
     this->maxPres=Settings::getSetting("routageMaxPres",70).toDouble();
     this->maxPortant=Settings::getSetting("routageMaxPortant",70).toDouble();
+    this->maxWaveHeight=Settings::getSetting("routageMaxWaveHeight",100).toDouble();
     this->minPres=Settings::getSetting("routageMinPres",0).toDouble();
     this->minPortant=Settings::getSetting("routageMinPortant",0).toDouble();
     this->pruneWakeAngle=Settings::getSetting("routagePruneWake",30).toInt();
@@ -891,6 +1001,7 @@ void ROUTAGE::calculate()
         Settings::setSetting("routageMaxPortant",maxPortant);
         Settings::setSetting("routageMinPres",minPres);
         Settings::setSetting("routageMinPortant",minPortant);
+        Settings::setSetting("routageMaxWaveHeight",maxWaveHeight);
         Settings::setSetting("routagePruneWake",pruneWakeAngle);
         Settings::setSetting("routageOrtho",routageOrtho?1:0);
         Settings::setSetting("routageShowBestLive",showBestLive?1:0);
@@ -908,7 +1019,7 @@ void ROUTAGE::calculate()
     /**** update boat barriers ***/
     myBoat->cleanBarrierList();
 
-    if(!grib)
+    if(!dataManager)
     {
         QMessageBox::critical(0,tr("Routage"),tr("Pas de grib charge"));
         parent->deleteRoutage(this);
@@ -923,7 +1034,7 @@ void ROUTAGE::calculate()
     }
     else
         i_eta=eta;
-    if ( eta>grib->getMaxDate() || eta<grib->getMinDate() )
+    if ( eta>dataManager->get_maxDate() || eta<dataManager->get_minDate() )
     {
         QMessageBox::critical(0,tr("Routage"),tr("Date de depart choisie incoherente avec le grib"));
         parent->deleteRoutage(this);
@@ -1048,10 +1159,25 @@ void ROUTAGE::slot_calculate_with_tempo()
     disconnect(proj,SIGNAL(projectionUpdated()),this,SLOT(slot_calculate_with_tempo()));
     timerTempo->start();
 }
+void ROUTAGE::calculateMaxDist()
+{
+    int timeStep=qMax(timeStepLess24,timeStepMore24);
+    double maxSpeed=myBoat->getPolarData()->getMaxSpeed();
+    maxDist=maxSpeed*2.0*timeStep/60.0;
+    double X1=proj->getCX();
+    double Y1=proj->getCY();
+    double X2,Y2;
+    Util::getCoordFromDistanceAngle(Y1,X1,maxDist,0.0,&Y2,&X2);
+    double x1,y1,x2,y2;
+    proj->map2screenDouble(X1,Y1,&x1,&y1);
+    proj->map2screenDouble(X2,Y2,&x2,&y2);
+    maxDist=QLineF(x1,y1,x2,y2).length();
+}
 
 void ROUTAGE::slot_calculate()
 {
     disconnect(proj,SIGNAL(projectionUpdated()),this,SLOT(slot_calculate()));
+    calculateMaxDist();
     double   cap;
     QTime timeTotal;
 #ifdef traceTime
@@ -1082,6 +1208,14 @@ void ROUTAGE::slot_calculate()
     int maxLoop=0;
     int nbCaps=0;
     int nbCapsPruned=0;
+    int dataWave=-1;
+    if(maxWaveHeight<100)
+    {
+        if(dataManager->hasData(DATA_WAVES_SIG_HGT_COMB,DATA_LV_GND_SURF,0))
+            dataWave=DATA_WAVES_SIG_HGT_COMB;
+        else if(dataManager->hasData(DATA_WAVES_MAX_HGT,DATA_LV_GND_SURF,0))
+            dataWave=DATA_WAVES_MAX_HGT;
+    }
 #ifdef OLD_BARRIER
     QList<POI *> poiList=parent->getPois();
     for(int p=0;p<poiList.size();++p)
@@ -1214,7 +1348,7 @@ void ROUTAGE::slot_calculate()
     time_t workEta=0;
     NR_n=0;
     NR_success=0;
-    time_t maxDate=grib->getMaxDate();
+    time_t maxDate=dataManager->get_maxDate();
     if(angleRange>=180) angleRange=179;
     arrivalIsClosest=false;
     time_t realEta=eta;
@@ -1252,14 +1386,14 @@ void ROUTAGE::slot_calculate()
                 workEta = eta;
             if(whatIfUsed && whatIfJour<=workEta)
                 workEta=workEta+whatIfTime*3600;
-            if(!grib->getInterpolatedValue_byDates((double) list->at(n).lon,(double) list->at(n).lat,
+            if(!dataManager->getInterpolatedWind((double) list->at(n).lon,(double) list->at(n).lat,
                    workEta,&windSpeed,&windAngle,INTERPOLATION_DEFAULT)||workEta+this->getTimeStep()*60>maxDate)
             {
                 iso->setPointDead(n);
                 continue;
             }
             windAngle=radToDeg(windAngle);
-            if(grib->getInterpolatedValueCurrent_byDates((double) list->at(n).lon,(double) list->at(n).lat,
+            if(dataManager->hasData(DATA_CURRENT_VX,DATA_LV_MSL,0) && dataManager->getInterpolatedCurrent((double) list->at(n).lon,(double) list->at(n).lat,
                    workEta,&current_speed,&current_angle,INTERPOLATION_DEFAULT))
             {
                 current_angle=radToDeg(current_angle);
@@ -1284,7 +1418,7 @@ void ROUTAGE::slot_calculate()
             iso->setPointCurrent(n,current_angle,current_speed);
             double vmg;
             myBoat->getPolarData()->getBvmg(Util::A360(list->at(n).capArrival-windAngle),windSpeed,&vmg);
-            iso->setPointCapVmg(n,Util::A360(vmg+windAngle));
+            //iso->setPointCapVmg(n,Util::A360(vmg+windAngle));
         }
 #ifdef traceTime
         msecs_5+=tfp.elapsed();
@@ -1303,6 +1437,7 @@ void ROUTAGE::slot_calculate()
         time.start();
 #endif
         bool hasTouchCoast=false;
+//        int passe=0;
         for(int n=0;n<list->size();++n)
         {
             if(aborted) break;
@@ -1407,19 +1542,6 @@ void ROUTAGE::slot_calculate()
     #endif
                     vlmPoint newPoint(0,0);
                     cap=caps.at(ccc);
-                    double twa_x=qAbs(cap-windAngle);
-                    if(qAbs(twa_x)>180)
-                    {
-                        if(twa_x<0)
-                            twa_x=360+twa_x;
-                        else
-                            twa_x=twa_x-360;
-                    }
-                    twa_x=qAbs(twa_x);
-                    if(twa_x<=90 && windSpeed>this->maxPres) continue;
-                    if(twa_x<=90 && windSpeed<this->minPres) continue;
-                    if(twa_x>=90 && windSpeed>this->maxPortant) continue;
-                    if(twa_x>=90 && windSpeed<this->minPortant) continue;
                     newPoint.routage=this;
                     newPoint.origin=iso->getPoint(n);
                     newPoint.originNb=n;
@@ -1434,8 +1556,9 @@ void ROUTAGE::slot_calculate()
                         newPoint.eta=eta;
                     if(n!=list->size()-1)
                     {
-                        if(Util::myDiffAngle(newPoint.origin->capArrival,
-                                       list->at(n+1).capArrival)<60)
+                        QLineF line1(xa,ya,newPoint.origin->x,newPoint.origin->y);
+                        QLineF line2(xa,ya,list->at(n+1).x,list->at(n+1).y);
+                        if(qAbs(Util::A180(qAbs(line1.angleTo(line2))))<60)
                         {
                             newPoint.xP1=list->at(n+1).x;
                             newPoint.yP1=list->at(n+1).y;
@@ -1443,8 +1566,9 @@ void ROUTAGE::slot_calculate()
                     }
                     if(n!=0)
                     {
-                        if(Util::myDiffAngle(newPoint.origin->capArrival,
-                                       list->at(n-1).capArrival)<60)
+                        QLineF line1(xa,ya,newPoint.origin->x,newPoint.origin->y);
+                        QLineF line2(xa,ya,list->at(n-1).x,list->at(n-1).y);
+                        if(qAbs(Util::A180(qAbs(line1.angleTo(line2))))<60)
                         {
                             newPoint.xM1=list->at(n-1).x;
                             newPoint.yM1=list->at(n-1).y;
@@ -1456,21 +1580,36 @@ void ROUTAGE::slot_calculate()
                 tfp.start();
 #endif
                 if(!this->useMultiThreading)
-                {
-                    for(int pp=0;pp<findPoints.size();++pp)
-                    {
-                        findPoints.replace(pp,findPointThreaded(findPoints.at(pp)));
-                    }
-                }
+                    findPoints=findPointThreaded(findPoints);
                 else
                 {
-                    findPoints = QtConcurrent::blockingMapped(findPoints, findPointThreaded);
+                    QList<QList<vlmPoint> > listList;
+                    QList<vlmPoint> tempList;
+                    int pp=0;
+                    int threadCount=qMax(1,QThread::idealThreadCount()*2);
+                    for (int t=1;t<=threadCount;++t)
+                    {
+                        tempList.clear();
+                        for (;(double)pp<(double)findPoints.size()*(double)t/(double)threadCount;++pp)
+                        {
+                            tempList.append(findPoints.at(pp));
+                        }
+                        listList.append(tempList);
+                    }
+                    tempList.clear();
+                    //qWarning()<<"1 listlist has"<<listList.size();
+                    listList = QtConcurrent::blockingMapped(listList, ROUTAGE::findPointThreaded);
+                    //qWarning()<<"2 listlist has"<<listList.size();
+                    findPoints.clear();
+                    for(int l=0;l<listList.size();++l)
+                        findPoints.append(listList.at(l));
+                    //qWarning()<<"findPoints has"<<findPoints.size();
                 }
-                for (int pp=findPoints.size()-1;pp>=0;--pp)
-                {
-                    if(findPoints.at(pp).isDead)
-                        findPoints.removeAt(pp);
-                }
+//                for (int pp=findPoints.size()-1;pp>=0;--pp)
+//                {
+//                    if(findPoints.at(pp).isDead)
+//                        findPoints.removeAt(pp);
+//                }
 #ifdef traceTime
                 msecs_3=msecs_3+tfp.elapsed();
 #endif
@@ -1484,8 +1623,22 @@ void ROUTAGE::slot_calculate()
 #ifdef traceTime
                         tfp.start();
 #endif
+                        double twa_x=qAbs(newPoint.capOrigin-newPoint.wind_angle);
+                        if(qAbs(twa_x)>180)
+                        {
+                            if(twa_x<0)
+                                twa_x=360+twa_x;
+                            else
+                                twa_x=twa_x-360;
+                        }
+                        twa_x=qAbs(twa_x);
                         if((checkCoast && map && map->crossing(QLineF(list->at(n).x,list->at(n).y,newPoint.x,newPoint.y),QLineF(list->at(n).lon,list->at(n).lat,newPoint.lon,newPoint.lat)))
-                                || (checkLine && crossBarriere(QLineF(list->at(n).x,list->at(n).y,newPoint.x,newPoint.y))))
+                                || (checkLine && crossBarriere(QLineF(list->at(n).x,list->at(n).y,newPoint.x,newPoint.y))) ||
+                            (twa_x<=90 && newPoint.wind_speed>this->maxPres) ||
+                            (twa_x<=90 && newPoint.wind_speed<this->minPres) ||
+                            (twa_x>=90 && newPoint.wind_speed>this->maxPortant) ||
+                            (twa_x>=90 && newPoint.wind_speed<this->minPortant) ||
+                            (dataWave>0 && dataManager->getInterpolatedValue_1D(dataWave,DATA_LV_GND_SURF,0,newPoint.lon,newPoint.lat,newPoint.eta)>maxWaveHeight))
                         {
 #ifdef traceTime
                             msecs_14=msecs_14+tfp.elapsed();
@@ -1586,6 +1739,20 @@ void ROUTAGE::slot_calculate()
         }
 #ifdef debugCount
         this->countDebug(nbIso,"initial count in tempPoints");
+        for(int deb=tempPoints.size()-1;deb>=0;--deb)
+        {
+            vlmPoint point=tempPoints.at(deb);
+            if(!point.origin->isStart)
+            {
+                QPolygonF * shape=this->getShapeIso();
+                QPointF p=QPointF(point.x,point.y);
+                if(shape->containsPoint(p,Qt::OddEvenFill))
+                {
+                    tempPoints.removeAt(deb);
+                }
+            }
+        }
+        this->countDebug(nbIso,"after shape contains removal");
 #endif
 #ifdef traceTime
         msecs_1=msecs_1+time.elapsed();
@@ -1594,7 +1761,7 @@ void ROUTAGE::slot_calculate()
         if(aborted)
             break;
 #ifdef traceTime
-        time.restart();
+        time.start();
 #endif
 #if 1
         if(tempPoints.size()>0 && !tempPoints.first().origin->isStart)
@@ -1611,7 +1778,7 @@ void ROUTAGE::slot_calculate()
             break;
 #if 1 /*check that the new iso itself does not cross previous segments or iso*/
 #ifdef traceTime
-        time.restart();
+        time.start();
 #endif
         if(!tempPoints.at(0).origin->isStart)
         {
@@ -1626,9 +1793,9 @@ void ROUTAGE::slot_calculate()
 #endif
 #if 1   /*eliminate points by wake pruning*/
 #ifdef traceTime
-        time.restart();
+        time.start();
 #endif
-        if(!hasTouchCoast && !tempPoints.first().origin->isStart)
+        if(arrivalIsClosest && !tempPoints.first().origin->isStart)
         {
             pruneWake(pruneWakeAngle);
         }
@@ -1643,7 +1810,7 @@ void ROUTAGE::slot_calculate()
 /*elimination de 50% des points surnumeraires*/
         //qWarning()<<"before first epuration"<<tempPoints.size();
 #ifdef traceTime
-        time.restart();
+        time.start();
 #endif
         int limit=(this->angleRange/this->angleStep)+this->explo;
         if(hasTouchCoast) limit=limit*1.5;
@@ -1662,7 +1829,7 @@ void ROUTAGE::slot_calculate()
 #endif
 #if 1 /*smoothing iso*/
 #ifdef traceTime
-        time.restart();
+        time.start();
 #endif
         if(!tempPoints.isEmpty() && !tempPoints.first().origin->isStart)
         {
@@ -1709,7 +1876,7 @@ void ROUTAGE::slot_calculate()
             break;
         somethingHasChanged=true;
 #ifdef traceTime
-        time.restart();
+        time.start();
 #endif
         bool routeDone=false;
         int nbLoop=0;
@@ -1725,10 +1892,17 @@ void ROUTAGE::slot_calculate()
                 maxLoop=nbLoop;
             somethingHasChanged=false;
 /*recheck that the new iso itself does not cross previous segments*/
+#ifdef traceTime
+            QTime t1,t2;
+            t1.start();
+#endif
             if(!tempPoints.first().origin->isStart && nbLoop<=5)
             {
                 checkIsoCrossingPreviousSegments();
             }
+#ifdef traceTime
+            msecs_9+=t1.elapsed();
+#endif
 #ifdef debugCount
             this->countDebug(nbIso,"after checkIsoCrossingPreviousSegments() -2");
 #endif
@@ -1737,7 +1911,6 @@ void ROUTAGE::slot_calculate()
             if(this->useRouteModule && !routeDone)
             {
 #ifdef traceTime
-                QTime t1,t2;
                 t1.start();
 #endif
                 somethingHasChanged=true;
@@ -1748,7 +1921,7 @@ void ROUTAGE::slot_calculate()
                     QList<vlmPoint> tempList;
                     int pp=0;
 #if 1
-                    int threadCount=QThread::idealThreadCount()*2;
+                    int threadCount=qMax(1,QThread::idealThreadCount()*2);
                     for (int t=1;t<=threadCount;++t)
                     {
                         tempList.clear();
@@ -1767,7 +1940,7 @@ void ROUTAGE::slot_calculate()
                     }
 #endif
                     tempList.clear();
-                    listList = QtConcurrent::blockingMapped(listList, findRoute);
+                    listList = QtConcurrent::blockingMapped(listList, ROUTAGE::findRoute);
                     tempPoints.clear();
                     for(pp=0;pp<listList.size();++pp)
                         tempPoints.append(listList.at(pp));
@@ -1839,10 +2012,12 @@ void ROUTAGE::slot_calculate()
                         }
                     }
 #endif
+#if 0
                     if(newPoint.origin->isStart)
                         newPoint.distIso=newPoint.distStart;
                     else
                         newPoint.distIso=ROUTAGE::findDistancePreviousIso(newPoint, &shapeIso);
+#endif
                     tempPoints.replace(np,newPoint);
                 }
 #ifdef debugCount
@@ -1853,7 +2028,7 @@ void ROUTAGE::slot_calculate()
 #ifdef traceTime
                     t2.start();
 #endif
-                    tempPoints = QtConcurrent::blockingMapped(tempPoints, checkCoastCollision);
+                    tempPoints = QtConcurrent::blockingMapped(tempPoints, ROUTAGE::checkCoastCollision);
                     for (int np=0;np<tempPoints.size();++np)
                     {
                         if(tempPoints.at(np).isDead)
@@ -1891,12 +2066,15 @@ void ROUTAGE::slot_calculate()
                     Triangle t(Point(pt1.origin->x,pt1.origin->y),
                                Point(pt1.x,pt1.y),
                                Point(pt2.x,pt2.y));
-                    if (t.orientation()!=right_turn)
+                    int sens=t.orientation();
+                    if (sens!=right_turn && sens!=collinear)
                     {
-                        if(pt1.distIso>pt2.distIso)
-                            tempPoints.removeAt(pp);
-                        else
-                            tempPoints.removeAt(pp-1);
+                        tempPoints.swap(pp-1,pp);
+                        ++pp;
+//                        if(pt1.distIso>pt2.distIso)
+//                            tempPoints.removeAt(pp);
+//                        else
+//                            tempPoints.removeAt(pp-1);
                     }
                 }
 #ifdef traceTime
@@ -1908,8 +2086,14 @@ void ROUTAGE::slot_calculate()
                     t1.start();
 #endif
                     removeCrossedSegments();
+#ifdef traceTime
+                    msecs_13=msecs_13+t1.elapsed();
+#endif
 #ifdef debugCount
                     this->countDebug(nbIso,"after removeCrossedSegment in end of final loop");
+#endif
+#ifdef traceTime
+                    t1.start();
 #endif
                     checkIsoCrossingPreviousSegments();
 #ifdef debugCount
@@ -1929,7 +2113,7 @@ void ROUTAGE::slot_calculate()
 #endif
         /*epuration finale final part*/
 #ifdef traceTime
-        time.restart();
+        time.start();
 #endif
         c=tempPoints.size();
         toBeRemoved=c-limit;
@@ -1947,7 +2131,7 @@ void ROUTAGE::slot_calculate()
 #ifdef traceTime
         msecs_6=msecs_6+time.elapsed();
 #endif
-        previousIso.clear();
+        //previousIso.clear();
 #ifdef traceTime
         QTime t2;
 #endif
@@ -2018,6 +2202,7 @@ void ROUTAGE::slot_calculate()
                 tempPoints[n].isoIndex=n;
                 tempPoints.at(n).origin->myChildren.append(tempPoints.at(n));
                 iso->addVlmPoint(tempPoints.at(n));
+#if 0
                 if(n>0)
                 {
                     if(Util::myDiffAngle(tempPoints.at(n).capArrival,tempPoints.at(n-1).capArrival) < 60)
@@ -2033,6 +2218,7 @@ void ROUTAGE::slot_calculate()
                 {
                     previousIso.append(QPointF(tempPoints.at(n).x,tempPoints.at(n).y));
                 }
+#endif
                 if(!i_iso)
                 {
                     vlmPointGraphic * vg=new vlmPointGraphic(this,nbIso+1,mmm,
@@ -2042,7 +2228,7 @@ void ROUTAGE::slot_calculate()
                                                            Z_VALUE_ISOPOINT);
                     vg->setParent(this);
                     ++mmm;
-#if 0
+#if 0 //set to 1 to debug extra information on isopoint
                     if(tempPoints.at(n).isBroken)
                         vg->setDebug("Broken "+QString().setNum(isochrones.size()+1));
                     else
@@ -2055,7 +2241,7 @@ void ROUTAGE::slot_calculate()
 #if 0
                     datathread dataThread;
                     dataThread.Boat=this->getBoat();
-                    dataThread.GriB=this->getGrib();
+                    dataThread.dataManager=get_dataManager();
                     dataThread.whatIfJour=this->getWhatIfJour();
                     dataThread.whatIfUsed=this->getWhatIfUsed();
                     dataThread.whatIfTime=this->getWhatIfTime();
@@ -2095,7 +2281,7 @@ void ROUTAGE::slot_calculate()
         previousSegments.clear();
         forbidZone.clear();
 #ifdef traceTime
-        time.restart();
+        time.start();
 #endif
         double newMinDist=initialDist*10;
         for (int n=0;n<list->size();++n)
@@ -2158,7 +2344,7 @@ void ROUTAGE::slot_calculate()
 #endif
         iso->slot_showMe();
 #ifdef traceTime
-        time.restart();
+        time.start();
 #endif
         if(++refresh%4==0)
         {
@@ -2181,7 +2367,7 @@ void ROUTAGE::slot_calculate()
         else
             isochrones.append(iso);
 #ifdef traceTime
-        time.restart();
+        time.start();
 #endif
 #ifdef USE_SHAPEISO
         calculateShapeIso();
@@ -2191,7 +2377,7 @@ void ROUTAGE::slot_calculate()
 #endif
         vlmPoint to(arrival.x(),arrival.y());
 #ifdef traceTime
-        time.restart();
+        time.start();
 #endif
         datathread dataThread;
         dataThread.Boat=this->getBoat();
@@ -2199,7 +2385,7 @@ void ROUTAGE::slot_calculate()
             dataThread.Eta=i_eta;
         else
             dataThread.Eta=eta;
-        dataThread.GriB=this->getGrib();
+        dataThread.dataManager=this->get_dataManager();
         dataThread.whatIfJour=this->getWhatIfJour();
         dataThread.whatIfUsed=this->getWhatIfUsed();
         dataThread.whatIfTime=this->getWhatIfTime();
@@ -2240,7 +2426,7 @@ void ROUTAGE::slot_calculate()
             datathread dataThread;
             dataThread.Boat=this->getBoat();
             dataThread.Eta=this->getEta();
-            dataThread.GriB=this->getGrib();
+            dataThread.dataManager=this->get_dataManager();
             dataThread.whatIfJour=this->getWhatIfJour();
             dataThread.whatIfUsed=this->getWhatIfUsed();
             dataThread.whatIfTime=this->getWhatIfTime();
@@ -2502,12 +2688,12 @@ void ROUTAGE::slot_calculate()
 }
 void ROUTAGE::countDebug(int nbIso, QString s)
 {
-    if (nbIso!=65) return;
+    if (nbIso!=238) return;
     int count=0;
     int nDead=0;
     for (int n=0;n<tempPoints.size();++n)
     {
-        if(tempPoints.at(n).originNb==74)
+        if(tempPoints.at(n).originNb==56)
         {
             ++count;
             if(s.contains("initial"))
@@ -2538,20 +2724,20 @@ double ROUTAGE::findDistancePreviousIso(const vlmPoint &P, const QPolygonF * pol
 
     for(int i=0;i<poly->size()-1;++i)
     {
-        double ax=poly->at(i).x();
-        double ay=poly->at(i).y();
-        double bx=poly->at(i+1).x();
-        double by=poly->at(i+1).y();
-        double r_numerator = (cx-ax)*(bx-ax) + (cy-ay)*(by-ay);
-        double r_denomenator = (bx-ax)*(bx-ax) + (by-ay)*(by-ay);
-        double r = r_numerator / r_denomenator;
+        const double ax=poly->at(i).x();
+        const double ay=poly->at(i).y();
+        const double bx=poly->at(i+1).x();
+        const double by=poly->at(i+1).y();
+        const double r_numerator = (cx-ax)*(bx-ax) + (cy-ay)*(by-ay);
+        const double r_denomenator = (bx-ax)*(bx-ax) + (by-ay)*(by-ay);
+        const double r = r_numerator / r_denomenator;
 //
 //        double px = ax + r*(bx-ax);
 //        double py = ay + r*(by-ay);
 //
-        double s =  ((ay-cy)*(bx-ax)-(ax-cx)*(by-ay) ) / r_denomenator;
+        const double s =  ((ay-cy)*(bx-ax)-(ax-cx)*(by-ay) ) / r_denomenator;
 
-        double distanceLine = fabs(s)*sqrt(r_denomenator);
+        const double distanceLine = fabs(s)*sqrt(r_denomenator);
 
 //
 // (xx,yy) is the point on the lineSegment closest to (cx,cy)
@@ -2560,13 +2746,11 @@ double ROUTAGE::findDistancePreviousIso(const vlmPoint &P, const QPolygonF * pol
 //        double yy = py;
         double distanceSegment=0;
         if ( (r >= 0) && (r <= 1) )
-        {
             distanceSegment = distanceLine;
-        }
         else
         {
-            double dist1 = (cx-ax)*(cx-ax) + (cy-ay)*(cy-ay);
-            double dist2 = (cx-bx)*(cx-bx) + (cy-by)*(cy-by);
+            const double dist1 = (cx-ax)*(cx-ax) + (cy-ay)*(cy-ay);
+            const double dist2 = (cx-bx)*(cx-bx) + (cy-by)*(cy-by);
             if (dist1 < dist2)
             {
 //                    xx = ax;
@@ -2645,64 +2829,86 @@ double ROUTAGE::findDistancePoly(const QPointF P, const QPolygonF * poly, QPoint
     }
     return minDistanceSegment;
 }
-void ROUTAGE::pruneWake(int wakeAngle)
+QList<vlmPoint> ROUTAGE::pruneWakeThreaded(const QList<vlmPoint> &list)
 {
-    if (wakeAngle<1) return;
+    QList<vlmPoint> listResult;
+    if(list.isEmpty()) return listResult;
+    vlmPoint p=list.at(0);
     QList<vlmPoint> *pIso;
     double wakeDir=0;
-    if(i_iso)
-        pIso=i_isochrones.last()->getPoints();
+    if(p.routage->getI_iso())
+        pIso=p.routage->getI_Isochrones()->at(p.routage->getI_Isochrones()->size()-1)->getPoints();
     else
-        pIso=isochrones.last()->getPoints();
-    for(int n=tempPoints.size()-1;n>=0;--n)
+        pIso=p.routage->getIsochrones()->at(p.routage->getIsochrones()->size()-1)->getPoints();
+    for(int n=0;n<list.size();++n)
     {
-        double x1,y1,x2,y2;
-        x1=tempPoints.at(n).x;
-        y1=tempPoints.at(n).y;
+        p=list.at(n);
+        if(p.origin->isBroken)
+        {
+            listResult.append(p);
+            continue;
+        }
+        const QLineF l2(p.routage->getXa(),p.routage->getYa(),p.x,p.y);
+        bool bad=false;
         for(int m=0;m<pIso->size();++m)
         {
-            if(pIso->at(m).distArrival>tempPoints.at(n).distArrival) continue;
+            const QLineF l1(p.routage->getXa(),p.routage->getYa(),pIso->at(m).x,pIso->at(m).y);
+            if(l1.length()>=l2.length()) continue;
             if(pIso->at(m).isDead) continue;
-            double pc1=pIso->at(m).distArrival/initialDist;
-            double pc2=tempPoints.at(n).distArrival/initialDist;
-            if(pc2-pc1<0.30) continue;
-            if(Util::myDiffAngle(pIso->at(m).capArrival,tempPoints.at(n).capArrival)>60) continue;
-            QLineF toArrival(pIso->at(m).x,pIso->at(m).y,xa,ya);
-            QLineF toArrival2(tempPoints.at(n).x,tempPoints.at(n).y,xa,ya);
-            double a=toArrival.angleTo(toArrival2);
-            if(a>180) a=360-a;
-            if(a>90) continue;
-            x2=pIso->at(m).x;
-            y2=pIso->at(m).y;
+            if(l1.length()/l2.length()<0.3) continue;
             QPolygonF wake;
-            wake.append(QPointF(x2,y2));
-            QLineF temp(xa,ya,x1,y1);
-            wakeDir=temp.angle();
-            QLineF temp1(x2,y2,x1,y1);
-            temp1.setAngle(Util::A360(wakeDir+wakeAngle));
-            temp1.setLength(10e5);
+            wake.append(QPointF(pIso->at(m).x,pIso->at(m).y));
+            wakeDir=l1.angle();
+            QLineF temp1(pIso->at(m).x,pIso->at(m).y,p.x,p.y);
+            temp1.setLength(temp1.length()*2.0);
+            temp1.setAngle(wakeDir+(p.routage->pruneWakeAngle/2.0));
             wake.append(temp1.p2());
-            temp1.setAngle(Util::A360(wakeDir-wakeAngle));
+            temp1.setAngle(wakeDir-p.routage->pruneWakeAngle);
             wake.append(temp1.p2());
-            wake.append(QPointF(x2,y2));
-            if(wake.containsPoint(QPointF(x1,y1),Qt::OddEvenFill))
+            wake.append(QPointF(pIso->at(m).x,pIso->at(m).y));
+            if(wake.containsPoint(QPointF(p.x,p.y),Qt::OddEvenFill))
             {
-                if(this->checkCoast || checkLine)
+                if(p.routage->getCheckCoast() || p.routage->getCheckLine())
                 {
-                    if((!checkCoast || (map &&!map->crossing(QLineF(x1,y1,pIso->at(m).x,pIso->at(m).y),QLineF(tempPoints.at(n).lon,tempPoints.at(n).lat,pIso->at(m).lon,pIso->at(m).lat))))
-                        && (!checkLine || !crossBarriere(QLineF(x1,y1,pIso->at(m).x,pIso->at(m).y))))
-                    {
-                        tempPoints.removeAt(n);
-                        break;
-                    }
+                    if(!p.routage->checkCoastCollision2(p,pIso->at(m)))
+                        bad=true;
                 }
                 else
-                {
-                    tempPoints.removeAt(n);
-                    break;
-                }
+                    bad=true;
             }
         }
+        if(!bad)
+            listResult.append(p);
+    }
+    return listResult;
+}
+void ROUTAGE::pruneWake(const int &wakeAngle)
+{
+    if(wakeAngle<1) return;
+    if(useMultiThreading)
+    {
+        QList<QList<vlmPoint> > listList;
+        QList<vlmPoint> tempList;
+        int pp=0;
+        int threadCount=qMax(1,QThread::idealThreadCount()*2);
+        for (int t=1;t<=threadCount;++t)
+        {
+            tempList.clear();
+            for (;(double)pp<(double)tempPoints.size()*(double)t/(double)threadCount;++pp)
+            {
+                tempList.append(tempPoints.at(pp));
+            }
+            listList.append(tempList);
+        }
+        tempList.clear();
+        listList = QtConcurrent::blockingMapped(listList, ROUTAGE::pruneWakeThreaded);
+        tempPoints.clear();
+        for(int l=0;l<listList.size();++l)
+            tempPoints.append(listList.at(l));
+    }
+    else
+    {
+        tempPoints=ROUTAGE::pruneWakeThreaded(tempPoints);
     }
 }
 double ROUTAGE::findTime(const vlmPoint * pt, QPointF P, double * cap)
@@ -2756,7 +2962,7 @@ void ROUTAGE::slot_gribDateChanged()
     bool found=false;
     for(int n=0;n<isochrones.size();++n)
     {
-        int time=qAbs(isochrones.at(n)->getPoint(0)->eta - grib->getCurrentDate());
+        int time=qAbs(isochrones.at(n)->getPoint(0)->eta - dataManager->get_currentDate());
         if (time<maxTime)
         {
             maxTime=time;
@@ -3057,33 +3263,75 @@ void ROUTAGE::convertToRoute()
     else if (multiNb>0)
         parent->addPivot(this,false);
 }
+vlmPoint ROUTAGE::multiThreadedContains(const vlmPoint &p)
+{
+    vlmPoint pt=p;
+    if(pt.routage->getShapeIso()->containsPoint(QPointF(pt.x,pt.y),Qt::OddEvenFill))
+        pt.isDead=true;
+    return pt;
+}
 void ROUTAGE::checkIsoCrossingPreviousSegments()
 {
 #ifdef USE_SHAPEISO
+    if(useMultiThreading)
+    {
+        tempPoints=QtConcurrent::blockingMapped(tempPoints,ROUTAGE::multiThreadedContains);
+    }
     for(int nn=0;nn<tempPoints.size();++nn)
     {
-//        if(tempPoints.at(nn).notSimplificable)
-//            continue;
-//        if(tempPoints.at(nn).origin->notSimplificable)
-//            continue;
-        if(shapeIso.containsPoint(QPointF(tempPoints.at(nn).x,tempPoints.at(nn).y),Qt::OddEvenFill))
+        if(!useMultiThreading)
         {
-            somethingHasChanged=true;
-            tempPoints.removeAt(nn);
-            --nn;
-            continue;
-        }
-        QLineF S(tempPoints.at(nn).origin->x,tempPoints.at(nn).origin->y,tempPoints.at(nn).x,tempPoints.at(nn).y);
-        QPointF P=S.pointAt(0.01);
-        S.setP1(P);
-        for (int i=0;i<shapeIso.size()-i;++i)
-        {
-            if(S.intersect(QLineF(shapeIso.at(i),shapeIso.at(i+1)),&P)==QLineF::BoundedIntersection)
+            if(shapeIso.containsPoint(QPointF(tempPoints.at(nn).x,tempPoints.at(nn).y),Qt::OddEvenFill))
             {
                 somethingHasChanged=true;
                 tempPoints.removeAt(nn);
                 --nn;
-                break;
+                continue;
+            }
+        }
+        else
+        {
+            if(tempPoints.at(nn).isDead)
+            {
+                somethingHasChanged=true;
+                tempPoints.removeAt(nn);
+                --nn;
+                continue;
+            }
+        }
+        if(tempPoints.at(nn).origin->isBroken)
+        {
+            QLineF S(tempPoints.at(nn).origin->x,tempPoints.at(nn).origin->y,tempPoints.at(nn).x,tempPoints.at(nn).y);
+            QPointF P=S.pointAt(0.01);
+            S.setP1(P);
+            bool bad=false;
+            for (int i=0;i<shapeIso.size()-1;++i)
+            {
+                QLineF I(shapeIso.at(i),shapeIso.at(i+1));
+                if(S.intersect(I,&P)==QLineF::BoundedIntersection)
+                {
+                    somethingHasChanged=true;
+                    tempPoints.removeAt(nn);
+                    --nn;
+                    bad=true;
+                    break;
+                }
+            }
+            if (bad) continue;
+            if(nn!=tempPoints.size()-1 && !tempPoints.at(nn).isBroken)
+            {
+                QLineF S2=QLineF(tempPoints.at(nn).x,tempPoints.at(nn).y,tempPoints.at(nn+1).x,tempPoints.at(nn+1).y);
+                for (int i=0;i<shapeMiddle.size()-1;++i)
+                {
+                    QLineF I(shapeMiddle.at(i),shapeMiddle.at(i+1));
+                    if(S2.intersect(I,&P)==QLineF::BoundedIntersection)
+                    {
+                        somethingHasChanged=true;
+                        tempPoints.removeAt(nn);
+                        --nn;
+                        break;
+                    }
+                }
             }
         }
     }
@@ -3140,6 +3388,28 @@ void ROUTAGE::checkIsoCrossingPreviousSegments()
 #endif
     }
 #endif
+#if 0
+    QPointF dummy;
+    for(int nn=0;nn<tempPoints.size()-1;++nn)
+    {
+        QLineF S1(tempPoints.at(nn).x,tempPoints.at(nn).y,tempPoints.at(nn+1).x,tempPoints.at(nn+1).y);
+        QList<vlmPoint> *iso=i_iso?i_isochrones.last()->getPoints():isochrones.last()->getPoints();
+        for(int mm=0;mm<iso->size()-1;++mm) /*also check that new Iso does not cross previous iso*/
+        {
+            if(iso->at(mm).isBroken) continue;
+            QLineF S2(QPointF(iso->at(mm).x,iso->at(mm).y),QPointF(iso->at(mm+1).x,iso->at(mm+1).y));
+            if(S1.intersect(S2,&dummy)==QLineF::BoundedIntersection)
+            {
+                if(tempPoints.at(nn).distIso<tempPoints.at(nn+1).distIso)
+                    tempPoints.removeAt(nn);
+                else
+                    tempPoints.removeAt(nn+1);
+                --nn;
+                break;
+            }
+        }
+    }
+#endif
 }
 void ROUTAGE::epuration(int toBeRemoved)
 {
@@ -3181,6 +3451,7 @@ void ROUTAGE::epuration(int toBeRemoved)
     QRectF bounding=shapeIso.boundingRect().normalized();
 #endif
     bool differentDirection=bounding.contains(xa,ya);
+    //bool differentDirection=shapeIso.containsPoint(QPointF(xa,ya),Qt::OddEvenFill);
     QLineF separation;
     QLineF tempLine(bounding.center(),QPointF(xa,ya));
     if(differentDirection)
@@ -3284,7 +3555,7 @@ void ROUTAGE::epuration(int toBeRemoved)
         QList<QList<vlmPoint> > listList;
         listList.append(rightFromLoxo);
         listList.append(leftFromLoxo);
-        listList = QtConcurrent::blockingMapped(listList, finalEpuration);
+        listList = QtConcurrent::blockingMapped(listList, ROUTAGE::finalEpuration);
         tempPoints.clear();
         tempPoints.reserve(listList.at(0).size()+listList.at(1).size());
         tempPoints.append(listList.at(0));
@@ -3312,7 +3583,10 @@ void ROUTAGE::removeCrossedSegments()
     for(int n=0;n<tempPoints.size()-1;++n)
     {
         bool differentDirection=false;
-        if(Util::myDiffAngle(tempPoints.at(n).capArrival,tempPoints.at(n+1).capArrival)>60.0)
+        QLineF line1(xa,ya,tempPoints.at(n).x,tempPoints.at(n).y);
+        QLineF line2(xa,ya,tempPoints.at(n+1).x,tempPoints.at(n+1).y);
+        if(qAbs(Util::A180(qAbs(line1.angleTo(line2))))>60.0 ||
+                qAbs(tempPoints.at(n).distArrival-tempPoints.at(n+1).distArrival)>maxDist)
         {
             if(tempPoints.at(n).originNb!=tempPoints.at(n+1).originNb)
             {
@@ -3325,7 +3599,7 @@ void ROUTAGE::removeCrossedSegments()
                     differentDirection=true;
             }
         }
-        else if(tempPoints.at(n).origin->isBroken || tempPoints.at(n+1).origin->isBroken)
+        else if(tempPoints.at(n).origin->isBroken /* && !tempPoints.at(n+1).origin->isBroken*/)
         {
             if(tempPoints.at(n).originNb!=tempPoints.at(n+1).originNb)
             {
@@ -3347,7 +3621,9 @@ void ROUTAGE::removeCrossedSegments()
             QPointF middle=temp1.pointAt(0.5);
             QLineF temp2(middle.x(),middle.y(),tempPoints.at(n).x,tempPoints.at(n).y);
             QLineF temp3(middle.x(),middle.y(),tempPoints.at(n+1).x,tempPoints.at(n+1).y);
-            ++debugCross0;
+//            QLineF temp2(tempPoints.at(n).origin->x,tempPoints.at(n).origin->y,tempPoints.at(n).x,tempPoints.at(n).y);
+//            QLineF temp3(tempPoints.at(n+1).origin->x,tempPoints.at(n+1).origin->y,tempPoints.at(n+1).x,tempPoints.at(n+1).y);
+            //++debugCross0;
             critere=temp2.angleTo(temp3);
             if(critere<0) critere+=360.0;
         }
@@ -3367,7 +3643,17 @@ void ROUTAGE::removeCrossedSegments()
         if(d.key()<180) break;
         QPoint couple=d.value();
         int badOne=0;
-        if(tempPoints.at(couple.x()).distIso<tempPoints.at(couple.y()).distIso)
+        double crit1=tempPoints.at(couple.x()).distIso;
+        double crit2=tempPoints.at(couple.y()).distIso;
+#if 0
+        if(qAbs(crit1-crit2)<(crit1+crit2)/20.0)
+        {
+            crit1=tempPoints.at(couple.x()).distArrival;
+            crit2=tempPoints.at(couple.y()).distArrival;
+        }
+#endif
+        //if(tempPoints.at(couple.x()).distIso<tempPoints.at(couple.y()).distIso)
+        if(crit1<crit2)
             badOne=couple.x();
         else
             badOne=couple.y();
@@ -3388,7 +3674,10 @@ void ROUTAGE::removeCrossedSegments()
 
 
             bool differentDirection=false;
-            if(Util::myDiffAngle(tempPoints.at(previous).capArrival,tempPoints.at(next).capArrival)>60)
+            QLineF line1(xa,ya,tempPoints.at(previous).x,tempPoints.at(previous).y);
+            QLineF line2(xa,ya,tempPoints.at(next).x,tempPoints.at(next).y);
+            if(qAbs(Util::A180(qAbs(line1.angleTo(line2))))>60.0 ||
+                    qAbs(tempPoints.at(previous).distArrival-tempPoints.at(next).distArrival)>maxDist)
             {
                 if(tempPoints.at(previous).originNb!=tempPoints.at(next).originNb)
                 {
@@ -3401,7 +3690,7 @@ void ROUTAGE::removeCrossedSegments()
                         differentDirection=true;
                 }
             }
-            else if(tempPoints.at(previous).origin->isBroken || tempPoints.at(next).origin->isBroken)
+            else if(tempPoints.at(previous).origin->isBroken /* && !tempPoints.at(next).origin->isBroken*/)
             {
                 if(tempPoints.at(previous).originNb!=tempPoints.at(next).originNb)
                 {
@@ -3423,6 +3712,8 @@ void ROUTAGE::removeCrossedSegments()
                 QPointF middle=temp1.pointAt(0.5);
                 QLineF temp2(middle.x(),middle.y(),tempPoints.at(previous).x,tempPoints.at(previous).y);
                 QLineF temp3(middle.x(),middle.y(),tempPoints.at(next).x,tempPoints.at(next).y);
+//                QLineF temp2(tempPoints.at(previous).origin->x,tempPoints.at(previous).origin->y,tempPoints.at(previous).x,tempPoints.at(previous).y);
+//                QLineF temp3(tempPoints.at(next).origin->x,tempPoints.at(next).origin->y,tempPoints.at(next).x,tempPoints.at(next).y);
                 critere=temp2.angleTo(temp3);
                 if(critere<0) critere+=360;
             }
@@ -3661,7 +3952,7 @@ void ROUTAGE::calculateCaps(QList<double> *caps, const vlmPoint &point, const do
             caps->prepend(Util::A360(point.capArrival+cc));
         if(cc>=workAngleRange/2.0) break;
     }
-#if 1
+#if 0
     if(point.capVmg==-1) return;
     Point vmg(cos(degToRad(point.capVmg)),sin(degToRad(point.capVmg)));
     Point O(0,0);
@@ -4540,7 +4831,7 @@ void ROUTAGE::calculateAlternative()
     datathread dataThread;
     dataThread.Boat=this->getBoat();
     dataThread.Eta=this->getEta();
-    dataThread.GriB=this->getGrib();
+    dataThread.dataManager=get_dataManager();
     dataThread.whatIfJour=this->getWhatIfJour();
     dataThread.whatIfUsed=this->getWhatIfUsed();
     dataThread.whatIfTime=this->getWhatIfTime();
@@ -4678,7 +4969,7 @@ bool ROUTAGE::checkIceGate(const vlmPoint &p) const
     }
     return true;
 }
-void ROUTAGE::calculateShapeIso(bool drawIt)
+void ROUTAGE::calculateShapeIso()
 {
 #ifndef USE_SHAPEISO
     return;
@@ -4717,6 +5008,7 @@ void ROUTAGE::calculateShapeIso(bool drawIt)
 //middle
     isoNb=isos.size()-1;
     n=0;
+    shapeMiddle.clear();
     while(true)
     {
         iso=isos.at(isoNb)->getPoints();
@@ -4724,11 +5016,13 @@ void ROUTAGE::calculateShapeIso(bool drawIt)
         while(!p.isBroken && p.myChildren.isEmpty() && n<iso->size()-1)
         {
             newShape.append(QPointF(p.x,p.y));
+            shapeMiddle.append(QPointF(p.x,p.y));
             p=iso->at(++n);
         }
         newShape.append(QPointF(p.x,p.y));
+        shapeMiddle.append(QPointF(p.x,p.y));
         if (n>=iso->size()-1) break;
-        if(p.isBroken)
+        if(p.isBroken && p.myChildren.isEmpty())
         {
             bool sameOrigin=false;
             while(p.isBroken)
@@ -4737,6 +5031,7 @@ void ROUTAGE::calculateShapeIso(bool drawIt)
                 p=*p.origin;
                 --isoNb;
                 newShape.append(QPointF(p.x,p.y));
+                shapeMiddle.append(QPointF(p.x,p.y));
                 if(!p.myChildren.isEmpty() && p.myChildren.at(p.myChildren.size()-1).isoIndex>i)
                 {
                     sameOrigin=true;
@@ -4749,12 +5044,15 @@ void ROUTAGE::calculateShapeIso(bool drawIt)
             }
             n=p.isoIndex;
             iso=isos.at(isoNb)->getPoints();
+            newShape.append(QPointF(p.x,p.y));
+            shapeMiddle.append(QPointF(p.x,p.y));
             if(!sameOrigin)
             {
                 while(!p.isBroken && n<iso->size()-1)
                 {
                     p=iso->at(++n);
                     newShape.append(QPointF(p.x,p.y));
+                    shapeMiddle.append(QPointF(p.x,p.y));
                     if(!p.myChildren.isEmpty())
                     {
                         ++isoNb;
@@ -4767,18 +5065,20 @@ void ROUTAGE::calculateShapeIso(bool drawIt)
         if(!p.myChildren.isEmpty())
         {
             newShape.append(QPointF(p.x,p.y));
+            shapeMiddle.append(QPointF(p.x,p.y));
             while(!p.myChildren.isEmpty())
             {
                 p=p.myChildren.at(0);
                 ++isoNb;
                 newShape.append(QPointF(p.x,p.y));
+                shapeMiddle.append(QPointF(p.x,p.y));
             }
         }
         iso=isos.at(isoNb)->getPoints();
         n=p.isoIndex;
         if(n>=iso->size()-1) break;
     }
-    newShape.remove(newShape.size()-1);
+    //newShape.remove(newShape.size()-1);
 //right side
     isoNb=isos.size()-1;
     iso=isos.at(isoNb)->getPoints();
@@ -4792,32 +5092,48 @@ void ROUTAGE::calculateShapeIso(bool drawIt)
         --isoNb;
         n=p.isoIndex;
         iso=isos.at(isoNb)->getPoints();
-        while(n<iso->size()-2 && !p.isBroken)
+        while(n<iso->size()-1 && !p.isBroken)
         {
             ++n;
-            p=iso->at(++n);
+            p=iso->at(n);
             newShape.append(QPointF(p.x,p.y));
         }
     }
     shapeIso.clear();
+    QPointF depart=i_iso?QPointF(xa,ya):QPointF(xs,ys);
+    double minDist=10e6;
+    iso=isos.last()->getPoints();
+    for(n=0;n<iso->size();++n)
+        minDist=qMin(minDist,QLineF(QPointF(iso->at(n).x,iso->at(n).y),depart).length());
+    //minDist=qMax(0.0,minDist-maxDist);
+    minDist=minDist/2.0;
     for(n=0;n<newShape.size();++n)
     {
-        if(n==newShape.size()-1 || newShape.at(n)!=newShape.at(n+1))
-            shapeIso.append(newShape.at(n));
+        QPointF P=newShape.at(n);
+#if 1
+        if(QLineF(P,depart).length()<minDist)
+            continue;
+#endif
+        if(shapeIso.isEmpty() || shapeIso.last()!=P)
+        {
+            if(shapeIso.size()>1 && P==shapeIso.at(shapeIso.size()-2))
+                shapeIso.remove(shapeIso.size()-1);
+            else
+                shapeIso.append(P);
+        }
     }
     if(!shapeIso.isClosed() && !shapeIso.isEmpty())
         shapeIso.append(shapeIso.at(0));
-    if(drawIt)
-    {
-        QPixmap img(proj->getW(),proj->getH());
-        img.fill(Qt::white);
-        QPen pen;
-        pen.setWidthF(1.0);
-        pen.setColor(Qt::red);
-        QPainter pnt(&img);
-        pnt.setPen(pen);
-        pnt.drawPolyline(shapeIso);
-        pnt.end();
-        img.save("isoShape"+QString().sprintf("%03d",isochrones.size())+".png");
-    }
+#if 0
+    QPixmap img(proj->getW(),proj->getH());
+    img.fill(Qt::white);
+    QPen pen;
+    pen.setWidthF(1.0);
+    pen.setColor(Qt::red);
+    QPainter pnt(&img);
+    pnt.setPen(pen);
+    pnt.drawPolyline(shapeIso);
+    pnt.end();
+    img.save("isoShape"+QString().sprintf("%03d",isochrones.size())+".png");
+#endif
 }

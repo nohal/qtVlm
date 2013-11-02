@@ -41,7 +41,8 @@ libs:
 	$(CD) $(call FixPath,src/libs/nmealib/src) $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make
 	$(CD) $(call FixPath,src/libs/libbsb) $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make
 	$(CD) $(call FixPath,src/libs/miniunz) $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make
-
+	$(CD) $(call FixPath,src/libs/jasper) $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make
+	$(CD) $(call FixPath,src/libs/g2clib-1.4.0) $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make
 clean:
 	$(RMAPPNAME)
 	$(CD) $(call FixPath,src/libs/bzip2) $(SEP) $(QMAKE) $(SEP) make clean
@@ -51,7 +52,8 @@ clean:
 	$(CD) $(call FixPath,src/libs/nmealib/src) $(SEP) $(QMAKE) $(SEP) make clean
 	$(CD) $(call FixPath,src/libs/libbsb) $(SEP) $(QMAKE) $(SEP) make clean
 	$(CD) $(call FixPath,src/libs/miniunz) $(SEP) $(QMAKE) $(SEP) make clean
-	$(CD) src $(SEP) $(QMAKE) $(SEP) make clean
+	$(CD) $(call FixPath,src/libs/jasper) $(SEP) $(QMAKE) $(SEP) make clean
+	$(CD) $(call FixPath,src/libs/g2clib-1.4.0) $(SEP) $(QMAKE) $(SEP) make clean
 	$(CD) $(call FixPath,src/libs/bzip2) $(SEP) $(RM) Makefile Makefile.Release Makefile.Debug $(SEP) $(RMFOLDER) release debug
 	$(CD) $(call FixPath,src/libs/zlib-1.2.7) $(SEP) $(RM) Makefile Makefile.Release Makefile.Debug $(SEP) $(RMFOLDER) release debug
 	$(CD) $(call FixPath,src/libs/qextserialport12) $(SEP) $(RM) Makefile Makefile.Release Makefile.Debug $(SEP) $(RMFOLDER) release debug
@@ -59,6 +61,8 @@ clean:
 	$(CD) $(call FixPath,src/libs/nmealib/src) $(SEP) $(RM) Makefile Makefile.Release Makefile.Debug $(SEP) $(RMFOLDER) release debug
 	$(CD) $(call FixPath,src/libs/miniunz) $(SEP) $(RM) Makefile
 	$(CD) $(call FixPath,src/libs/libbsb) $(SEP) $(RM) Makefile
+	$(CD) $(call FixPath,src/libs/g2clib-1.4.0) $(SEP) $(RM) Makefile
+	$(CD) src $(SEP) $(QMAKE) $(SEP) make clean
 	$(CD) $(call FixPath,src) $(SEP) $(RM) Makefile Makefile.Release Makefile.Debug
 	$(RMFOLDER) $(call FixPath,src/libs/build)
 	$(RMFOLDER) $(call FixPath,src/objs)

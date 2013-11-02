@@ -33,7 +33,6 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include "Orthodromie.h"
 #include "Projection.h"
-#include "Grib.h"
 #include "mycentralwidget.h"
 #include "vlmLine.h"
 #include "POI.h"
@@ -49,14 +48,14 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #define USE_VBVMG_VLM
 
-ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScene, myCentralWidget *parentWindow)
+ROUTE::ROUTE(QString name, Projection *proj, DataManager *dataManager, QGraphicsScene * myScene, myCentralWidget *parentWindow)
             : QObject()
 
 {
     this->proj=proj;
     this->name=name;
     this->myscene=myScene;
-    this->grib=grib;
+    this->dataManager=dataManager;
     this->parent=parentWindow;
     this->color=Settings::getSetting("routeLineColor", QColor(Qt::yellow)).value<QColor>();
     this->width=Settings::getSetting("routeLineWidth", 2.0).toDouble();
@@ -113,7 +112,7 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
     this->roadMapInterval=1;
     this->roadMapHDG=0;
     this->useInterval=true;
-    this->precalculateTan();
+    this->hypotPos=NULL;
     routeDelay=new QTimer(this);
     routeDelay->setInterval(5);
     routeDelay->setSingleShot(true);
@@ -121,6 +120,7 @@ ROUTE::ROUTE(QString name, Projection *proj, Grib *grib, QGraphicsScene * myScen
     this->strongSimplify=false;
     delay=10;
     forceComparator=false;
+    fastSpeed=NULL;
 }
 
 ROUTE::~ROUTE()
@@ -137,10 +137,15 @@ ROUTE::~ROUTE()
             line->deleteLater();
         }
     }
-    delete tanPos;
-    delete tanNeg;
-    delete hypotPos;
-    delete hypotNeg;
+    if(hypotPos!=NULL)
+    {
+        delete tanPos;
+        delete tanNeg;
+        delete hypotPos;
+        delete hypotNeg;
+    }
+    if(fastSpeed)
+        delete fastSpeed;
 }
 void ROUTE::setShowInterpolData(bool b)
 {
@@ -267,12 +272,17 @@ void ROUTE::zoom()
 
 void ROUTE::slot_recalculate(boat * boat)
 {
+    if(fastSpeed)
+    {
+        delete fastSpeed;
+        fastSpeed=NULL;
+    }
     if(temp) return;
     QTime timeTotal;
     timeTotal.start();
     line->setCoastDetection(false);
-    QTime timeDebug;
-    int timeD=0;
+    //QTime timeDebug;
+    //int timeD=0;
     int nbLoop=0;
     if(parent->getAboutToQuit()) return;
     if(busy)
@@ -334,7 +344,7 @@ void ROUTE::slot_recalculate(boat * boat)
     eta=0;
     has_eta=false;
     time_t now;
-    if(myBoat!=NULL && myBoat->getPolarData() && grib && grib->isOk())
+    if(myBoat!=NULL && myBoat->getPolarData() && dataManager && dataManager->isOk())
     {
         initialized=true;
         switch(startTimeOption)
@@ -352,7 +362,7 @@ void ROUTE::slot_recalculate(boat * boat)
                     eta=now;
                 break;
             case 2:
-                eta=grib->getCurrentDate();
+                eta=dataManager->get_currentDate();
                 break;
             case 3:
                 eta=startTime.toUTC().toTime_t();
@@ -415,11 +425,11 @@ void ROUTE::slot_recalculate(boat * boat)
         double wind_angle,wind_speed,cap,angle,capSaved;
         cap=-1;
         capSaved=cap;
-        time_t maxDate=grib->getMaxDate();
+        time_t maxDate=dataManager->get_maxDate();
         QString previousPoiName="";
         time_t previousEta=0;
         time_t lastEta=0;
-        time_t gribDate=grib->getCurrentDate();
+        time_t gribDate=dataManager->get_currentDate();
         if(this->my_poiList.isEmpty())
             initialDist=0;
         else
@@ -461,7 +471,7 @@ void ROUTE::slot_recalculate(boat * boat)
             }
             if(optimizingPOI)
                 orth2.setEndPoint(poi->getLongitude(),poi->getLatitude());
-            if(!grib->isOk() && !imported)
+            if(!dataManager->isOk() && !imported)
             {
                 tip=tr("<br>Route: ")+name;
                 tip=tip+"<br>Estimated ETA: No grib loaded" ;
@@ -492,7 +502,7 @@ void ROUTE::slot_recalculate(boat * boat)
                     else
                         eta= eta + myBoat->getVacLen()*multVac;
                     Eta=eta;
-                    if(((grib->getInterpolatedValue_byDates(lon, lat,
+                    if(((dataManager->getInterpolatedWind(lon, lat,
                                               eta,&wind_speed,&wind_angle,INTERPOLATION_DEFAULT)
                             && eta<=maxDate) || imported))
                     {
@@ -500,7 +510,7 @@ void ROUTE::slot_recalculate(boat * boat)
                         double current_speed=-1;
                         double current_angle=0;
                         //calculate surface wind if any current
-                        if(grib->getInterpolatedValueCurrent_byDates(lon, lat,
+                        if(dataManager->hasData(DATA_CURRENT_VX,DATA_LV_MSL,0) && dataManager->getInterpolatedCurrent(lon, lat,
                                                   eta,&current_speed,&current_angle,INTERPOLATION_DEFAULT))
                         {
                             current_angle=radToDeg(current_angle);
@@ -556,9 +566,9 @@ void ROUTE::slot_recalculate(boat * boat)
                                         double w2Save=w2;
                                         double h1Save=h1;
 #endif
-                                        timeDebug.start();
+                                        //timeDebug.start();
                                         this->do_vbvmg_buffer(remaining_distance,cap,wind_speed,wind_angle,&h1,&h2,&w1,&w2,&t1,&t2,&d1,&d2);
-                                        timeD+=timeDebug.elapsed();
+                                        //timeD+=timeDebug.elapsed();
 #if 0
                                         if(qRound(w1*1000)!=qRound(w1Save*1000) || qRound(h1*1000)!=qRound(h1Save*1000))
                                         {
@@ -678,6 +688,9 @@ void ROUTE::slot_recalculate(boat * boat)
                                         roadPoint.append(-1); //18
                                         roadPoint.append(-1); //19
                                         roadPoint.append(-1); //20
+                                        roadPoint.append(-1); //21 waves
+                                        roadPoint.append(-1); //22 waves dir
+                                        roadPoint.append(-1); //23 waves combined height
                                         roadMap.append(roadPoint);
                                     }
                                     break;
@@ -721,6 +734,18 @@ void ROUTE::slot_recalculate(boat * boat)
                                 roadPoint.append(sog); //18
                                 roadPoint.append(current_speed); //19
                                 roadPoint.append(Util::A360(current_angle+180.0)); //20
+                                if(dataManager->hasData(DATA_WAVES_MAX_HGT,DATA_LV_GND_SURF,0))
+                                    roadPoint.append(dataManager->getInterpolatedValue_1D(DATA_WAVES_MAX_HGT,DATA_LV_GND_SURF,0,p.lon,p.lat,roadPoint.at(0))); //21
+                                else
+                                    roadPoint.append(-1);// 21
+                                if(dataManager->hasData(DATA_WAVES_MAX_DIR,DATA_LV_GND_SURF,0))
+                                    roadPoint.append(dataManager->getInterpolatedValue_1D(DATA_WAVES_MAX_DIR,DATA_LV_GND_SURF,0,p.lon,p.lat,roadPoint.at(0))); //21
+                                else
+                                    roadPoint.append(-1);// 22
+                                if(dataManager->hasData(DATA_WAVES_SIG_HGT_COMB,DATA_LV_GND_SURF,0))
+                                    roadPoint.append(dataManager->getInterpolatedValue_1D(DATA_WAVES_SIG_HGT_COMB,DATA_LV_GND_SURF,0,p.lon,p.lat,roadPoint.at(0))); //21
+                                else
+                                    roadPoint.append(-1);// 23
                                 roadMap.append(roadPoint);
                             }
                             if(lastEta<gribDate && Eta>=gribDate)
@@ -728,10 +753,15 @@ void ROUTE::slot_recalculate(boat * boat)
                                 if(!this->getSimplify() && this->showInterpolData)
                                 {
                                     QList<double> roadPoint=roadMap.last();
+                                    vlmPoint p(roadPoint.at(1),roadPoint.at(2));
+                                    p.eta=roadPoint.at(0);
+                                    bool night=false;
+                                    if(parent->getTerre()->daylight(NULL,p))
+                                        night=true;
                                     roadInfo->setValues(roadPoint.at(6),roadPoint.at(7),roadPoint.at(8),
                                                         roadPoint.at(4),roadPoint.at(3),roadPoint.at(11),
                                                         roadPoint.at(10),engineUsed,lat<0,roadPoint.at(17),
-                                                        roadPoint.at(18),roadPoint.at(19),roadPoint.at(20));
+                                                        roadPoint.at(18),roadPoint.at(19),roadPoint.at(20),roadPoint.at(21),roadPoint.at(22),night,roadPoint.at(23));
                                 }
                                 if(gribDate>start+1000)
                                 {
@@ -778,6 +808,9 @@ void ROUTE::slot_recalculate(boat * boat)
                             roadPoint.append(-1); //18
                             roadPoint.append(-1); //19
                             roadPoint.append(-1); //20
+                            roadPoint.append(-1); //21 waves height
+                            roadPoint.append(-1); //22 waves dir
+                            roadPoint.append(-1); //23 waves combined height
                             roadMap.append(roadPoint);
                         }
                         break;
@@ -978,12 +1011,12 @@ void ROUTE::slot_recalculate(boat * boat)
 void ROUTE::interpolatePos()
 {
     line->setHasInterpolated(false);
-    if(!grib || !grib->isOk())
+    if(!dataManager || !dataManager->isOk())
         return;
     QList<vlmPoint> *list=line->getPoints();
     if (list->count()==0) return;
     time_t lastEta=list->at(0).eta;
-    time_t gribDate=grib->getCurrentDate();
+    time_t gribDate=dataManager->get_currentDate();
     if(parent->getCompassFollow()==this)
         parent->centerCompass(list->at(0).lon,list->at(0).lat);
     if(gribDate<lastEta+1000) return;
@@ -1318,10 +1351,15 @@ void ROUTE::do_vbvmg_buffer(double dist,double wanted_heading,
     int i,j, min_i, min_j, max_i, max_j;
 
     b_t1 = b_t2 = b_l1 = b_l2 = b_alpha = b_beta = beta = 0.0;
+    if(fastSpeed==NULL)
+    {
+        fastSpeed = new QCache<int,double>;
+        fastSpeed->setMaxCost(180);
+    }
 
-    QCache<int,double> fastSpeed;
-    fastSpeed.setMaxCost(180);
-
+    fastSpeed->clear();
+    if(hypotPos==NULL)
+        this->precalculateTan();
 
     /* first compute the time for the "ortho" heading */
     speed=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(w_angle-wanted_heading)));
@@ -1411,12 +1449,12 @@ void ROUTE::do_vbvmg_buffer(double dist,double wanted_heading,
             }
             d2 = dist - d1;
 #if 1
-            if(fastSpeed.contains(j))
-                speed_t2=*fastSpeed.object(j);
+            if(fastSpeed->contains(j))
+                speed_t2=*fastSpeed->object(j);
             else
             {
                 speed_t2=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-beta)));
-                fastSpeed.insert(j,new double(speed_t2));
+                fastSpeed->insert(j,new double(speed_t2));
             }
 #else
             speed_t2=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-beta)));
@@ -1472,12 +1510,12 @@ void ROUTE::do_vbvmg_buffer(double dist,double wanted_heading,
                 }
                 d2 = dist - d1;
 #if 1
-            if(fastSpeed.contains(j))
-                speed_t2=*fastSpeed.object(j);
+            if(fastSpeed->contains(j))
+                speed_t2=*fastSpeed->object(j);
             else
             {
                 speed_t2=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-beta)));
-                fastSpeed.insert(j,new double(speed_t2));
+                fastSpeed->insert(j,new double(speed_t2));
             }
 #else
             speed_t2=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-beta)));
@@ -1564,7 +1602,9 @@ void ROUTE::do_vbvmg_buffer(double dist,double wanted_heading,
     {
         *wangle2 += TWO_PI;
     }
-    fastSpeed.clear();
+    fastSpeed->clear();
+    delete fastSpeed;
+    fastSpeed=NULL;
     *heading1=radToDeg(*heading1);
     *heading2=radToDeg(*heading2);
     *wangle1=radToDeg(*wangle1);
@@ -1631,7 +1671,8 @@ routeStats ROUTE::getStats()
     stats.engineTime=0;
     stats.nightTime=0;
     stats.rainTime=0;
-    if(!grib) return stats;
+    stats.maxWaveHeight=0;
+    if(!dataManager) return stats;
     if(this->my_poiList.isEmpty()) return stats;
     QList<vlmPoint> * points=this->getLine()->getPoints();
     if(points->size()<=1) return stats;
@@ -1645,7 +1686,7 @@ routeStats ROUTE::getStats()
         double lat=points->at(n).lat;
         time_t date=points->at(n).eta;
         time_t prevDate=points->at(n-1).eta;
-        if(!grib->getInterpolatedValue_byDates(lon, lat,prevDate,&tws,&twd,INTERPOLATION_DEFAULT))
+        if(!dataManager->getInterpolatedWind(lon, lat,prevDate,&tws,&twd,INTERPOLATION_DEFAULT))
                 return stats;
         twd=radToDeg(twd);
         stats.totalTime+=date-prevDate;
@@ -1675,7 +1716,9 @@ routeStats ROUTE::getStats()
             stats.engineTime+=date-prevDate;
         if(!parent->getTerre()->daylight(NULL,points->at(n)))
             stats.nightTime+=date-prevDate;
-        stats.rainTime+=grib->getInterpolatedValue_byDates(GRB_PRECIP_TOT,LV_GND_SURF,0,lon, lat, prevDate)>0.0?date-prevDate:0;
+        stats.rainTime+=dataManager->getInterpolatedValue_1D(DATA_PRECIP_TOT,DATA_LV_GND_SURF,0,lon, lat, prevDate)>0.0?date-prevDate:0;
+        stats.maxWaveHeight=qMax(stats.maxWaveHeight,dataManager->getInterpolatedValue_1D(DATA_WAVES_MAX_HGT,DATA_LV_GND_SURF,0,lon,lat, prevDate));
+        stats.combWaveHeight=qMax(stats.combWaveHeight,dataManager->getInterpolatedValue_1D(DATA_WAVES_SIG_HGT_COMB,DATA_LV_GND_SURF,0,lon,lat, prevDate));
     }
     stats.averageBS=stats.averageBS/(points->size()-1);
     stats.averageTWS=stats.averageTWS/(points->size()-1);

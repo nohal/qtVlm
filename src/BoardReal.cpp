@@ -25,6 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QString>
 
 #include "MainWindow.h"
+#include "DataManager.h"
+#include "mycentralwidget.h"
 
 #include "BoardReal.h"
 #include "Board.h"
@@ -34,7 +36,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "dataDef.h"
 #include "Util.h"
-#include "Grib.h"
 
 boardReal::boardReal(MainWindow * mainWin, board * parent) : QWidget(mainWin)
 {
@@ -183,15 +184,15 @@ void boardReal::boatUpdated(void)
         angle->setText("---");
     }
     this->windInfo->setText("--");
-    if(mainWin->getGrib() && mainWin->getGrib()->isOk())
+    DataManager * dataManager=mainWin->getMy_centralWidget()->get_dataManager();
+    if(dataManager && dataManager->isOk())
     {
         time_t now=QDateTime::currentDateTimeUtc().toTime_t();
-        Grib * grib=mainWin->getGrib();
         QString s=QString();
-        if(now>grib->getMinDate() && now<grib->getMaxDate())
+        if(now>dataManager->get_minDate() && now<dataManager->get_maxDate())
         {
             double tws,twd;
-            grib->getInterpolatedValue_byDates((double) myBoat->getLon(),myBoat->getLat(),
+            dataManager->getInterpolatedWind((double) myBoat->getLon(),myBoat->getLat(),
                                    now,&tws,&twd,INTERPOLATION_DEFAULT);
             twd=radToDeg(twd);
             if(twd>360)
@@ -220,7 +221,7 @@ void boardReal::boatUpdated(void)
     }
     /* GPS status */
     QString status;
-    if(myBoat->gpsIsRunning() && !this->gpsInfo->isHidden())
+    if(!myBoat->getPause() && !this->gpsInfo->isHidden())
     {
         nmeaINFO info=myBoat->getInfo();
         imgInfo.fill(Qt::white);
@@ -344,24 +345,36 @@ void boardReal::startGPS(void)
         qWarning() << "No real boat to start GPS";
         return;
     }
-    if(myBoat->gpsIsRunning())
+    startBtn->setDisabled(true);
+    statusBtn->setDisabled(true);
+    if(!myBoat->getPause())
     {
         myBoat->stopRead();
+        this->startBtn->setText(tr("Start GPS"));
+        this->gpsInfo->hide();
+    }
+    else
+    {
+        myBoat->startRead();
+        if(!myBoat->getPause())
+        {
+            this->startBtn->setText(tr("Stop GPS"));
+            this->statusBtn->setEnabled(true);
+        }
+    }
+    if(myBoat->getPause())
+    {
         this->startBtn->setText(tr("Start GPS"));
         this->statusBtn->setEnabled(false);
         this->gpsInfo->hide();
     }
     else
     {
-        myBoat->startRead();
-        if(myBoat->gpsIsRunning())
-        {
-            this->startBtn->setText(tr("Stop GPS"));
-            this->statusBtn->setEnabled(true);
-        }
+        this->startBtn->setText(tr("Stop GPS"));
+        this->statusBtn->setEnabled(true);
     }
+    this->startBtn->setEnabled(true);
 }
-
  void boardReal::statusGPS(void)
  {
      if(this->gpsInfo->isHidden())
