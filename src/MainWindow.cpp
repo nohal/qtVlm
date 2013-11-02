@@ -857,11 +857,10 @@ void MainWindow::openGribFile(QString fileName, bool zoom, bool current)
 
         if(!dataManager->isOk(DataManager::GRIB_CURRENT))
             badFile=true;
-        else if(dataManager->hasData(DATA_CURRENT_VX,DATA_LV_MSL,0,DataManager::GRIB_CURRENT))
+        else if(!dataManager->hasData(DATA_CURRENT_VX,DATA_LV_MSL,0,DataManager::GRIB_CURRENT))
         {
             slotFile_Close_Current();            
             badCurrent=true;
-
         }
     }
     else
