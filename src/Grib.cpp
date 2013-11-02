@@ -88,7 +88,16 @@ QString Grib::get_info(void) {
     info += tr("Taille : %1 octets") .arg(get_fileSize())+"\n";
     info += "\n";
 
-    info += tr("%1 types de données").arg(mapGribRecords.size());
+    int nbData=mapGribRecords.size();
+    if(hasData(DATA_WIND_VX,DATA_LV_ABOV_GND,10)) nbData--;
+    if(hasData(DATA_CURRENT_VX,DATA_LV_MSL,0)) nbData--;
+    if(hasData(DATA_WAVES_WND_DIR,DATA_LV_GND_SURF,0)) nbData-=2;
+    if(hasData(DATA_WAVES_SWL_DIR,DATA_LV_GND_SURF,0)) nbData-=2;
+    if(hasData(DATA_WAVES_MAX_DIR,DATA_LV_GND_SURF,0)) nbData-=2;
+    if(hasData(DATA_WAVES_PRIM_DIR,DATA_LV_GND_SURF,0)) nbData--;
+    if(hasData(DATA_WAVES_SEC_DIR,DATA_LV_GND_SURF,0)) nbData--;
+
+    info += tr("%1 types de données").arg(nbData);
     info += tr(" - %1 dates :").arg(get_nbDate())+"\n";
     if(get_nbDate()!=0) {
         info += tr("    du %1").arg( Util::formatDateTimeLong(*(tList.begin())))+"\n";
