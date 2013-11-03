@@ -79,11 +79,43 @@ void GribRecord::unitConversion(void) {
             break;
 
     }
+    translateDataType();
+}
+void  GribRecord::translateDataType()
+{
     if(dataType==DATA_CURRENT_VX || dataType==DATA_CURRENT_VY)
     {
-        //qWarning()<<dataType<<levelType<<levelValue;
         levelType=DATA_LV_MSL;
         levelValue=0;
+    }
+    if  ((idCenter==7 && idModel==122 && idGrid==239)  // akw.all.grb
+      || (idCenter==7 && idModel==124 && idGrid==253)  // enp.all.grb
+      || (idCenter==7 && idModel==123 && idGrid==244)  // nah.all.grb
+      || (idCenter==7 && idModel==125 && idGrid==253)  // nph.all.grb
+      || (idCenter==7 && idModel==88 && idGrid==233)   // nwww3.all.grb
+      || (idCenter==7 && idModel==121 && idGrid==238)  // wna.all.grb
+      || (idCenter==7 && idModel==88 && idGrid==255))   // saildocs
+    {
+        if ( (dataType==DATA_WIND_VX || dataType==DATA_WIND_VY)
+                && levelType==DATA_LV_GND_SURF
+                && levelValue==1)
+        {
+                levelType  = DATA_LV_ABOV_GND;
+                levelValue = 10;
+        }
+    }
+    //------------------------
+    // Meteorem
+    //------------------------
+    else if (idCenter==59 && idModel==78 && idGrid==255)
+    {
+        if ( (dataType==DATA_WIND_VX || dataType==DATA_WIND_VY)
+                && levelType==DATA_LV_MSL
+                && levelValue==0)
+        {
+                levelType  = DATA_LV_ABOV_GND;
+                levelValue = 10;
+        }
     }
 }
 

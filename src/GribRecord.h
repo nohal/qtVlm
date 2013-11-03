@@ -140,6 +140,8 @@ protected:
                         unsigned int day,unsigned int hour,unsigned int min,unsigned int sec);
 
 
+private:
+        void translateDataType();
 };
 Q_DECLARE_TYPEINFO(GribRecord,Q_MOVABLE_TYPE);
 
