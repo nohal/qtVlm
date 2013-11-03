@@ -3650,7 +3650,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Show arrox for wave direction</source>
-        <translation>Montrer les flèches de direction des vagues</translation>
+        <translation type="obsolete">Montrer les flèches de direction des vagues</translation>
     </message>
     <message>
         <source>Isotherm 0C</source>
@@ -3691,6 +3691,10 @@ Etes-vous sur ?</source>
     <message>
         <source>Informations sur le fichier GRIB</source>
         <translation>Informations sur le fichier GRIB</translation>
+    </message>
+    <message>
+        <source>Show arrow for wave direction</source>
+        <translation>Affiche les flèches de vagues</translation>
     </message>
 </context>
 <context>

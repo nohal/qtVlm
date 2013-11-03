@@ -114,7 +114,11 @@ void DialogPoi::initPOI(POI * poi,const bool &creationMode)
     cb_routeList->clear();
     cb_routeList->addItem("Not in a route");
     while(i.hasNext())
-        cb_routeList->addItem(i.next()->getName());
+    {
+        ROUTE * route=i.next();
+        if(Settings::getSetting("autoHideRoute",1).toInt()==1 && (route->getBoat()==NULL || !route->getBoat()->getIsSelected())) continue;
+        cb_routeList->addItem(route->getName());
+    }
     if(poi->getRoute()!=NULL)
         cb_routeList->setCurrentIndex(cb_routeList->findText(((ROUTE*) poi->getRoute())->getName()));
     if(poi->getWph()==-1)
@@ -192,9 +196,20 @@ void DialogPoi::done(int result)
         }
         if(cb_routeList->currentIndex()!=0)
         {
-            ROUTE * route=parent->getRouteList()[cb_routeList->currentIndex()-1];
-            if(!route->getFrozen())
-                poi->setRoute(route);
+            for (int n=0;n<parent->getRouteList().size();++n)
+            {
+                if(parent->getRouteList().at(n)->getName()==cb_routeList->currentText())
+                {
+                    ROUTE * route=parent->getRouteList().at(n);
+                    if(!route->getFrozen())
+                    {
+                        poi->setRoute(route);
+                        break;
+                    }
+                    else
+                        break;
+                }
+            }
         }
         else
             poi->setRoute(NULL);

@@ -468,6 +468,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     connect(menuBar->acView_ColorMapSmooth, SIGNAL(triggered(bool)), terre,  SLOT(setColorMapSmooth(bool)));
     connect(menuBar->acView_ColorMapSmooth, SIGNAL(triggered(bool)), this->mainW,  SLOT(slotParamChanged()));
     connect(menuBar->acView_WindArrow, SIGNAL(triggered(bool)), terre,  SLOT(setDrawWindArrows(bool)));
+    connect(menuBar->acView_WavesArrow, SIGNAL(triggered(bool)), terre,  SLOT(setDrawWavesArrows(bool)));
     connect(menuBar->acView_Barbules, SIGNAL(triggered(bool)), terre,  SLOT(setBarbules(bool)));
     connect(menuBar->acView_TemperatureLabels, SIGNAL(triggered(bool)),terre,  SLOT(slotTemperatureLabels(bool)));
     connect(menuBar->acView_Isobars, SIGNAL(triggered(bool)), terre,  SLOT(setDrawIsobars(bool)));
@@ -724,6 +725,32 @@ void myCentralWidget::loadBoat(void)
 }
 
 void myCentralWidget::loadPOI(void) {
+    // First do some cleaning
+    // route
+    while(!route_list.isEmpty())
+    {
+        route_list.first()->setTemp(true);
+        QListIterator<POI*> i (route_list.first()->getPoiList());
+        while(i.hasNext())
+        {
+            POI * poi = i.next();
+            poi->setRoute(NULL);
+            poi->setMyLabelHidden(false);
+            slot_delPOI_list(poi);
+            poi->deleteLater();
+        }
+        deleteRoute(route_list.first());
+    }
+    // POI
+    while (!poi_list.isEmpty())
+    {
+        POI * poi=poi_list.first();
+        slot_delPOI_list(poi);
+        poi->deleteLater();
+    }
+    // Barrier
+    BarrierSet::clear_barrierSetList();
+    // then reload data
     POI::read_POIData(this);
     ROUTE::read_routeData(this);
     assignPois();
@@ -3104,7 +3131,7 @@ void myCentralWidget::exportRouteFromMenuKML(ROUTE * route,QString fileName,bool
     kml.setAttribute("xmlns:gx","http://www.google.com/kml/ext/2.2");
     kml.setAttribute("xmlns:kml","http://www.opengis.net/kml/2.2");
     kml.setAttribute("xmlns:atom","http://www.w3.org/2005/Atom");
-    kml.setAttribute("xmlns:vlm","http://www.virtual-loup-de-mer.org");
+    kml.setAttribute("xmlns:vlm","http://www.v-l-m.org");
     QDomElement d1 = doc.createElement("Document");
     kml.appendChild(d1);
     QDomElement d2=doc.createElement("name");
@@ -4710,27 +4737,7 @@ void myCentralWidget::slot_POISave(void)
 }
 
 void myCentralWidget::slot_POIRestore(void)
-{
-    while(!route_list.isEmpty())
-    {
-        route_list.first()->setTemp(true);
-        QListIterator<POI*> i (route_list.first()->getPoiList());
-        while(i.hasNext())
-        {
-            POI * poi = i.next();
-            poi->setRoute(NULL);
-            poi->setMyLabelHidden(false);
-            slot_delPOI_list(poi);
-            poi->deleteLater();
-        }
-        deleteRoute(route_list.first());
-    }
-    while (!poi_list.isEmpty())
-    {
-        POI * poi=poi_list.first();
-        slot_delPOI_list(poi);
-        poi->deleteLater();
-    }
+{   
     loadPOI();
     QMessageBox::information(this,tr("Chargement des POIs et des routes"),tr("Chargement reussi"));
 }

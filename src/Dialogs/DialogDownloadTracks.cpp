@@ -23,7 +23,7 @@ DialogDownloadTracks::DialogDownloadTracks(MainWindow * ,myCentralWidget * paren
     Util::setFontDialog(this);
     this->raceIsValid=false;
     this->setWhatsThis(tr("Permet de telecharger manuellement une trace pour une course VLM.\nLa boîte à cocher trace partielle s'active apres l'entree d'un numero de course valide, et permet de requérir une trace tronquée."));
-    ui->raceIDEdit->setToolTip(tr("Numero de la course\n http://www.virtual-loup-de-mer.org/races.php?fulllist=1"));
+    ui->raceIDEdit->setToolTip(tr("Numero de la course\n http://www.v-l-m.org/races.php?fulllist=1"));
     ui->boatIDEdit->setToolTip(tr("Numero du bateau"));
     ui->startTimeEdit->setToolTip(tr("Debut de la trace"));
     ui->startTimeEdit->setEnabled(false);
@@ -463,7 +463,7 @@ void DialogDownloadTracks::requestFinished (QByteArray data)
     break;
     case VLM_RACE_INFO:
     {
-        //http://virtual-loup-de-mer.org/ws/raceinfo.php?idrace=20110524
+        //http://v-l-m.org/ws/raceinfo.php?idrace=20110524
        // {"idraces":"20110524","racename":"Transatlantic NY - Lizard","started":"1","deptime":"1306263600","startlong":"-73837","startlat":"40458","boattype":"boat_VLM70","closetime":"1337820526","racetype":"1","firstpcttime":"200","depend_on":"0","qualifying_races":"","idchallenge":"","coastpenalty":"900","bobegin":"0","boend":"0","maxboats":"0","theme":"","vacfreq":"5","races_waypoints":{"1":{"idwaypoint":"2011052401","wpformat":"0","wporder":"1","wptype":"Finish","latitude1":"49960","longitude1":"-5201","latitude2":"49900","longitude2":"-5201","libelle":"Point Lizard","maparea":"12"}},"races_instructions":[{"idraces":"20110524","instructions":"http:\/\/www.virtual-winds.org\/forum\/index.php?s=&showtopic=6853&view=findpost&p=225544","flag":"13","autoid":"271"}]}
 
         //qWarning()<<"inside VLM_RACE_INFO";

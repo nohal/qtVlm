@@ -154,6 +154,7 @@ QList<BarrierSet*> barrierSetList;
 
 void BarrierSet::readBarriersFromDisk(MainWindow * mainWindow) {
     QString fname = appFolder.value("userFiles")+"poi.dat";
+    int discarded=0;
 
     QDomNode * rootNode=XmlFile::get_dataNodeFromDisk(fname,ROOT_NAME);
     if(!rootNode) {
@@ -275,12 +276,27 @@ void BarrierSet::readBarriersFromDisk(MainWindow * mainWindow) {
                 delete barrierSet;
             }
             else {
-                barrierSetList.append(barrierSet);
+                if(barrierSetListContains(barrierSet->get_key())) {
+                    discarded++;
+                    delete barrierSet;
+                }
+                else
+                    barrierSetList.append(barrierSet);
             }
 
         }
         node = node.nextSibling();
     }
+    qWarning() << "Discarding " << discarded << " barrierSet during load";
+    if(discarded>0)
+        BarrierSet::saveBarriersToDisk();
+}
+
+bool BarrierSet::barrierSetListContains(QString key) {
+    for(int i=0;i<barrierSetList.count();++i)
+        if(barrierSetList.at(i)->get_key()==key)
+            return true;
+    return false;
 }
 
 void BarrierSet::saveBarriersToDisk(void) {

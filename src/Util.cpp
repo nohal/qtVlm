@@ -578,9 +578,9 @@ QString  url_name[NB_URL] = { "std","s10","s11"
 #endif
 
                           };
-QString  url_str[NB_URL] = { "virtual-loup-de-mer.org", "s10.virtual-loup-de-mer.org","s11.virtual-loup-de-mer.org"
+QString  url_str[NB_URL] = { "v-l-m.org", "s10.v-l-m.org","s11.v-l-m.org"
 #ifdef __QTVLM_WITH_TEST
-                 , "testing.virtual-loup-de-mer.org"
+                 , "testing.v-l-m.org"
 #endif
              };
 
@@ -599,7 +599,7 @@ QString Util::getHost()
     }
     return host+url_str[num];
 #else
-    return "http://virtual-loup-de-mer.org";
+    return "http://v-l-m.org";
 #endif
 }
 

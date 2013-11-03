@@ -497,7 +497,7 @@ void Polar::clearPolar(void)
 /* VMG                                                                                 */
 /*                                                                                     */
 /* Part of the code comes from C lib of VLM: (c) 2008 by Yves Lafon                    */
-/* see http://www.virtual-loup-de-mer.org/ or http://dev.virtual-loup-de-mer.org/vlm/  */
+/* see http://www.v-l-m.org/ or http://dev.v-l-m.org/vlm/  */
 /* Contact: <yves@raubacapeu.net>                                                      */
 /***************************************************************************************/
 
