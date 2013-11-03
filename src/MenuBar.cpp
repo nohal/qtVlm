@@ -226,7 +226,7 @@ MenuBar::MenuBar(MainWindow *parent)
                 acView_GroupColorMap->addAction(acView_WavesWhiteCap);
                 menuGroupWaves->addSeparator();
                 acView_WavesArrow = addActionCheck(menuGroupWaves, tr("Waves arrow"), tr(""),
-                            tr("Show arrox for wave direction"));
+                            tr("Show arrow for wave direction"));
                 acView_WavesArrow->setChecked(Settings::getSetting("showWavesArrows", true).toBool());
 
 

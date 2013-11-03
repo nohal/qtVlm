@@ -248,7 +248,8 @@ bool MapDataDrawer::drawColorMapGeneric_2D_Partial(const GribThreadData &g)
     int H = paintZone.height();
     W+=W%2;
     H+=H%2;
-    int space=0;
+    int space=1;
+    int offsetX=0,offsetY=0;
     int W_s=0,H_s=0;
     QRgb   rgb;
 
@@ -265,6 +266,8 @@ bool MapDataDrawer::drawColorMapGeneric_2D_Partial(const GribThreadData &g)
         W_s=W/space+2;
         H_s=H/space+2;
         sz=(W_s+2)*(H_s+2);
+        offsetX=from.x()%space;
+        offsetY=from.y()%space;
     }
     QVector<double> u_tab(sz,-1.0);
     QVector<double> v_tab(sz);
@@ -273,8 +276,7 @@ bool MapDataDrawer::drawColorMapGeneric_2D_Partial(const GribThreadData &g)
     uchar * buffer=new uchar [(W+2)*(H+2)*4];
     int indice=0;
     const int W4=(W+2)*4;
-    int offsetX=from.x()%space;
-    int offsetY=from.y()%space;
+
     for (i=0; i<=W; i+=2)
     {
         for (j=0; j<=H; j+=2)
@@ -445,7 +447,7 @@ void MapDataDrawer::drawColorMapGeneric_2D_OLD(QPainter &pnt, const Projection *
     double u,v,x,y;
     const int W = proj->getW();
     const int H = proj->getH();
-    int space=0;
+    int space=1;
     int W_s=0,H_s=0;
     QRgb   rgb;
 
@@ -621,11 +623,7 @@ void MapDataDrawer::drawColorMapGeneric_2D(QPainter &pnt, Projection *proj, cons
     double nCpu=qMax(2,QThread::idealThreadCount());
     int w=floor((double)proj->getW()/(double)(nCpu/2.0));
     int h=floor((double)proj->getH()/2.0);
-    /*int space=0;
-    if (barbules)
-        space =  windBarbuleSpace;
-    else
-        space =  windArrowSpace;*/
+
     for(int i=0;i<nCpu/2;++i)
     {
         int decalw=0;
