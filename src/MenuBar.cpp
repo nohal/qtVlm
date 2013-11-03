@@ -366,7 +366,7 @@ MenuBar::MenuBar(MainWindow *parent)
 #endif
         acVLMParamBoat = addAction(menuBoat,tr("Parametres du/des bateaux"),"","","");
         acRace = addAction(menuBoat,tr("Parametres des courses"),"","","");
-        acVLMSync = addAction(menuBoat,tr("VLM Sync"),"","","");
+        acVLMSync = addAction(menuBoat,tr("VLM Sync"),"F5","","");
         acPilototo = addAction(menuBoat,tr("Pilototo"),"","","");
         acShowLog=addAction(menuBoat,tr("Historique VLM"),"Ctrl+Shift+E","",tr(""));
         acGetTrack=addAction(menuBoat,tr("Telecharger trace"),"Ctrl+Shift+T","",tr(""));
@@ -507,7 +507,7 @@ MenuBar::MenuBar(MainWindow *parent)
 
     //-------------------------------------
     menuHelp = new QMenu(tr("Aide"));
-        acHelp_Help = addAction(menuHelp, tr("Aide"),tr("Ctrl+H"),tr(""),appFolder.value("img")+"help.png");
+        acHelp_Help = addAction(menuHelp, tr("Aide"),"F1",tr(""),appFolder.value("img")+"help.png");
         acHelp_APropos = addAction(menuHelp, tr("A propos de qtVlm"),tr(""),tr(""),"");
         acHelp_AProposQT = addAction(menuHelp, tr("A propos de QT"),tr(""),tr(""),"");
         acHelp_Forum = addAction(menuHelp, tr("QtVlm forum"),tr(""),tr(""),"");
