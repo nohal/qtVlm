@@ -1397,7 +1397,7 @@ void tool_windAngle::draw(QPainter * painter)
 
 QColor tool_windAngle::windSpeed_toColor()
 {
-   //color from VLM code: http://www.virtual-loup-de-mer.org
+   //color from VLM code: http://www.v-l-m.org
    // <=F0 : blanc
    if (windSpeed <= 1) return QColor(255, 255, 255);
    // <=F1 : bleu clair legerement gris

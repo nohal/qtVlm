@@ -1063,7 +1063,7 @@ void MainWindow::slotOptions_Language()
 
 //-------------------------------------------------
 void MainWindow::slotHelp_Help() {
-    QDesktopServices::openUrl(QUrl("http://wiki.virtual-loup-de-mer.org/index.php/QtVlm#L.27interface_de_qtVlm"));
+    QDesktopServices::openUrl(QUrl("http://wiki.v-l-m.org/index.php/QtVlm#L.27interface_de_qtVlm"));
 }
 void MainWindow::slotHelp_Forum() {
     QDesktopServices::openUrl(QUrl("http://www.virtual-winds.org/forum/index.php?showtopic=6638&view=getnewpost"));
@@ -1074,13 +1074,13 @@ void MainWindow::slotHelp_APropos() {
     QMessageBox::about (this,
             tr("A propos"),
             tr("qtVlm : GUI pour Virtual loup de mer")
-            +"\nhttp://www.virtual-loup-de-mer.org\n"+
+            +"\nhttp://www.v-l-m.org\n"+
 
             tr("Version : ")+Version::getVersion()
                     +"      "+Version::getDate()
             +"\n"+ tr("Licence : GNU GPL v3")
             +"\n"+ "http://qtvlm.sf.net"
-            +"\n"+ "http://virtual-winds.com/forum"
+            +"\n"+ "http://virtual-winds.org/forum"
             +"\n"+ tr("Grib part is originaly from zygrib project")
             +"\n"+ "http://www.zygrib.org"
         );

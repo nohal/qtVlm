@@ -3105,7 +3105,7 @@ void myCentralWidget::exportRouteFromMenuKML(ROUTE * route,QString fileName,bool
     kml.setAttribute("xmlns:gx","http://www.google.com/kml/ext/2.2");
     kml.setAttribute("xmlns:kml","http://www.opengis.net/kml/2.2");
     kml.setAttribute("xmlns:atom","http://www.w3.org/2005/Atom");
-    kml.setAttribute("xmlns:vlm","http://www.virtual-loup-de-mer.org");
+    kml.setAttribute("xmlns:vlm","http://www.v-l-m.org");
     QDomElement d1 = doc.createElement("Document");
     kml.appendChild(d1);
     QDomElement d2=doc.createElement("name");
