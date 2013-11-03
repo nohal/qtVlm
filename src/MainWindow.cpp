@@ -833,6 +833,8 @@ void MainWindow::closeProgress(void)
     }
     statusBar->show();
     menuBar->show();
+    my_centralWidget->update_menuRoute();
+    my_centralWidget->update_menuRoutage();
 #ifdef __ANDROIDD__
     menuBar->setNativeMenuBar(true);
     menuBar->hide();
