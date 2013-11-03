@@ -79,7 +79,12 @@ void GribRecord::unitConversion(void) {
             break;
 
     }
-
+    if(dataType==DATA_CURRENT_VX || dataType==DATA_CURRENT_VY)
+    {
+        //qWarning()<<dataType<<levelType<<levelValue;
+        levelType=DATA_LV_MSL;
+        levelValue=0;
+    }
 }
 
 //===============================================================================================
