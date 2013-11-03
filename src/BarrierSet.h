@@ -52,6 +52,7 @@ class BarrierSet: public QObject
         static bool myLessThan(const BarrierSet * set_1,const BarrierSet* set_2) {return set_1->name < set_2->name;}
 
         static void get_barrierSetListFromKeys(QList<QString> keyList,QList<BarrierSet*>* mySetList);
+        static bool barrierSetListContains(QString key);
 
         void cleanEmptyBarrier(Barrier * barrier, bool withMsgBox=false);
 

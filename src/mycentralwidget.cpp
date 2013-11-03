@@ -725,6 +725,32 @@ void myCentralWidget::loadBoat(void)
 }
 
 void myCentralWidget::loadPOI(void) {
+    // First do some cleaning
+    // route
+    while(!route_list.isEmpty())
+    {
+        route_list.first()->setTemp(true);
+        QListIterator<POI*> i (route_list.first()->getPoiList());
+        while(i.hasNext())
+        {
+            POI * poi = i.next();
+            poi->setRoute(NULL);
+            poi->setMyLabelHidden(false);
+            slot_delPOI_list(poi);
+            poi->deleteLater();
+        }
+        deleteRoute(route_list.first());
+    }
+    // POI
+    while (!poi_list.isEmpty())
+    {
+        POI * poi=poi_list.first();
+        slot_delPOI_list(poi);
+        poi->deleteLater();
+    }
+    // Barrier
+    BarrierSet::clear_barrierSetList();
+    // then reload data
     POI::read_POIData(this);
     ROUTE::read_routeData(this);
     assignPois();
@@ -4711,27 +4737,7 @@ void myCentralWidget::slot_POISave(void)
 }
 
 void myCentralWidget::slot_POIRestore(void)
-{
-    while(!route_list.isEmpty())
-    {
-        route_list.first()->setTemp(true);
-        QListIterator<POI*> i (route_list.first()->getPoiList());
-        while(i.hasNext())
-        {
-            POI * poi = i.next();
-            poi->setRoute(NULL);
-            poi->setMyLabelHidden(false);
-            slot_delPOI_list(poi);
-            poi->deleteLater();
-        }
-        deleteRoute(route_list.first());
-    }
-    while (!poi_list.isEmpty())
-    {
-        POI * poi=poi_list.first();
-        slot_delPOI_list(poi);
-        poi->deleteLater();
-    }
+{   
     loadPOI();
     QMessageBox::information(this,tr("Chargement des POIs et des routes"),tr("Chargement reussi"));
 }
