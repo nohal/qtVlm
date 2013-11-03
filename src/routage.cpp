@@ -2152,7 +2152,7 @@ void ROUTAGE::slot_calculate()
                     continue;
                 }
 
-                if(n!=tempPoints.size()-1 && (checkCoast || checkLine))
+                if(n!=tempPoints.size()-1)
                 {
 #ifdef traceTime
                     t2.start();

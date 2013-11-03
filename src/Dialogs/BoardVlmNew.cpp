@@ -126,8 +126,11 @@ BoardVlmNew::BoardVlmNew(MainWindow *main)
     this->lab_backTab2->installEventFilter(this);
     this->lab_backTab3->installEventFilter(this);
     this->lab_back->installEventFilter(this);
-    QGraphicsDropShadowEffect *shadow=new QGraphicsDropShadowEffect(this);
-    this->setGraphicsEffect(shadow);
+    if(Settings::getSetting("newBoardShadow",1).toInt()==1)
+    {
+        QGraphicsDropShadowEffect *shadow=new QGraphicsDropShadowEffect(this);
+        this->setGraphicsEffect(shadow);
+    }
     vibStates.append(10);
     vibStates.append(-10);
     vibStates.append(9);
@@ -197,6 +200,13 @@ void BoardVlmNew::slot_tabChanged(int tabNb)
 
 void BoardVlmNew::slot_reloadSkin()
 {
+    if(Settings::getSetting("newBoardShadow",1).toInt()==1)
+    {
+        QGraphicsDropShadowEffect *shadow=new QGraphicsDropShadowEffect(this);
+        this->setGraphicsEffect(shadow);
+    }
+    else
+        this->setGraphicsEffect(NULL);
     QPixmap skin;
     QString skinName=Settings::getSetting("defaultSkin",QFileInfo("img/skin_compas.png").absoluteFilePath()).toString();
     if(!QFile(skinName).exists())
