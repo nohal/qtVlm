@@ -481,7 +481,7 @@
     <message>
         <source>Numero de la course
  http://www.virtual-loup-de-mer.org/races.php?fulllist=1</source>
-        <translation>Numéro de la course</translation>
+        <translation type="obsolete">Numéro de la course</translation>
     </message>
     <message>
         <source>Numero du bateau</source>
@@ -629,6 +629,11 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
 La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un numero de course valide, et permet de requérir une trace tronquée.</source>
         <translation>Permet de telecharger manuellement une trace pour une course VLM.
 La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un numero de course valide, et permet de requérir une trace tronquée.</translation>
+    </message>
+    <message>
+        <source>Numero de la course
+ http://www.v-l-m.org/races.php?fulllist=1</source>
+        <translation>Numéro de la course</translation>
     </message>
 </context>
 <context>
@@ -2906,10 +2911,6 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Aide</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Ctrl+H</source>
         <translation></translation>
     </message>
     <message>
@@ -6312,6 +6313,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Supprimer automatiquement les gribs de plus de 3 jours</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Ombre sur le nouveau tableau de board</source>
         <translation></translation>
     </message>
 </context>

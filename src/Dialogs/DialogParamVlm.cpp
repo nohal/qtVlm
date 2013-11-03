@@ -59,6 +59,7 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     this->chkPavillon->setCheckState(Settings::getSetting("showFlag",0,"showHideItem").toInt()==1?Qt::Checked:Qt::Unchecked);
     this->chkFusion->setChecked(Settings::getSetting("fusionStyle",0).toInt()==1);
     this->classicalBoard->setChecked(Settings::getSetting("classicalVlmBoard",0).toInt()==1);
+    this->newBoardShadow->setChecked(Settings::getSetting("newBoardShadow",0).toInt()==1);
     QString skinName=Settings::getSetting("defaultSkin",QFileInfo("img/skin_compas.png").absoluteFilePath()).toString();
     if(!QFile(skinName).exists())
         skinName=QFileInfo("img/skin_compas.png").absoluteFilePath();
@@ -252,6 +253,7 @@ void DialogParamVlm::done(int result)
         Settings::setSetting("fusionStyle",this->chkFusion->isChecked()?1:0);
         bool previousBoardSetting=Settings::getSetting("classicalVlmBoard",0).toInt()==1;
         Settings::setSetting("classicalVlmBoard",this->classicalBoard->isChecked()?1:0);
+        Settings::setSetting("newBoardShadow",this->newBoardShadow->isChecked()?1:0);
         if(previousBoardSetting!=classicalBoard->isChecked())
             centralWidget->getMainWindow()->loadBoard();
         QString skinName=edt_skinFile->text();
@@ -555,6 +557,7 @@ void DialogParamVlm::slot_changeParam()
     bool real=centralWidget->getPlayer()->getType()!=BOAT_VLM;
     concurrent_box->setVisible(!real);
     classicalBoard->setVisible(!real);
+    newBoardShadow->setVisible(!real);
     label_skin->setVisible(!real);
     edt_skinFile->setVisible(!real);
     btn_browseSkin->setVisible(!real);

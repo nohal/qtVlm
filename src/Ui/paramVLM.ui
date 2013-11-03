@@ -144,6 +144,13 @@
            </widget>
           </item>
           <item>
+           <widget class="QCheckBox" name="newBoardShadow">
+            <property name="text">
+             <string>Ombre sur le nouveau tableau de board</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <layout class="QHBoxLayout" name="horizontalLayout_14">
             <item>
              <widget class="QLabel" name="label_skin">
@@ -1483,6 +1490,7 @@
   <tabstop>defFontSize</tabstop>
   <tabstop>chkFusion</tabstop>
   <tabstop>classicalBoard</tabstop>
+  <tabstop>newBoardShadow</tabstop>
   <tabstop>edt_skinFile</tabstop>
   <tabstop>btn_browseSkin</tabstop>
   <tabstop>pushButton_7</tabstop>
@@ -1541,6 +1549,7 @@
   <tabstop>gribMulti</tabstop>
   <tabstop>gribMono</tabstop>
   <tabstop>gribAuto</tabstop>
+  <tabstop>chk_gribDelete</tabstop>
  </tabstops>
  <resources/>
  <connections>
