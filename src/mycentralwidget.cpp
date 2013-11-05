@@ -400,6 +400,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     this->kap=NULL;
     this->routeClipboard=NULL;
     noSave=false;
+    playerAcc=NULL;
 
     currentPlayer=NULL;
 
@@ -4509,18 +4510,24 @@ void myCentralWidget::manageAccount(bool * res)
     }
     else if(currentPlayer && currentPlayer->getType()!=BOAT_VLM)
         realBoat->playerDeActivated();
-
-    playerAcc = new DialogPlayerAccount(proj,mainW,this,inetManager);
+    if(playerAcc==NULL)
+        playerAcc = new DialogPlayerAccount(proj,mainW,this,inetManager);
     playerAcc->initList(&player_list);
     int tmp_res= playerAcc->exec();
     if(res)
         *res=(tmp_res == QDialog::Accepted);
     delete playerAcc;
+    playerAcc=NULL;
 }
 
 void myCentralWidget::updatePlayer(Player * player)
 {
+    qWarning()<<"updating player (1)"<<player->getName();
+    if(playerAcc==NULL)
+        playerAcc = new DialogPlayerAccount(proj,mainW,this,inetManager);
     playerAcc->doUpdate(player);
+    delete playerAcc;
+    playerAcc=NULL;
 }
 
 void myCentralWidget::slot_playerSelected(Player * player)
