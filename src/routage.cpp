@@ -395,7 +395,7 @@ QList<vlmPoint> ROUTAGE::finalEpuration(const QList<vlmPoint> &listPoints)
 {
     if(listPoints.isEmpty()) return listPoints;
     if(listPoints.first().origin->isStart) return listPoints;
-    double maxDist=listPoints.at(0).routage->get_maxDist();
+    const double maxDist=listPoints.at(0).routage->get_maxDist();
     int toBeRemoved=listPoints.at(0).internal_1;
     double initialDist=listPoints.at(0).internal_2;
     if(toBeRemoved<=0) return listPoints;
@@ -413,7 +413,7 @@ QList<vlmPoint> ROUTAGE::finalEpuration(const QList<vlmPoint> &listPoints)
         if(listPoints.at(n).originNb!=listPoints.at(n+1).originNb && (listPoints.at(n).origin->isBroken || listPoints.at(n+1).origin->isBroken))
             critere=179;
         else if(qAbs(Util::A180(qAbs(line1.angleTo(line2)))) > 60 ||
-                qAbs(listPoints.at(n).distArrival-listPoints.at(n+1).distArrival)>maxDist)
+                qAbs(line1.length()-line2.length())>maxDist)
             critere=179;
         else
         {
@@ -510,7 +510,7 @@ QList<vlmPoint> ROUTAGE::finalEpuration(const QList<vlmPoint> &listPoints)
             if(listPoints.at(previous).originNb!=listPoints.at(next).originNb && (listPoints.at(previous).origin->isBroken || listPoints.at(next).origin->isBroken))
                 critere=179;
             else if(qAbs(Util::A180(qAbs(line1.angleTo(line2)))) > 60 ||
-                    qAbs(listPoints.at(previous).distArrival-listPoints.at(next).distArrival)>maxDist)
+                    qAbs(line1.length()-line2.length())>maxDist)
                 critere=179;
             byCriteres.insert(critere,QPoint(previous,next));
             s=previous*10e6+next;
@@ -3593,7 +3593,7 @@ void ROUTAGE::removeCrossedSegments()
         QLineF line1(xa,ya,tempPoints.at(n).x,tempPoints.at(n).y);
         QLineF line2(xa,ya,tempPoints.at(n+1).x,tempPoints.at(n+1).y);
         if(qAbs(Util::A180(qAbs(line1.angleTo(line2))))>60.0 ||
-                qAbs(tempPoints.at(n).distArrival-tempPoints.at(n+1).distArrival)>maxDist)
+                qAbs(line1.length()-line2.length())>maxDist)
         {
             if(tempPoints.at(n).originNb!=tempPoints.at(n+1).originNb)
             {
@@ -3684,7 +3684,7 @@ void ROUTAGE::removeCrossedSegments()
             QLineF line1(xa,ya,tempPoints.at(previous).x,tempPoints.at(previous).y);
             QLineF line2(xa,ya,tempPoints.at(next).x,tempPoints.at(next).y);
             if(qAbs(Util::A180(qAbs(line1.angleTo(line2))))>60.0 ||
-                    qAbs(tempPoints.at(previous).distArrival-tempPoints.at(next).distArrival)>maxDist)
+                    qAbs(line1.length()-line2.length())>maxDist)
             {
                 if(tempPoints.at(previous).originNb!=tempPoints.at(next).originNb)
                 {
