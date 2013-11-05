@@ -3238,6 +3238,13 @@ void ROUTAGE::convertToRoute()
     result=NULL;
     route->setHidePois(true);
     route->setFrozen(false);
+    while(!route->getHas_eta() && route->getPoiList().size()>1)
+    {
+        POI * poi=route->getPoiList().last();
+        poi->setRoute(NULL);
+        parent->slot_delPOI_list(poi);
+        delete poi;
+    }
     if(!multiRoutage && routeStartBoat)
     {
         if (!route->getPoiList().isEmpty() && route->getPoiList().at(0)->getRouteTimeStamp()!=-1)
