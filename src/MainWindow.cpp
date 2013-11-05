@@ -40,6 +40,9 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QDesktopWidget>
 #include <QClipboard>
 
+#include <iostream>
+#include <fstream>
+
 #include "MainWindow.h"
 #include "Util.h"
 #include "Orthodromie.h"
@@ -120,6 +123,7 @@ void MainWindow::connectSignals()
     connect(mb->acFile_Lock, SIGNAL(triggered()), this, SLOT(slotFile_Lock()));
     connect(this,SIGNAL(updateLockIcon(QIcon)),mb,SLOT(slot_updateLockIcon(QIcon)));
     connect(mb->acFile_QuitNoSave, SIGNAL(triggered()), this, SLOT(slotFile_QuitNoSave()));
+    connect(mb->acCombineGrib, SIGNAL(triggered()), this, SLOT(slotCombineGrib()));
 
 
     connect(mb->acFax_Open, SIGNAL(triggered()), my_centralWidget, SLOT(slotFax_open()));
@@ -1123,6 +1127,68 @@ void MainWindow::slotFile_QuitNoSave() {
     my_centralWidget->set_noSave(true);
     my_centralWidget->setAboutToQuit();
     QApplication::quit();
+}
+
+using namespace std;
+void MainWindow::slotCombineGrib() {
+
+    QDir dirGrib(gribFilePath);
+    if(!dirGrib.exists())
+    {
+        gribFilePath=appFolder.value("grib");
+        Settings::setSetting("askGribFolder",1);
+        Settings::setSetting("edtGribFolder",gribFilePath);
+    }
+
+    QStringList files = QFileDialog::getOpenFileNames(
+                this,
+                tr("Select several Grib files to combine"),
+                gribFilePath,
+                tr("GRIB file (*.grb *.grib *.grb2 *.grib2)"));
+    if(files.size()>1) {
+        files.sort();
+        QString str=QString().setNum(files.size()) + " " + tr("gribs to combine");
+        QMessageBox::information(this,tr("Grib combination"),str,QMessageBox::Ok);
+        /* select output file */
+        QString filename = QFileDialog::getSaveFileName(this,
+                                                        tr("Filename of destination file"), "", tr("GRIB file (*.grb *.grib *.grb2 *.grib2)"));
+        if (filename != "") {
+            ofstream fdest;
+            fdest.open(filename.toUtf8().constData(),ios::out | ios::trunc | ios::binary);
+            if(!fdest.is_open()) return;
+            int added=0;
+            for(int i=0;i<files.count();++i) {
+                ifstream fread;
+                fread.open(files.at(i).toUtf8().constData(),ios::in | ios::binary);
+                if(!fdest.is_open()) continue;
+                fdest << fread.rdbuf();
+
+                /*if(!fread.eof()) {
+                    qWarning() << i << ": incomplete read";
+                    fread.close();
+                    continue;
+                }*/
+                fread.close();
+                if(!fdest.good()) {
+                    qWarning() << i << ": dest not good";
+                    fdest.close();
+                    break;
+                }
+                added++;
+
+            }
+            fdest.close();
+            str=QString().setNum(added) +" " + tr("files successfully combined")+"\n"+tr("Open generated file ?");
+            if(QMessageBox::question(this,tr("Grib combination"),str)==QMessageBox::Yes) {
+                bool zoom =  (Settings::getSetting("gribZoomOnLoad",0).toInt()==1);
+                openGribFile(filename, zoom);
+                if(my_centralWidget) my_centralWidget->fileInfo_GRIB(DataManager::GRIB_GRIB);
+            }
+        }
+
+    }
+    else
+        QMessageBox::information(this,tr("Grib combination"),tr("Not enough file to combine"),QMessageBox::Ok);
 }
 
 //-------------------------------------------------
