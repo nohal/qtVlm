@@ -783,7 +783,7 @@ void opponentList::getNxtOppData()
 {
     int listSize = opponent_list.size();
     QString idu;
-    if(currentOpponent>=listSize)
+    if(showWhat==SHOW_ALL || currentOpponent>=listSize)
     {
         parent->update();
         return;
@@ -1117,6 +1117,33 @@ void opponentList::requestFinished (QByteArray res_byte)
                                 }
                                 break;
                             }
+                            case SHOW_ALL:
+                            {
+                                QMultiMap<int,QVariantMap> sorted;
+                                QMapIterator<QString,QVariant> it(ranking);
+                                while (it.hasNext())
+                                {
+                                    QVariantMap data=it.next().value().toMap();
+                                    if(isBoatVLM(data["idusers"].toString())) continue;
+                                    int diffRank=qAbs(data["rank"].toInt());
+                                    sorted.insert(diffRank,data);
+                                }
+                                QMapIterator<int,QVariantMap> s(sorted);
+                                while (s.hasNext())
+                                {
+                                    QVariantMap data=s.next().value();
+                                    opponent_list.append(new opponent(colorTable[pos],data["idusers"].toString(),currentRace,
+                                                                data["latitude"].toDouble(),data["longitude"].toDouble(),
+                                                                data["boatpseudo"].toString(), data["boatname"].toString(),proj,main,parent));
+                                    QString h1,h3,h24,pavillon;
+                                    h1=h1.sprintf("%.2f",data["last1h"].toDouble());
+                                    h3=h3.sprintf("%.2f",data["last3h"].toDouble());
+                                    h24=h24.sprintf("%.2f",data["last24h"].toDouble());
+                                    pavillon=data["country"].toString();
+                                    opponent_list.last()->setOtherData(data["rank"].toInt(),h1,h3,h24,data["status"].toString(),pavillon);
+                                }
+                                break;
+                            }
                         }
                     }
                     if(this->showReal && !parent->getIsStartingUp())
@@ -1135,7 +1162,6 @@ void opponentList::requestFinished (QByteArray res_byte)
                             if(opponent_list.at(n)->getIsReal())
                                 delete opponent_list.takeAt(n);
                        }
-                        //currentRace = opponent_list[0]->getRace();
                         currentOpponent = 0;
                         currentMode=OPP_MODE_REFRESH;
                         getNxtOppData();

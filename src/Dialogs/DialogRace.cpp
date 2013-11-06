@@ -229,6 +229,7 @@ void DialogRace::initList(QList<boatVLM*> & boat_list_ptr,QList<raceData*> & rac
         this->button10ranking->setEnabled(false);
         this->buttonMySelection->setEnabled(false);
         this->buttonNone->setEnabled(false);
+        this->buttonAll->setEnabled(false);
         this->buttonReal->setEnabled(false);
         this->filterReal->setEnabled(false);
     }
@@ -273,6 +274,11 @@ void DialogRace::showRealToggle(bool)
     this->filterReal->setEnabled(buttonReal->isChecked());
 }
 
+void DialogRace::showAllToggle(bool b)
+{
+    if(b)
+        param_list[numRace]->showWhat=SHOW_ALL;
+}
 void DialogRace::itemChanged(QStandardItem * item)
 {
     model->blockSignals(true);
@@ -623,6 +629,8 @@ void DialogRace::chgRace(int id)
             param_list[numRace]->showWhat=SHOW_TEN_CLOSEST_RANKING;
         if(this->buttonNone->isChecked())
             param_list[numRace]->showWhat=SHOW_NONE;
+        if(this->buttonAll->isChecked())
+            param_list[numRace]->showWhat=SHOW_ALL;
         param_list[numRace]->showReal=this->buttonReal->isChecked();
     }
 
@@ -836,12 +844,16 @@ void DialogRace::chgRace(int id)
         nsNSZ->setCurrentIndex(0);
     if(param_list[numRace]->showWhat==SHOW_MY_LIST)
         this->buttonMySelection->setChecked(true);
-    if(param_list[numRace]->showWhat==SHOW_TEN_FIRST)
+    else if(param_list[numRace]->showWhat==SHOW_TEN_FIRST)
         this->button10First->setChecked(true);
-    if(param_list[numRace]->showWhat==SHOW_TEN_CLOSEST_DISTANCE)
+    else if(param_list[numRace]->showWhat==SHOW_TEN_CLOSEST_DISTANCE)
         this->button10distance->setChecked(true);
-    if(param_list[numRace]->showWhat==SHOW_TEN_CLOSEST_RANKING)
+    else if(param_list[numRace]->showWhat==SHOW_TEN_CLOSEST_RANKING)
         this->button10ranking->setChecked(true);
+    else if(param_list[numRace]->showWhat==SHOW_ALL)
+        this->buttonAll->setChecked(true);
+    else if(param_list[numRace]->showWhat==SHOW_NONE)
+        this->buttonNone->setChecked(true);
     this->buttonReal->setChecked(param_list[numRace]->showReal);
     this->buttonReal->setEnabled(param_list[numRace]->hasReal);
     this->filterReal->setEnabled(param_list[numRace]->hasReal);

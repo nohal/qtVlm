@@ -65,7 +65,8 @@ class DialogRace : public QDialog, public Ui::race_dialog_ui, public inetClient
         void NSZToggle(bool b);
         void slotFilterReal();
 
-    signals:
+        void showAllToggle(bool b);
+signals:
         void readRace(void);
         void writeBoat(void);
         void updateOpponent(void);
