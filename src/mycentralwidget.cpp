@@ -4392,7 +4392,7 @@ void myCentralWidget::update_menuRoute()
     while(i.hasNext())
     {
         ROUTE * route=i.next();
-        if(Settings::getSetting("autoHideRoute",1).toInt()==0 || route->getBoat()==mainW->getSelectedBoat() || route->getBoat()==NULL || !route->getBoat()->isActive())
+        if(Settings::getSetting("autoHideRoute",1).toInt()==0 || route->getBoat()==NULL || route->getBoat()->getIsSelected() || !route->getBoat()->isActive())
             menuBar->addMenuRoute(route);
     }
 
@@ -4412,7 +4412,7 @@ void myCentralWidget::update_menuRoutage()
     while(i.hasNext())
     {
         ROUTAGE * routage=i.next();
-        if(Settings::getSetting("autoHideRoute",1).toInt()==0 || routage->getBoat()==mainW->getSelectedBoat() || routage->getBoat()==NULL || !routage->getBoat()->isActive())
+        if(Settings::getSetting("autoHideRoute",1).toInt()==0 || routage->getBoat()==NULL || routage->getBoat()->getIsSelected() || !routage->getBoat()->isActive())
             menuBar->addMenuRoutage(routage);
     }
 }

@@ -837,8 +837,6 @@ void MainWindow::closeProgress(void)
     }
     statusBar->show();
     menuBar->show();
-    my_centralWidget->update_menuRoute();
-    my_centralWidget->update_menuRoutage();
 #ifdef __ANDROIDD__
     menuBar->setNativeMenuBar(true);
     menuBar->hide();
@@ -1868,6 +1866,8 @@ void MainWindow::VLM_Sync_sync(void)
             this->slot_centerSelectedBoat();
         my_centralWidget->emitUpdateRoute(NULL);
         updateTitle();
+        my_centralWidget->update_menuRoute();
+        my_centralWidget->update_menuRoutage();
     }
 }
 void MainWindow::slot_boatHasUpdated()
