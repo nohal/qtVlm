@@ -2759,8 +2759,40 @@ Etes-vous sur ?</source>
         <translation></translation>
     </message>
     <message>
-        <source>Fichiers GRIB (*.grb *.grib *.grb.bz2 *.grib.bz2 *.grb.gz *.grib.gz *.grb2)</source>
-        <translation></translation>
+        <source>Select several Grib files to combine</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GRIB file (*.grb *.grib *.grb2 *.grib2)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>gribs to combine</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Grib combination</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Filename of destination file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>files successfully combined</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open generated file ?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Not enough file to combine</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fichiers GRIB (*.grb *.grib *.grb.bz2 *.grib.bz2 *.grb.gz *.grib.gz *.grb2 *.grib2)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3696,6 +3728,10 @@ Etes-vous sur ?</source>
     <message>
         <source>Show arrow for wave direction</source>
         <translation>Affiche les flèches de vagues</translation>
+    </message>
+    <message>
+        <source>Combine grib files</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8633,6 +8669,10 @@ Please select another point or press esc to exit barrier creation mode</source>
     <message>
         <source>...</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>All (without trace)</source>
+        <translation>Tous (sans les traces)</translation>
     </message>
 </context>
 <context>

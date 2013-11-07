@@ -108,6 +108,7 @@ public slots:
         void slotFile_Lock(bool readOnly=false);
         void slotFile_QuitNoSave();
         void slot_gribFileReceived(QString fileName);
+        void slotCombineGrib();
 
         void slot_clearPilototo();
 

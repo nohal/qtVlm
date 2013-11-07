@@ -296,13 +296,6 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="3">
-       <widget class="QRadioButton" name="buttonNone">
-        <property name="text">
-         <string>Aucun</string>
-        </property>
-       </widget>
-      </item>
       <item row="2" column="1">
        <widget class="QRadioButton" name="button10First">
         <property name="text">
@@ -363,6 +356,20 @@
         </property>
        </spacer>
       </item>
+      <item row="0" column="5">
+       <widget class="QRadioButton" name="buttonNone">
+        <property name="text">
+         <string>Aucun</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QRadioButton" name="buttonAll">
+        <property name="text">
+         <string>All (without trace)</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -375,6 +382,24 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>chooser_raceList</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>ranking</tabstop>
+  <tabstop>displayNSZ</tabstop>
+  <tabstop>latNSZ</tabstop>
+  <tabstop>nsNSZ</tabstop>
+  <tabstop>buttonMySelection</tabstop>
+  <tabstop>button10distance</tabstop>
+  <tabstop>buttonAll</tabstop>
+  <tabstop>buttonNone</tabstop>
+  <tabstop>button10First</tabstop>
+  <tabstop>button10ranking</tabstop>
+  <tabstop>buttonReal</tabstop>
+  <tabstop>filterReal</tabstop>
+  <tabstop>buttonBox</tabstop>
+  <tabstop>arrived</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
@@ -400,8 +425,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>403</x>
-     <y>342</y>
+     <x>412</x>
+     <y>536</y>
     </hint>
     <hint type="destinationlabel">
      <x>127</x>
@@ -416,8 +441,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>403</x>
-     <y>342</y>
+     <x>412</x>
+     <y>536</y>
     </hint>
     <hint type="destinationlabel">
      <x>415</x>
@@ -432,8 +457,8 @@
    <slot>tenFirstToggle(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>183</x>
-     <y>315</y>
+     <x>217</x>
+     <y>496</y>
     </hint>
     <hint type="destinationlabel">
      <x>372</x>
@@ -448,8 +473,8 @@
    <slot>myListToggle(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>178</x>
-     <y>286</y>
+     <x>217</x>
+     <y>466</y>
     </hint>
     <hint type="destinationlabel">
      <x>372</x>
@@ -464,8 +489,8 @@
    <slot>tenFirstDistToggle(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>360</x>
-     <y>286</y>
+     <x>449</x>
+     <y>466</y>
     </hint>
     <hint type="destinationlabel">
      <x>372</x>
@@ -480,8 +505,8 @@
    <slot>tenFirstRankToggle(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>365</x>
-     <y>315</y>
+     <x>449</x>
+     <y>496</y>
     </hint>
     <hint type="destinationlabel">
      <x>372</x>
@@ -496,8 +521,8 @@
    <slot>noneToggle(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>548</x>
-     <y>276</y>
+     <x>629</x>
+     <y>466</y>
     </hint>
     <hint type="destinationlabel">
      <x>403</x>
@@ -512,8 +537,8 @@
    <slot>NSZToggle(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>67</x>
-     <y>214</y>
+     <x>80</x>
+     <y>370</y>
     </hint>
     <hint type="destinationlabel">
      <x>403</x>
@@ -528,12 +553,28 @@
    <slot>showRealToggle(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>669</x>
-     <y>306</y>
+     <x>570</x>
+     <y>496</y>
     </hint>
     <hint type="destinationlabel">
      <x>403</x>
      <y>327</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonAll</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>race_dialog_ui</receiver>
+   <slot>showAllToggle(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>510</x>
+     <y>458</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>355</x>
+     <y>272</y>
     </hint>
    </hints>
   </connection>
@@ -548,5 +589,6 @@
   <slot>noneToggle(bool)</slot>
   <slot>NSZToggle(bool)</slot>
   <slot>showRealToggle(bool)</slot>
+  <slot>showAllToggle(bool)</slot>
  </slots>
 </ui>

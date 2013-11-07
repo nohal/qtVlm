@@ -1336,6 +1336,8 @@ void myCentralWidget::loadGribFile(QString fileName, bool zoom) {
         f.append("*.GRIB.GZ");
         f.append("*.grb2");
         f.append("*.GRB2");
+        f.append("*.grib2");
+        f.append("*.GRIB2");
         QFileInfoList list=inf.absoluteDir().entryInfoList(f);
         foreach(const QFileInfo &i,list) {
             if(i.lastModified()<QDateTime::currentDateTime().addDays(-3) && i.filePath()!=inf.filePath())
@@ -4390,7 +4392,7 @@ void myCentralWidget::update_menuRoute()
     while(i.hasNext())
     {
         ROUTE * route=i.next();
-        if(Settings::getSetting("autoHideRoute",1).toInt()==0 || route->getBoat()==mainW->getSelectedBoat() || route->getBoat()==NULL || !route->getBoat()->isActive())
+        if(Settings::getSetting("autoHideRoute",1).toInt()==0 || route->getBoat()==NULL || route->getBoat()->getIsSelected() || !route->getBoat()->isActive())
             menuBar->addMenuRoute(route);
     }
 
@@ -4410,7 +4412,7 @@ void myCentralWidget::update_menuRoutage()
     while(i.hasNext())
     {
         ROUTAGE * routage=i.next();
-        if(Settings::getSetting("autoHideRoute",1).toInt()==0 || routage->getBoat()==mainW->getSelectedBoat() || routage->getBoat()==NULL || !routage->getBoat()->isActive())
+        if(Settings::getSetting("autoHideRoute",1).toInt()==0 || routage->getBoat()==NULL || routage->getBoat()->getIsSelected() || !routage->getBoat()->isActive())
             menuBar->addMenuRoutage(routage);
     }
 }

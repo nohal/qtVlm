@@ -355,6 +355,8 @@ MenuBar::MenuBar(MainWindow *parent)
         acFax_Close = addAction(mn_fax, tr("Fermer le fax meteo"), "", tr(""));
         mn_fax->addAction(acFax_Close);
         menuGrib->addMenu(mn_fax);
+        menuGrib->addSeparator();
+        acCombineGrib = addAction(menuGrib,tr("Combine grib files"),"","","");
 
     addMenu(menuGrib);
 
