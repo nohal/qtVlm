@@ -113,6 +113,7 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     cbGribStep = new QComboBox(gribToolBar);
     cbGribStep->setSizeAdjustPolicy(QComboBox::AdjustToContents);
     cbGribStep->setFont(font);
+    cbGribStep->addItem(tr("5 m"),300);
     cbGribStep->addItem(tr("15 m"),900);
     cbGribStep->addItem(tr("30 m"),1800);
     cbGribStep->addItem(tr("1 h"),3600);
@@ -452,7 +453,7 @@ void ToolBar::update_gribBtn(void) {
 }
 
 int ToolBar::get_gribStep(void) {
-    int stepTable[7]={900,1800,3600,7200,10800,21600,43200};
+    int stepTable[8]={300,900,1800,3600,7200,10800,21600,43200};
     return stepTable[cbGribStep->currentIndex()];
 }
 
