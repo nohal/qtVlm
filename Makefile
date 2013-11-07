@@ -73,7 +73,7 @@ install: all
 	@echo "***********************************************************"
 	mkdir -p $(prefix)
 	cp -Rf qtVlm tr/ $(prefix)
-	cp -Rf base_dir/icon base_dir/img base_dir/polar $(prefix)
+	cp -Rf base_dir/icon base_dir/img base_dir/polar base_dir/dataColors.dat $(prefix)
 	mkdir -p $(prefix)/grib
 	mkdir -p $(prefix)/maps
 	@echo "***********************************************************"
