@@ -2531,37 +2531,37 @@ void MainWindow::slotLoadVLMGrib(void)
 /*************************************/
 #ifdef __QTVLM_WITH_TEST
 
-#include "libgps.h"
-#include "gps.h"
+//#include "libgps.h"
+//#include "gps.h"
 
 
 void MainWindow::slotVLM_Test(void)
 {
-    struct gps_data_t gps_data;
-    memset(&gps_data,0,sizeof(struct gps_data_t));
+//    struct gps_data_t gps_data;
+//    memset(&gps_data,0,sizeof(struct gps_data_t));
 
-    if(gps_open("localhost", DEFAULT_GPSD_PORT,&gps_data)==-1) {
-        qWarning() << "Error opening gpsd connection";
-        return;
-    }
+//    if(gps_open("localhost", DEFAULT_GPSD_PORT,&gps_data)==-1) {
+//        qWarning() << "Error opening gpsd connection";
+//        return;
+//    }
 
-    gps_stream(&gps_data,WATCH_ENABLE|WATCH_JSON,NULL);
+//    gps_stream(&gps_data,WATCH_ENABLE|WATCH_JSON,NULL);
 
-    for (;;) {
-        if (!gps_waiting(&gps_data,500))
-            continue;
+//    for (;;) {
+//        if (!gps_waiting(&gps_data,500))
+//            continue;
 
-        if (gps_read(&gps_data) == -1) {
-            qWarning() << "Read error.\n";
-            break ;
-        } else {
-            qWarning() << "Sat visible: " << gps_data.satellites_visible;
-            qWarning() << "Fix: " << gps_data.fix.mode;
-            qWarning() << "Pos: " << gps_data.fix.latitude << "," << gps_data.fix.longitude;
-        }
-    }
-    gps_stream(&gps_data,WATCH_DISABLE,NULL);
-    gps_close(&gps_data);
+//        if (gps_read(&gps_data) == -1) {
+//            qWarning() << "Read error.\n";
+//            break ;
+//        } else {
+//            qWarning() << "Sat visible: " << gps_data.satellites_visible;
+//            qWarning() << "Fix: " << gps_data.fix.mode;
+//            qWarning() << "Pos: " << gps_data.fix.latitude << "," << gps_data.fix.longitude;
+//        }
+//    }
+//    gps_stream(&gps_data,WATCH_DISABLE,NULL);
+//    gps_close(&gps_data);
 }
 #else
 void MainWindow::slotVLM_Test(void)
@@ -2570,13 +2570,13 @@ void MainWindow::slotVLM_Test(void)
 #endif
 void MainWindow::slotGribInterpolation(void)
 {
-#ifdef __QTVLM_WITH_TEST
-    if(my_centralWidget->getGrib())
-    {
-        gribValidation_dialog->setMode(this->my_centralWidget->getGrib()->getInterpolationMode());
-        gribValidation_dialog->show();
-    }
-#endif
+//#ifdef __QTVLM_WITH_TEST
+//    if(my_centralWidget->getGrib())
+//    {
+//        gribValidation_dialog->setMode(this->my_centralWidget->getGrib()->getInterpolationMode());
+//        gribValidation_dialog->show();
+//    }
+//#endif
 }
 
 /*

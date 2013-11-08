@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DataManager.h"
 
 #ifdef __QTVLM_WITH_TEST
-extern int nbWarning;
+//extern int nbWarning;
 #endif
 DialogGribValidation::DialogGribValidation(myCentralWidget * my_centralWidget,MainWindow * mainWindow) :  QDialog(my_centralWidget)
 {
@@ -48,7 +48,7 @@ DialogGribValidation::DialogGribValidation(myCentralWidget * my_centralWidget,Ma
     longitude->setText("0");
     this->latitude->blockSignals(true);
 #ifdef __QTVLM_WITH_TEST
-    nbWarning=0;
+    //nbWarning=0;
 #endif
 }
 
@@ -104,7 +104,7 @@ void DialogGribValidation::interpolationChanged(int newMode)
 void DialogGribValidation::inputChanged(void)
 {
 #ifdef __QTVLM_WITH_TEST
-    nbWarning=0;
+    //nbWarning=0;
 #endif
     /* recompute interpolation */
     double lat,lon;
