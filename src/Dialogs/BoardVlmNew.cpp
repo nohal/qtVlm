@@ -434,7 +434,9 @@ void BoardVlmNew::slot_updateData()
         det_DNM->setText(QString().sprintf("%d",qRound(myBoat->getDnm()))+tr("nm"));
     det_ORT->setText(QString().sprintf("%.2f",myBoat->getOrtho())+tr("deg"));
     det_VMG->setText(QString().sprintf("%.2f",myBoat->getVmg())+tr("kts"));
-    det_ANGLE->setText(QString().sprintf("%.2f",myBoat->getWPangle())+tr("deg"));
+    double WPAngle=myBoat->getWPangle();
+    if(WPAngle>180.0) WPAngle-=360.0;
+    det_ANGLE->setText(QString().sprintf("%.2f",WPAngle)+tr("deg"));
     det_TWS->setText(QString().sprintf("%.2f",myBoat->getWindSpeed())+tr("kts"));
     det_TWD->setText(QString().sprintf("%.2f",myBoat->getWindDir())+tr("deg"));
     if(myBoat->getPolarData())
