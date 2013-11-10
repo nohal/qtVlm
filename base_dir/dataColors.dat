@@ -28,6 +28,11 @@
 			<color>66;170;20;100</color>
 			<color>70;150;40;120</color>
 			<color>75;140;50;140</color>
+			<color>80;104;68;104</color>
+			<color>85;56;47;56</color>
+			<color>90;30;28;30</color>
+			<color>95;17;16;17</color>
+			<color>100;0;0;0</color>
 		</colorData>
 		<colorData>
 			<name>waves_m</name>
