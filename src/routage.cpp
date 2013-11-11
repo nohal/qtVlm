@@ -410,11 +410,14 @@ QList<vlmPoint> ROUTAGE::finalEpuration(const QList<vlmPoint> &listPoints)
     {
         QLineF line1(xa,ya,listPoints.at(n).x,listPoints.at(n).y);
         QLineF line2(xa,ya,listPoints.at(n+1).x,listPoints.at(n+1).y);
-        if(listPoints.at(n).originNb!=listPoints.at(n+1).originNb && (listPoints.at(n).origin->isBroken || listPoints.at(n+1).origin->isBroken))
+        if(n==0 || n==listPoints.size()-2)
+            critere=179.9;
+        else if(listPoints.at(n).originNb!=listPoints.at(n+1).originNb &&
+                (listPoints.at(n).origin->isBroken2 || listPoints.at(n+1).origin->isBroken2))
             critere=179;
         else if(qAbs(Util::A180(qAbs(line1.angleTo(line2)))) > 60 ||
                 qAbs(line1.length()-line2.length())>maxDist)
-            critere=179;
+            critere=150;
         else
         {
             critere=0;
@@ -441,6 +444,8 @@ QList<vlmPoint> ROUTAGE::finalEpuration(const QList<vlmPoint> &listPoints)
             {
                 critere=360-critere;
             }
+            if(listPoints.at(n).originNb!=listPoints.at(n+1).originNb && listPoints.at(n).origin->isBroken2 && listPoints.at(n+1).origin->isBroken2)
+                critere=qMin(179.0,critere*2.0);
         }
         byCriteres.insert(critere,QPoint(n,n+1));
         s=n*10e6+n+1;
@@ -456,11 +461,11 @@ QList<vlmPoint> ROUTAGE::finalEpuration(const QList<vlmPoint> &listPoints)
         if(!d.hasNext()) break;
         QPoint couple=d.next().value();
         int badOne=0;
-        if(!listPoints.at(couple.x()).origin->isBroken &&
-           listPoints.at(couple.y()).origin->isBroken)
+        if(!listPoints.at(couple.x()).origin->isBroken2 &&
+           listPoints.at(couple.y()).origin->isBroken2)
             badOne=couple.x();
-        else if(listPoints.at(couple.x()).origin->isBroken &&
-           !listPoints.at(couple.y()).origin->isBroken)
+        else if(listPoints.at(couple.x()).origin->isBroken2 &&
+           !listPoints.at(couple.y()).origin->isBroken2)
             badOne=couple.y();
         else if(listPoints.at(couple.x()).distIso<listPoints.at(couple.y()).distIso)
             badOne=couple.x();
@@ -482,36 +487,43 @@ QList<vlmPoint> ROUTAGE::finalEpuration(const QList<vlmPoint> &listPoints)
             double critereNext=byIndices.value(s);
             byCriteres.remove(criterePrevious,QPoint(previous,badOne));
             byCriteres.remove(critereNext,QPoint(badOne,next));
-            QLineF temp1;
-            QPointF middle;
-            if(listPoints.at(previous).originNb!=listPoints.at(next).originNb)
-            {
-                temp1.setPoints(QPointF(listPoints.at(previous).origin->x,listPoints.at(previous).origin->y),
-                             QPointF(listPoints.at(next).origin->x,listPoints.at(next).origin->y));
-                middle=temp1.pointAt(0.5);
-            }
-            else
-                middle=QPointF(listPoints.at(previous).origin->x,listPoints.at(previous).origin->y);
-            temp1.setPoints(QPointF(listPoints.at(previous).x,listPoints.at(previous).y),
-                            QPointF(listPoints.at(next).x,listPoints.at(next).y));
-            QPointF middleBis=temp1.pointAt(0.5);
-            temp1.setPoints(middleBis,middle);
-            temp1.setLength(initialDist);
-            middle=temp1.p2();
-            QLineF temp2(middle.x(),middle.y(),listPoints.at(previous).x,listPoints.at(previous).y);
-            QLineF temp3(middle.x(),middle.y(),listPoints.at(next).x,listPoints.at(next).y);
-            double critere=qAbs(temp2.angleTo(temp3));
-            if(critere>180)
-            {
-                critere=360-critere;
-            }
             QLineF line1(xa,ya,listPoints.at(previous).x,listPoints.at(previous).y);
             QLineF line2(xa,ya,listPoints.at(next).x,listPoints.at(next).y);
-            if(listPoints.at(previous).originNb!=listPoints.at(next).originNb && (listPoints.at(previous).origin->isBroken || listPoints.at(next).origin->isBroken))
+            double critere=0;
+            if(listPoints.at(previous).originNb!=listPoints.at(next).originNb &&
+                    (listPoints.at(previous).origin->isBroken2 || listPoints.at(next).origin->isBroken2))
                 critere=179;
             else if(qAbs(Util::A180(qAbs(line1.angleTo(line2)))) > 60 ||
                     qAbs(line1.length()-line2.length())>maxDist)
-                critere=179;
+                critere=150;
+            else
+            {
+                QLineF temp1;
+                QPointF middle;
+                if(listPoints.at(previous).originNb!=listPoints.at(next).originNb)
+                {
+                    temp1.setPoints(QPointF(listPoints.at(previous).origin->x,listPoints.at(previous).origin->y),
+                                 QPointF(listPoints.at(next).origin->x,listPoints.at(next).origin->y));
+                    middle=temp1.pointAt(0.5);
+                }
+                else
+                    middle=QPointF(listPoints.at(previous).origin->x,listPoints.at(previous).origin->y);
+                temp1.setPoints(QPointF(listPoints.at(previous).x,listPoints.at(previous).y),
+                                QPointF(listPoints.at(next).x,listPoints.at(next).y));
+                QPointF middleBis=temp1.pointAt(0.5);
+                temp1.setPoints(middleBis,middle);
+                temp1.setLength(initialDist);
+                middle=temp1.p2();
+                QLineF temp2(middle.x(),middle.y(),listPoints.at(previous).x,listPoints.at(previous).y);
+                QLineF temp3(middle.x(),middle.y(),listPoints.at(next).x,listPoints.at(next).y);
+                critere=qAbs(temp2.angleTo(temp3));
+                if(critere>180)
+                {
+                    critere=360-critere;
+                }
+                if(listPoints.at(previous).originNb!=listPoints.at(next).originNb && listPoints.at(previous).origin->isBroken2 && listPoints.at(next).origin->isBroken2)
+                    critere=qMin(179.0,critere*2.0);
+            }
             byCriteres.insert(critere,QPoint(previous,next));
             s=previous*10e6+next;
             byIndices.insert(s,critere);
@@ -2195,6 +2207,12 @@ void ROUTAGE::slot_calculate()
                             || Util::myDiffAngle(tempPoints.at(n).capOrigin,tempPoints.at(n+1).capOrigin)>150.0)
                         tempPoints[n].isBroken=true;
                 }
+                if(tempPoints.at(n).isBroken)
+                {
+                    tempPoints[n].isBroken2=true;
+                    if(n>0)
+                        iso->setPointIsBroken2(iso->getPoints()->size()-1);
+                }
                 if(i_iso)
                     tempPoints[n].eta=i_eta-(int)this->getTimeStep()*60.00;
                 else
@@ -2229,10 +2247,10 @@ void ROUTAGE::slot_calculate()
                     vg->setParent(this);
                     ++mmm;
 #if 0 //set to 1 to debug extra information on isopoint
-                    if(tempPoints.at(n).isBroken)
-                        vg->setDebug("Broken "+QString().setNum(isochrones.size()+1));
+                    if(tempPoints.at(n).isBroken2)
+                        vg->setDebug("Broken2 "+QString().setNum(isochrones.size()+1));
                     else
-                        vg->setDebug("Not Broken "+QString().setNum(isochrones.size()+1));
+                        vg->setDebug("Not Broken2 "+QString().setNum(isochrones.size()+1));
 #endif
                     vg->setEta(eta+(int)this->getTimeStep()*60.00);
                     connect(this,SIGNAL(updateVgTip(int,int,QString)),vg,SLOT(slot_updateTip(int,int,QString)));
@@ -2688,12 +2706,12 @@ void ROUTAGE::slot_calculate()
 }
 void ROUTAGE::countDebug(int nbIso, QString s)
 {
-    if (nbIso!=238) return;
+    if (nbIso!=122) return;
     int count=0;
     int nDead=0;
     for (int n=0;n<tempPoints.size();++n)
     {
-        if(tempPoints.at(n).originNb==56)
+        if(tempPoints.at(n).originNb==103)
         {
             ++count;
             if(s.contains("initial"))
@@ -2836,26 +2854,36 @@ QList<vlmPoint> ROUTAGE::pruneWakeThreaded(const QList<vlmPoint> &list)
     vlmPoint p=list.at(0);
     QList<vlmPoint> *pIso;
     double wakeDir=0;
+    double myXa,myYa;
+    const double halfLengthRace=QLineF(p.routage->getXa(),p.routage->getYa(),p.routage->getXs(),p.routage->getYs()).length()/2.0;
     if(p.routage->getI_iso())
+    {
         pIso=p.routage->getI_Isochrones()->at(p.routage->getI_Isochrones()->size()-1)->getPoints();
+        myXa=p.routage->getXs();
+        myYa=p.routage->getYs();
+    }
     else
+    {
         pIso=p.routage->getIsochrones()->at(p.routage->getIsochrones()->size()-1)->getPoints();
+        myXa=p.routage->getXa();
+        myYa=p.routage->getYa();
+    }
     for(int n=0;n<list.size();++n)
     {
         p=list.at(n);
-        if(p.origin->isBroken)
+        if(p.origin->isBroken2)
         {
             listResult.append(p);
             continue;
         }
-        const QLineF l2(p.routage->getXa(),p.routage->getYa(),p.x,p.y);
+        const QLineF l2(myXa,myYa,p.x,p.y);
         bool bad=false;
         for(int m=0;m<pIso->size();++m)
         {
-            const QLineF l1(p.routage->getXa(),p.routage->getYa(),pIso->at(m).x,pIso->at(m).y);
+            const QLineF l1(myXa,myYa,pIso->at(m).x,pIso->at(m).y);
             if(l1.length()>=l2.length()) continue;
+            if(l2.length()-l1.length()<halfLengthRace) continue;
             if(pIso->at(m).isDead) continue;
-            if(l1.length()/l2.length()<0.3) continue;
             QPolygonF wake;
             wake.append(QPointF(pIso->at(m).x,pIso->at(m).y));
             wakeDir=l1.angle();
@@ -3606,7 +3634,7 @@ void ROUTAGE::removeCrossedSegments()
                     differentDirection=true;
             }
         }
-        else if(tempPoints.at(n).origin->isBroken /* && !tempPoints.at(n+1).origin->isBroken*/)
+        else if(tempPoints.at(n).origin->isBroken2 /* && !tempPoints.at(n+1).origin->isBroken*/)
         {
             if(tempPoints.at(n).originNb!=tempPoints.at(n+1).originNb)
             {
@@ -3697,7 +3725,7 @@ void ROUTAGE::removeCrossedSegments()
                         differentDirection=true;
                 }
             }
-            else if(tempPoints.at(previous).origin->isBroken /* && !tempPoints.at(next).origin->isBroken*/)
+            else if(tempPoints.at(previous).origin->isBroken2 /* && !tempPoints.at(next).origin->isBroken*/)
             {
                 if(tempPoints.at(previous).originNb!=tempPoints.at(next).originNb)
                 {

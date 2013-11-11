@@ -70,6 +70,7 @@ class vlmLine : public QGraphicsWidget
 
         int count(void) const { return line.count(); }
         void setPointDead(const int &n){this->line[n].isDead=true;}
+        void setPointIsBroken2(const int &n){this->line[n].isBroken2=true;}
         void setPointStartCap(const int &n,const double &c){this->line[n].startCap=c;}
         void setPointWind(const int &n, const double &twd, const double &tws){this->line[n].wind_angle=twd;this->line[n].wind_speed=tws;}
         void setPointCurrent(const int &n, const double &cd, const double &cs){this->line[n].current_angle=cd;this->line[n].current_speed=cs;}

@@ -21,6 +21,7 @@ vlmPoint::vlmPoint(const double  &lon, const double &lat)
     this->distIso=-1;
     this->capOrigin=0;
     this->isBroken=false;
+    this->isBroken2=false;
     this->debugInt=0;
     this->internal_1=0;
     this->internal_2=0;
