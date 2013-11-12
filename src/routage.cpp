@@ -2207,6 +2207,8 @@ void ROUTAGE::slot_calculate()
                             || Util::myDiffAngle(tempPoints.at(n).capOrigin,tempPoints.at(n+1).capOrigin)>150.0)
                         tempPoints[n].isBroken=true;
                 }
+                if(n==0 || n==tempPoints.size()-1)
+                    tempPoints[n].isBroken2=true;
                 if(tempPoints.at(n).isBroken)
                 {
                     tempPoints[n].isBroken2=true;
