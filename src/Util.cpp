@@ -116,8 +116,11 @@ void Util::setFontDialog(QWidget * o)
         w=o->width();
     QDesktopWidget * desktopWidget = QApplication::desktop();
     QRect screenRect = desktopWidget->screenGeometry(desktopWidget->primaryScreen());
-    o->setMaximumHeight(screenRect.height()-50);
-    o->setMaximumWidth(screenRect.width()-20);
+    if(o->maximumWidth()>10000)
+    {
+        o->setMaximumHeight(screenRect.height()-50);
+        o->setMaximumWidth(screenRect.width()-20);
+    }
     o->resize(w,h);
     QPoint center=screenRect.center();
     center.setX(center.x()-w/2);
