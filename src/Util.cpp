@@ -36,6 +36,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Projection.h"
 #include "Version.h"
 #include "Orthodromie.h"
+#include <QDesktopWidget>
 
 double Util::A180(double angle)
 {
@@ -108,11 +109,21 @@ void Util::setFontDialog(QWidget * o)
 {
     QObject * object=qobject_cast<QObject*>(o);
     int h=Settings::getSetting(object->objectName()+".height",-1).toInt();
-    if(h>0)
-    {
-        int w=Settings::getSetting(object->objectName()+".width",-1).toInt();
-        o->resize(w,h);
-    }
+    if(h<=0)
+        h=o->height();
+    int w=Settings::getSetting(object->objectName()+".width",-1).toInt();
+    if(w<=0)
+        w=o->width();
+    QDesktopWidget * desktopWidget = QApplication::desktop();
+    QRect screenRect = desktopWidget->screenGeometry(desktopWidget->primaryScreen());
+    o->setMaximumHeight(screenRect.height()-50);
+    o->setMaximumWidth(screenRect.width()-20);
+    o->resize(w,h);
+    QPoint center=screenRect.center();
+    center.setX(center.x()-w/2);
+    center.setY(center.y()-h/2);
+    o->move(center);
+
     setFontDialog(object);
 }
 
