@@ -3636,7 +3636,7 @@ void ROUTAGE::removeCrossedSegments()
                     differentDirection=true;
             }
         }
-        else if(tempPoints.at(n).origin->isBroken2 /* && !tempPoints.at(n+1).origin->isBroken*/)
+        else if(tempPoints.at(n).origin->isBroken /* && !tempPoints.at(n+1).origin->isBroken*/)
         {
             if(tempPoints.at(n).originNb!=tempPoints.at(n+1).originNb)
             {
@@ -3727,7 +3727,7 @@ void ROUTAGE::removeCrossedSegments()
                         differentDirection=true;
                 }
             }
-            else if(tempPoints.at(previous).origin->isBroken2 /* && !tempPoints.at(next).origin->isBroken*/)
+            else if(tempPoints.at(previous).origin->isBroken /* && !tempPoints.at(next).origin->isBroken*/)
             {
                 if(tempPoints.at(previous).originNb!=tempPoints.at(next).originNb)
                 {
