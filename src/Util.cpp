@@ -679,6 +679,13 @@ void Util::addAgent(QNetworkRequest & request,bool overrideForce)
 }
 bool Util::lineIsCrossingRect(const QLineF &line, const QRectF &rect)
 {
+//    if(rect.contains(line.p1())) return true;
+//    if(rect.contains(line.p2())) return true;
+//    if(QLineF(rect.topLeft(),rect.topRight()).intersect(line,NULL)==QLineF::BoundedIntersection) return true;
+//    if(QLineF(rect.topRight(),rect.bottomRight()).intersect(line,NULL)==QLineF::BoundedIntersection) return true;
+//    if(QLineF(rect.bottomRight(),rect.bottomLeft()).intersect(line,NULL)==QLineF::BoundedIntersection) return true;
+//    if(QLineF(rect.bottomLeft(),rect.topLeft()).intersect(line,NULL)==QLineF::BoundedIntersection) return true;
+//    return false;
     double A=(line.y2()-line.y1())*rect.topLeft().x() +
              (line.x1()-line.x2())*rect.topLeft().y() +
              (line.x2()*line.y1()-line.x1()*line.y2());

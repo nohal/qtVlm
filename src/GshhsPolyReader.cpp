@@ -161,6 +161,12 @@ void GshhsPolyCell::DrawPolygonContour(QPainter &pnt, contour_list * p, const do
 {
     double x1, y1, x2, y2;
     double long_max, lat_max, long_min, lat_min;
+    double X,Y;
+    proj->map2screenDouble((double)x0cell,(double)y0cell,&X,&Y);
+    QPointF left(X,Y);
+    proj->map2screenDouble(Util::A360((double)x0cell+1.0),Util::A360((double)y0cell+1.0),&X,&Y);
+    QPointF right(X,Y);
+    boundingRect=QRectF(left,right);
 
     long_min=(double)x0cell;
     lat_min=(double)y0cell;
@@ -216,6 +222,8 @@ void GshhsPolyCell::DrawPolygonContour(QPainter &pnt, contour_list * p, const do
             }
         }
     }
+    //pnt.drawRect(boundingRect);
+    //qWarning()<<"coasts size "<<coasts.size();
 }
 
 #define DRAW_POLY_CONTOUR(POLY) if(POLY) DrawPolygonContour(pnt,POLY,dx,proj);
@@ -383,7 +391,7 @@ void GshhsPolyReader::drawGshhsPolyMapPlain(QPainter &pnt, Projection *proj,
             {
                 if (allCells[cxx][cy+90] == NULL) {
                     cel = new GshhsPolyCell(fpoly,cxx, cy,proj,&polyHeader);
-                    assert(cel);
+                    //assert(cel);
                     allCells[cxx][cy+90] = cel;
                 }
                 else {
@@ -410,19 +418,20 @@ void GshhsPolyReader::drawGshhsPolyMapSeaBorders( QPainter &pnt, Projection *pro
     int dx, cx, cxx, cy;
     GshhsPolyCell *cel;
 
+    qWarning()<<"--------start--------------";
+    int nCel=0;
     for (cx=cxmin; cx<cxmax; ++cx) {
         cxx = cx;
         while (cxx < 0)
             cxx += 360;
         while (cxx >= 360)
             cxx -= 360;
-
         for (cy=cymin; cy<cymax; ++cy) {
             if (cxx>=0 && cxx<=359 && cy>=-90 && cy<=89)
             {
                 if (allCells[cxx][cy+90] == NULL) {
                     cel = new GshhsPolyCell(fpoly,cxx, cy,proj,&polyHeader);
-                    assert(cel);
+                    //assert(cel);
                     allCells[cxx][cy+90] = cel;
                 }
                 else {
@@ -430,6 +439,7 @@ void GshhsPolyReader::drawGshhsPolyMapSeaBorders( QPainter &pnt, Projection *pro
                 }
                 dx = cx-cxx;
                 cel->drawSeaBorderLines(pnt, dx, proj);
+                //qWarning()<<"CelNb"<<++nCel<<cel->getCoasts()->size();
             }
         }
     }

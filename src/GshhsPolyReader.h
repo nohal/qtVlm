@@ -67,10 +67,12 @@ class GshhsPolyCell
                     const QColor &seaColor, const QColor &landColor );
 
         void  drawSeaBorderLines(QPainter &pnt, const double &dx, Projection *proj);
-        const QList<QLineF> * getCoasts() const {return & coasts;}
+        QList<QLineF> * getCoasts() {return & coasts;}
+        QRectF getBoundingRect() {return boundingRect;}
     private:
         int nbpoints;
         int x0cell, y0cell;
+        QRectF boundingRect;
 
         FILE *fpoly;
 
@@ -137,8 +139,7 @@ inline bool GshhsPolyReader::crossing(const QLineF &traject, const QLineF &traje
     cymax = (int) ceil  (qMax(trajectWorld.p1().y(),trajectWorld.p2().y()));
     int cx, cxx, cy;
     GshhsPolyCell *cel;
-
-    for (cx=cxmin; cx<cxmax; cx++)
+    for (cx=cxmin; cx<cxmax; ++cx)
     {
         cxx = cx;
         while (cxx < 0)
@@ -146,28 +147,22 @@ inline bool GshhsPolyReader::crossing(const QLineF &traject, const QLineF &traje
         while (cxx >= 360)
             cxx -= 360;
 
-        for (cy=cymin; cy<cymax; cy++)
+        for (cy=cymin; cy<cymax; ++cy)
         {
             if(this->abortRequested) return false;
             if (cxx>=0 && cxx<=359 && cy>=-90 && cy<=89)
             {
                 if(this->abortRequested) return false;
-                if (allCells[cxx][cy+90] == NULL) continue;
                 cel = allCells[cxx][cy+90];
-                const QList<QLineF> *coasts=cel->getCoasts();
+                if (cel == NULL) continue;
+                QList<QLineF> *coasts=cel->getCoasts();
                 if (coasts->isEmpty()) continue;
-                for(int cs=0;cs<coasts->count();cs++)
+                if(!Util::lineIsCrossingRect(traject,cel->getBoundingRect()))
+                    continue;
+                for(int cs=0;cs<coasts->count();++cs)
                 {
-#if 1
-                    if(this->abortRequested)
-                    {
-                        return false;
-                    }
                     if (my_intersects(traject,coasts->at(cs)))
-#else
-                    QPointF dummy;
-                    if(coasts->at(cs).intersect(traject,&dummy)==QLineF::BoundedIntersection)
-#endif
+                    //if(coasts->at(cs).intersect(traject,NULL)==QLineF::BoundedIntersection)
                         return true;
                 }
             }

@@ -58,7 +58,7 @@ Original code: virtual-winds.com
 #include "Terrain.h"
 //#include "Terrain.h"
 //#define debugCount
-//#define traceTime
+#define traceTime
 
 //#define HAS_ICEGATE
 #define USE_SHAPEISO
@@ -2043,6 +2043,7 @@ void ROUTAGE::slot_calculate()
                     tempPoints = QtConcurrent::blockingMapped(tempPoints, ROUTAGE::checkCoastCollision);
                     for (int np=0;np<tempPoints.size();++np)
                     {
+                        //tempPoints.replace(np,checkCoastCollision(tempPoints.at(np)));
                         if(tempPoints.at(np).isDead)
                         {
                             tempPoints.removeAt(np);
@@ -2514,47 +2515,58 @@ void ROUTAGE::slot_calculate()
         QString temp;
         tt.setHMS(0,0,0,0);
         tt=tt.addMSecs(msecs_5);
-        qWarning()<<"...Preparation loop:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
+        QString pc=QString().sprintf("%.2f",(double) msecs_5*100.0/(double) msecs)+"%";
+        qWarning()<<"...Preparation loop:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'")<<pc;
         info=info+"\n...Preparation loop: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
         tt.setHMS(0,0,0,0);
         tt=tt.addMSecs(msecs_1);
-        qWarning()<<"...Calculating iso points:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
+        pc=QString().sprintf("%.2f",(double) msecs_1*100.0/(double) msecs)+"%";
+        qWarning()<<"...Calculating iso points:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'")<<pc;
         info=info+"\n...Calculating iso points: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
         tt.setHMS(0,0,0,0);
         tt=tt.addMSecs(msecs_3);
-        qWarning()<<".........out of which inside findPoint():"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
+        pc=QString().sprintf("%.2f",(double) msecs_3*100.0/(double) msecs)+"%";
+        qWarning()<<".........out of which inside findPoint():"<<tt.toString("hh'h'mm'min'ss.zzz'secs'")<<pc;
         info=info+"\n.........out of which inside findPoint(): "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
         tt.setHMS(0,0,0,0);
         tt=tt.addMSecs(msecs_14);
-        qWarning()<<".........out of which detecting collision with coasts:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
+        pc=QString().sprintf("%.2f",(double) msecs_14*100.0/(double) msecs)+"%";
+        qWarning()<<".........out of which detecting collision with coasts:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'")<<pc;
         info=info+"\n.........out of which detecting collision with coasts: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
         tt.setHMS(0,0,0,0);
         tt=tt.addMSecs(msecs_21);
-        qWarning()<<".........out of which calculating distances and angles:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
+        pc=QString().sprintf("%.2f",(double) msecs_21*100.0/(double) msecs)+"%";
+        qWarning()<<".........out of which calculating distances and angles:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'")<<pc;
         info=info+"\n.........out of which calculating distances and angles: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
         tt.setHMS(0,0,0,0);
         tt=tt.addMSecs(msecs_2);
-        qWarning()<<"...removing crossed segments:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
+        pc=QString().sprintf("%.2f",(double) msecs_2*100.0/(double) msecs)+"%";
+        qWarning()<<"...removing crossed segments:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'")<<pc;
         info=info+"\n...removing crossed segments: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
         tt.setHMS(0,0,0,0);
         tt=tt.addMSecs(msecs_4);
-        qWarning()<<"...smoothing isochron:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
+        pc=QString().sprintf("%.2f",(double) msecs_4*100.0/(double) msecs)+"%";
+        qWarning()<<"...smoothing isochron:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'")<<pc;
         info=info+"\n...smoothing isochron: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
         tt.setHMS(0,0,0,0);
         tt=tt.addMSecs(msecs_9);
-        qWarning()<<"...checking iso not crossing previous segments or iso:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
+        pc=QString().sprintf("%.2f",(double) msecs_9*100.0/(double) msecs)+"%";
+        qWarning()<<"...checking iso not crossing previous segments or iso:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'")<<pc;
         info=info+"\n...checking iso not crossing previous segments or iso: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
         tt.setHMS(0,0,0,0);
         tt=tt.addMSecs(msecs_10);
-        qWarning()<<"...pruning by wake:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
+        pc=QString().sprintf("%.2f",(double) msecs_10*100.0/(double) msecs)+"%";
+        qWarning()<<"...pruning by wake:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'")<<pc;
         info=info+"\n...pruning by wake: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
         tt.setHMS(0,0,0,0);
         tt=tt.addMSecs(msecs_6);
-        qWarning()<<"...final cleaning:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
+        pc=QString().sprintf("%.2f",(double) msecs_6*100.0/(double) msecs)+"%";
+        qWarning()<<"...final cleaning:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'")<<pc;
         info=info+"\n...final cleaning: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
         tt.setHMS(0,0,0,0);
         tt=tt.addMSecs(msecs_7);
-        qWarning()<<"...Final checking and calculating route between Isos:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'")<<"(maxLoop="<<maxLoop<<")";
+        pc=QString().sprintf("%.2f",(double) msecs_7*100.0/(double) msecs)+"%";
+        qWarning()<<"...Final checking and calculating route between Isos:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'")<<pc<<"(maxLoop="<<maxLoop<<")";
         info=info+"\n...Final checking and calculating route between Isos: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
         tt.setHMS(0,0,0,0);
         tt=tt.addMSecs(msecs_12);
@@ -2563,35 +2575,44 @@ void ROUTAGE::slot_calculate()
         int nbCpu=1;
         if(this->useMultiThreading)
             nbCpu=QThread::idealThreadCount();
-        qWarning()<<"........out of which calculating route between Isos:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'")<<"(ran on"<<nbCpu<<"threads)";
+        pc=QString().sprintf("%.2f",(double) msecs_12*100.0/(double) msecs)+"%";
+        qWarning()<<"........out of which calculating route between Isos:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'")<<pc<<"(ran on"<<nbCpu<<"threads)";
         info=info+"\n........out of which calculating route between Isos: "+tt.toString("hh'h'mm'min'ss.zzz'secs'")+" (ran on "+temp.sprintf("%d",nbCpu)+" threads)";
         tt.setHMS(0,0,0,0);
         tt=tt.addMSecs(msecs_13);
-        qWarning()<<"........out of which removing crossed route segments:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
+        pc=QString().sprintf("%.2f",(double) msecs_13*100.0/(double) msecs)+"%";
+        qWarning()<<"........out of which removing crossed route segments:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'")<<pc;
         info=info+"\n........out of which removing crossed route segments: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
         tt.setHMS(0,0,0,0);
         tt=tt.addMSecs(msecs_17);
-        qWarning()<<"........out of which checking right-to-left order for same origin points:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
+        pc=QString().sprintf("%.2f",(double) msecs_17*100.0/(double) msecs)+"%";
+        qWarning()<<"........out of which checking right-to-left order for same origin points:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'")<<pc;
         info=info+"\n........out of which checking right-to-left order for same origin points: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
         tt.setHMS(0,0,0,0);
         tt=tt.addMSecs(msecs_8);
-        qWarning()<<"...checking if arrived:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
+        pc=QString().sprintf("%.2f",(double) msecs_8*100.0/(double) msecs)+"%";
+        qWarning()<<"...checking if arrived:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'")<<pc;
         info=info+"\n...checking if arrived: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
         tt.setHMS(0,0,0,0);
         tt=tt.addMSecs(msecs_15);
-        qWarning()<<"...generating segments"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
+        pc=QString().sprintf("%.2f",(double) msecs_15*100.0/(double) msecs)+"%";
+        qWarning()<<"...generating segments"<<tt.toString("hh'h'mm'min'ss.zzz'secs'")<<pc;
         info=info+"\n...generating segments: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
         tt.setHMS(0,0,0,0);
         tt=tt.addMSecs(msecs_11);
-        qWarning()<<"...processing events"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
+        pc=QString().sprintf("%.2f",(double) msecs_11*100.0/(double) msecs)+"%";
+        qWarning()<<"...processing events"<<tt.toString("hh'h'mm'min'ss.zzz'secs'")<<pc;
         info=info+"\n...processing events: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
         tt.setHMS(0,0,0,0);
         tt=tt.addMSecs(msecs_16);
-        qWarning()<<"...calculating shapeIso:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
+        pc=QString().sprintf("%.2f",(double) msecs_16*100.0/(double) msecs)+"%";
+        qWarning()<<"...calculating shapeIso:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'")<<pc;
         info=info+"\n...calculating shapeIso: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
         tt.setHMS(0,0,0,0);
-        tt=tt.addMSecs(msecs-(msecs_1+msecs_2+msecs_4+msecs_5+msecs_6+msecs_7+msecs_8+msecs_9+msecs_10+msecs_11+msecs_15+msecs_16));
-        qWarning()<<"...sum of other calculations:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'");
+        int other=msecs_1+msecs_2+msecs_4+msecs_5+msecs_6+msecs_7+msecs_8+msecs_9+msecs_10+msecs_11+msecs_15+msecs_16;
+        tt=tt.addMSecs(msecs-other);
+        pc=QString().sprintf("%.2f",(double) other*100.0/(double) msecs)+"%";
+        qWarning()<<"...sum of other calculations:"<<tt.toString("hh'h'mm'min'ss.zzz'secs'")<<pc;
         info=info+"\n...sum of other calculations: "+tt.toString("hh'h'mm'min'ss.zzz'secs'");
         if(msecsD1!=0)
         {
