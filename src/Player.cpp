@@ -245,9 +245,9 @@ void Player::loadBoatsLog()
     if(type==BOAT_REAL && realBoat)
         return;
     boatsLog.clear();
-    QString fileName="./";
-    fileName.append(QString::number(player_id));
-    fileName.append(appFolder.value("userFiles")+"BoatsLog.dat");
+    QString fileName="";
+    fileName.append(appFolder.value("userFiles"));
+    fileName.append(QString::number(player_id)+"BoatsLog.dat");
     QFile file( fileName );
     if( !file.open( QIODevice::ReadOnly ) )
       return;

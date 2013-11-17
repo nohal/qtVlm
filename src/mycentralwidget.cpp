@@ -2107,15 +2107,15 @@ void myCentralWidget::slot_showVlmLog()
 {
     if (mainW->getSelectedBoat()->get_boatType()==BOAT_VLM)
     {
-        vlmLogViewer = new DialogVlmLog(this);
-        vlmLogViewer->initWithBoat( (boatVLM*)mainW->getSelectedBoat() );
+        DialogVlmLog vlmLogViewer(this);
+        vlmLogViewer.initWithBoat( (boatVLM*)mainW->getSelectedBoat() );
+        vlmLogViewer.exec();
     }
     else {
         QMessageBox::warning(0,QObject::tr("Voir Vlm Logs"),
              QString(QObject::tr("Pas de bateau VLM actif.")));
         return;
     }
-
 }
 
 void myCentralWidget::slot_fetchVLMTrack()
