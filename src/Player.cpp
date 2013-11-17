@@ -228,10 +228,11 @@ void Player::saveBoatsLog()
 {
     if(type==BOAT_REAL && realBoat)
         return;
-    QString fileName="./";
-    fileName.append(QString::number(player_id));
-    fileName.append(appFolder.value("userFiles")+"BoatsLog.dat");
+    QString fileName="";
+    fileName.append(appFolder.value("userFiles"));
+    fileName.append(QString::number(player_id)+"BoatsLog.dat");
     QFile file( fileName );
+    //qWarning() << "appFolder(userFiles) "<< appFolder.value("userFiles") << " Filename: " <<fileName;
     if( !file.open( QIODevice::WriteOnly ) )
       return;
     QDataStream stream( &file );

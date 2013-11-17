@@ -2123,15 +2123,15 @@ void myCentralWidget::slot_fetchVLMTrack()
     Player * cur_player=this->getPlayer();
     if(cur_player)
     {
-        vlmTrackRetriever = new DialogDownloadTracks(mainW,this,this->getInet());
-        vlmTrackRetriever->init();
+        DialogDownloadTracks vlmTrackRetriever1(mainW,this,this->getInet());
+        vlmTrackRetriever1.init();
+        vlmTrackRetriever1.exec();
     }
     else {
         QMessageBox::warning(0,QObject::tr("Telecharger traces VLM"),
              QString(QObject::tr("Pas de compte VLM actif.")));
         return;
     }
-
 }
 
 void myCentralWidget::setHorn()

@@ -38,6 +38,7 @@ private:
     QFile jsonFile;
     myCentralWidget * parent;
     bool raceIsValid,boatIsValid,cached;
+    bool dlRunning;
 
     bool doRequest(int reqType);
     void jsonError (QJson::Parser * parser);
@@ -49,6 +50,7 @@ private slots:
     void on_startTimeEdit_dateTimeChanged(QDateTime);
     void on_endTimeEdit_dateTimeChanged(QDateTime);
     void on_frameTrackCheckBox_clicked(bool checked=false);
+    void slot_fetch(void);
 };
 
 #endif // DIALOGDOWNLOADTRACKS_H

@@ -22,7 +22,7 @@ DialogDownloadTracks::DialogDownloadTracks(MainWindow * ,myCentralWidget * paren
     ui->setupUi(this);
     Util::setFontDialog(this);
     this->raceIsValid=false;
-    this->setWhatsThis(tr("Permet de telecharger manuellement une trace pour une course VLM.\nLa boîte à cocher trace partielle s'active apres l'entree d'un numero de course valide, et permet de requérir une trace tronquée."));
+    this->setWhatsThis(tr("Permet de telecharger manuellement une trace pour une course VLM.\nLa boîte �  cocher trace partielle s'active apres l'entree d'un numero de course valide, et permet de requérir une trace tronquée."));
     ui->raceIDEdit->setToolTip(tr("Numero de la course\n http://www.v-l-m.org/races.php?fulllist=1"));
     ui->boatIDEdit->setToolTip(tr("Numero du bateau"));
     ui->startTimeEdit->setToolTip(tr("Debut de la trace"));
@@ -61,7 +61,6 @@ void DialogDownloadTracks::init()
     ui->labelPath->setEnabled(false);
     ui->labelFileName->setText("N/A");
     ui->labelStatus->setEnabled(false);
-    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
     fileName="";
     fullFileName="";
     routeName="";
@@ -70,85 +69,20 @@ void DialogDownloadTracks::init()
     filePath=appFolder.value("tracks");
     ui->labelPathName->setText(filePath);
     cached=false;
+    connect(ui->fetchButton,SIGNAL(clicked()),this,SLOT(slot_fetch()));
+    dlRunning = false;
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+    ui->fetchButton->setEnabled(false);
     this->show();
 }
 
 void DialogDownloadTracks::accept()
 {
-    if (raceIsValid&&boatIsValid)
-    {
-        raceID=ui->raceIDEdit->value();
-        boatID=ui->boatIDEdit->value();
-        routeName=ui->editRouteName->text();
-        if (ui->frameTrackCheckBox->isChecked())
-        {
-            qStartTime=ui->startTimeEdit->dateTime();
-            startTime=qStartTime.toTime_t();
-            qEndTime=ui->endTimeEdit->dateTime();
-            endTime=qEndTime.toTime_t();
-            updateFileName(ui->frameTrackCheckBox->isChecked());
-            if ( !cached )
-                doRequest(VLM_GET_PARTIAL_TRACK);
-            else
-            {
-                QTextStream stream(&jsonFile);
-                QJson::Parser parser;
-                bool ok;
-                QByteArray data;
-                stream>>data;
-                QVariantMap result=parser.parse (data, &ok).toMap();
-                if (!ok) {
-                    jsonError(&parser);
-                    return;
-                }
-                if (result["nb_tracks"]!=0)
-                {
-                    QVariant trackRaw=result["tracks"];
-                    QList<QVariant> details=trackRaw.toList();
-                    parent->withdrawRouteFromBank(routeName,details);
-                }
-             }
-        }
-        else
-        {
-            updateFileName(ui->frameTrackCheckBox->isChecked());
-            if ( !cached )
-                doRequest(VLM_GET_TRACK);
-            else
-            {
-                QTextStream stream(&jsonFile);
-                QJson::Parser parser;
-                bool ok;
-                QByteArray data;
-                stream>>data;
-                QVariantMap result=parser.parse (data, &ok).toMap();
-                if (!ok) {
-                    jsonError(&parser);
-                    return;
-                }
-                if (result["nb_tracks"]!=0)
-                {
-                    QVariant trackRaw=result["tracks"];
-                    QList<QVariant> details=trackRaw.toList();
-                    parent->withdrawRouteFromBank(routeName,details);
-                }
-            }
-        }
-        done(QDialog::Accepted);
-    }
-    else
-    {
-        QMessageBox msgBox;
-        msgBox.setText(tr("Course ou bateau inconnu"));
-        msgBox.setIcon(QMessageBox::Critical);
-        msgBox.exec();
-        done(QDialog::Rejected);
-    }
+    done(QDialog::Accepted);
 }
 void DialogDownloadTracks::done(int result)
 {
     QDialog::done(result);
-    this->deleteLater();
 }
 
 void DialogDownloadTracks::on_boatIDEdit_valueChanged(int)
@@ -384,6 +318,8 @@ void DialogDownloadTracks::requestFinished (QByteArray data)
                                      errMsg);
             }
         }
+        dlRunning = false;
+        ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
     }
     break;
     case VLM_GET_PARTIAL_TRACK:
@@ -459,6 +395,8 @@ void DialogDownloadTracks::requestFinished (QByteArray data)
                                  tr("Requete incorrecte"),
                                  errMsg);
         }
+        dlRunning = false;
+        ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
     }
     break;
     case VLM_RACE_INFO:
@@ -505,7 +443,7 @@ void DialogDownloadTracks::requestFinished (QByteArray data)
                  ui->frameTrackCheckBox->setEnabled(true);
                  ui->frameTrackCheckBox->setChecked(false);
                  updateFileName(ui->frameTrackCheckBox->isChecked());
-                 ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+                 ui->fetchButton->setEnabled(true);
              }
 //             ui->startTimeEdit->setEnabled(true);
 //             ui->endTimeEdit->setEnabled(true);
@@ -524,7 +462,7 @@ void DialogDownloadTracks::requestFinished (QByteArray data)
             jsonError(&parser);
             boatIsValid=false;
             ui->labelDisplayBoatName->setText("N/A");
-            ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+            ui->fetchButton->setEnabled(false);
             return;
         }
         else
@@ -537,7 +475,7 @@ void DialogDownloadTracks::requestFinished (QByteArray data)
                 ui->editRouteName->setText(routeName);
                 ui->labelDisplayBoatName->setText(playerName);
                 if (raceIsValid)
-                    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+                    ui->fetchButton->setEnabled(true);
             }
             else
             {
@@ -547,7 +485,7 @@ void DialogDownloadTracks::requestFinished (QByteArray data)
                 routeName="";
                 ui->editRouteName->setText(routeName);
                 ui->editRouteName->setEnabled(false);
-                ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+                ui->fetchButton->setEnabled(false);
             }
         break;
     }
@@ -561,4 +499,82 @@ void DialogDownloadTracks::jsonError (QJson::Parser * parser)
     QMessageBox::critical (this,
                            tr("Erreur"),
                            tr("Erreur de lecture json."));
+}
+
+void DialogDownloadTracks::slot_fetch (void)
+{
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+    if (raceIsValid&&boatIsValid)
+    {
+        raceID=ui->raceIDEdit->value();
+        boatID=ui->boatIDEdit->value();
+        routeName=ui->editRouteName->text();
+        if (ui->frameTrackCheckBox->isChecked())
+        {
+            qStartTime=ui->startTimeEdit->dateTime();
+            startTime=qStartTime.toTime_t();
+            qEndTime=ui->endTimeEdit->dateTime();
+            endTime=qEndTime.toTime_t();
+            updateFileName(ui->frameTrackCheckBox->isChecked());
+            if ( !cached ) {
+                dlRunning=true;
+                doRequest(VLM_GET_PARTIAL_TRACK);
+            }
+            else
+            {
+                QTextStream stream(&jsonFile);
+                QJson::Parser parser;
+                bool ok;
+                QByteArray data;
+                stream>>data;
+                QVariantMap result=parser.parse (data, &ok).toMap();
+                if (!ok) {
+                    jsonError(&parser);
+                    return;
+                }
+                if (result["nb_tracks"]!=0)
+                {
+                    QVariant trackRaw=result["tracks"];
+                    QList<QVariant> details=trackRaw.toList();
+                    parent->withdrawRouteFromBank(routeName,details);
+                    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+                }
+             }
+        }
+        else
+        {
+            updateFileName(ui->frameTrackCheckBox->isChecked());
+            if ( !cached ) {
+                dlRunning=true;
+                doRequest(VLM_GET_TRACK);
+            }
+            else
+            {
+                QTextStream stream(&jsonFile);
+                QJson::Parser parser;
+                bool ok;
+                QByteArray data;
+                stream>>data;
+                QVariantMap result=parser.parse (data, &ok).toMap();
+                if (!ok) {
+                    jsonError(&parser);
+                    return;
+                }
+                if (result["nb_tracks"]!=0)
+                {
+                    QVariant trackRaw=result["tracks"];
+                    QList<QVariant> details=trackRaw.toList();
+                    parent->withdrawRouteFromBank(routeName,details);
+                    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+                }
+            }
+        }
+    }
+    else
+    {
+        QMessageBox msgBox;
+        msgBox.setText(tr("Course ou bateau inconnu"));
+        msgBox.setIcon(QMessageBox::Critical);
+        msgBox.exec();
+    }
 }
