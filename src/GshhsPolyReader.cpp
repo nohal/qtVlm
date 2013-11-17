@@ -418,8 +418,6 @@ void GshhsPolyReader::drawGshhsPolyMapSeaBorders( QPainter &pnt, Projection *pro
     int dx, cx, cxx, cy;
     GshhsPolyCell *cel;
 
-    qWarning()<<"--------start--------------";
-    int nCel=0;
     for (cx=cxmin; cx<cxmax; ++cx) {
         cxx = cx;
         while (cxx < 0)
@@ -439,7 +437,6 @@ void GshhsPolyReader::drawGshhsPolyMapSeaBorders( QPainter &pnt, Projection *pro
                 }
                 dx = cx-cxx;
                 cel->drawSeaBorderLines(pnt, dx, proj);
-                //qWarning()<<"CelNb"<<++nCel<<cel->getCoasts()->size();
             }
         }
     }

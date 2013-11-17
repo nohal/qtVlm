@@ -104,7 +104,7 @@ class GshhsPolyReader
         void drawGshhsPolyMapSeaBorders( QPainter &pnt, Projection *proj);
 
         void setQuality(const int &quality); // 5 levels: 0=low ... 4=full
-        bool crossing(const QLineF &traject, const QLineF &trajectWorld) const;
+        bool crossing(const QLineF &traject, const QLineF &trajectWorld, const bool &threaded=false) const;
         int currentQuality;
         void setProj(Projection * p){this->proj=p;}
         int  getPolyVersion();
@@ -125,7 +125,7 @@ class GshhsPolyReader
         QList<QLineF>coasts;
 };
 Q_DECLARE_TYPEINFO(GshhsPolyReader,Q_MOVABLE_TYPE);
-inline bool GshhsPolyReader::crossing(const QLineF &traject, const QLineF &trajectWorld) const
+inline bool GshhsPolyReader::crossing(const QLineF &traject, const QLineF &trajectWorld, const bool &threaded) const
 {
     if(proj==NULL) return false;
     if(!proj->isInBounderies(traject.p1().x(),traject.p1().y()) &&
@@ -157,13 +157,17 @@ inline bool GshhsPolyReader::crossing(const QLineF &traject, const QLineF &traje
                 if (cel == NULL) continue;
                 QList<QLineF> *coasts=cel->getCoasts();
                 if (coasts->isEmpty()) continue;
-                if(!Util::lineIsCrossingRect(traject,cel->getBoundingRect()))
+                if(coasts->size()>4 && !Util::lineIsCrossingRect(traject,cel->getBoundingRect()))
                     continue;
                 for(int cs=0;cs<coasts->count();++cs)
                 {
                     if (my_intersects(traject,coasts->at(cs)))
                     //if(coasts->at(cs).intersect(traject,NULL)==QLineF::BoundedIntersection)
+                    {
+                        if(!threaded && cs>20)
+                            coasts->move(cs,0);
                         return true;
+                    }
                 }
             }
         }

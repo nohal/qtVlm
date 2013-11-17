@@ -230,19 +230,18 @@ QList<vlmPoint> ROUTAGE::findPointThreaded(const QList<vlmPoint> &list)
         if(!pt.origin->isStart && previousIso->size()>1)
         {
             QLineF temp1(pt.origin->x,pt.origin->y,pt.x,pt.y);
-            QPointF dummy(0,0);
             for (int i=0;i<previousIso->size()-1;++i)
             {
                 QLineF s(previousIso->at(i),previousIso->at(i+1));
                 if(pt.originNb!=i && pt.originNb!=i+1)
                 {
-                    //if(temp1.intersect(s,&dummy)==QLineF::BoundedIntersection)
-                    if(temp1.intersect(s,&dummy)==QLineF::BoundedIntersection)
+                    //if(temp1.intersect(s,NULL)==QLineF::BoundedIntersection)
+                    if(temp1.intersect(s,NULL)==QLineF::BoundedIntersection)
                     {
                         bad=true;
                         break;
                     }
-                    if(temp1.intersect(previousSegments->at(i),&dummy)==QLineF::BoundedIntersection)
+                    if(temp1.intersect(previousSegments->at(i),NULL)==QLineF::BoundedIntersection)
                     {
                         bad=true;
                         break;
@@ -377,7 +376,7 @@ vlmPoint ROUTAGE::checkCoastCollision(const vlmPoint &point)
     y1=newPoint.origin->y;
     x2=newPoint.x;
     y2=newPoint.y;
-    newPoint.isDead=(newPoint.routage->getCheckCoast() && (newPoint.routage->getMap() && newPoint.routage->getMap()->crossing(QLineF(x1,y1,x2,y2),QLineF(newPoint.origin->lon,newPoint.origin->lat,newPoint.lon,newPoint.lat))))
+    newPoint.isDead=(newPoint.routage->getCheckCoast() && (newPoint.routage->getMap() && newPoint.routage->getMap()->crossing(QLineF(x1,y1,x2,y2),QLineF(newPoint.origin->lon,newPoint.origin->lat,newPoint.lon,newPoint.lat),newPoint.routage->get_threaded())))
                  || (newPoint.routage->getCheckLine() && newPoint.routage->crossBarriere(QLineF(x1,y1,x2,y2)));
     return newPoint;
 }
@@ -388,7 +387,7 @@ bool ROUTAGE::checkCoastCollision2(const vlmPoint &point1, const vlmPoint &point
     y1=point1.y;
     x2=point2.x;
     y2=point2.y;
-    return (point1.routage->getCheckCoast() && (point1.routage->getMap() && point1.routage->getMap()->crossing(QLineF(x1,y1,x2,y2),QLineF(point1.lon,point1.lat,point2.lon,point2.lat))))
+    return (point1.routage->getCheckCoast() && (point1.routage->getMap() && point1.routage->getMap()->crossing(QLineF(x1,y1,x2,y2),QLineF(point1.lon,point1.lat,point2.lon,point2.lat),point1.routage->get_threaded())))
                  || (point1.routage->getCheckLine() && point1.routage->crossBarriere(QLineF(x1,y1,x2,y2)));
 }
 QList<vlmPoint> ROUTAGE::finalEpuration(const QList<vlmPoint> &listPoints)
@@ -884,6 +883,7 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, DataManager *dataManager, QGrap
     this->whatIfUsed=false;
     this->whatIfTime=0;
     this->whatIfWind=100;
+    this->threaded=false;
     pen.setColor(color);
     pen.setBrush(color);
     pen.setWidthF(2);
@@ -1526,12 +1526,11 @@ void ROUTAGE::slot_calculate()
                         QLineF temp(list->at(n).x,list->at(n).y,xa,ya);
                         temp.setAngle(Util::A360(90-caps.at(ccc)));
                         temp.setLength(list->at(n).distIso);
-                        QPointF dummy;
                         if(n>1)
                         {
                             if(list->at(n).distIso<list->at(n-1).distIso)
                             {
-                                if(temp.intersect(limitRight,&dummy)==QLineF::BoundedIntersection)
+                                if(temp.intersect(limitRight,NULL)==QLineF::BoundedIntersection)
                                 {
                                     ++nbCapsPruned;
                                     continue;
@@ -1542,7 +1541,7 @@ void ROUTAGE::slot_calculate()
                         {
                             if(list->at(n).distIso<list->at(n+1).distIso)
                             {
-                                if(temp.intersect(limitLeft,&dummy)==QLineF::BoundedIntersection)
+                                if(temp.intersect(limitLeft,NULL)==QLineF::BoundedIntersection)
                                 {
                                     ++nbCapsPruned;
                                     continue;
@@ -2040,7 +2039,9 @@ void ROUTAGE::slot_calculate()
 #ifdef traceTime
                     t2.start();
 #endif
+                    this->threaded=true;
                     tempPoints = QtConcurrent::blockingMapped(tempPoints, ROUTAGE::checkCoastCollision);
+                    this->threaded=false;
                     for (int np=0;np<tempPoints.size();++np)
                     {
                         //tempPoints.replace(np,checkCoastCollision(tempPoints.at(np)));
@@ -2952,7 +2953,9 @@ void ROUTAGE::pruneWake(const int &wakeAngle)
             listList.append(tempList);
         }
         tempList.clear();
+        this->threaded=true;
         listList = QtConcurrent::blockingMapped(listList, ROUTAGE::pruneWakeThreaded);
+        this->threaded=false;
         tempPoints.clear();
         for(int l=0;l<listList.size();++l)
             tempPoints.append(listList.at(l));
@@ -3395,7 +3398,6 @@ void ROUTAGE::checkIsoCrossingPreviousSegments()
     }
     return;
 #else
-    QPointF dummy;
     for(int nn=0;nn<tempPoints.size()-1;++nn)
     {
         if(tempPoints.at(nn).notSimplificable || tempPoints.at(nn+1).notSimplificable)
@@ -3415,7 +3417,7 @@ void ROUTAGE::checkIsoCrossingPreviousSegments()
         bool bad=false;
         for(int mm=0;mm<previousSegments.size();++mm)
         {
-            if(S1.intersect(previousSegments.at(mm),&dummy)==QLineF::BoundedIntersection)
+            if(S1.intersect(previousSegments.at(mm),NULL)==QLineF::BoundedIntersection)
             {
                 bad=true;
                 somethingHasChanged=true;
@@ -3432,7 +3434,7 @@ void ROUTAGE::checkIsoCrossingPreviousSegments()
         for(int mm=0;mm<previousIso.size()-1;++mm) /*also check that new Iso does not cross previous iso*/
         {
             QLineF S2(previousIso.at(mm),previousIso.at(mm+1));
-            if(S1.intersect(S2,&dummy)==QLineF::BoundedIntersection)
+            if(S1.intersect(S2,NULL)==QLineF::BoundedIntersection)
 //                    if(fastIntersects(S1,S2))
             {
                 if(tempPoints.at(nn).distIso<tempPoints.at(nn+1).distIso)
@@ -3447,7 +3449,6 @@ void ROUTAGE::checkIsoCrossingPreviousSegments()
     }
 #endif
 #if 0
-    QPointF dummy;
     for(int nn=0;nn<tempPoints.size()-1;++nn)
     {
         QLineF S1(tempPoints.at(nn).x,tempPoints.at(nn).y,tempPoints.at(nn+1).x,tempPoints.at(nn+1).y);
@@ -3456,7 +3457,7 @@ void ROUTAGE::checkIsoCrossingPreviousSegments()
         {
             if(iso->at(mm).isBroken) continue;
             QLineF S2(QPointF(iso->at(mm).x,iso->at(mm).y),QPointF(iso->at(mm+1).x,iso->at(mm+1).y));
-            if(S1.intersect(S2,&dummy)==QLineF::BoundedIntersection)
+            if(S1.intersect(S2,NULL)==QLineF::BoundedIntersection)
             {
                 if(tempPoints.at(nn).distIso<tempPoints.at(nn+1).distIso)
                     tempPoints.removeAt(nn);
@@ -3652,8 +3653,7 @@ void ROUTAGE::removeCrossedSegments()
                              tempPoints.at(n).x,tempPoints.at(n).y);
                 QLineF temp2(tempPoints.at(n+1).origin->x,tempPoints.at(n+1).origin->y,
                              tempPoints.at(n+1).x,tempPoints.at(n+1).y);
-                QPointF dummy;
-                if(temp1.intersect(temp2,&dummy)!=QLineF::BoundedIntersection)
+                if(temp1.intersect(temp2,NULL)!=QLineF::BoundedIntersection)
                     differentDirection=true;
             }
         }
@@ -3665,8 +3665,7 @@ void ROUTAGE::removeCrossedSegments()
                              tempPoints.at(n).x,tempPoints.at(n).y);
                 QLineF temp2(tempPoints.at(n+1).origin->x,tempPoints.at(n+1).origin->y,
                              tempPoints.at(n+1).x,tempPoints.at(n+1).y);
-                QPointF dummy;
-                if(temp1.intersect(temp2,&dummy)!=QLineF::BoundedIntersection)
+                if(temp1.intersect(temp2,NULL)!=QLineF::BoundedIntersection)
                     differentDirection=true;
             }
         }
@@ -3743,8 +3742,7 @@ void ROUTAGE::removeCrossedSegments()
                                  tempPoints.at(previous).x,tempPoints.at(previous).y);
                     QLineF temp2(tempPoints.at(next).origin->x,tempPoints.at(next).origin->y,
                                  tempPoints.at(next).x,tempPoints.at(next).y);
-                    QPointF dummy;
-                    if(temp1.intersect(temp2,&dummy)!=QLineF::BoundedIntersection)
+                    if(temp1.intersect(temp2,NULL)!=QLineF::BoundedIntersection)
                         differentDirection=true;
                 }
             }
@@ -3756,8 +3754,7 @@ void ROUTAGE::removeCrossedSegments()
                                  tempPoints.at(previous).x,tempPoints.at(previous).y);
                     QLineF temp2(tempPoints.at(next).origin->x,tempPoints.at(next).origin->y,
                                  tempPoints.at(next).x,tempPoints.at(next).y);
-                    QPointF dummy;
-                    if(temp1.intersect(temp2,&dummy)!=QLineF::BoundedIntersection)
+                    if(temp1.intersect(temp2,NULL)!=QLineF::BoundedIntersection)
                         differentDirection=true;
                 }
             }
@@ -3805,7 +3802,6 @@ void ROUTAGE::removeCrossedSegments()
 void ROUTAGE::removeCrossedSegments()
 {
     if(tempPoints.isEmpty()) return;
-    QPointF dummy;
     QMultiMap<double,QPoint> byCriteres;
     QHash<quint32,double> byIndices;
     QList<bool> deadStatus;
@@ -3819,7 +3815,7 @@ void ROUTAGE::removeCrossedSegments()
         {
             QLineF a1(tempPoints.at(n).origin->x,tempPoints.at(n).origin->y,tempPoints.at(n).x,tempPoints.at(n).y);
             QLineF a2(tempPoints.at(n+1).origin->x,tempPoints.at(n+1).origin->y,tempPoints.at(n+1).x,tempPoints.at(n+1).y);
-            if(a1.intersect(a2,&dummy)!=QLineF::BoundedIntersection)
+            if(a1.intersect(a2,NULL)!=QLineF::BoundedIntersection)
             {
                 if(tempPoints.at(n).origin->isBroken)
                 {
@@ -3851,7 +3847,7 @@ void ROUTAGE::removeCrossedSegments()
                              tempPoints.at(n).x,tempPoints.at(n).y);
                 QLineF temp2(tempPoints.at(n+1).origin->x,tempPoints.at(n+1).origin->y,
                              tempPoints.at(n+1).x,tempPoints.at(n+1).y);
-                if(temp1.intersect(temp2,&dummy)!=QLineF::BoundedIntersection)
+                if(temp1.intersect(temp2,NULL)!=QLineF::BoundedIntersection)
                     differentDirection=true;
             }
         }
@@ -3909,7 +3905,7 @@ void ROUTAGE::removeCrossedSegments()
             {
                 QLineF a1(tempPoints.at(previous).origin->x,tempPoints.at(previous).origin->y,tempPoints.at(previous).x,tempPoints.at(previous).y);
                 QLineF a2(tempPoints.at(next).origin->x,tempPoints.at(next).origin->y,tempPoints.at(next).x,tempPoints.at(next).y);
-                if(a1.intersect(a2,&dummy)!=QLineF::BoundedIntersection)
+                if(a1.intersect(a2,NULL)!=QLineF::BoundedIntersection)
                 {
                     if(tempPoints.at(previous).origin->isBroken)
                     {
@@ -3941,7 +3937,7 @@ void ROUTAGE::removeCrossedSegments()
                                  tempPoints.at(previous).x,tempPoints.at(previous).y);
                     QLineF temp2(tempPoints.at(next).origin->x,tempPoints.at(next).origin->y,
                                  tempPoints.at(next).x,tempPoints.at(next).y);
-                    if(temp1.intersect(temp2,&dummy)!=QLineF::BoundedIntersection)
+                    if(temp1.intersect(temp2,NULL)!=QLineF::BoundedIntersection)
                         differentDirection=true;
                 }
             }
@@ -3988,7 +3984,7 @@ void ROUTAGE::removeCrossedSegments()
         if(tempPoints.at(n).originNb==tempPoints.at(n+1).originNb) continue;
         QLineF a1(tempPoints.at(n).origin->x,tempPoints.at(n).origin->y,tempPoints.at(n).x,tempPoints.at(n).y);
         QLineF a2(tempPoints.at(n+1).origin->x,tempPoints.at(n+1).origin->y,tempPoints.at(n+1).x,tempPoints.at(n+1).y);
-        if(a1.intersect(a2,&dummy)==QLineF::BoundedIntersection)
+        if(a1.intersect(a2,NULL)==QLineF::BoundedIntersection)
         {
             if(tempPoints.at(n).distIso<tempPoints.at(n+1).distIso)
                 tempPoints.removeAt(n);
@@ -4330,9 +4326,8 @@ void ROUTAGE::showIsoRoute()
                     found=false;
                     for(int pp=0;pp<i_poly.size()-1;++pp)
                     {
-                        QPointF dummy;
                         QLineF iLine(i_poly.at(pp),i_poly.at(pp+1));
-                        if(rLine.intersect(iLine,&dummy)==QLineF::BoundedIntersection)
+                        if(rLine.intersect(iLine,NULL)==QLineF::BoundedIntersection)
                         {
                             while(i_poly.size()>pp+2)
                                 i_poly.remove(i_poly.size()-1);
@@ -4471,13 +4466,12 @@ void ROUTAGE::showIsoRoute()
                     found=false;
                     for(int pp=0;pp<i_isochrone->getPoints()->size()-1;++pp)
                     {
-                        QPointF dummy;
                         p1=i_isochrone->getPoints()->at(pp);
                         p2=i_isochrone->getPoints()->at(pp+1);
                         proj->map2screenDouble(p1.lon,p1.lat,&x1,&y1);
                         proj->map2screenDouble(p2.lon,p2.lat,&x2,&y2);
                         QLineF iLine(x1,y1,x2,y2);
-                        if(rLine.intersect(iLine,&dummy)==QLineF::BoundedIntersection)
+                        if(rLine.intersect(iLine,NULL)==QLineF::BoundedIntersection)
                         {
                             intersection=pp;
                             found=true;
@@ -4615,39 +4609,9 @@ double ROUTAGE::pointDistanceRatio(double x, double goal, QPolygonF *poly, QPoly
     if(i_poly->isEmpty() || poly->isEmpty() || prev_poly->isEmpty())
         return 10e6;
     QPointF point=pointAt(i_poly,x);
-#if 0
-//    qWarning()<<"i_poly counts"<<i_poly->size();
-//    qWarning()<<"poly counts"<<poly->size();
-//    qWarning()<<"prev_poly counts"<<prev_poly->size();
-    double angle=QLineF(poly->first(),prev_poly->first()).angle();
-    QLineF cutter(point,poly->first());
-    cutter.setLength(cutter.length()*100.0);
-    cutter.setAngle(angle);
-    cutter.setPoints(cutter.p2(),cutter.p1());
-    cutter.setLength(cutter.length()*100.0);
-    double dist1=10e6, dist2=10e3;
-    QPointF dummy;
-    for (int n=0;n<poly->size()-1;++n)
-    {
-        if(QLineF(poly->at(n),poly->at(n+1)).intersect(cutter,&dummy)==QLineF::BoundedIntersection)
-        {
-            dist1=QLineF(dummy,point).length();
-            break;
-        }
-    }
-    for (int n=0;n<prev_poly->size()-1;++n)
-    {
-        if(QLineF(prev_poly->at(n),prev_poly->at(n+1)).intersect(cutter,&dummy)==QLineF::BoundedIntersection)
-        {
-            dist2=QLineF(dummy,point).length();
-            break;
-        }
-    }
-#else
-    QPointF dummy;
-    double dist1=this->findDistancePoly(point,poly,&dummy);
-    double dist2=this->findDistancePoly(point,prev_poly,&dummy);
-#endif
+    QPointF intersection;
+    double dist1=this->findDistancePoly(point,poly,&intersection);
+    double dist2=this->findDistancePoly(point,prev_poly,&intersection);
     if(dist2==0) return -goal;
     if(dist1+dist2==0) return 10e6;
     return (dist1/(dist1+dist2))-goal;
@@ -4860,10 +4824,9 @@ bool ROUTAGE::newtownRaphson(double * root, double goal,double precision,QPolygo
 bool ROUTAGE::crossBarriere(const QLineF &line) const
 {
 #ifdef OLD_BARRIER
-    QPointF dummy;
     foreach (const QLineF &barriere,barrieres)
     {
-        if(barriere.intersect(line,&dummy)==QLineF::BoundedIntersection)
+        if(barriere.intersect(line,NULL)==QLineF::BoundedIntersection)
             return true;
     }
     return false;
