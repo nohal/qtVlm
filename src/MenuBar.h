@@ -271,12 +271,6 @@ public:
         QAction *acMap_CitiesNames3;
         QAction *acMap_CitiesNames4;
 
-    QAction *acMap_Zoom_In;
-    QAction *acMap_Zoom_Out;
-    QAction *acMap_Zoom_Sel;
-    QAction *acMap_Zoom_All;
-    QAction *acMap_sel;
-
     QAction *acOptions_Proxy;
     QAction *acOptions_Units;
     QAction *acOptions_GraphicsParams;

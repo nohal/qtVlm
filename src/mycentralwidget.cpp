@@ -1208,7 +1208,7 @@ void myCentralWidget::slot_mouseRelease(QGraphicsSceneMouseEvent* e)
             {
                 //qWarning() << "zoom on " << x0 << "," << y0 << " " << x1 << "," << y1;
                 proj->zoomOnZone(x0,y0,x1,y1);
-                selection->clearSelection();
+                slot_clearSelection();
             }
         }
     }
