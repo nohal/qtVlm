@@ -1430,10 +1430,27 @@ void myCentralWidget::showGribDate_dialog(void)
     }
 }
 
+bool myCentralWidget::get_gribZone(double * x0,double * y0,double * x1,double * y1) {
+    if (selection->getZone(x0,y0, x1,y1)) {
+        return true;
+    }
+    else {
+        if(dataManager) {
+            Grib * grib = dataManager->get_grib(DataManager::GRIB_GRIB);
+            if(grib && grib->getZoneExtension(x0,y0, x1,y1))
+                return true;
+            grib = dataManager->get_grib(DataManager::GRIB_CURRENT);
+            if(grib && grib->getZoneExtension(x0,y0, x1,y1))
+                return true;
+        }
+    }
+    return false;
+}
+
 void myCentralWidget::slot_fileLoad_GRIB() {
     double x0, y0, x1, y1;
 
-    if (selection->getZone(&x0,&y0, &x1,&y1)) {
+    if (get_gribZone(&x0,&y0, &x1,&y1)) {
         dialogLoadGrib->setZone(x0, y0, x1, y1);
         dialogLoadGrib->exec();
     }
@@ -1518,7 +1535,7 @@ void myCentralWidget::slotLoadSailsDocGrib(void) {
 #define DIR_STR_LON(VAL) (VAL>=0?"E":"W")
 
 
-    if (selection->getZone(&x0,&y0, &x1,&y1))
+    if (get_gribZone(&x0,&y0, &x1,&y1))
     {
         param.sprintf("%f%s,%f%s,%f%s,%f%s",fabs(y0),DIR_STR_LAT(y0),
                       fabs(y1),DIR_STR_LAT(y1),
