@@ -288,6 +288,7 @@ public slots :
         void slot_addRouteFromMenu();
         void slot_importRouteFromMenu(bool ortho=false);
         void slot_importRouteFromMenu2();
+        void slot_importRouteFromVlm();
         void slot_editRoute(ROUTE * route,bool createMode=false);
         void slot_twaLine();
         void slot_releaseCompassFollow(){this->compassRoute=NULL;}

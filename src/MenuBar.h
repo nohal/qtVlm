@@ -148,6 +148,7 @@ public:
     QMenu   *mnRoute_import;
     QAction   *acRoute_import;
     QAction   *acRoute_import2;
+    QAction   *acRoute_import3;
     QMenu   *mnRoute_export;
     QAction   *acRoute_paste;
     QAction *acRoute_comparator;

@@ -391,6 +391,8 @@ MenuBar::MenuBar(MainWindow *parent)
                     tr("En mode VB-VMG"),"", "", "");
         acRoute_import2 = addAction(mnRoute_import,
                     tr("En mode Ortho"),"", "", "");
+        acRoute_import3 = addAction(mnRoute_import,
+                    tr("Depuis le pilototo VLM"),"", "", "");
         acRoute_paste = addAction(menuRoute,
                     tr("Coller une route"),"Ctrl+V", "", "");
         menuRoute->addMenu(mnRoute_import);
@@ -813,6 +815,7 @@ void MenuBar::setPlayerType(const int &type)
     acOptions_SH_Por->setVisible(!real);
     acShowLog->setVisible(!real);
     acGetTrack->setVisible(!real);
+    acRoute_import3->setVisible(!real);
 }
 
 void ZeroOneActionGroup::clear(void) {

@@ -56,9 +56,8 @@ Original code: virtual-winds.com
 #include "vlmpointgraphic.h"
 #include "settings.h"
 #include "Terrain.h"
-//#include "Terrain.h"
 //#define debugCount
-#define traceTime
+//#define traceTime
 
 //#define HAS_ICEGATE
 #define USE_SHAPEISO
@@ -357,7 +356,15 @@ QList<vlmPoint> ROUTAGE::findPointThreaded(const QList<vlmPoint> &list)
 //            if(qRound(diff*10e8)!=0)
 //                qWarning()<<"erreur disIso"<<diff<<"max="<<max<<isoProche.size();
 #else
+#if 0
+            double lineO=QLineF(pt.x,pt.y,pt.origin->x,pt.origin->y).length()*2.1;
+            QRectF R(0,0,lineO,lineO);
+            R.moveCenter(QPointF(pt.x,pt.y));
+            QPolygonF polyP=pt.routage->getShapeMiddle()->intersected(R);
+            pt.distIso=ROUTAGE::findDistancePreviousIso(pt, &polyP);
+#else
             pt.distIso=ROUTAGE::findDistancePreviousIso(pt, pt.routage->getShapeMiddle());
+#endif
 #endif
         }
         result.append(pt);

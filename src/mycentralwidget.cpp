@@ -571,6 +571,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     connect(menuBar->acRoute_add, SIGNAL(triggered()), this, SLOT(slot_addRouteFromMenu()));
     connect(menuBar->acRoute_import, SIGNAL(triggered()), this, SLOT(slot_importRouteFromMenu()));
     connect(menuBar->acRoute_import2, SIGNAL(triggered()), this, SLOT(slot_importRouteFromMenu2()));
+    connect(menuBar->acRoute_import3, SIGNAL(triggered()), this, SLOT(slot_importRouteFromVlm()));
 
     /*Routages*/
     connect(menuBar->acRoutage_add, SIGNAL(triggered()), this, SLOT(slot_addRoutageFromMenu()));
@@ -2201,6 +2202,102 @@ bool myCentralWidget::freeRoutageName(QString name,ROUTAGE * thisroutage)
     }
     return true;
 }
+void myCentralWidget::slot_importRouteFromVlm()
+{
+    if(mainW->getSelectedBoat()==NULL || mainW->getSelectedBoat()->get_boatType()!=BOAT_VLM) return;
+    boatVLM * boat=(boatVLM*)mainW->getSelectedBoat();
+    if(boat->getPilotType()==1 || boat->getPilotType()==2)
+    {
+        QMessageBox::critical(0,QObject::tr("Importation impossible"),
+             QString(QObject::tr("Le bateau est en mode cap fixe ou TWA.")));
+        return;
+    }
+    QStringList  pilototo = boat->getPilototo();
+    for (int n = 0;n<pilototo.size();++n)
+    {
+        QString   instr = pilototo.at(n);
+        if (instr == "none") continue;
+        QStringList   parse = instr.split(",");
+        int mode  = parse.at (2).toInt();
+        if(parse.at(5)!="pending") continue;
+        if (mode == 1 || mode ==2)
+        {
+            QMessageBox::critical(0,QObject::tr("Importation impossible"),
+                 QString(QObject::tr("Le pilototo contient des ordres en mode cap fixe ou TWA.")));
+            return;
+        }
+    }
+    /* check ok, let's to it*/
+    for(int n=0;n<route_list.size();++n)
+    {
+        ROUTE * route=route_list.at(n);
+        if(route->getName()==tr("pilototo")+"_"+boat->getName())
+        {
+            while(!route->getPoiList().isEmpty())
+            {
+                POI * poi = route->getPoiList().takeFirst();
+                poi->setRoute(NULL);
+                poi->setMyLabelHidden(false);
+                slot_delPOI_list(poi);
+                poi->deleteLater();
+            }
+            this->deleteRoute(route);
+            break;
+        }
+    }
+    QString poiName=tr("PIL_")+boat->getName()+"_";
+    for(int n=poi_list.size()-1;n>=0;--n)
+    {
+        POI * poi=poi_list.at(n);
+        if(poi->getName()==poiName+"1" || poi->getName()==poiName+"2" ||
+           poi->getName()==poiName+"3" || poi->getName()==poiName+"4" ||
+           poi->getName()==poiName+"5" || poi->getName()==poiName+"0")
+        {
+            poi->setRoute(NULL);
+            poi->setMyLabelHidden(false);
+            slot_delPOI_list(poi);
+            poi->deleteLater();
+        }
+    }
+    ROUTE * route=addRoute();
+    route->setName(tr("pilototo")+"_"+boat->getName());
+    route->setColor(Qt::black);
+    route->setBoat(mainW->getSelectedBoat());
+    route->setStartFromBoat(true);
+    update_menuRoute();
+    route->setFrozen(true);
+    route->setTemp(true);
+    POI * poi = slot_addPOI(poiName+"0",0,boat->getWPLat(),boat->getWPLon(),boat->getWPHd(),false,false,mainW->getSelectedBoat());
+    poi->setNavMode(0); //VBVMG
+    if(boat->getPilotType()==3)
+        poi->setNavMode(2); //ORTHO
+    if(boat->getPilotType()==4)
+        poi->setNavMode(1); //VMG
+    poi->setRoute(route);
+    int nPoi=0;
+    for (int n = 0;n<pilototo.size();++n)
+    {
+        QString   instr = pilototo.at(n);
+        if (instr == "none") continue;
+        QStringList   parse = instr.split(",");
+        if(parse.at(5)!="pending") continue;
+        int mode  = parse.at (2).toInt();
+        QStringList parse2 = parse.at(4).split("@");
+        poi = slot_addPOI(poiName+QString().setNum(++nPoi),0,parse.at(3).toDouble(),parse2.at(0).toDouble(),(parse2.length() == 2) ? parse2.at(1).toDouble() : -1,false,false,mainW->getSelectedBoat());
+        poi->setNavMode(0); //VBVMG
+        if(mode==3)
+            poi->setNavMode(2); //ORTHO
+        if(mode==4)
+            poi->setNavMode(1); //VMG
+        poi->setRoute(route);
+    }
+    route->setUseVbVmgVlm(true);
+    route->setNewVbvmgVlm(false);
+    route->setTemp(false);
+    route->setFrozen(false);
+    route->setHidePois(false);
+    route->slot_recalculate();
+}
 void myCentralWidget::slot_importRouteFromMenu2()
 {
     slot_importRouteFromMenu(true);
@@ -2210,7 +2307,7 @@ void myCentralWidget::slot_importRouteFromMenu(bool ortho)
 {
     if (!mainW->getSelectedBoat())
     {
-        QMessageBox::warning(0,QObject::tr("Aucun Bateau"),
+        QMessageBox::critical(0,QObject::tr("Aucun Bateau"),
              QString(QObject::tr("L'import de route necessite un bateau actif.")));
         return;
     }

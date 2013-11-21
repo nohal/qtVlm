@@ -627,13 +627,22 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
     <message>
         <source>Permet de telecharger manuellement une trace pour une course VLM.
 La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un numero de course valide, et permet de requérir une trace tronquée.</source>
-        <translation>Permet de telecharger manuellement une trace pour une course VLM.
+        <translation type="obsolete">Permet de telecharger manuellement une trace pour une course VLM.
 La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un numero de course valide, et permet de requérir une trace tronquée.</translation>
     </message>
     <message>
         <source>Numero de la course
  http://www.v-l-m.org/races.php?fulllist=1</source>
         <translation>Numéro de la course</translation>
+    </message>
+    <message>
+        <source>Fetch</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Permet de telecharger manuellement une trace pour une course VLM.
+La boîte �  cocher trace partielle s&apos;active apres l&apos;entree d&apos;un numero de course valide, et permet de requérir une trace tronquée.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3733,6 +3742,10 @@ Etes-vous sur ?</source>
         <source>Combine grib files</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Depuis le pilototo VLM</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>POI</name>
@@ -4881,6 +4894,18 @@ height</source>
 waves height</source>
         <translation>Hauteur des vagues combinées</translation>
     </message>
+    <message>
+        <source>Importation impossible</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Le bateau est en mode cap fixe ou TWA.</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Le pilototo contient des ordres en mode cap fixe ou TWA.</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>ROUTAGE</name>
@@ -5955,6 +5980,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Add Barrier</source>
         <translation>Ajouter une barrière</translation>
+    </message>
+    <message>
+        <source>5 m</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -8232,6 +8261,14 @@ Please select another point or press esc to exit barrier creation mode</source>
     <message>
         <source>Show grib info after grib loading</source>
         <translation>Afficher les infos grib après le chargement du grib</translation>
+    </message>
+    <message>
+        <source>pilototo</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>PIL_</source>
+        <translation></translation>
     </message>
 </context>
 <context>
