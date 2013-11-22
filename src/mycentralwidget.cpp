@@ -2212,6 +2212,12 @@ void myCentralWidget::slot_importRouteFromVlm()
              QString(QObject::tr("Le bateau est en mode cap fixe ou TWA.")));
         return;
     }
+    if(boat->getWPLat()==0 && boat->getWPLon()==0)
+    {
+        QMessageBox::critical(0,QObject::tr("Importation impossible"),
+             QString(QObject::tr("Pas de WP defini dans VLM")));
+        return;
+    }
     QStringList  pilototo = boat->getPilototo();
     for (int n = 0;n<pilototo.size();++n)
     {

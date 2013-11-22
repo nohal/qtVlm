@@ -4906,6 +4906,10 @@ waves height</source>
         <source>Le pilototo contient des ordres en mode cap fixe ou TWA.</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Pas de WP defini dans VLM</source>
+        <translation>Pas de WP défini dans VLM</translation>
+    </message>
 </context>
 <context>
     <name>ROUTAGE</name>
