@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>408</width>
-    <height>293</height>
+    <height>303</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,10 +34,43 @@
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="bgDataType"/>
+          <spacer name="horizontalSpacer_7">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
          </item>
          <item>
-          <widget class="QComboBox" name="bgDataAlt"/>
+          <widget class="QComboBox" name="bgDataType">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="sizeAdjustPolicy">
+            <enum>QComboBox::AdjustToContents</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="bgDataAlt">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="sizeAdjustPolicy">
+            <enum>QComboBox::AdjustToContents</enum>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -89,10 +122,31 @@
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="frstArwType"/>
+          <spacer name="horizontalSpacer_8">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
          </item>
          <item>
-          <widget class="QComboBox" name="frstArwAlt"/>
+          <widget class="QComboBox" name="frstArwType">
+           <property name="sizeAdjustPolicy">
+            <enum>QComboBox::AdjustToContents</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="frstArwAlt">
+           <property name="sizeAdjustPolicy">
+            <enum>QComboBox::AdjustToContents</enum>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -137,10 +191,31 @@
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="secArwType"/>
+          <spacer name="horizontalSpacer_9">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
          </item>
          <item>
-          <widget class="QComboBox" name="secArwAlt"/>
+          <widget class="QComboBox" name="secArwType">
+           <property name="sizeAdjustPolicy">
+            <enum>QComboBox::AdjustToContents</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="secArwAlt">
+           <property name="sizeAdjustPolicy">
+            <enum>QComboBox::AdjustToContents</enum>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -289,7 +364,7 @@
           </spacer>
          </item>
          <item>
-          <widget class="QCheckBox" name="chkShowIsoBarMinMAx">
+          <widget class="QCheckBox" name="chkShowIsoBarMinMax">
            <property name="text">
             <string>Min/Max</string>
            </property>
@@ -317,7 +392,7 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_20">
          <item>
-          <widget class="QCheckBox" name="chlShowIsoTherm">
+          <widget class="QCheckBox" name="chkShowIsoTherm">
            <property name="text">
             <string>Afficher</string>
            </property>
@@ -458,54 +533,6 @@
  <resources/>
  <connections>
   <connection>
-   <sender>pushButton</sender>
-   <signal>clicked()</signal>
-   <receiver>DialogGribDrawing_ui</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>338</x>
-     <y>274</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>247</x>
-     <y>267</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>bgDataType</sender>
-   <signal>currentIndexChanged(int)</signal>
-   <receiver>DialogGribDrawing_ui</receiver>
-   <slot>bgDataType(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>206</x>
-     <y>53</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>4</x>
-     <y>92</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>bgDataAlt</sender>
-   <signal>currentIndexChanged(int)</signal>
-   <receiver>DialogGribDrawing_ui</receiver>
-   <slot>bgDataAlt(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>325</x>
-     <y>53</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>406</x>
-     <y>72</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>chkShowTemp</sender>
    <signal>toggled(bool)</signal>
    <receiver>DialogGribDrawing_ui</receiver>
@@ -544,8 +571,8 @@
    <slot>slot_frstArwType(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>196</x>
-     <y>118</y>
+     <x>309</x>
+     <y>125</y>
     </hint>
     <hint type="destinationlabel">
      <x>404</x>
@@ -576,8 +603,8 @@
    <slot>slot_secArwType(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>213</x>
-     <y>181</y>
+     <x>309</x>
+     <y>190</y>
     </hint>
     <hint type="destinationlabel">
      <x>405</x>
@@ -624,8 +651,8 @@
    <slot>slot_showIsoBar(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>52</x>
-     <y>73</y>
+     <x>63</x>
+     <y>72</y>
     </hint>
     <hint type="destinationlabel">
      <x>402</x>
@@ -640,8 +667,8 @@
    <slot>slot_isoBarSpacing(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>135</x>
-     <y>98</y>
+     <x>151</x>
+     <y>108</y>
     </hint>
     <hint type="destinationlabel">
      <x>405</x>
@@ -656,8 +683,8 @@
    <slot>slot_isoBarShowLabel(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>30</x>
-     <y>125</y>
+     <x>42</x>
+     <y>134</y>
     </hint>
     <hint type="destinationlabel">
      <x>5</x>
@@ -666,14 +693,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>chkShowIsoBarMinMAx</sender>
+   <sender>chkShowIsoBarMinMax</sender>
    <signal>toggled(bool)</signal>
    <receiver>DialogGribDrawing_ui</receiver>
    <slot>slot_isoBarShowMinMax(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>336</x>
-     <y>126</y>
+     <x>384</x>
+     <y>134</y>
     </hint>
     <hint type="destinationlabel">
      <x>405</x>
@@ -682,14 +709,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>chlShowIsoTherm</sender>
+   <sender>chkShowIsoTherm</sender>
    <signal>toggled(bool)</signal>
    <receiver>DialogGribDrawing_ui</receiver>
    <slot>slot_showIsoTherm(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>49</x>
-     <y>183</y>
+     <x>61</x>
+     <y>190</y>
     </hint>
     <hint type="destinationlabel">
      <x>4</x>
@@ -704,8 +731,8 @@
    <slot>slot_isoThermSpacing(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>118</x>
-     <y>211</y>
+     <x>153</x>
+     <y>220</y>
     </hint>
     <hint type="destinationlabel">
      <x>147</x>
@@ -720,12 +747,60 @@
    <slot>slot_isoThermShowLabel(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>43</x>
-     <y>238</y>
+     <x>55</x>
+     <y>246</y>
     </hint>
     <hint type="destinationlabel">
      <x>66</x>
      <y>267</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>bgDataType</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>DialogGribDrawing_ui</receiver>
+   <slot>slot_bgDataType(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>226</x>
+     <y>49</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>2</x>
+     <y>47</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>DialogGribDrawing_ui</receiver>
+   <slot>slot_finished()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>349</x>
+     <y>284</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>241</x>
+     <y>282</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>bgDataAlt</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>DialogGribDrawing_ui</receiver>
+   <slot>slot_bgDataAlt(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>361</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>400</x>
+     <y>78</y>
     </hint>
    </hints>
   </connection>
@@ -747,5 +822,6 @@
   <slot>slot_isoBarShowLabel(bool)</slot>
   <slot>slot_isoThermShowLabel(bool)</slot>
   <slot>slot_isoBarShowMinMax(bool)</slot>
+  <slot>slot_finished()</slot>
  </slots>
 </ui>

@@ -47,7 +47,7 @@ class POI : public QGraphicsWidget
 
         ~POI();
 
-        /* accés aux données */
+        /* accÃ©s aux donnÃ©es */
         QString  getName(void)         {return name;}
         ROUTE    *getRoute(void)        {return route;}
         double    getLongitude(void)    {return lon;}
@@ -75,7 +75,7 @@ class POI : public QGraphicsWidget
         double getLatConnected(){return latConnected;}
         bool    getAutoRange(void)  { return autoRange; }
 
-        /* modification des données */
+        /* modification des donnÃ©es */
         void setName           (QString name);
         void setLongitude      (double lon);
         void setLatitude       (double lat);
@@ -115,7 +115,7 @@ class POI : public QGraphicsWidget
         QPainterPath shape() const;
         QRectF boundingRect() const;
 
-        /* event propagé par la scene */
+        /* event propagÃ© par la scene */
         bool tryMoving(int x, int y);
         time_t getPiloteDate(){return piloteDate;}
         void setPiloteDate(const time_t &t){this->piloteDate=t;}

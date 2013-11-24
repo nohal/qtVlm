@@ -22,14 +22,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define DATAMANAGER_H
 
 #include <set>
+#include <QObject>
 
 #include "dataDef.h"
 #include "class_list.h"
 
-class DataManager
-{
+class DataManager: public QObject
+{ Q_OBJECT
     public:
         DataManager();
+        ~DataManager();
 
         bool load_data(QString fileName,int gribType);
         void close_data(int gribType);
@@ -43,6 +45,8 @@ class DataManager
         Grib * get_grib(int dataType,int levelType, int levelValue);
 
         QMap<int, QList<int> *> *get_levelList(int dataType);
+        bool hasDataType(int dataType);
+        int get_firstDataType(void);
 
         std::set<time_t> * get_dateList(void) { return &dateList; }
 
@@ -82,6 +86,11 @@ class DataManager
         FCT_GET(double,isoBarsStep)
         FCT_GET(int,isoTherms0Step)
 
+        QMap<int,QStringList> * get_levelTypes(void) { return &levelTypes; }
+        QMap<int,QString> * get_dataTypes(void) { return &dataTypes; }
+        QMap<int,QString> * get_arrowTypesFst(void) { return &arrowTypesFst; }
+        QMap<int,QString> * get_arrowTypesSec(void) { return &arrowTypesSec; }
+
         void load_forcedParam();
 
         enum { GRIB_NONE=0,
@@ -92,6 +101,7 @@ class DataManager
 
         void print_firstRecord_bmap(void);
         void print_firstRecord_info(void);
+        Couple get_defaultLevel(int type);
 
     private:
 
@@ -109,6 +119,15 @@ class DataManager
         void update_levelMap(void);
         void clear_levelMap(void);
         QMap<int,QMap<int, QList<int>*> *> levelMap;
+
+        QMap<int,QStringList> levelTypes;
+        QMap<int,QString> dataTypes;
+        QMap<int,QString> arrowTypesFst;
+        QMap<int,QString> arrowTypesSec;
+        void init_stringList(void);
+
+        Couple * defaultLevel;
+        void init_defaultLevel(void);
 
         double isoBarsStep;
         int isoTherms0Step;

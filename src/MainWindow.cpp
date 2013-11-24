@@ -119,8 +119,9 @@ void MainWindow::connectSignals()
     connect(mb->acFile_Load_SAILSDOC_GRIB, SIGNAL(triggered()), my_centralWidget, SLOT(slotLoadSailsDocGrib()));
     connect(mb->acFile_Info_GRIB_main, SIGNAL(triggered()), my_centralWidget, SLOT(slot_fileInfo_GRIB_main()));
     connect(mb->acFile_Info_GRIB_current, SIGNAL(triggered()), my_centralWidget, SLOT(slot_fileInfo_GRIB_current()));
+    connect(mb->acGrib_dialog, SIGNAL(triggered()), my_centralWidget, SLOT(slot_gribDialog()));
     connect(mb->acFile_Quit, SIGNAL(triggered()), this, SLOT(slotFile_Quit()));
-    connect(mb->acFile_Lock, SIGNAL(triggered()), this, SLOT(slotFile_Lock()));
+    connect(mb->acFile_Lock, SIGNAL(triggered()), this, SLOT(slotFile_Lock()));    
     connect(this,SIGNAL(updateLockIcon(QIcon)),mb,SLOT(slot_updateLockIcon(QIcon)));
     connect(mb->acFile_QuitNoSave, SIGNAL(triggered()), this, SLOT(slotFile_QuitNoSave()));
     connect(mb->acCombineGrib, SIGNAL(triggered()), this, SLOT(slotCombineGrib()));
@@ -130,9 +131,6 @@ void MainWindow::connectSignals()
     connect(mb->acFax_Close, SIGNAL(triggered()), my_centralWidget, SLOT(slotFax_close()));
     connect(mb->acImg_Open, SIGNAL(triggered()), my_centralWidget, SLOT(slotImg_open()));
     connect(mb->acImg_Close, SIGNAL(triggered()), my_centralWidget, SLOT(slotImg_close()));
-
-    connect(mb->acView_WindArrow, SIGNAL(triggered(bool)),
-            this,  SLOT(slotWindArrows(bool)));
 
     //-------------------------------------------------------
 
@@ -739,7 +737,7 @@ void MainWindow::closeProgress(void)
             pnt.setRenderHint(QPainter::SmoothPixmapTransform, true);
             QTime calibration;
             calibration.start();
-            mapDataDrawer->draw_WIND_Color_OLD(pnt,proj,true,true,true);
+            mapDataDrawer->drawTest_mono(pnt,proj);
             int cal2=calibration.elapsed();
             pnt.end();
             //imgAll->save("calib1.jpg");
@@ -748,7 +746,7 @@ void MainWindow::closeProgress(void)
             pnt.setRenderHint(QPainter::Antialiasing, true);
             pnt.setRenderHint(QPainter::SmoothPixmapTransform, true);
             calibration.start();
-            mapDataDrawer->draw_WIND_Color(pnt,proj,true,true,true);
+            mapDataDrawer->drawTest_multi(pnt,proj);
             int cal1=calibration.elapsed();
             pnt.end();
             //imgAll->save("calib2.jpg");
@@ -774,7 +772,7 @@ void MainWindow::closeProgress(void)
     if(gribFilePath.isEmpty())
         gribFilePath = appFolder.value("grib");
     QString fname = Settings::getSetting("gribFileName", "").toString();
-    int curMode = my_centralWidget->getTerre()->getColorMapMode();
+    //int curMode = my_centralWidget->getTerre()->get_colorMapMode();
     if (fname != "" && QFile::exists(fname))
     {
         openGribFile(fname, false);
@@ -786,9 +784,8 @@ void MainWindow::closeProgress(void)
         openGribFile(fname, false,true);
         gribFileNameCurrent=fname;
     }
-    slot_updateGribMono();
-    my_centralWidget->getTerre()->setColorMapMode(curMode);
-    my_centralWidget->updateGribMenu();
+    slot_updateGribMono();    
+    //my_centralWidget->getTerre()->setColorMapMode(curMode);
     progress->close();\
     if(!Settings::getSetting("LastKap","").toString().isEmpty())
     {
@@ -876,7 +873,7 @@ void MainWindow::openGribFile(QString fileName, bool zoom, bool current)
 
     if (!badFile && !badCurrent)
     {
-        slot_updateGribMono();
+        slot_updateGribMono();        
         slotDateGribChanged_now();
 
         if(!current)
@@ -1214,6 +1211,7 @@ void MainWindow::slotFile_Open()
         gribFilePath = finfo.absolutePath();
         bool zoom =  (Settings::getSetting("gribZoomOnLoad",0).toInt()==1);
         openGribFile(fileName, zoom);
+        //my_centralWidget->getTerre()->update_mapDataAndLevel();
         if(my_centralWidget) my_centralWidget->fileInfo_GRIB(DataManager::GRIB_GRIB);
     }
     updateTitle();
@@ -1222,6 +1220,7 @@ void MainWindow::slotFile_Reopen()
 {
    if(!my_centralWidget->get_dataManager()->get_grib(DataManager::GRIB_GRIB)) return;
    openGribFile (my_centralWidget->get_dataManager()->get_grib(DataManager::GRIB_GRIB)->get_fileName(), (Settings::getSetting("gribZoomOnLoad",0).toInt() == 1));
+   //my_centralWidget->getTerre()->update_mapDataAndLevel();
    updateTitle();
 }
 void MainWindow::slotFile_Open_Current()
@@ -1247,6 +1246,7 @@ void MainWindow::slotFile_Open_Current()
         gribFilePath = finfo.absolutePath();
         bool zoom =  (Settings::getSetting("gribZoomOnLoad",0).toInt()==1);
         openGribFile(fileName, zoom, true);
+        //my_centralWidget->getTerre()->update_mapDataAndLevel();
         if(my_centralWidget) my_centralWidget->fileInfo_GRIB(DataManager::GRIB_CURRENT);
     }
     updateTitle();
@@ -1257,6 +1257,7 @@ void MainWindow::slotFile_Close_Current() {
     my_centralWidget->closeGribFileCurrent();
     toolBar->update_gribBtn();
     updateTitle();
+    my_centralWidget->getTerre()->update_mapDataAndLevel();
     my_centralWidget->emitUpdateRoute(NULL);
 }
 //-------------------------------------------------
@@ -1266,6 +1267,7 @@ void MainWindow::slotFile_Close()
     my_centralWidget->closeGribFile();
     toolBar->update_gribBtn();
     updateTitle();
+    my_centralWidget->getTerre()->update_mapDataAndLevel();
     my_centralWidget->emitUpdateRoute(NULL);
 }
 
@@ -1343,12 +1345,6 @@ void MainWindow::slotSetGribDate(time_t tps) {
         if(tps>=min && tps <=max)
             my_centralWidget->setCurrentDate(tps);
     }
-}
-
-void MainWindow::slotWindArrows(bool b)
-{
-    // pas de barbules sans fleches
-    menuBar->acView_Barbules->setEnabled(b);
 }
 
 //-------------------------------------------------
@@ -1713,10 +1709,12 @@ void MainWindow::slotInetUpdated(void)
 }
 void MainWindow::slot_positScale()
 {
+    qWarning() << "[slot_positScale()]";
     Settings::setSetting("scalePosX",this->mouseClicX);
     Settings::setSetting("scalePosY",this->mouseClicY);
     my_centralWidget->getTerre()->setScalePos(this->mouseClicX,this->mouseClicY);
     my_centralWidget->getTerre()->redrawGrib();
+    qWarning() << "[slot_positScale()] done";
 }
 
 void MainWindow::slot_centerMap()

@@ -316,6 +316,19 @@ enum {
     DATA_LV_MAX
 };
 
+class Couple {
+
+    public:
+        Couple(void)        { init(DATA_NOTDEF,0);  }
+        Couple(int a,int b) { init(a,b); }
+        int a;
+        int b;
+
+        void init(int a,int b) { this->a=a; this->b=b; }
+
+       // QDataStream & operator<<(QDataStream & stream, const Couple & couple);
+};
+
 #ifndef M_PI
 #define M_E        2.71828182845904523536
 #define M_LOG2E    1.44269504088896340736

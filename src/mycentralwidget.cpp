@@ -96,6 +96,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "StatusBar.h"
 #include "BarrierSet.h"
 #include "DialogChooseBarrierSet.h"
+#include "DialogGribDrawing.h"
 
 /*******************/
 /*    myScene      */
@@ -401,6 +402,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     this->routeClipboard=NULL;
     noSave=false;
     playerAcc=NULL;
+    dialogGribDrawing=NULL;
 
     currentPlayer=NULL;
 
@@ -461,27 +463,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
 //voir s'il faut mettre le slot ds centralWidget ou utiliser myScene
     connect(terre,SIGNAL(showContextualMenu(QGraphicsSceneContextMenuEvent *)),
             parent, SLOT(slotShowContextualMenu(QGraphicsSceneContextMenuEvent *)));
-    connect(menuBar->acView_GroupColorMap, SIGNAL(triggered(QAction *)), this, SLOT(slot_setColorMapMode(QAction *)));    
-    connect(menuBar->acMap_Rivers, SIGNAL(triggered(bool)), terre,  SLOT(setDrawRivers(bool)));
-    connect(menuBar->acMap_CountriesBorders, SIGNAL(triggered(bool)), terre,  SLOT(setDrawCountriesBorders(bool)));
-    connect(menuBar->acMap_CountriesNames, SIGNAL(triggered(bool)), terre,  SLOT(setCountriesNames(bool)));
-    connect(menuBar->acView_WindColors, SIGNAL(triggered(bool)), terre,  SLOT(slot_setDrawWindColors(bool)));
-    connect(menuBar->acView_ColorMapSmooth, SIGNAL(triggered(bool)), terre,  SLOT(setColorMapSmooth(bool)));
-    connect(menuBar->acView_ColorMapSmooth, SIGNAL(triggered(bool)), this->mainW,  SLOT(slotParamChanged()));
-    connect(menuBar->acView_WindArrow, SIGNAL(triggered(bool)), terre,  SLOT(setDrawWindArrows(bool)));
-    connect(menuBar->acView_WavesArrow, SIGNAL(triggered(bool)), terre,  SLOT(setDrawWavesArrows(bool)));
-    connect(menuBar->acView_Barbules, SIGNAL(triggered(bool)), terre,  SLOT(setBarbules(bool)));
-    connect(menuBar->acView_TemperatureLabels, SIGNAL(triggered(bool)),terre,  SLOT(slotTemperatureLabels(bool)));
-    connect(menuBar->acView_Isobars, SIGNAL(triggered(bool)), terre,  SLOT(setDrawIsobars(bool)));
-    connect(menuBar->acView_GroupIsobarsStep, SIGNAL(triggered(QAction *)), this, SLOT(slotIsobarsStep()));
-    connect(menuBar->acView_IsobarsLabels, SIGNAL(triggered(bool)), terre,  SLOT(setDrawIsobarsLabels(bool)));
-    connect(menuBar->acView_PressureMinMax, SIGNAL(triggered(bool)), terre,  SLOT(setPressureMinMax(bool)));
 
-    connect(menuBar->acView_Isotherms0, SIGNAL(triggered(bool)), terre,  SLOT(setDrawIsotherms0(bool)));
-
-    connect(menuBar->acView_GroupIsotherms0Step, SIGNAL(triggered(QAction *)), this, SLOT(slotIsotherms0Step()));
-
-    connect(menuBar->acView_Isotherms0Labels, SIGNAL(triggered(bool)), terre,  SLOT(setDrawIsotherms0Labels(bool)));
 
     connect(menuBar->acOptions_SH_sAll, SIGNAL(triggered(bool)), this,  SLOT(slot_showALL(bool)));
     connect(menuBar->acOptions_SH_hAll, SIGNAL(triggered(bool)), this,  SLOT(slot_hideALL(bool)));
@@ -1226,7 +1208,7 @@ void myCentralWidget::zoomOnGrib(int grbType)
     if(grbType==DataManager::GRIB_NONE)
     {
         grbType=DataManager::GRIB_GRIB;
-        if(menuBar->acView_CurrentColors->isChecked())
+        if(terre->get_colorMapMode()==DATA_CURRENT_VX)
             grbType=dataManager->hasData(DATA_CURRENT_VX,DATA_LV_MSL,0);
     }
     double x0,y0, x1,y1;
@@ -1258,57 +1240,14 @@ void myCentralWidget::zoomOnGrib(int grbType)
     }
 }
 
-
-void myCentralWidget::updateGribMenu(void)
-{
-    /* Main grib */
-    bool keepCurMode=false;
-    QMap<int,DataCode> *dataMap=mapDataDrawer->get_dataCodeMap();
-
-    /* is current drawing mode still present ? */
-    int curMode = terre->getColorMapMode();
-    bool containsWind=false;
-    QMapIterator<int,DataCode> i(*dataMap);
-    while (i.hasNext())
-    {
-        i.next();
-        if(i.key() != MapDataDrawer::drawNone)
-        {
-            QAction * act = menuBar->gribDataActionMap.value(i.key());
-            if(act)
-            {
-                if(dataManager && dataManager->isOk())
-                {
-                    bool res = dataManager->hasData(i.value().dataType,
-                                                    i.value().levelType,i.value().levelValue)!= DataManager::GRIB_NONE;
-                    act->setEnabled(res);
-                    if(res && i.key()==MapDataDrawer::drawWind)
-                        containsWind=true;
-                    if(i.key()==curMode && res)
-                    {
-                        act->setChecked(true);
-                        keepCurMode=true;
-                    }
-                }
-            }
-        }
-    }
-    int newMode=MapDataDrawer::drawNone;
-    if(keepCurMode)
-        newMode=curMode;
-    else if(containsWind)
-        newMode=MapDataDrawer::drawWind;
-    terre->setColorMapMode(newMode);
-    menuBar->setMenubarColorMapMode(newMode,true);
-}
-
 void myCentralWidget::loadGribFile(QString fileName, bool zoom) {
     if (!dataManager)
         return;
 
     dataManager->load_data(fileName,DataManager::GRIB_GRIB);
 
-    updateGribMenu();
+    // updating data type/level/value
+    terre->update_mapDataAndLevel();
 
     if(!dataManager->isOk(DataManager::GRIB_GRIB)) {
         emit redrawAll();
@@ -1355,8 +1294,6 @@ void myCentralWidget::closeGribFile(void)
 
     dataManager->close_data(DataManager::GRIB_GRIB);
 
-    updateGribMenu();
-
     emit redrawAll();
     Settings::setSetting("gribFileName","");
 }
@@ -1367,8 +1304,6 @@ void myCentralWidget::loadGribFileCurrent(QString fileName, bool zoom)
         return;
 
     dataManager->load_data(fileName,DataManager::GRIB_CURRENT);
-
-    updateGribMenu();
 
     if(!dataManager->isOk(DataManager::GRIB_CURRENT))
     {
@@ -1392,14 +1327,13 @@ void myCentralWidget::closeGribFileCurrent(void)
 
     dataManager->close_data(DataManager::GRIB_CURRENT);
 
-    updateGribMenu();
-
     emit redrawAll();
     Settings::setSetting("gribFileNameCurrent","");
 }
 
 void myCentralWidget::setCurrentDate(time_t t, bool uRoute)
 {
+    //qWarning() << "[setCurrentDate]";
     if (dataManager->isOk() && dataManager->get_currentDate() != t)
     {
         dataManager->set_currentDate(t);
@@ -1423,7 +1357,7 @@ void myCentralWidget::showGribDate_dialog(void)
 {
     if(dataManager->isOk())
     {
-        gribDateDialog = new DialogGribDate();
+        DialogGribDate * gribDateDialog = new DialogGribDate();
         time_t res;
         gribDateDialog->showDialog(dataManager->get_currentDate(),dataManager->get_dateList(),&res);
         gribDateDialog->deleteLater();
@@ -1522,6 +1456,22 @@ void myCentralWidget::fileInfo_GRIB(Grib * grib) {
         }
         disconnect(buttonBox,SIGNAL(accepted()),dia,SLOT(accept()));
         delete dia;
+    }
+}
+
+void myCentralWidget::slot_gribDialog(void) {
+    if(!dialogGribDrawing)
+        dialogGribDrawing=new DialogGribDrawing(this,this);
+
+    if(dialogGribDrawing->isHidden()) {
+        toolBar->acGrib_dialog->setChecked(true);
+        menuBar->acGrib_dialog->setChecked(true);
+        dialogGribDrawing->showDialog();
+    }
+    else {
+        toolBar->acGrib_dialog->setChecked(false);
+        menuBar->acGrib_dialog->setChecked(false);
+        dialogGribDrawing->hide();
     }
 }
 
@@ -2215,7 +2165,7 @@ void myCentralWidget::slot_importRouteFromVlm()
     if(boat->getWPLat()==0 && boat->getWPLon()==0)
     {
         QMessageBox::critical(0,QObject::tr("Importation impossible"),
-             QString(QObject::tr("Pas de WP defini dans VLM")));
+                              QString(QObject::tr("Pas de WP defini dans VLM")));
         return;
     }
     QStringList  pilototo = boat->getPilototo();
@@ -4796,61 +4746,11 @@ void myCentralWidget::slot_map_CitiesNames()
         terre->setCitiesNamesLevel(4);
 }
 
-void myCentralWidget::slotIsobarsStep()
-{
-    int s = 4;
-    MenuBar  *mb = menuBar;
-    QAction *act = mb->acView_GroupIsobarsStep->checkedAction();
-    if (act == mb->acView_IsobarsStep1)
-        s = 1;
-    else if (act == mb->acView_IsobarsStep2)
-        s = 2;
-    else if (act == mb->acView_IsobarsStep3)
-        s = 3;
-    else if (act == mb->acView_IsobarsStep4)
-        s = 4;
-    else if (act == mb->acView_IsobarsStep5)
-        s = 5;
-    else if (act == mb->acView_IsobarsStep6)
-        s = 6;
-    else if (act == mb->acView_IsobarsStep8)
-        s = 8;
-    else if (act == mb->acView_IsobarsStep10)
-        s = 10;
-    terre->setIsobarsStep(s);
-}
-
-void myCentralWidget::slotIsotherms0Step()
-{
-    int s = 100;
-    MenuBar  *mb = menuBar;
-    QAction *act = mb->acView_GroupIsotherms0Step->checkedAction();
-    if (act == mb->acView_Isotherms0Step10)
-        s = 10;
-    else if (act == mb->acView_Isotherms0Step20)
-        s = 20;
-    else if (act == mb->acView_Isotherms0Step50)
-        s = 50;
-    else if (act == mb->acView_Isotherms0Step100)
-        s = 100;
-    else if (act == mb->acView_Isotherms0Step200)
-        s = 200;
-    else if (act == mb->acView_Isotherms0Step500)
-        s = 500;
-    else if (act == mb->acView_Isotherms0Step1000)
-        s = 1000;
-
-    terre->setIsotherms0Step(s);
-}
-
-void myCentralWidget::slot_setColorMapMode(QAction* act)
-{
-    int mode;
-
-    if(!act) mode = MapDataDrawer::drawNone;
-    else mode = menuBar->gribDataActionMap.key(act,MapDataDrawer::drawNone);
-
-    terre->setColorMapMode(mode);
+POI *  myCentralWidget::get_POIatPos(double lat,double lon) {
+    for(int i=0;i<poi_list.count();++i)
+        if(poi_list[i]->getLatitude()==lat && poi_list[i]->getLongitude()==lon)
+            return poi_list[i];
+    return NULL;
 }
 
 /**************************/
@@ -4936,6 +4836,7 @@ void myCentralWidget::slot_shFla(bool)
 }
 void myCentralWidget::slot_shNig(bool)
 {
+    qWarning() << "[slot_shNig]";
     bool shNight=Settings::getSetting("showNight",1).toInt()==1;
     Settings::setSetting("showNight",!shNight?1:0);
     emit this->redrawGrib();

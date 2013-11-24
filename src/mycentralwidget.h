@@ -128,6 +128,7 @@ class myCentralWidget : public QWidget
         QList<raceData*> & getRaces() { return this->race_list; }
         QList<POI*> & getPois() { return this->poi_list; }
         QList<POI*> * getPoisList() { return & this->poi_list; }
+        POI * get_POIatPos(double lat,double lon);
         GshhsReader * get_gshhsReader(void) { return gshhsReader; }
         opponentList * getOppList() { return opponents; }
         inetConnexion * getInet(void) { return inetManager; }
@@ -144,6 +145,7 @@ class myCentralWidget : public QWidget
         MainWindow * getMainWindow(void) { return mainW; }
         MyView * getView() const {return this->view;}
         void removeRoute();
+        FCT_GET(MenuBar *,menuBar)
 
         FCT_SETGET(ToolBar*,toolBar)
         FCT_SETGET_CST(bool, noSave)
@@ -325,6 +327,7 @@ public slots :
         void slot_fileInfo_GRIB_main(void);
         void slot_fileInfo_GRIB_current(void);
         void slotLoadSailsDocGrib(void);
+        void slot_gribDialog(void);
         void slotFax_open();
         void slotFax_close();
         void slotImg_open();
@@ -343,9 +346,6 @@ public slots :
         /* Menu */
         void slot_map_CitiesNames();
         void slot_clearSelection(void);
-        void slotIsobarsStep();
-        void slotIsotherms0Step();
-        void slot_setColorMapMode(QAction*);
         void slot_editHorn();
         void slot_playHorn();
         void slot_startReplay();
@@ -421,7 +421,7 @@ signals:
 
         /* Grib */
         MapDataDrawer * mapDataDrawer;
-        DataManager * dataManager;
+        DataManager * dataManager;        
         bool get_gribZone(double * x0,double * y0,double * x1,double * y1);
 
         /* other child */        
@@ -434,7 +434,6 @@ signals:
         MyView * view;
 
         /* Dialogs */
-        DialogGribDate * gribDateDialog;
         DialogBoatAccount * boatAcc;
         DialogPlayerAccount * playerAcc;
         DialogRace * raceDialog;
@@ -444,6 +443,7 @@ signals:
         DialogRealBoatConfig * realBoatConfig;
         DialogVlmLog * vlmLogViewer;
         DialogDownloadTracks * vlmTrackRetriever;
+        DialogGribDrawing * dialogGribDrawing;
 
         /* Lists, POI*/
         QList<POI*> poi_list;

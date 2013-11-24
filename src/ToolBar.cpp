@@ -109,7 +109,9 @@ ToolBar::ToolBar(MainWindow *mainWindow)
 
     datesGrib_now = init_Action(tr("Now"),tr(""),tr(""),appFolder.value("img")+"now.png",gribToolBar);
     datesGrib_sel = init_Action(tr("Select date"),tr(""),tr(""),appFolder.value("img")+"clock.png",gribToolBar);
-
+    acGrib_dialog = init_Action(tr("Grib drawing config"),tr(""),
+                              tr("Grib drawing config"),appFolder.value("img")+"wind.png",gribToolBar);
+    acGrib_dialog->setCheckable(true);
     cbGribStep = new QComboBox(gribToolBar);
     cbGribStep->setSizeAdjustPolicy(QComboBox::AdjustToContents);
     cbGribStep->setFont(font);
@@ -129,6 +131,8 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     gribToolBar->addSeparator();
     gribToolBar->addAction(datesGrib_sel);
     gribToolBar->addAction(datesGrib_now);
+    gribToolBar->addSeparator();
+    gribToolBar->addAction(acGrib_dialog);
     gribToolBar->addSeparator();
     gribToolBar->addAction(acDatesGrib_prev);
     gribToolBar->addWidget(cbGribStep);    
@@ -217,6 +221,7 @@ ToolBar::ToolBar(MainWindow *mainWindow)
 
     connect(cbGribStep, SIGNAL(activated(int)),mainWindow, SLOT(slotDateStepChanged(int)));
     connect(datesGrib_now, SIGNAL(triggered()),mainWindow, SLOT(slotDateGribChanged_now()));
+    connect(acGrib_dialog,SIGNAL(triggered()),centralWidget, SLOT(slot_gribDialog()));
     connect(datesGrib_sel, SIGNAL(triggered()),mainWindow, SLOT(slotDateGribChanged_sel()));
     connect(acDatesGrib_next, SIGNAL(triggered()),mainWindow, SLOT(slotDateGribChanged_next()));
     connect(acDatesGrib_prev, SIGNAL(triggered()),mainWindow, SLOT(slotDateGribChanged_prev()));

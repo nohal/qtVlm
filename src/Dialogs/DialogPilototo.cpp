@@ -678,17 +678,18 @@ void DialogPilototo::instructionUpdated(void)
 * widget + data structure
 ******************************/
 
-DialogPilototoInstruction::DialogPilototoInstruction(QWidget * main,QWidget * parent) : QWidget(parent)
+DialogPilototoInstruction::DialogPilototoInstruction(DialogPilototo * dialogPilototo,QWidget * parent) : QWidget(parent)
 {
     setupUi(this);
+    this->dialogPilototo=dialogPilototo;
     pipPalette=parent->palette();
     connect(this,SIGNAL(doEditInstruction(DialogPilototoInstruction*)),
-                ((DialogPilototo*)main)->instructionEditor,SLOT(editInstruction(DialogPilototoInstruction*)));
+                dialogPilototo->instructionEditor,SLOT(editInstruction(DialogPilototoInstruction*)));
     connect(this,SIGNAL(doDelInstruction(DialogPilototoInstruction*)),
-                main,SLOT(delInstruction(DialogPilototoInstruction *)));
+                dialogPilototo,SLOT(delInstruction(DialogPilototoInstruction *)));
     connect(this,SIGNAL(instructionUpdated()),
-                main,SLOT(instructionUpdated()));
-    connect(this,SIGNAL(selectPOI(DialogPilototoInstruction*,int)),main,SLOT(doSelectPOI(DialogPilototoInstruction*,int)));
+                dialogPilototo,SLOT(instructionUpdated()));
+    connect(this,SIGNAL(selectPOI(DialogPilototoInstruction*,int)),dialogPilototo,SLOT(doSelectPOI(DialogPilototoInstruction*,int)));
 
     mode_sel->addItem(tr("Cap constant (1)"));
     mode_sel->addItem(tr("Angle du vent (2)"));
@@ -705,6 +706,7 @@ DialogPilototoInstruction::DialogPilototoInstruction(QWidget * main,QWidget * pa
 
 
     updateHasChanged(true); /*instruction is not saved when created*/
+
     initVal();
 }
 
@@ -960,6 +962,14 @@ void DialogPilototoInstruction::updateText(bool updateAll)
             break;
     }
     final_txt=modeTxt+" = "+param;
+
+    /* trying to find existing POI */
+    if(mode==2 || mode==3 || mode==4) {
+        POI * poi=dialogPilototo->get_parent()->get_POIatPos(lat_scr,lon_scr);
+        if(poi)
+            final_txt+=" => " + poi->getName();
+    }
+
     if(updateAll)
     {
         instructionText->setMinimumWidth( fmt.width(param_txt)+20 );

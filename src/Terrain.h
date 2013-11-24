@@ -33,6 +33,8 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QMutex>
 
 #include "class_list.h"
+#include "dataDef.h"
+
 class Terrain : public QGraphicsWidget
 {
     Q_OBJECT
@@ -41,8 +43,23 @@ public:
     Terrain(myCentralWidget *centralWidget, Projection *proj);
 
     void  setGSHHS_map(GshhsReader *map);
-    void setColorMapMode(int mode);
-    int  getColorMapMode(void) { return colorMapMode; }
+
+    void update_mapDataAndLevel(void);
+
+    void setColorMapMode(int dataType, int levelType, int levelValue);
+    FCT_GET(int,colorMapMode)
+    FCT_GET(int,colorMapLevelType)
+    FCT_GET(int,colorMapLevelValue)
+
+    void setFrstArwMode(int mode, int levelType, int levelValue);
+    FCT_GET(int,frstArwMode)
+    FCT_GET(int,frstArwLevelType)
+    FCT_GET(int,frstArwLevelValue)
+
+    void setSecArwMode(int dataType,int levelType, int levelValue);
+    FCT_GET(int,secArwMode)
+    FCT_GET(int,secArwLevelType)
+    FCT_GET(int,secArwLevelValue)
 
     void updateSize(int width, int height);
 
@@ -53,7 +70,6 @@ public:
     void setScalePos(const int &a, const int &b){this->scalePos=QPoint(a,b);}
     bool daylight(QPainter * pnt, const vlmPoint &coords);
 
-    void switchGribDisplay(bool windArrowOnly);
     QSize getSize() const {return QSize(width,height);}
 
 public slots :
@@ -75,7 +91,7 @@ public slots :
     void setDrawIsobarsLabels (bool);
     void setIsobarsStep		  (double step);
     void setPressureMinMax    (bool);
-    void slotTemperatureLabels(bool b);
+    void show_temperatureLabels(bool b);
 
     void setDrawIsotherms0       (bool);
     void setDrawIsotherms0Labels (bool);
@@ -123,7 +139,6 @@ private:
 
     QColor  seaColor, landColor, backgroundColor, transparentColor;
     QColor  selectColor;
-    QColor  windArrowsColor;
 
     double isobarsStep;
     bool   showIsobars;
@@ -160,7 +175,15 @@ private:
     int   showCitiesNamesLevel;
     bool  showCountriesNames;
 
-    int	  colorMapMode;
+    int	colorMapMode, colorMapLevelType, colorMapLevelValue;
+    int frstArwMode, frstArwLevelType, frstArwLevelValue;
+    int secArwMode, secArwLevelType, secArwLevelValue;
+    //void update_colorMapLevel(int *mode, int *levelType, int *levelValue);
+    int compute_dataType(DataManager * dataManager,
+                         int currentMode, int defaultMode1, int defaultMode2,
+                         QMap<int,QString> * allowedMode);
+    Couple compute_level(DataManager * dataManager,int newType,int curLevelType, int curLevelValue,
+                         QMap<int,QStringList> * allowedLevel);
 
     //-----------------------------------------------
     void draw_GSHHSandGRIB(void);

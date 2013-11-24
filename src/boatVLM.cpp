@@ -35,6 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Orthodromie.h"
 #include "inetConnexion.h"
 #include "DataManager.h"
+#include "opponentBoat.h"
 
 
 boatVLM::boatVLM(QString        pseudo, bool activated, int boatId, int playerId,Player * player, int isOwn,
@@ -993,6 +994,13 @@ void boatVLM::updateHint(void)
         str2+=QString().sprintf("VMG: %.2f ",vvmg)+tr("kts")+"<br>";
         str=str2+str;
     }
+
+    // get loch info from opp
+    opponent * opp=parent->getOppList()->get_opponent(boat_id);
+    if(opp) {
+        qWarning() << "loch: " << opp->get_loch1h() << " - " << opp->get_loch3h() << " - " << opp->get_loch24h();
+    }
+
     str=str.replace(" ","&nbsp;");
     desc=desc.replace(" ","&nbsp;");
     setToolTip(desc+"<br>"+str);

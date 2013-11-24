@@ -257,7 +257,7 @@ void Grib::createDewPointData(void) {
                 GribRecord *recModel = getGribRecord(DATA_TEMP,DATA_LV_ABOV_GND,2,date);
                 if (recModel != NULL) {
                     // Crée un GribRecord avec les dewpoints calcules
-                    GribRecord *recDewpoint;
+                    GribRecord *recDewpoint=NULL;
                     if(version == 1) {
                         GribV1Record * rec=(GribV1Record *)recModel;
                         recDewpoint = new GribV1Record(*rec);
@@ -508,8 +508,10 @@ bool Grib::interpolateValue_2D(double d_long, double d_lat, time_t now, time_t t
     double gribStep_t1_lat=1,gribStep_t2_lat=1;
 
     /*sanity check */
-    if(!u || !v || !recU1 || !recV1)
+    if(!u || !v || !recU1 || !recV1) {
+        qWarning() << "[interpolateValue_2D] Missing pointer";
         return false;
+    }
 
 
     gridOriginLat_1=recV1->get_latMin();
@@ -519,10 +521,17 @@ bool Grib::interpolateValue_2D(double d_long, double d_lat, time_t now, time_t t
     gribStep_t1_lon=recU1->get_Di()==0?1:recU1->get_Di();
     gribStep_t1_lat=recU1->get_Dj()==0?1:recU1->get_Dj();
 
-    if(!recU1->getValue_TWSA(d_long,d_lat,&(wData_prev.u0),&(wData_prev.u1),&(wData_prev.u2),&(wData_prev.u3),debug))
+    if(!recU1->getValue_TWSA(d_long,d_lat,&(wData_prev.u0),&(wData_prev.u1),&(wData_prev.u2),&(wData_prev.u3),debug)) {
+        //qWarning() << "[interpolateValue_2D] getValue_TWSA - recU1 KO";
         return false;
-    if(!recV1->getValue_TWSA(d_long,d_lat,&(wData_prev.v0),&(wData_prev.v1),&(wData_prev.v2),&(wData_prev.v3),debug))
+    }
+    if(!recV1->getValue_TWSA(d_long,d_lat,&(wData_prev.v0),&(wData_prev.v1),&(wData_prev.v2),&(wData_prev.v3),debug)) {
+        //qWarning() << "[interpolateValue_2D] getValue_TWSA - recV1 KO";
         return false;
+    }
+
+    gridOriginLat_2=gridOriginLat_1;
+    gridOriginLon_2=gridOriginLon_1;
 
     if(recU2 && recV2) {
         hasNxt=true;
@@ -532,10 +541,14 @@ bool Grib::interpolateValue_2D(double d_long, double d_lat, time_t now, time_t t
         gribStep_t2_lon=recU2->get_Di()==0?1:recU2->get_Di();
         gribStep_t2_lat=recU2->get_Dj()==0?1:recU2->get_Dj();
 
-        if(!recU2->getValue_TWSA(d_long,d_lat,&(wData_nxt.u0),(&wData_nxt.u1),&(wData_nxt.u2),&(wData_nxt.u3),debug))
+        if(!recU2->getValue_TWSA(d_long,d_lat,&(wData_nxt.u0),(&wData_nxt.u1),&(wData_nxt.u2),&(wData_nxt.u3),debug)) {
+            //qWarning() << "[interpolateValue_2D] getValue_TWSA - recU2 KO";
             return false;
-        if(!recV2->getValue_TWSA(d_long,d_lat,&(wData_nxt.v0),(&wData_nxt.v1),&(wData_nxt.v2),&(wData_nxt.v3),debug))
+        }
+        if(!recV2->getValue_TWSA(d_long,d_lat,&(wData_nxt.v0),(&wData_nxt.v1),&(wData_nxt.v2),&(wData_nxt.v3),debug)) {
+            //qWarning() << "[interpolateValue_2D] getValue_TWSA - recV2 KO";
             return false;
+        }
     }
     gribStep_t1_lon=qAbs(gribStep_t1_lon);
     gribStep_t2_lon=qAbs(gribStep_t2_lon);
@@ -567,7 +580,7 @@ bool Grib::interpolateValue_2D(double d_long, double d_lat, time_t now, time_t t
                                                         u,v,gridOriginLat_1,gridOriginLon_1,gridOriginLat_2,gridOriginLon_2,UV,debug);
             break;
          default:
-            if(debug)
+            //if(debug)
                 qWarning() << "NO interpolation defined";
             return false;
      }

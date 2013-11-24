@@ -43,12 +43,97 @@ DataManager::DataManager() {
     isoBarsStep = Settings::getSetting("isobarsStep", 2).toDouble();
     isoTherms0Step = Settings::getSetting("isoTherms0Step", 50).toInt();
 
+    init_defaultLevel();
+    init_stringList();
+
     QString interpol_name[4] = { "UKN", "TWSA", "selecive TWSA", "Hybride" };
     interpolationMode = INTERPOLATION_DEFAULT;
     qWarning() << "Starting with interpolation: " << interpol_name[interpolationMode];
 
     load_forcedParam();
 
+}
+
+DataManager::~DataManager(void) {
+    delete[] defaultLevel;
+}
+
+void DataManager::init_stringList(void) {
+    /* data types */
+    dataTypes.insert(DATA_NOTDEF,             tr("Aucun"));
+    dataTypes.insert(DATA_WIND_VX,            tr("Carte du vent"));
+    dataTypes.insert(DATA_CURRENT_VX,         tr("Carte du courant"));
+    dataTypes.insert(DATA_CLOUD_TOT,          tr("Couverture nuageuse"));
+    dataTypes.insert(DATA_PRECIP_TOT,         tr("Carte des precipitations"));
+    dataTypes.insert(DATA_HUMID_REL,          tr("Carte de l'humidite relative"));
+    dataTypes.insert(DATA_TEMP,               tr("Carte de la temperature"));
+    dataTypes.insert(DATA_TEMP_POT,           tr("Carte de la temperature potentielle"));
+    dataTypes.insert(DATA_DEWPOINT,           tr("Point de rosee"));
+    dataTypes.insert(DATA_SNOW_CATEG,         tr("Neige (chute possible)"));
+    dataTypes.insert(DATA_FRZRAIN_CATEG,      tr("Pluie verglacante (chute possible)"));
+    dataTypes.insert(DATA_CAPE,               tr("CAPE (surface)"));
+    dataTypes.insert(DATA_CIN,                tr("CIN (surface)"));
+    dataTypes.insert(DATA_WAVES_SIG_HGT_COMB, tr("Waves combined"));
+    dataTypes.insert(DATA_WAVES_WND_HGT,      tr("Wind waves"));
+    dataTypes.insert(DATA_WAVES_SWL_HGT,      tr("Swell waves"));
+    dataTypes.insert(DATA_WAVES_MAX_HGT,      tr("Max waves"));
+    dataTypes.insert(DATA_WAVES_WHITE_CAP,    tr("White cap prob"));
+
+    /* arrow types */
+    arrowTypesFst.insert(DATA_NOTDEF,         tr("Aucun"));
+    arrowTypesFst.insert(DATA_WIND_VX,        tr("Vent"));
+    arrowTypesFst.insert(DATA_CURRENT_VX,     tr("Courant"));
+
+    arrowTypesSec.insert(DATA_NOTDEF,         tr("Aucun"));
+    arrowTypesSec.insert(DATA_CURRENT_VX,     tr("Courant"));
+    arrowTypesSec.insert(DATA_WAVES_WND_HGT,  tr("Wind waves"));
+    arrowTypesSec.insert(DATA_WAVES_SWL_HGT,  tr("Swell waves"));
+    arrowTypesSec.insert(DATA_WAVES_MAX_HGT,  tr("Max waves"));
+    //arrowTypesSec.insert(DATA_WAVES_PRIM_DIR, tr("Primary waves"));
+    //arrowTypesSec.insert(DATA_WAVES_SEC_DIR,  tr("Secondary waves"));
+
+    /* levels */
+    levelTypes.insert(DATA_LV_GND_SURF,              QStringList() << tr("Surface")            << "");
+    levelTypes.insert(DATA_LV_ISOTHERM0,             QStringList() << tr("Isotherm 0C")        << "");
+    levelTypes.insert(DATA_LV_ISOBARIC,              QStringList() << tr("Isobaric")           << "hPa");
+    levelTypes.insert(DATA_LV_MSL,                   QStringList() << tr("Mean Sea Level")     << "");
+    levelTypes.insert(DATA_LV_ABOV_GND,              QStringList() << tr("Above ground")       << "m");
+    levelTypes.insert(DATA_LV_SIGMA,                 QStringList() << tr("Sigma")              << "?");
+    levelTypes.insert(DATA_LV_ATMOS_ALL,             QStringList() << tr("Entire atmosphere")  << "");
+    levelTypes.insert(DATA_LV_ORDERED_SEQUENCE_DATA, QStringList() << tr("Ordered sequence")   << "?");
+}
+
+void DataManager::init_defaultLevel(void) {
+    defaultLevel = new Couple[DATA_MAX+1];
+    for(int i=0;i<=DATA_MAX;++i) {
+        defaultLevel[i].init(DATA_LV_NOTDEF,0);
+    }
+
+    defaultLevel[DATA_PRESSURE].init(DATA_LV_MSL,0);
+    defaultLevel[DATA_WIND_VX].init(DATA_LV_ABOV_GND,10);
+    defaultLevel[DATA_CURRENT_VX].init(DATA_LV_MSL,0);
+    defaultLevel[DATA_CLOUD_TOT].init(DATA_LV_ATMOS_ALL,0);
+    defaultLevel[DATA_PRECIP_TOT].init(DATA_LV_GND_SURF,0);
+    defaultLevel[DATA_CAPE].init(DATA_LV_GND_SURF,0);
+    defaultLevel[DATA_SNOW_CATEG].init(DATA_LV_GND_SURF,0);
+    defaultLevel[DATA_FRZRAIN_CATEG].init(DATA_LV_GND_SURF,0);
+    defaultLevel[DATA_HUMID_REL].init(DATA_LV_ABOV_GND,2);
+    defaultLevel[DATA_TEMP].init(DATA_LV_ABOV_GND,2);
+    defaultLevel[DATA_TEMP_POT].init(DATA_LV_SIGMA,9950);
+    defaultLevel[DATA_DEWPOINT].init(DATA_LV_ABOV_GND,2);
+    defaultLevel[DATA_CIN].init(DATA_LV_GND_SURF,0);
+    defaultLevel[DATA_WAVES_SIG_HGT_COMB].init(DATA_LV_GND_SURF,0);
+    defaultLevel[DATA_WAVES_WND_HGT].init(DATA_LV_GND_SURF,0);
+    defaultLevel[DATA_WAVES_SWL_HGT].init(DATA_LV_GND_SURF,0);
+    defaultLevel[DATA_WAVES_WHITE_CAP].init(DATA_LV_GND_SURF,0);
+    defaultLevel[DATA_WAVES_MAX_HGT].init(DATA_LV_GND_SURF,0);
+}
+
+Couple DataManager::get_defaultLevel(int type) {
+    if(type >=0 && type < DATA_MAX)
+        return defaultLevel[type];
+    else
+        return defaultLevel[DATA_MAX];
 }
 
 Grib * DataManager::get_grib(int gribType) {
@@ -193,6 +278,15 @@ void DataManager::clear_levelMap(void) {
 
 QMap<int,QList<int>*> * DataManager::get_levelList(int dataType) {
     return levelMap.value(dataType,NULL);
+}
+
+bool DataManager::hasDataType(int dataType) {
+    return levelMap.contains(dataType);
+}
+
+int DataManager::get_firstDataType(void) {
+    if(levelMap.count()==0) return DATA_NOTDEF;
+    else return levelMap.begin().key();
 }
 
 QString DataManager::get_fileName(int gribType) {

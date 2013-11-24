@@ -89,6 +89,7 @@ class ToolBar : public QObject
         QAction * acGrib_play;
         QAction * datesGrib_now;
         QAction * datesGrib_sel;
+        QAction * acGrib_dialog;
         void update_gribBtn(void);
         int get_gribStep(void);
         bool isPlaying(void) { return acGrib_play->data().toInt()==1; }

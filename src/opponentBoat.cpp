@@ -646,6 +646,13 @@ QString opponentList::getRaceId()
     return opponent_list[0]->getRace();
 }
 
+opponent * opponentList::get_opponent(int idu) {
+    for(int i=0;i<opponent_list.count();++i)
+        if(opponent_list[i]->getIduser().toInt()==idu)
+            return opponent_list[i];
+    return NULL;
+}
+
 void opponentList::setBoatList(QString list_txt,QString race,int showWhat, bool force, bool showReal, QString filter)
 {
     //qWarning()<<"traceCache count="<<traceCache.count();
@@ -714,7 +721,7 @@ void opponentList::clear(void)
 
 void opponentList::refreshData(void)
 {
-    //qWarning() << "refreshData";
+    qWarning() << "refreshData opponentList";
     if(!hasInet() || hasRequest())
     {
         if(!hasInet() || parent->getIsStartingUp())

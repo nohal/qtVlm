@@ -91,6 +91,7 @@ class DataColors;
 class ColorElement;
 class DataCode;
 class grb2DataType;
+class DialogGribDrawing;
 
 
 /* GshhsReader.h */

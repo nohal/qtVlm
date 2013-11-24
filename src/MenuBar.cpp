@@ -48,8 +48,6 @@ MenuBar::MenuBar(MainWindow *parent)
     mainWindow=parent;
     this->setAccessibleName("mainMenuQtvlm");
 
-     menuAltitude=NULL;
-     acAlt_GroupAltitude=NULL;
     //-------------------------------------
     // Menu + Actions
     //-------------------------------------
@@ -166,188 +164,12 @@ MenuBar::MenuBar(MainWindow *parent)
                     tr("Informations sur le fichier GRIB"), appFolder.value("img")+"info.png");
         menuGrib->addSeparator();
 
-        menuGroupColorMap = new QMenu(tr("Type de carte"));
-        acView_GroupColorMap = new ZeroOneActionGroup (menuGroupColorMap);
-                acView_WindColors = addActionCheck(menuGroupColorMap, tr("Carte du vent"), "", "");
-                gribDataActionMap.insert(MapDataDrawer::drawWind,acView_WindColors);
-                acView_GroupColorMap->addAction(acView_WindColors);
-                acView_CurrentColors = addActionCheck(menuGroupColorMap, tr("Carte du courant"), "", "");
-                gribDataActionMap.insert(MapDataDrawer::drawCurrent,acView_CurrentColors);
-                acView_GroupColorMap->addAction(acView_CurrentColors);
-                acView_RainColors = addActionCheck(menuGroupColorMap, tr("Carte des preecipitations"),"","");
-                gribDataActionMap.insert(MapDataDrawer::drawRain,acView_RainColors);
-                acView_GroupColorMap->addAction(acView_RainColors);
-                acView_CloudColors = addActionCheck(menuGroupColorMap, tr("Couverture nuageuse"), "","");
-                gribDataActionMap.insert(MapDataDrawer::drawCloud,acView_CloudColors);
-                acView_GroupColorMap->addAction(acView_CloudColors);
-                acView_HumidColors = addActionCheck(menuGroupColorMap, tr("Carte de l'humidite relative"),"","");
-                gribDataActionMap.insert(MapDataDrawer::drawHumid,acView_HumidColors);
-                acView_GroupColorMap->addAction(acView_HumidColors);
-                acView_TempColors = addActionCheck(menuGroupColorMap, tr("Carte de la temperature"),"","");
-                gribDataActionMap.insert(MapDataDrawer::drawTemp,acView_TempColors);
-                acView_GroupColorMap->addAction(acView_TempColors);
-                acView_TempPotColors = addActionCheck(menuGroupColorMap, tr("Carte de la temperature potentielle"),"","");
-                gribDataActionMap.insert(MapDataDrawer::drawTempPot,acView_TempPotColors);
-                acView_GroupColorMap->addAction(acView_TempPotColors);
-                acView_DeltaDewpointColors = addActionCheck(menuGroupColorMap, tr("Ecart temperature-point de rosee"), "", "");
-                gribDataActionMap.insert(MapDataDrawer::drawDeltaDewpoint,acView_DeltaDewpointColors);
-                acView_GroupColorMap->addAction(acView_DeltaDewpointColors);
-                acView_SnowCateg = addActionCheck(menuGroupColorMap, tr("Neige (chute possible)"), "", "");
-                gribDataActionMap.insert(MapDataDrawer::drawSnowCateg,acView_SnowCateg);
-                acView_GroupColorMap->addAction(acView_SnowCateg);
-                //acView_SnowDepth = addActionCheck(menuGroupColorMap, tr("Neige (Epaisseur)"), "", "");
-                //acView_GroupColorMap->addAction(acView_SnowDepth);
-                acView_FrzRainCateg = addActionCheck(menuGroupColorMap, tr("Pluie verglacante (chute possible)"), "", "");
-                gribDataActionMap.insert(MapDataDrawer::drawFrzRainCateg,acView_FrzRainCateg);
-                acView_GroupColorMap->addAction(acView_FrzRainCateg);
-                acView_CAPEsfc = addActionCheck(menuGroupColorMap, tr("CAPE (surface)"), "", "");
-                gribDataActionMap.insert(MapDataDrawer::drawCAPEsfc,acView_CAPEsfc);
-                acView_GroupColorMap->addAction(acView_CAPEsfc);
-                acView_CINsfc = addActionCheck(menuGroupColorMap, tr("CIN (surface)"), "", "");
-                gribDataActionMap.insert(MapDataDrawer::drawCINsfc,acView_CINsfc);
-                acView_GroupColorMap->addAction(acView_CINsfc);
-                // Waves
-                menuGroupWaves = new QMenu(tr("Waves"));
-                //acView_GroupWaves = new ZeroOneActionGroup (menuGroupWaves);
-                acView_WavesSigHgtComb = addActionCheck(menuGroupWaves, tr("Waves combined"), "", "");
-                gribDataActionMap.insert(MapDataDrawer::drawWavesSigHgtComb,acView_WavesSigHgtComb);
-                acView_GroupColorMap->addAction(acView_WavesSigHgtComb);
-                acView_WavesWnd = addActionCheck(menuGroupWaves, tr("Wind waves"), "", "");
-                gribDataActionMap.insert(MapDataDrawer::drawWavesWnd,acView_WavesWnd);
-                acView_GroupColorMap->addAction(acView_WavesWnd);
-                acView_WavesSwl = addActionCheck(menuGroupWaves, tr("Swell waves"), "", "");
-                gribDataActionMap.insert(MapDataDrawer::drawWavesSwl,acView_WavesSwl);
-                acView_GroupColorMap->addAction(acView_WavesSwl);
-                acView_WavesMax = addActionCheck(menuGroupWaves, tr("Max waves"), "", "");
-                gribDataActionMap.insert(MapDataDrawer::drawWavesMax,acView_WavesMax);
-                acView_GroupColorMap->addAction(acView_WavesMax);
-                acView_WavesWhiteCap = addActionCheck(menuGroupWaves, tr("White cap prob"), "", "");
-                gribDataActionMap.insert(MapDataDrawer::drawWavesWhiteCap,acView_WavesWhiteCap);
-                acView_GroupColorMap->addAction(acView_WavesWhiteCap);
-                menuGroupWaves->addSeparator();
-                acView_WavesArrow = addActionCheck(menuGroupWaves, tr("Waves arrow"), tr(""),
-                            tr("Show arrow for wave direction"));
-                acView_WavesArrow->setChecked(Settings::getSetting("showWavesArrows", true).toBool());
 
+        acGrib_dialog = addAction(menuGrib, tr("Grib drawing config"),
+                                  "",
+                                  tr("Grib drawing config"), appFolder.value("img")+"wind.png");
+        acGrib_dialog->setCheckable(true);
 
-                menuGroupColorMap->addMenu(menuGroupWaves);
-
-        menuGrib->addMenu(menuGroupColorMap);
-        menuGrib->addSeparator();
-
-        // init string list for levelTypes and units
-        /*
-        DATA_LV_GND_SURF=0,
-        DATA_LV_ISOTHERM0,
-        DATA_LV_ISOBARIC,
-        DATA_LV_MSL,
-        DATA_LV_ABOV_GND,
-        DATA_LV_SIGMA,
-        DATA_LV_ATMOS_ALL,
-        DATA_LV_ORDERED_SEQUENCE_DATA
-        */
-
-        levelTypes.append(tr("Surface"));
-        levelTypesUnit.append("unit ?");
-        levelTypes.append(tr("Isotherm 0C"));
-        levelTypesUnit.append("unit ?");
-        levelTypes.append(tr("Isobaric"));
-        levelTypesUnit.append("hPa");
-        levelTypes.append(tr("Mean Sea Level"));
-        levelTypesUnit.append("unit ?");
-        levelTypes.append(tr("Above ground"));
-        levelTypesUnit.append("m");
-        levelTypes.append(tr("Sigma"));
-        levelTypesUnit.append("?");
-        levelTypes.append(tr("Entire atmosphere"));
-        levelTypesUnit.append("unit ?");
-        levelTypes.append(tr("Ordered sequence"));
-        levelTypesUnit.append("?");
-
-        //-------------------------------------
-        menuAltitude = new QMenu(tr("Altitude"));
-        acAlt_GroupAltitude = new ZeroOneActionGroup (menuAltitude);
-        //connect(menuAltitude,SIGNAL(aboutToShow()),this,SLOT(slot_showAltitudeMenu()));
-
-       //menuGrib->addMenu(menuAltitude);
-       menuGrib->addSeparator();
-
-       setMenubarColorMapMode(Settings::getSetting("colorMapMode", MapDataDrawer::drawWind).toInt());
-
-        acView_ColorMapSmooth = addActionCheck(menuGrib, tr("Degrades de couleurs"), tr(""),
-                    tr(""));
-        acView_ColorMapSmooth->setChecked(Settings::getSetting("colorMapSmooth", true).toBool());
-        acView_WindArrow = addActionCheck(menuGrib, tr("Fleches du vent"), tr(""),
-                    tr("Afficher les fleches de direction du vent"));
-        acView_WindArrow->setChecked(Settings::getSetting("showWindArrows", true).toBool());
-        acView_Barbules = addActionCheck(menuGrib, tr("Barbules"), tr(""),
-                    tr("Afficher les barbules sur les fleches de vent"));
-        acView_Barbules->setChecked(Settings::getSetting("showBarbules", true).toBool());
-        menuGrib->addSeparator();
-        acView_TemperatureLabels = addActionCheck(menuGrib,
-                                tr("Temperature"), tr("Ctrl+T"),
-                    "");
-        acView_TemperatureLabels->setChecked(Settings::getSetting("showTemperatureLabels", false).toBool());
-        //--------------------------------
-        menuGrib->addSeparator();
-                menuIsobars = new QMenu(tr("Isobares"));
-                acView_Isobars = addActionCheck(menuIsobars, tr("Afficher les isobares"), "","");
-                acView_Isobars->setChecked(Settings::getSetting("showIsobars", true).toBool());
-            menuIsobarsStep = new QMenu(tr("Espacement (hPa)"));
-            acView_GroupIsobarsStep = new QActionGroup(menuIsobarsStep);
-                acView_IsobarsStep1 = addActionCheck(menuIsobarsStep, tr("1"), "", tr("Espacement des isobares"));
-                acView_IsobarsStep2 = addActionCheck(menuIsobarsStep, tr("2"), "", tr("Espacement des isobares"));
-                acView_IsobarsStep3 = addActionCheck(menuIsobarsStep, tr("3"), "", tr("Espacement des isobares"));
-                acView_IsobarsStep4 = addActionCheck(menuIsobarsStep, tr("4"), "", tr("Espacement des isobares"));
-                acView_IsobarsStep5 = addActionCheck(menuIsobarsStep, tr("5"), "", tr("Espacement des isobares"));
-                acView_IsobarsStep6 = addActionCheck(menuIsobarsStep, tr("6"), "", tr("Espacement des isobares"));
-                acView_IsobarsStep8 = addActionCheck(menuIsobarsStep, tr("8"), "", tr("Espacement des isobares"));
-                acView_IsobarsStep10 = addActionCheck(menuIsobarsStep, tr("10"), "", tr("Espacement des isobares"));
-                acView_GroupIsobarsStep->addAction(acView_IsobarsStep1);
-                acView_GroupIsobarsStep->addAction(acView_IsobarsStep2);
-                acView_GroupIsobarsStep->addAction(acView_IsobarsStep3);
-                acView_GroupIsobarsStep->addAction(acView_IsobarsStep4);
-                acView_GroupIsobarsStep->addAction(acView_IsobarsStep5);
-                acView_GroupIsobarsStep->addAction(acView_IsobarsStep6);
-                acView_GroupIsobarsStep->addAction(acView_IsobarsStep8);
-                acView_GroupIsobarsStep->addAction(acView_IsobarsStep10);
-            menuIsobars->addMenu(menuIsobarsStep);
-        acView_IsobarsLabels = addActionCheck(menuIsobars, tr("Etiquettes des isobares"), "",
-                            tr("Afficher les étiquettes des isobares"));
-        acView_IsobarsLabels->setChecked(Settings::getSetting("showIsobarsLabels", false).toBool());
-        acView_PressureMinMax = addActionCheck(menuIsobars, tr("Pression Mini(L) Maxi(H)"), "",
-                            tr("Afficher les points de pression mini et maxi"));
-        acView_PressureMinMax->setChecked(Settings::getSetting("showPressureMinMax", false).toBool());
-                menuGrib->addMenu(menuIsobars);
-        setIsobarsStep(Settings::getSetting("isobarsStep", 2).toInt());
-        //--------------------------------
-                menuIsotherms0 = new QMenu(tr("Isothermes 0degC"));
-        acView_Isotherms0 = addActionCheck(menuIsotherms0, tr("Isothermes 0degC"), "",
-                            tr("Afficher les isothermes 0degC"));
-        acView_Isotherms0->setChecked(Settings::getSetting("showIsotherms0", false).toBool());
-            menuIsotherms0Step = new QMenu(tr("Espacement (m)"));
-            acView_GroupIsotherms0Step    = new QActionGroup(menuIsotherms0Step);
-                acView_Isotherms0Step10   = addActionCheck(menuIsotherms0Step, tr("10"), "", tr("Espacement des isothermes 0degC"));
-                acView_Isotherms0Step20   = addActionCheck(menuIsotherms0Step, tr("20"), "", tr("Espacement des isothermes 0degC"));
-                acView_Isotherms0Step50   = addActionCheck(menuIsotherms0Step, tr("50"), "", tr("Espacement des isothermes 0degC"));
-                acView_Isotherms0Step100  = addActionCheck(menuIsotherms0Step, tr("100"), "", tr("Espacement des isothermes 0degC"));
-                acView_Isotherms0Step200  = addActionCheck(menuIsotherms0Step, tr("200"), "", tr("Espacement des isothermes 0degC"));
-                acView_Isotherms0Step500  = addActionCheck(menuIsotherms0Step, tr("500"), "", tr("Espacement des isothermes 0degC"));
-                acView_Isotherms0Step1000 = addActionCheck(menuIsotherms0Step, tr("1000"), "", tr("Espacement des isothermes 0degC"));
-                acView_GroupIsotherms0Step->addAction(acView_Isotherms0Step10);
-                acView_GroupIsotherms0Step->addAction(acView_Isotherms0Step20);
-                acView_GroupIsotherms0Step->addAction(acView_Isotherms0Step50);
-                acView_GroupIsotherms0Step->addAction(acView_Isotherms0Step100);
-                acView_GroupIsotherms0Step->addAction(acView_Isotherms0Step200);
-                acView_GroupIsotherms0Step->addAction(acView_Isotherms0Step500);
-                acView_GroupIsotherms0Step->addAction(acView_Isotherms0Step1000);
-            menuIsotherms0->addMenu(menuIsotherms0Step);
-            setIsotherms0Step(Settings::getSetting("isotherms0Step", 50).toInt());
-        acView_Isotherms0Labels = addActionCheck(menuIsotherms0,
-                                                tr("Etiquettes des isothermes 0degC"), "",
-                            tr("Afficher les étiquettes des isothermes 0degC"));
-        acView_Isotherms0Labels->setChecked(Settings::getSetting("showIsotherms0Labels", false).toBool());
-                menuGrib->addMenu(menuIsotherms0);
         menuGrib->addSeparator();
         mn_fax=new QMenu(tr("Fax meteo"));
         acFax_Open = addAction(mn_fax, tr("Ouvrir un fax meteo"), "", tr(""));
@@ -660,31 +482,6 @@ void MenuBar::setCitiesNamesLevel(int level) {
     }
 }
 
-//-------------------------------------------------
-void MenuBar::setIsobarsStep(int step) {
-    switch (step) {
-        case 1: acView_IsobarsStep1->setChecked(true); break;
-        case 2: acView_IsobarsStep2->setChecked(true); break;
-        case 3: acView_IsobarsStep3->setChecked(true); break;
-        case 4: acView_IsobarsStep4->setChecked(true); break;
-        case 5: acView_IsobarsStep5->setChecked(true); break;
-        case 6: acView_IsobarsStep6->setChecked(true); break;
-        case 8: acView_IsobarsStep8->setChecked(true); break;
-        case 10: acView_IsobarsStep10->setChecked(true); break;
-    }
-}
-//-------------------------------------------------
-void MenuBar::setIsotherms0Step(int step) {
-    switch (step) {
-        case 10: acView_Isotherms0Step10->setChecked(true); break;
-        case 20: acView_Isotherms0Step20->setChecked(true); break;
-        case 50: acView_Isotherms0Step50->setChecked(true); break;
-        case 100: acView_Isotherms0Step100->setChecked(true); break;
-        case 200: acView_Isotherms0Step200->setChecked(true); break;
-        case 500: acView_Isotherms0Step500->setChecked(true); break;
-        case 1000: acView_Isotherms0Step1000->setChecked(true); break;
-    }
-}
 
 void MenuBar::slot_updateLockIcon(QIcon ic) {
     acFile_Lock->setIcon(ic);
@@ -745,58 +542,7 @@ void MenuBar::slot_showBarrierMenu(void) {
 
 }
 
-void MenuBar::slot_showAltitudeMenu(void) {
-    int colorMapMode=Settings::getSetting("colorMapMode", MapDataDrawer::drawWind).toInt();
 
-    if(acAlt_GroupAltitude)
-        acAlt_GroupAltitude->clear();
-    if(menuAltitude)
-        menuAltitude->clear();
-
-    MapDataDrawer * mapDataDrawer = my_CentralWidget->get_mapDataDrawer();
-    DataManager * dataManager = my_CentralWidget->get_dataManager();
-    if(!dataManager || !mapDataDrawer) return;
-
-    QMap<int,DataCode> *dataMap=mapDataDrawer->get_dataCodeMap();
-    if(!dataMap) return;
-
-    int curType = dataMap->value(colorMapMode).dataType;
-    QMap<int,QList<int>*> * levelList = dataManager->get_levelList(curType);
-
-    if(levelList) {
-        QMapIterator<int,QList<int>*> j(*levelList);
-        while (j.hasNext()) {
-            j.next();
-            QList<int>* lst = j.value();
-            if(!lst) continue;
-
-            for(int i=0;i<lst->count();++i) {
-                QAction * act = addActionCheck(menuAltitude,
-                                               levelTypes[j.key()] + " - " +
-                        QString().setNum(lst->at(i)) + " " + levelTypesUnit[j.key()], "", "");
-                acAlt_GroupAltitude->addAction(act);
-            }
-        }
-    }
-
-}
-
-
-
-//------------------------------------------------------------
-void MenuBar::setMenubarColorMapMode(int colorMapMode,bool withoutEvent)
-{    
-    QMapIterator<int,QAction *> i(gribDataActionMap);
-    while(i.hasNext()) {
-        i.next();
-        QAction * ptr=i.value();
-        if(withoutEvent)
-            ptr->blockSignals(true);
-        ptr->setChecked(colorMapMode == i.key());
-        if(withoutEvent)
-            ptr->blockSignals(false);
-    }
-}
 void MenuBar::setPlayerType(const int &type)
 {
     bool real=type!=BOAT_VLM;

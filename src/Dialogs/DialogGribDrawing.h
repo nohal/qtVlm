@@ -24,46 +24,58 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDialog>
 
 #include "class_list.h"
+#include "dataDef.h"
 
 #include "ui_DialogGribDrawing.h"
 
+#define SAVINFO_MAPDATA 0
+#define SAVINFO_FRSTARW 1
+#define SAVINFO_SECARW  2
+
 class DialogGribDrawing: public QDialog,  Ui::DialogGribDrawing_ui {
+    Q_OBJECT
     public:
         DialogGribDrawing(QWidget *parent,myCentralWidget * centralWidget);
+        ~DialogGribDrawing();
+        void showDialog(void);
 
-        void done(int result);
+    signals:
+        void hideDialog(bool);
 
     public slots:
-        void slot_bgDataType(int);
-        void slot_bgDataAlt(int);
-        void slot_frstArwType(int);
-        void slot_showTemp(bool);
-        void slot_smooth(bool);
-        void slot_frstArwAlt(int);
-        void slot_secArwType(int);
-        void slot_secArwAlt(int);
-        void slot_showBarbule(bool);
-        void slot_showIsoBar(bool);
-        void slot_showIsoTherm(bool);
-        void slot_isoBarSpacing(int);
-        void slot_isoThermSpacing(int);
-        void slot_isoBarShowLabel(bool);
-        void slot_isoThermShowLabel(bool);
-        void slot_isoBarShowMinMax(bool);
+        void slot_bgDataType(int idx);
+        void slot_bgDataAlt(int idx);
+        void slot_frstArwType(int idx);
+        void slot_showTemp(bool st);
+        void slot_smooth(bool st);
+        void slot_frstArwAlt(int idx);
+        void slot_secArwType(int idx);
+        void slot_secArwAlt(int idx);
+        void slot_showBarbule(bool st);
+        void slot_showIsoBar(bool st);
+        void slot_showIsoTherm(bool st);
+        void slot_isoBarSpacing(int val);
+        void slot_isoThermSpacing(int val);
+        void slot_isoBarShowLabel(bool st);
+        void slot_isoThermShowLabel(bool st);
+        void slot_isoBarShowMinMax(bool st);
+        void slot_finished();
 
     private:
         Terrain * terrain;
         myCentralWidget * centralWidget;
+        DataManager * dataManager;
 
-        QStringList levelTypes;
-        QStringList levelTypesUnit;
-        QStringList dataTypes;
-        QStringList arrowTypesFst;
-        QStringList arrowTypesSec;
+        Couple * savDataMapMode;
+        Couple * savFrstArwMode;
+        Couple * savSecArwMode;
+        void clear_savArray(void);
 
-        void init_state(void);
-        void init_stringList(void);
-
+        bool init_state(void);
+        void init_comboList(QMap<int,QString> * map, QComboBox * cb);
+        int get_comboListItem(int data, QComboBox *cb);
+        int get_comboListItem(int data1,int data2,QComboBox * cb);
+        Couple update_levelCb(int data, QComboBox * cb, int infoType, int levelType=DATA_LV_NOTDEF, int levelValue=0);
 };
 
 #endif // DIALOGGRIBDRAWING_H

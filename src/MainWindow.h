@@ -121,8 +121,6 @@ public slots:
         void slotDateGribChanged_sel();
         void slotSetGribDate(time_t);
 
-        void slotWindArrows(bool b);
-
         void slotOptions_Language();
         void slotHelp_Help();
         void slotHelp_Forum();
