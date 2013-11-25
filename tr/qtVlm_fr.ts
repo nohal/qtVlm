@@ -410,6 +410,121 @@
     </message>
 </context>
 <context>
+    <name>DataManager</name>
+    <message>
+        <source>Aucun</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Carte du vent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Carte du courant</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Couverture nuageuse</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Carte des precipitations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Carte de l&apos;humidite relative</source>
+        <translation type="unfinished">Carte de l&apos;humidité relative</translation>
+    </message>
+    <message>
+        <source>Carte de la temperature</source>
+        <translation type="unfinished">Carte de la température</translation>
+    </message>
+    <message>
+        <source>Carte de la temperature potentielle</source>
+        <translation type="unfinished">Carte de la température potentielle</translation>
+    </message>
+    <message>
+        <source>Point de rosee</source>
+        <translation type="unfinished">Point de rosée</translation>
+    </message>
+    <message>
+        <source>Neige (chute possible)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pluie verglacante (chute possible)</source>
+        <translation type="unfinished">Pluie verglaçante (chute possible)</translation>
+    </message>
+    <message>
+        <source>CAPE (surface)</source>
+        <translation type="unfinished">CAPE (surface)</translation>
+    </message>
+    <message>
+        <source>CIN (surface)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Waves combined</source>
+        <translation type="unfinished">Vagues combinées</translation>
+    </message>
+    <message>
+        <source>Wind waves</source>
+        <translation type="unfinished">Vagues du vent</translation>
+    </message>
+    <message>
+        <source>Swell waves</source>
+        <translation type="unfinished">Vagues de la houle</translation>
+    </message>
+    <message>
+        <source>Max waves</source>
+        <translation type="unfinished">Vagues max</translation>
+    </message>
+    <message>
+        <source>White cap prob</source>
+        <translation type="unfinished">Probabilité de déferlantes</translation>
+    </message>
+    <message>
+        <source>Vent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Courant</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Surface</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Isotherm 0C</source>
+        <translation type="unfinished">Isotherme 0 C</translation>
+    </message>
+    <message>
+        <source>Isobaric</source>
+        <translation type="unfinished">Isobarique</translation>
+    </message>
+    <message>
+        <source>Mean Sea Level</source>
+        <translation type="unfinished">Pression au niveau de la mer</translation>
+    </message>
+    <message>
+        <source>Above ground</source>
+        <translation type="unfinished">Au dessus du sol</translation>
+    </message>
+    <message>
+        <source>Sigma</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Entire atmosphere</source>
+        <translation type="unfinished">Atmosphère entière</translation>
+    </message>
+    <message>
+        <source>Ordered sequence</source>
+        <translation type="unfinished">Sequence ordonnée</translation>
+    </message>
+</context>
+<context>
     <name>DialogBoatAccount</name>
     <message>
         <source>&lt;Aucun&gt;</source>
@@ -760,128 +875,92 @@ La boîte �  cocher trace partielle s&apos;active apres l&apos;entree d&apos;u
 <context>
     <name>DialogGribDrawing</name>
     <message>
-        <source>Aucun</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Carte du vent</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Carte du courant</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Couverture nuageuse</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Carte des preecipitations</source>
-        <translation>Carte des précipitations</translation>
+        <translation type="obsolete">Carte des précipitations</translation>
     </message>
     <message>
         <source>Carte de l&apos;humidite relative</source>
-        <translation>Carte de l&apos;humidité relative</translation>
+        <translation type="obsolete">Carte de l&apos;humidité relative</translation>
     </message>
     <message>
         <source>Carte de la temperature</source>
-        <translation>Carte de la température</translation>
+        <translation type="obsolete">Carte de la température</translation>
     </message>
     <message>
         <source>Carte de la temperature potentielle</source>
-        <translation>Carte de la température potentielle</translation>
+        <translation type="obsolete">Carte de la température potentielle</translation>
     </message>
     <message>
         <source>Point de rosee</source>
-        <translation>Point de rosée</translation>
+        <translation type="obsolete">Point de rosée</translation>
     </message>
     <message>
         <source>Ecart temperature-point de rosee</source>
-        <translation>Ecart température-point de rosée</translation>
-    </message>
-    <message>
-        <source>Neige (chute possible)</source>
-        <translation></translation>
+        <translation type="obsolete">Ecart température-point de rosée</translation>
     </message>
     <message>
         <source>Pluie verglacante (chute possible)</source>
-        <translation>Pluie verglaçante (chute possible)</translation>
+        <translation type="obsolete">Pluie verglaçante (chute possible)</translation>
     </message>
     <message>
         <source>CAPE (surface)</source>
-        <translation>CAPE (surface)</translation>
-    </message>
-    <message>
-        <source>CIN (surface)</source>
-        <translation></translation>
+        <translation type="obsolete">CAPE (surface)</translation>
     </message>
     <message>
         <source>Waves combined</source>
-        <translation>Vagues combinées</translation>
+        <translation type="obsolete">Vagues combinées</translation>
     </message>
     <message>
         <source>Wind waves</source>
-        <translation>Vagues du vent</translation>
+        <translation type="obsolete">Vagues du vent</translation>
     </message>
     <message>
         <source>Swell waves</source>
-        <translation>Vagues de la houle</translation>
+        <translation type="obsolete">Vagues de la houle</translation>
     </message>
     <message>
         <source>Max waves</source>
-        <translation>Vagues max</translation>
+        <translation type="obsolete">Vagues max</translation>
     </message>
     <message>
         <source>White cap prob</source>
-        <translation>Probabilité de déferlantes</translation>
-    </message>
-    <message>
-        <source>Vent</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Courant</source>
-        <translation></translation>
+        <translation type="obsolete">Probabilité de déferlantes</translation>
     </message>
     <message>
         <source>Primary waves</source>
-        <translation>Vagues primaires</translation>
+        <translation type="obsolete">Vagues primaires</translation>
     </message>
     <message>
         <source>Secondary waves</source>
-        <translation>Vagues secondaires</translation>
-    </message>
-    <message>
-        <source>Surface</source>
-        <translation></translation>
+        <translation type="obsolete">Vagues secondaires</translation>
     </message>
     <message>
         <source>Isotherm 0C</source>
-        <translation>Isotherme 0 C</translation>
+        <translation type="obsolete">Isotherme 0 C</translation>
     </message>
     <message>
         <source>Isobaric</source>
-        <translation>Isobarique</translation>
+        <translation type="obsolete">Isobarique</translation>
     </message>
     <message>
         <source>Mean Sea Level</source>
-        <translation>Pression au niveau de la mer</translation>
+        <translation type="obsolete">Pression au niveau de la mer</translation>
     </message>
     <message>
         <source>Above ground</source>
-        <translation>Au dessus du sol</translation>
-    </message>
-    <message>
-        <source>Sigma</source>
-        <translation></translation>
+        <translation type="obsolete">Au dessus du sol</translation>
     </message>
     <message>
         <source>Entire atmosphere</source>
-        <translation>Atmosphère entière</translation>
+        <translation type="obsolete">Atmosphère entière</translation>
     </message>
     <message>
         <source>Ordered sequence</source>
-        <translation>Sequence ordonnée</translation>
+        <translation type="obsolete">Sequence ordonnée</translation>
+    </message>
+    <message>
+        <source>Grib drawing</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2851,14 +2930,6 @@ Etes-vous sur ?</source>
         <translation>Téléchargement VLM</translation>
     </message>
     <message>
-        <source>Carte du vent</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Barbules</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Bateau</source>
         <translation></translation>
     </message>
@@ -3007,112 +3078,8 @@ Etes-vous sur ?</source>
         <translation>Téléchargement</translation>
     </message>
     <message>
-        <source>Couverture nuageuse</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Neige (chute possible)</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>CAPE (surface)</source>
-        <translation>CAPE (surface)</translation>
-    </message>
-    <message>
-        <source>Ctrl+T</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Isobares</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Afficher les isobares</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Espacement (hPa)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>1</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Espacement des isobares</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>2</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>3</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>4</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>5</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>6</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>8</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>10</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Etiquettes des isobares</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Afficher les étiquettes des isobares</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Pression Mini(L) Maxi(H)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Afficher les points de pression mini et maxi</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Espacement (m)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>20</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>50</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>100</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>200</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>500</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>1000</source>
-        <translation></translation>
+        <translation type="obsolete">CAPE (surface)</translation>
     </message>
     <message>
         <source>Routes</source>
@@ -3167,44 +3134,32 @@ Etes-vous sur ?</source>
         <translation>Téléchargement SailDocs</translation>
     </message>
     <message>
-        <source>Type de carte</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Carte des preecipitations</source>
-        <translation>Carte des précipitations</translation>
+        <translation type="obsolete">Carte des précipitations</translation>
     </message>
     <message>
         <source>Carte de l&apos;humidite relative</source>
-        <translation>Carte de l&apos;humidité relative</translation>
+        <translation type="obsolete">Carte de l&apos;humidité relative</translation>
     </message>
     <message>
         <source>Carte de la temperature</source>
-        <translation>Carte de la température</translation>
+        <translation type="obsolete">Carte de la température</translation>
     </message>
     <message>
         <source>Carte de la temperature potentielle</source>
-        <translation>Carte de la température potentielle</translation>
+        <translation type="obsolete">Carte de la température potentielle</translation>
     </message>
     <message>
         <source>Ecart temperature-point de rosee</source>
-        <translation>Ecart température-point de rosée</translation>
+        <translation type="obsolete">Ecart température-point de rosée</translation>
     </message>
     <message>
         <source>Pluie verglacante (chute possible)</source>
-        <translation>Pluie verglaçante (chute possible)</translation>
-    </message>
-    <message>
-        <source>Altitude</source>
-        <translation></translation>
+        <translation type="obsolete">Pluie verglaçante (chute possible)</translation>
     </message>
     <message>
         <source>Sea level</source>
         <translation type="obsolete">Niveau de la mer</translation>
-    </message>
-    <message>
-        <source>Surface</source>
-        <translation></translation>
     </message>
     <message>
         <source>Atmosphere</source>
@@ -3232,43 +3187,43 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Degrades de couleurs</source>
-        <translation>Dégradé de couleurs</translation>
+        <translation type="obsolete">Dégradé de couleurs</translation>
     </message>
     <message>
         <source>Fleches du vent</source>
-        <translation>Flèches du vent</translation>
+        <translation type="obsolete">Flèches du vent</translation>
     </message>
     <message>
         <source>Afficher les fleches de direction du vent</source>
-        <translation>Afficher les flèches de direction du vent</translation>
+        <translation type="obsolete">Afficher les flèches de direction du vent</translation>
     </message>
     <message>
         <source>Afficher les barbules sur les fleches de vent</source>
-        <translation>Afficher les barbules sur les flèches du vent</translation>
+        <translation type="obsolete">Afficher les barbules sur les flèches du vent</translation>
     </message>
     <message>
         <source>Temperature</source>
-        <translation>Température</translation>
+        <translation type="obsolete">Température</translation>
     </message>
     <message>
         <source>Isothermes 0degC</source>
-        <translation>Isotherme 0°C</translation>
+        <translation type="obsolete">Isotherme 0°C</translation>
     </message>
     <message>
         <source>Afficher les isothermes 0degC</source>
-        <translation>Afficher les isothermes 0°C</translation>
+        <translation type="obsolete">Afficher les isothermes 0°C</translation>
     </message>
     <message>
         <source>Espacement des isothermes 0degC</source>
-        <translation>Espacement des isothermes 0°C</translation>
+        <translation type="obsolete">Espacement des isothermes 0°C</translation>
     </message>
     <message>
         <source>Etiquettes des isothermes 0degC</source>
-        <translation>Etiquettes des isothermes 0°C</translation>
+        <translation type="obsolete">Etiquettes des isothermes 0°C</translation>
     </message>
     <message>
         <source>Afficher les étiquettes des isothermes 0degC</source>
-        <translation>Afficher les étiquettes des isothermes 0°C</translation>
+        <translation type="obsolete">Afficher les étiquettes des isothermes 0°C</translation>
     </message>
     <message>
         <source>Parametres du/des bateaux</source>
@@ -3467,10 +3422,6 @@ Etes-vous sur ?</source>
         <translation>Čeština</translation>
     </message>
     <message>
-        <source>Carte du courant</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Ouvrir un GRIB Courants</source>
         <translation></translation>
     </message>
@@ -3643,10 +3594,6 @@ Etes-vous sur ?</source>
         <translation>Montrer les barrières</translation>
     </message>
     <message>
-        <source>CIN (surface)</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Supprimer des routes</source>
         <translation></translation>
     </message>
@@ -3664,31 +3611,31 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Waves</source>
-        <translation>Vagues</translation>
+        <translation type="obsolete">Vagues</translation>
     </message>
     <message>
         <source>Waves combined</source>
-        <translation>Vagues combinées</translation>
+        <translation type="obsolete">Vagues combinées</translation>
     </message>
     <message>
         <source>Wind waves</source>
-        <translation>Vagues du vent</translation>
+        <translation type="obsolete">Vagues du vent</translation>
     </message>
     <message>
         <source>Swell waves</source>
-        <translation>Vagues de la houle</translation>
+        <translation type="obsolete">Vagues de la houle</translation>
     </message>
     <message>
         <source>Max waves</source>
-        <translation>Vagues max</translation>
+        <translation type="obsolete">Vagues max</translation>
     </message>
     <message>
         <source>White cap prob</source>
-        <translation>Probabilité de déferlantes</translation>
+        <translation type="obsolete">Probabilité de déferlantes</translation>
     </message>
     <message>
         <source>Waves arrow</source>
-        <translation>Flèches de la mer</translation>
+        <translation type="obsolete">Flèches de la mer</translation>
     </message>
     <message>
         <source>Show arrox for wave direction</source>
@@ -3696,31 +3643,27 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Isotherm 0C</source>
-        <translation>Isotherme 0 C</translation>
+        <translation type="obsolete">Isotherme 0 C</translation>
     </message>
     <message>
         <source>Isobaric</source>
-        <translation>Isobarique</translation>
+        <translation type="obsolete">Isobarique</translation>
     </message>
     <message>
         <source>Mean Sea Level</source>
-        <translation>Pression au niveau de la mer</translation>
+        <translation type="obsolete">Pression au niveau de la mer</translation>
     </message>
     <message>
         <source>Above ground</source>
-        <translation>Au dessus du sol</translation>
-    </message>
-    <message>
-        <source>Sigma</source>
-        <translation></translation>
+        <translation type="obsolete">Au dessus du sol</translation>
     </message>
     <message>
         <source>Entire atmosphere</source>
-        <translation>Atmosphère entière</translation>
+        <translation type="obsolete">Atmosphère entière</translation>
     </message>
     <message>
         <source>Ordered sequence</source>
-        <translation>Sequence ordonnée</translation>
+        <translation type="obsolete">Sequence ordonnée</translation>
     </message>
     <message>
         <source>Informations sur le fichier</source>
@@ -3736,7 +3679,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Show arrow for wave direction</source>
-        <translation>Affiche les flèches de vagues</translation>
+        <translation type="obsolete">Affiche les flèches de vagues</translation>
     </message>
     <message>
         <source>Combine grib files</source>
@@ -3745,6 +3688,10 @@ Etes-vous sur ?</source>
     <message>
         <source>Depuis le pilototo VLM</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Grib drawing config</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5988,6 +5935,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>5 m</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Grib drawing config</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
