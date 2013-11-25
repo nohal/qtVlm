@@ -61,7 +61,7 @@ vlmLine::vlmLine(Projection * proj, QGraphicsScene * myScene,double z_level) :
     this->coastDetected=false;
     this->coastDetection=false;
     this->mcp=NULL;
-    if(myZvalue==Z_VALUE_ROUTE || myZvalue==Z_VALUE_BOAT || myZvalue==Z_VALUE_OPP)
+    if(myZvalue==Z_VALUE_ROUTE || myZvalue==Z_VALUE_BOAT || myZvalue==Z_VALUE_OPP || myZvalue==Z_VALUE_LINE_POI)
         this->setAcceptHoverEvents(true);
     show();
 }
@@ -319,7 +319,7 @@ void vlmLine::hoverEnterEvent(QGraphicsSceneHoverEvent *)
 {
     //qWarning()<<"entering hoverEnter event";
     emit hovered();
-    this->setZValue(myZvalue+30);
+    this->setZValue(myZvalue+0.5);
     this->linePen.setWidthF(this->lineWidth*2.0);
     update();
     //qWarning()<<"end of hoverEnter event";

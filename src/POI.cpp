@@ -844,7 +844,7 @@ void POI::slot_relier()
         {
             if(lineBetweenPois!=NULL)
                 delete lineBetweenPois;
-            lineBetweenPois=new vlmLine(proj,parent->getScene(),Z_VALUE_POI);
+            lineBetweenPois=new vlmLine(proj,parent->getScene(),Z_VALUE_LINE_POI);
             connectedPoi->setLineBetweenPois(lineBetweenPois);
             QPen pen(lineColor);
             pen.setWidthF(lineWidth);
@@ -859,6 +859,14 @@ void POI::manageLineBetweenPois()
     lineBetweenPois->deleteAll();
     lineBetweenPois->addVlmPoint(vlmPoint(this->lon,this->lat));
     lineBetweenPois->addVlmPoint(vlmPoint(this->connectedPoi->lon,this->connectedPoi->lat));
+    Orthodromie ooAB(this->lon,this->lat,connectedPoi->lon,connectedPoi->lat);
+    Orthodromie ooBA(connectedPoi->lon,connectedPoi->lat,this->lon,this->lat);
+    QString mes(tr("Ortho ")+this->name+"->"+connectedPoi->name+QString().sprintf(" %.2f",ooAB.getAzimutDeg())+tr("deg")+"/"+QString().sprintf("%.2f",ooAB.getAzimutDeg())+tr("NM")+"<br>"+
+                tr("Ortho ")+connectedPoi->name+"->"+this->name+QString().sprintf(" %.2f",ooBA.getAzimutDeg())+tr("deg")+"/"+QString().sprintf("%.2f",ooBA.getAzimutDeg())+tr("NM")+"<br>"+
+                tr("Loxo ")+this->name+"->"+connectedPoi->name+QString().sprintf(" %.2f",ooAB.getLoxoCap())+tr("deg")+"/"+QString().sprintf("%.2f",ooAB.getLoxoDistance())+tr("NM")+"<br>"+
+                tr("Loxo ")+connectedPoi->name+"->"+this->name+QString().sprintf(" %.2f",ooBA.getLoxoCap())+tr("deg")+"/"+QString().sprintf("%.2f",ooBA.getLoxoDistance())+tr("NM"));
+    lineBetweenPois->setToolTip(mes.replace(" ","&nbsp;"));
+    lineBetweenPois->set_zValue(Z_VALUE_LINE_POI);
     lineBetweenPois->slot_showMe();
 }
 void POI::slot_poiRoute()

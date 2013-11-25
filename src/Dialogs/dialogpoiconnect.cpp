@@ -18,7 +18,7 @@ DialogPoiConnect::DialogPoiConnect(POI * poi,myCentralWidget *parent) :
     for(int m=0;m<poiList.count();m++)
     {
         POI * p = poiList.at(m);
-        if(p!=poi && p->getRoute()==NULL && (p->getConnectedPoi()==NULL || p->getConnectedPoi()==poi))
+        if(p!=poi && (p->getRoute()==NULL || p->getRoute()==poi->getRoute()) && (p->getConnectedPoi()==NULL || p->getConnectedPoi()==poi))
         {
             this->comboPoi->addItem(p->getName(),m);
             if(p->getConnectedPoi()==poi)

@@ -758,15 +758,10 @@ void myCentralWidget::connectPois(void) {
                         poi2->setConnectedPoi(poi1);
                         poi2->setLineWidth(poi1->getLineWidth());
                         poi2->setLineColor(poi1->getLineColor());
-                        vlmLine * lineBetweenPois=new vlmLine(proj,this->getScene(),Z_VALUE_POI);
-                        lineBetweenPois->addVlmPoint(vlmPoint(poi1->getLongitude(),poi1->getLatitude()));
-                        lineBetweenPois->addVlmPoint(vlmPoint(poi2->getLongitude(),poi2->getLatitude()));
+                        vlmLine * lineBetweenPois=new vlmLine(proj,this->getScene(),Z_VALUE_LINE_POI);
                         poi1->setLineBetweenPois(lineBetweenPois);
                         poi2->setLineBetweenPois(lineBetweenPois);
-                        QPen pen(poi1->getLineColor());
-                        pen.setWidthF(poi1->getLineWidth());
-                        lineBetweenPois->setLinePen(pen);
-                        lineBetweenPois->slot_showMe();
+                        poi1->manageLineBetweenPois();
                         break;
                     }
                 }
