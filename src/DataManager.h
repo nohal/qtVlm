@@ -87,9 +87,9 @@ class DataManager: public QObject
         FCT_GET(int,isoTherms0Step)
 
         QMap<int,QStringList> * get_levelTypes(void) { return &levelTypes; }
-        QMap<int,QString> * get_dataTypes(void) { return &dataTypes; }
-        QMap<int,QString> * get_arrowTypesFst(void) { return &arrowTypesFst; }
-        QMap<int,QString> * get_arrowTypesSec(void) { return &arrowTypesSec; }
+        QMap<int,QStringList> * get_dataTypes(void) { return &dataTypes; }
+        QMap<int,QStringList> * get_arrowTypesFst(void) { return &arrowTypesFst; }
+        QMap<int,QStringList> * get_arrowTypesSec(void) { return &arrowTypesSec; }
 
         void load_forcedParam();
 
@@ -121,9 +121,9 @@ class DataManager: public QObject
         QMap<int,QMap<int, QList<int>*> *> levelMap;
 
         QMap<int,QStringList> levelTypes;
-        QMap<int,QString> dataTypes;
-        QMap<int,QString> arrowTypesFst;
-        QMap<int,QString> arrowTypesSec;
+        QMap<int,QStringList> dataTypes;
+        QMap<int,QStringList> arrowTypesFst;
+        QMap<int,QStringList> arrowTypesSec;
         void init_stringList(void);
 
         Couple * defaultLevel;

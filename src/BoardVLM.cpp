@@ -405,8 +405,7 @@ void boardVLM::boatUpdated(void)
     longitude->setText(Util::pos2String(TYPE_LON,myBoat->getLon()));
     latitude->setText(Util::pos2String(TYPE_LAT,myBoat->getLat()));
 
-    //btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 127);"));
-    set_style(this->btn_Synch,QColor(255,255,127));
+    set_style(this->btn_Synch,QColor(20,255,20));
     set_style(this->ClearPilot,QColor(255,255,127));
     ClearPilot->blockSignals(false);
     isComputing = false;
@@ -735,7 +734,6 @@ void boardVLM::doSync()
 {
     if(currentBoat())
     {
-        //btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 0, 0);"));
         set_style(btn_Synch,QColor(255,0,0));
         emit VLM_Sync();
     }
@@ -973,12 +971,10 @@ void boardVLM::sendCmd(int cmdNum,double  val1,double val2, double val3)
     if(!hasInet() || hasRequest())
     {
         qWarning() <<  "error sendCmd " << cmdNum << " - bad state";
-        //btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 127);"));
-        set_style(btn_Synch,QColor(255,255,127));
+        set_style(btn_Synch,QColor(20,255,20));
         return;
     }
 
-    //btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 0, 0);"));
     set_style(btn_Synch,QColor(255,0,0));
     currentCmdNum=cmdNum;
     cmd_val1=QString().sprintf("%.10f",val1);
@@ -1052,7 +1048,6 @@ void boardVLM::requestFinished (QByteArray res)
             if(checkWSResult(res,"BoardVLM",mainWin))
                 currentBoat()->slot_getData(true);
             else
-                //btn_Synch->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 170, 0);"));
                 set_style(btn_Synch,QColor(255,170,0));
             break;
     }

@@ -459,15 +459,21 @@ bool Grib::interpolateValue_1D(double d_long, double d_lat, time_t now,time_t tP
     *res=0;
     double v = recPrev->getInterpolatedValue(d_long, d_lat, MUST_INTERPOLATE_VALUE);
     double v_2;
-    if(v != GRIB_NOTDEF && tPrev!=tNxt)
-    {
-        v_2=recNxt->getInterpolatedValue(d_long, d_lat, MUST_INTERPOLATE_VALUE);
-        if(v_2 != GRIB_NOTDEF) {
-            *res= v+((v_2-v)/((double)(tNxt-tPrev)))*((double)(now-tPrev));
+    if(v != GRIB_NOTDEF) {
+        if(tPrev!=tNxt)
+        {
+            v_2=recNxt->getInterpolatedValue(d_long, d_lat, MUST_INTERPOLATE_VALUE);
+            if(v_2 != GRIB_NOTDEF) {
+                *res= v+((v_2-v)/((double)(tNxt-tPrev)))*((double)(now-tPrev));
+                return true;
+            }
+            else
+                return false;
+        }
+        else {
+            *res=v;
             return true;
         }
-        else
-            return false;
     }
     else
         return false;

@@ -60,35 +60,35 @@ DataManager::~DataManager(void) {
 
 void DataManager::init_stringList(void) {
     /* data types */
-    dataTypes.insert(DATA_NOTDEF,             tr("Aucun"));
-    dataTypes.insert(DATA_WIND_VX,            tr("Carte du vent"));
-    dataTypes.insert(DATA_CURRENT_VX,         tr("Carte du courant"));
-    dataTypes.insert(DATA_CLOUD_TOT,          tr("Couverture nuageuse"));
-    dataTypes.insert(DATA_PRECIP_TOT,         tr("Carte des precipitations"));
-    dataTypes.insert(DATA_HUMID_REL,          tr("Carte de l'humidite relative"));
-    dataTypes.insert(DATA_TEMP,               tr("Carte de la temperature"));
-    dataTypes.insert(DATA_TEMP_POT,           tr("Carte de la temperature potentielle"));
-    dataTypes.insert(DATA_DEWPOINT,           tr("Point de rosee"));
-    dataTypes.insert(DATA_SNOW_CATEG,         tr("Neige (chute possible)"));
-    dataTypes.insert(DATA_FRZRAIN_CATEG,      tr("Pluie verglacante (chute possible)"));
-    dataTypes.insert(DATA_CAPE,               tr("CAPE (surface)"));
-    dataTypes.insert(DATA_CIN,                tr("CIN (surface)"));
-    dataTypes.insert(DATA_WAVES_SIG_HGT_COMB, tr("Waves combined"));
-    dataTypes.insert(DATA_WAVES_WND_HGT,      tr("Wind waves"));
-    dataTypes.insert(DATA_WAVES_SWL_HGT,      tr("Swell waves"));
-    dataTypes.insert(DATA_WAVES_MAX_HGT,      tr("Max waves"));
-    dataTypes.insert(DATA_WAVES_WHITE_CAP,    tr("White cap prob"));
+    dataTypes.insert(DATA_NOTDEF,             QStringList() << tr("Aucun")                              << tr("Aucun")       << "");
+    dataTypes.insert(DATA_WIND_VX,            QStringList() << tr("Carte du vent")                      << tr("Vent")        << "kts" << "deg");
+    dataTypes.insert(DATA_CURRENT_VX,         QStringList() << tr("Carte du courant")                   << tr("Courant")     << "kts" << "deg");
+    dataTypes.insert(DATA_CLOUD_TOT,          QStringList() << tr("Couverture nuageuse")                << tr("Couv nuage")  << "%"     );
+    dataTypes.insert(DATA_PRECIP_TOT,         QStringList() << tr("Precipitations")                     << tr("Precip")      << "kg/m2" );
+    dataTypes.insert(DATA_HUMID_REL,          QStringList() << tr("Humidite relative")                  << tr("Humid rel")   << "%"     );
+    dataTypes.insert(DATA_TEMP,               QStringList() << tr("Temperature")                        << tr("Temp")        << "°C"    );
+    dataTypes.insert(DATA_TEMP_POT,           QStringList() << tr("Temperature potentielle")            << tr("Temp pot")    << "°C"    );
+    dataTypes.insert(DATA_DEWPOINT,           QStringList() << tr("Point de rosee")                     << tr("Pt rosee")    << "°C"    );
+    dataTypes.insert(DATA_SNOW_CATEG,         QStringList() << tr("Neige (chute possible)")             << tr("Neige")       << "0/1"   );
+    dataTypes.insert(DATA_FRZRAIN_CATEG,      QStringList() << tr("Pluie verglacante (chute possible)") << tr("Pluie verg.") << "0/1"   );
+    dataTypes.insert(DATA_CAPE,               QStringList() << tr("CAPE (surface)")                     << tr("CAPE")        << "J/kg"  );
+    dataTypes.insert(DATA_CIN,                QStringList() << tr("CIN (surface)")                      << tr("CIN")         << "J/kg"  );
+    dataTypes.insert(DATA_WAVES_SIG_HGT_COMB, QStringList() << tr("Waves combined")                     << tr("Wave comb")   << "m"     );
+    dataTypes.insert(DATA_WAVES_WND_HGT,      QStringList() << tr("Wind waves")                         << tr("Wind wave")   << "m" << "deg");
+    dataTypes.insert(DATA_WAVES_SWL_HGT,      QStringList() << tr("Swell waves")                        << tr("Swell wave")  << "m" << "deg");
+    dataTypes.insert(DATA_WAVES_MAX_HGT,      QStringList() << tr("Max waves")                          << tr("Max wave")    << "m" << "deg");
+    dataTypes.insert(DATA_WAVES_WHITE_CAP,    QStringList() << tr("White cap prob")                     << tr("Whte cap")    << "%"     );
 
     /* arrow types */
-    arrowTypesFst.insert(DATA_NOTDEF,         tr("Aucun"));
-    arrowTypesFst.insert(DATA_WIND_VX,        tr("Vent"));
-    arrowTypesFst.insert(DATA_CURRENT_VX,     tr("Courant"));
+    arrowTypesFst.insert(DATA_NOTDEF,         QStringList() << tr("Aucun")       << tr("Aucun")       << "");
+    arrowTypesFst.insert(DATA_WIND_VX,        QStringList() << tr("Vent")        << tr("Vent")        << "kts" << "deg");
+    arrowTypesFst.insert(DATA_CURRENT_VX,     QStringList() << tr("Courant")     << tr("Courant")     << "kts" << "deg");
 
-    arrowTypesSec.insert(DATA_NOTDEF,         tr("Aucun"));
-    arrowTypesSec.insert(DATA_CURRENT_VX,     tr("Courant"));
-    arrowTypesSec.insert(DATA_WAVES_WND_HGT,  tr("Wind waves"));
-    arrowTypesSec.insert(DATA_WAVES_SWL_HGT,  tr("Swell waves"));
-    arrowTypesSec.insert(DATA_WAVES_MAX_HGT,  tr("Max waves"));
+    arrowTypesSec.insert(DATA_NOTDEF,         QStringList() << tr("Aucun")       << tr("Aucun")       << "");
+    arrowTypesSec.insert(DATA_CURRENT_VX,     QStringList() << tr("Courant")     << tr("Courant")     << "kts" << "deg");
+    arrowTypesSec.insert(DATA_WAVES_WND_HGT,  QStringList() << tr("Wind waves")  << tr("Wind wave")   << "m" << "deg");
+    arrowTypesSec.insert(DATA_WAVES_SWL_HGT,  QStringList() << tr("Swell waves") << tr("Swell wave")  << "m" << "deg");
+    arrowTypesSec.insert(DATA_WAVES_MAX_HGT,  QStringList() << tr("Max waves")   << tr("Max wave")    << "m" << "deg");
     //arrowTypesSec.insert(DATA_WAVES_PRIM_DIR, tr("Primary waves"));
     //arrowTypesSec.insert(DATA_WAVES_SEC_DIR,  tr("Secondary waves"));
 
@@ -369,7 +369,7 @@ double DataManager::getInterpolatedValue_1D(int dataType,int levelType,int level
             if(gribCurrent->getInterpolatedValue_1D(dataType,levelType,levelValue,d_long,d_lat,now,&res))
                 return res;
     }
-    return false;
+    return 0;
 }
 
 bool DataManager::getInterpolatedValue_2D(int dataType1,int dataType2,int levelType,int levelValue,

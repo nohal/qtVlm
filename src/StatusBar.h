@@ -34,7 +34,7 @@ class StatusBar : public QStatusBar
     public:
         StatusBar(MainWindow * mainWindow);
 
-        void showWindData(double x,double y);
+        void showGribData(double x,double y);
         void showSelectedZone(double x0, double y0, double x1, double y1);
         void drawVacInfo(void);
     

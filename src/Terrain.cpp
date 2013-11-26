@@ -687,7 +687,7 @@ void Terrain::show_temperatureLabels(bool b) {
 
 int Terrain::compute_dataType(DataManager * dataManager,
                      int currentMode, int defaultMode1, int defaultMode2,
-                     QMap<int,QString> * allowedMode) {
+                     QMap<int,QStringList> * allowedMode) {
     int newType=DATA_NOTDEF;
     /* is current mode valid: ie in dataRange [0..DATA_MAX[, != NOT_DEF, allowed for this type of drawing*/
     if(currentMode >= 0 && currentMode < DATA_MAX && currentMode != DATA_NOTDEF &&

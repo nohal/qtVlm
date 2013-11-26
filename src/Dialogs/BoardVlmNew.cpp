@@ -517,7 +517,7 @@ void BoardVlmNew::slot_updateData()
     this->blockSignals(false);
     spin_PolarTWS->setValue(myBoat->getWindSpeed());
     this->blocking=false;
-    set_style(this->btn_sync,QColor(255,255,127));
+    set_style(this->btn_sync,QColor(20,255,20));
     if(!vibration->isActive())
         vibration->start(80);
 }

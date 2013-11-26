@@ -80,6 +80,10 @@ class Util
     static QString formatTemperature_short(const double &tempKelvin);
     static QString formatPercentValue(double v);
 
+    static QString formatSimpleIntUnit(int val,QString unit);
+    static QString formatSimpleDoubleUnit(double val,QString unit);
+    static QString formatData(int type,double val1,double val2=0);
+
     static int    kmhToBeaufort(const double &v);
     static double  kmhToBeaufort_F(const double &v);
     static double  BeaufortToKmh_F(const double &bf);

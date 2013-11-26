@@ -116,6 +116,13 @@ void MapDataDrawer::init_drawerInfo(void) {
     forceInterpol(drawerInfo[DATA_WAVES_MAX_HGT],INTERPOLATION_TWSA);
 }
 
+dataDrawerInfo * MapDataDrawer::get_drawerInfo(int type) {
+    if(type>=0 && type<DATA_MAX && drawerInfo[type].isOk)
+        return &drawerInfo[type];
+    else
+        return NULL;
+}
+
 
 QRgb  MapDataDrawer::getRainColor(double v, bool smooth) {
     return DataColors::get_color("rain_mmh",v,smooth);

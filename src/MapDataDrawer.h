@@ -64,6 +64,8 @@ class MapDataDrawer
 
         // Carte 1D et 2D
 
+        dataDrawerInfo * get_drawerInfo(int type);
+
         void drawColorMapGeneric_DTC(QPainter &pnt, Projection *proj,
                                                     int dataType,int levelType,int levelValue,
                                                     bool smooth);

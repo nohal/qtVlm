@@ -40,20 +40,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * si affichage de fleche frst ou sec affichage aussi ?
  * => affichage des label de temp: dépendant du level si temp affichée ou combo de selection de level
  * => remettre le deltaDew
- * => contrôles les appels aux anciens drawWind + supprimer ces fonctions
  * => parametre de level pour les Min/Max pression ?
  * => logique affichage des iso (utilisation de level ?)
  * => revoir les enchainements drawGeneric_DTC => 1D/2D_DTC => 1D/2D, en particulier sur l'utilisation de a struct
  * soit tt ds generic soit ds dtc spécifique, supprimer un niveau
  * => ajouter un affichage de fleche '1D' => interpolation 1D sur angle
  * => quelle interpolation utilisée pour les vagues ? 1D en force et 1D en direction ou 2D
- * => gérer proprement le chargement de grib: disparition de data type ou level
  * => bench Mono/Multi ok forçage mono mais comment on assure le fonctionnement en multi pour le test?
  * => bench mono/multi n'es plus avec affichage fleches
- * Ticket:
- * nom du POI ds pilototo
- * loch 1h/3h/24h ds tooltip boat
- * minimiser la zone de couverture de la polaire
+ * => modifier le cartouche pour afficher le type de data selectionné
  */
 
 DialogGribDrawing::DialogGribDrawing(QWidget *parent, myCentralWidget *centralWidget) : QDialog(parent) {
@@ -174,10 +169,14 @@ bool DialogGribDrawing::init_state(void) {
             terrain->setSecArwMode(curData,res.a,res.b);
     }
 
+    int idx;
+
     // IsoBar
     bool showIso=Settings::getSetting("showIsobars", false).toBool();
     chkShowIsoBar->setChecked(showIso);
-    isoBarSpacing->setCurrentText(Settings::getSetting("isobarsStep", "2").toString());
+    idx = isoBarSpacing->findText(Settings::getSetting("isobarsStep", "2").toString());
+    if(idx!=-1)
+        isoBarSpacing->setCurrentIndex(idx);
     isoBarSpacing->setEnabled(showIso);
     chkShowIsoBarLabel->setChecked(Settings::getSetting("showIsobarsLabels", false).toBool());
     chkShowIsoBarLabel->setEnabled(showIso);
@@ -187,7 +186,9 @@ bool DialogGribDrawing::init_state(void) {
     // IsoTherm0
     showIso=Settings::getSetting("showIsotherms0", false).toBool();
     chkShowIsoTherm->setChecked(showIso);
-    isoThermSpacing->setCurrentText(Settings::getSetting("isotherms0Step", "50").toString());
+    idx = isoThermSpacing->findText(Settings::getSetting("isotherms0Step", "50").toString());
+    if(idx!=-1)
+        isoThermSpacing->setCurrentIndex(idx);
     isoThermSpacing->setEnabled(showIso);
     chkShowIsoThermLabel->setChecked(Settings::getSetting("showIsotherms0Labels", false).toBool());
     chkShowIsoThermLabel->setEnabled(showIso);
@@ -338,16 +339,16 @@ int DialogGribDrawing::get_comboListItem(int data1,int data2,QComboBox * cb) {
     return i;
 }
 
-void DialogGribDrawing::init_comboList(QMap<int,QString> * map,QComboBox * cb) {
+void DialogGribDrawing::init_comboList(QMap<int,QStringList> * map,QComboBox * cb) {
     cb->blockSignals(true);
     cb->clear();
-    QMapIterator<int,QString> i(*map);
+    QMapIterator<int,QStringList> i(*map);
     while (i.hasNext()) {
         i.next();
         if(i.key()==DATA_NOTDEF)
-            cb->addItem(i.value(),i.key());
+            cb->addItem(i.value().first(),i.key());
         else if(dataManager->hasDataType(i.key()))
-            cb->addItem(i.value(),i.key());
+            cb->addItem(i.value().first(),i.key());
     }
     cb->blockSignals(false);
 }

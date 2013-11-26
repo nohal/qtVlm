@@ -181,7 +181,7 @@ private:
     //void update_colorMapLevel(int *mode, int *levelType, int *levelValue);
     int compute_dataType(DataManager * dataManager,
                          int currentMode, int defaultMode1, int defaultMode2,
-                         QMap<int,QString> * allowedMode);
+                         QMap<int,QStringList> * allowedMode);
     Couple compute_level(DataManager * dataManager,int newType,int curLevelType, int curLevelValue,
                          QMap<int,QStringList> * allowedLevel);
 

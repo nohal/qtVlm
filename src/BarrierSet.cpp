@@ -108,6 +108,9 @@ void BarrierSet::slot_editBarrierSet(void) {
 }
 
 void BarrierSet::slot_delBarrierSet(void) {
+    myCentralWidget * centralWidget=mainWindow->getMy_centralWidget();
+    if(centralWidget->get_barrierEditMode()!=BARRIER_EDIT_NO_EDIT)
+        centralWidget->escKey_barrier();
     deleteLater();
 }
 

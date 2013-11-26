@@ -18,6 +18,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
+#include <QDebug>
+
 #include "MainWindow.h"
 #include "StatusBar.h"
 #include "Orthodromie.h"
@@ -26,6 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "boatVLM.h"
 #include "settings.h"
 #include "DataManager.h"
+#include "MapDataDrawer.h"
+#include "Terrain.h"
 
 StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
     this->mainWindow=mainWindow;
@@ -69,7 +73,7 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
     mainWindow->setStatusBar(this);
 }
 
-void StatusBar::showWindData(double x,double y)
+void StatusBar::showGribData(double x,double y)
 {
 #if 0 /*unflag to visualize closest point to next gate from mouse position*/
     if(!selectedBoat) return;
@@ -159,8 +163,7 @@ void StatusBar::showWindData(double x,double y)
 
     }
 #endif
-    QString s, res;
-    double a,b;
+    QString res;
 
     if(showingSelectionMessage)
     {
@@ -181,26 +184,46 @@ void StatusBar::showWindData(double x,double y)
     stBar_label_1->setText(label1);
 
     DataManager * dataManager=my_centralWidget->get_dataManager();
-    bool bo=false;
+    Terrain * terrain=my_centralWidget->getTerre();
+    MapDataDrawer * mapDrawer=my_centralWidget->get_mapDataDrawer();
+    QMap<int,QStringList> * mapDataTypes=dataManager->get_dataTypes();
     res.clear();
-    bo=(dataManager && dataManager->getInterpolatedWind(x,y,dataManager->get_currentDate(),&a,&b));
-    if(bo)
-    {
-        res = "- " + tr(" Vent") + ": ";
-        s.sprintf("%6.2f", radToDeg(b));
-        res += s+tr("deg")+" ";
-        s.sprintf("%6.2f",a);
-        res += s+tr(" kts");
+
+    if(dataManager && terrain && mapDrawer) {
+
+        int mode=terrain->get_colorMapMode();
+        int levelType=terrain->get_colorMapLevelType();
+        int levelValue=terrain->get_colorMapLevelValue();
+        dataDrawerInfo * drawerInfo=mapDrawer->get_drawerInfo(mode);
+
+        if(drawerInfo) {
+            /* interpolation */
+            if(drawerInfo->is2D) {
+                //qWarning() << "[showGribData] 2D";
+                double v1,v2;
+                int interpol=INTERPOLATION_UKN;
+                if(drawerInfo->forcedInterpol)
+                    interpol=drawerInfo->forcedInterpolType;
+                if(dataManager->getInterpolatedValue_2D(mode,drawerInfo->secData_2D,levelType,levelValue,
+                                                        x,y,dataManager->get_currentDate(),&v1,&v2,
+                                                        interpol,drawerInfo->UV)) {
+                    res = " - " + mapDataTypes->value(mode).at(1);
+                    res += " " + Util::formatData(mode,v1,v2);
+                }
+            }
+            else {
+                //qWarning() << "[showGribData] 1D " << mode << " / " << levelType << " / " << levelValue;
+                double v1=dataManager->getInterpolatedValue_1D(mode,levelType,levelValue,x,y,
+                                                               dataManager->get_currentDate());
+                //qWarning() << "[showGribData] val " << v1;
+                res = " - " + mapDataTypes->value(mode).at(1);
+                res += " " + Util::formatData(mode,v1);
+            }
+        }
+        else
+            qWarning() << "[showGribData] no drawer info";
     }
-    bo=(dataManager && dataManager->getInterpolatedCurrent(x,y,dataManager->get_currentDate(),&a,&b));
-    if(bo)
-    {
-        res += " - " + tr(" Courant") + ": ";
-        s.sprintf("%6.2f", Util::A360(radToDeg(b)+180.0));
-        res += s+tr("deg")+", ";
-        s.sprintf("%6.2f",a);
-        res += s+tr(" kts");
-    }
+
     stBar_label_2->setText(res);
 }
 

@@ -28,6 +28,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QUrl>
 #include <QClipboard>
 #include <cstdlib>
+#include <QObject>
 
 #include "Util.h"
 
@@ -36,6 +37,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Projection.h"
 #include "Version.h"
 #include "Orthodromie.h"
+#include "dataDef.h"
 #include <QDesktopWidget>
 
 double Util::A180(double angle)
@@ -68,6 +70,79 @@ QString Util::currentPath()
     dir.cdUp();
     dir.cdUp();
     return dir.absolutePath();
+}
+
+QString Util::formatSimpleIntUnit(int val,QString unit) {
+    QString s;
+    s.sprintf("%d",val);
+    return s+" "+unit;
+}
+
+QString Util::formatSimpleDoubleUnit(double val,QString unit) {
+    QString s;
+    s.sprintf("%6.2f",val);
+    return s+" "+unit;
+}
+
+QString Util::formatData(int type,double val1,double val2) {
+    QString res;
+    switch(type) {
+        case DATA_PRESSURE:
+            res=Util::formatSimpleIntUnit(val1,"Pa");
+            break;
+        case DATA_GEOPOT_HGT:
+            res=Util::formatSimpleDoubleUnit(val1,"gpm");
+            break;
+        case DATA_TEMP:
+        case DATA_TEMP_POT:
+        case DATA_TMAX:
+        case DATA_TMIN:
+        case DATA_DEWPOINT:
+            res=Util::formatTemperature(val1);
+            break;
+        case DATA_CURRENT_VX:
+            val2=Util::A360(radToDeg(val2)+180.0);
+            res = Util::formatSimpleDoubleUnit(val2,"deg");
+            res+= ", " +Util::formatSimpleDoubleUnit(val1,"kts");
+        case DATA_WIND_VX:
+            val2=radToDeg(val2);
+            res = Util::formatSimpleDoubleUnit(val2,"deg");
+            res+= ", " +Util::formatSimpleDoubleUnit(val1,"kts");
+            break;
+        case DATA_HUMID_SPEC:
+            res=Util::formatSimpleDoubleUnit(val1,"kg/kg");
+            break;
+        case DATA_HUMID_REL:
+        case DATA_CLOUD_TOT:
+        case DATA_WAVES_WHITE_CAP:
+            res=Util::formatPercentValue(val1);
+            break;
+        case DATA_PRECIP_RATE:
+            res=Util::formatSimpleDoubleUnit(val1,"kg/m2/s");
+            break;
+        case DATA_PRECIP_TOT:
+            res=Util::formatSimpleDoubleUnit(val1,"kg/m2");
+            break;
+        case DATA_SNOW_DEPTH:
+        case DATA_WAVES_SIG_HGT_COMB:
+            res=Util::formatSimpleDoubleUnit(val1,"m");
+            break;
+        case DATA_FRZRAIN_CATEG:
+        case DATA_SNOW_CATEG:
+            if(val1) res=QObject::tr("oui");
+            else res=QObject::tr("non");
+            break;
+        case DATA_CIN:
+        case DATA_CAPE:
+            res=Util::formatSimpleDoubleUnit(val1,"J/kg");
+            break;
+        case DATA_WAVES_WND_HGT:
+        case DATA_WAVES_SWL_HGT:
+        case DATA_WAVES_MAX_HGT:
+            res = Util::formatSimpleDoubleUnit(Util::A360(radToDeg(val2)+180.0),"deg");
+            res+= ", " + Util::formatSimpleDoubleUnit(val1,"m");
+    }
+    return res;
 }
 
 //======================================================================

@@ -72,7 +72,7 @@ class DialogGribDrawing: public QDialog,  Ui::DialogGribDrawing_ui {
         void clear_savArray(void);
 
         bool init_state(void);
-        void init_comboList(QMap<int,QString> * map, QComboBox * cb);
+        void init_comboList(QMap<int,QStringList> * map, QComboBox * cb);
         int get_comboListItem(int data, QComboBox *cb);
         int get_comboListItem(int data1,int data2,QComboBox * cb);
         Couple update_levelCb(int data, QComboBox * cb, int infoType, int levelType=DATA_LV_NOTDEF, int levelValue=0);
