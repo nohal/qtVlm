@@ -2009,9 +2009,11 @@ void myCentralWidget::slot_startReplay()
 {
     if(mainW->getSelectedBoat()==NULL) return;
     emit startReplay(true);
-    replayTimer->setInterval(Settings::getSetting("speed_replay",20).toInt());
-    replayTimer->start();
+    int rt=Settings::getSetting("speed_replay",20).toInt();
+    rt=101-rt;
+    replayTimer->setInterval(rt);
     this->replayStep=-1;
+    replayTimer->start();
 }
 void myCentralWidget::slot_replay()
 {
