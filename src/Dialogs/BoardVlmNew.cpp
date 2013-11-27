@@ -662,7 +662,8 @@ void BoardVlmNew::slot_drawPolar()
 }
 void BoardVlmNew::slot_outDatedVlmData()
 {
-    set_style(this->btn_sync,QColor(255,191,21));
+    if (!(btn_sync->styleSheet()).contains(QColor(255, 0, 0).name())) //if red stays red
+        set_style(this->btn_sync,QColor(255,191,21));
 }
 void BoardVlmNew::updateLcds()
 {

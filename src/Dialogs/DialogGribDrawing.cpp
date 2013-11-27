@@ -36,7 +36,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /*****************************
  * A faire:
- * => affichage en bas de la data courante et non que le vent
  * si affichage de fleche frst ou sec affichage aussi ?
  * => affichage des label de temp: dépendant du level si temp affichée ou combo de selection de level
  * => remettre le deltaDew
@@ -46,9 +45,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * soit tt ds generic soit ds dtc spécifique, supprimer un niveau
  * => ajouter un affichage de fleche '1D' => interpolation 1D sur angle
  * => quelle interpolation utilisée pour les vagues ? 1D en force et 1D en direction ou 2D
- * => bench Mono/Multi ok forçage mono mais comment on assure le fonctionnement en multi pour le test?
- * => bench mono/multi n'es plus avec affichage fleches
  * => modifier le cartouche pour afficher le type de data selectionné
+ * => avoir la secArr d'une autre couleur
+ * => texte isobar /isotherm
  */
 
 DialogGribDrawing::DialogGribDrawing(QWidget *parent, myCentralWidget *centralWidget) : QDialog(parent) {
