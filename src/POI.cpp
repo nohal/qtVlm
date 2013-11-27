@@ -140,6 +140,10 @@ POI::POI(QString name, int type, double lat, double lon,
     else
         hide();
     this->setAcceptTouchEvents(true);
+    if(parent->getSelectedBoat()!=NULL)
+    {
+        this->slot_WPChanged(parent->getSelectedBoat()->getWPLat(),parent->getSelectedBoat()->getWPLon());
+    }
 }
 
 POI::~POI()
@@ -1032,6 +1036,7 @@ void POI::slot_paramChanged()
 
 void POI::slot_WPChanged(double tlat,double tlon)
 {
+    if(parent->getSelectedBoat()==NULL) return;
     colorPilototo=0;
     WPlat=tlat;
     WPlon=tlon;
