@@ -117,7 +117,10 @@ void DialogPoi::initPOI(POI * poi,const bool &creationMode)
     {
         ROUTE * route=i.next();
         if(Settings::getSetting("autoHideRoute",1).toInt()==1 && (route->getBoat()==NULL || !route->getBoat()->getIsSelected())) continue;
-        cb_routeList->addItem(route->getName());
+        QPixmap iconI(20,10);
+        iconI.fill(route->getColor());
+        QIcon icon(iconI);
+        cb_routeList->addItem(icon,route->getName());
     }
     if(poi->getRoute()!=NULL)
         cb_routeList->setCurrentIndex(cb_routeList->findText(((ROUTE*) poi->getRoute())->getName()));
