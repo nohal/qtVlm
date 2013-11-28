@@ -633,7 +633,7 @@ void  MapDataDrawer::drawColorMapGeneric_Abs_Delta_Data (
 // Dessin de fleches pour data 2D
 //--------------------------------------------------------------------------
 
-void MapDataDrawer::drawArrowGeneric_DTC(QPainter &pnt, Projection *proj,
+void MapDataDrawer::drawArrowGeneric_DTC(QPainter &pnt, Projection *proj,QColor color,
                                          int dataType, int levelType, int levelValue,
                                          bool barbules) {
     GribRecord *recU1,*recV1,*recU2,*recV2;
@@ -647,12 +647,12 @@ void MapDataDrawer::drawArrowGeneric_DTC(QPainter &pnt, Projection *proj,
     time_t currentDate=dataManager->get_currentDate();
     if(dataManager->get_data2D(dataType,drawerInfo[dataType].secData_2D,levelType,levelValue,currentDate,
                                  &tPrev,&tNxt,&recU1,&recV1,&recU2,&recV2))
-        drawArrowGeneric(pnt,proj,barbules,
+        drawArrowGeneric(pnt,proj,barbules,color,
                                currentDate,tPrev,tNxt,
                                recU1,recV1,recU2,recV2,drawerInfo[dataType].UV,interpolationType);
 }
 
-void MapDataDrawer::drawArrowGeneric(QPainter &pnt, Projection *proj,bool barbules,
+void MapDataDrawer::drawArrowGeneric(QPainter &pnt, Projection *proj,bool barbules,QColor color,
                               const time_t &now, const time_t &t1, const time_t &t2,
                               GribRecord * recU1, GribRecord * recV1, GribRecord * recU2, GribRecord * recV2,
                               const bool &UV, int interpolation_mode) {
@@ -676,9 +676,9 @@ void MapDataDrawer::drawArrowGeneric(QPainter &pnt, Projection *proj,bool barbul
                 if(u<0)
                     continue;
                 if (barbules)
-                    drawWindArrowWithBarbs(pnt, i*space,j*space, u,v, y<0);
+                    drawWindArrowWithBarbs(pnt, i*space,j*space, u,v, y<0,color);
                 else
-                    drawWindArrow(pnt, i*space,j*space, v);
+                    drawWindArrow(pnt, i*space,j*space, v,color);
             }
         }
     }
@@ -952,11 +952,11 @@ void MapDataDrawer::drawTransformedLine( QPainter &pnt,
     pnt.drawLine(ii, jj, kk, ll);
 }
 //-----------------------------------------------------------------------------
-void MapDataDrawer::drawWindArrow(QPainter &pnt, int i, int j, double ang)
+void MapDataDrawer::drawWindArrow(QPainter &pnt, int i, int j, double ang, QColor color)
 {
     ang-=PI_2;
     double si=sin(ang),  co=cos(ang);
-    QPen pen( QColor(255, 255, 255));
+    QPen pen(color);
     pen.setWidth(2);
     pnt.setPen(pen);
     drawTransformedLine(pnt, si,co, i-windArrowSize/2,j,  0,0, windArrowSize, 0);   // hampe
@@ -965,15 +965,14 @@ void MapDataDrawer::drawWindArrow(QPainter &pnt, int i, int j, double ang)
 }
 
 //-----------------------------------------------------------------------------
-void MapDataDrawer::drawWindArrowWithBarbs(
-                        QPainter &pnt,
+void MapDataDrawer::drawWindArrowWithBarbs(QPainter &pnt,
                         int i, int j, double vkn, double ang,
-                        bool south)
+                        bool south, QColor color)
 {
     ang-=PI_2;
     double si=sin(ang),  co=cos(ang);
 
-    QPen pen( QColor(255,255,255));
+    QPen pen(color);
     pen.setWidth(2);
     pnt.setPen(pen);
     pnt.setBrush(Qt::NoBrush);

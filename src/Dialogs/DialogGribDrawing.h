@@ -47,11 +47,14 @@ class DialogGribDrawing: public QDialog,  Ui::DialogGribDrawing_ui {
         void slot_bgDataAlt(int idx);
         void slot_frstArwType(int idx);
         void slot_showTemp(bool st);
+        void slot_tempAlt(int idx);
         void slot_smooth(bool st);
         void slot_frstArwAlt(int idx);
         void slot_secArwType(int idx);
         void slot_secArwAlt(int idx);
         void slot_showBarbule(bool st);
+        void slot_frstArrowColor(void);
+        void slot_secArrowColor(void);
         void slot_showIsoBar(bool st);
         void slot_showIsoTherm(bool st);
         void slot_isoBarSpacing(int val);
@@ -76,6 +79,9 @@ class DialogGribDrawing: public QDialog,  Ui::DialogGribDrawing_ui {
         int get_comboListItem(int data, QComboBox *cb);
         int get_comboListItem(int data1,int data2,QComboBox * cb);
         Couple update_levelCb(int data, QComboBox * cb, int infoType, int levelType=DATA_LV_NOTDEF, int levelValue=0);
+
+        void updateBtnColor(QPushButton * btn,QColor color);
+        void chg_color(QPushButton * btn,QString setting,QColor defaultColor);
 };
 
 #endif // DIALOGGRIBDRAWING_H

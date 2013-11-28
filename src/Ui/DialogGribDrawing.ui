@@ -77,13 +77,6 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
-          <widget class="QCheckBox" name="chkShowTemp">
-           <property name="text">
-            <string>Température</string>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QCheckBox" name="chkSmooth">
            <property name="text">
             <string>Dégradé de couleur</string>
@@ -153,6 +146,45 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
+          <widget class="QLabel" name="label_7">
+           <property name="text">
+            <string>Color</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btn_frstArrowColor">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>23</width>
+             <height>23</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_15">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
           <widget class="QCheckBox" name="chkShowBarbule">
            <property name="text">
             <string>Barbule</string>
@@ -212,6 +244,87 @@
          </item>
          <item>
           <widget class="QComboBox" name="secArwAlt">
+           <property name="sizeAdjustPolicy">
+            <enum>QComboBox::AdjustToContents</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_10">
+         <item>
+          <widget class="QLabel" name="label_8">
+           <property name="text">
+            <string>Color</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btn_secArrowColor">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>23</width>
+             <height>23</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_14">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="Line" name="line_4">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <item>
+          <widget class="QCheckBox" name="chkShowTemp">
+           <property name="text">
+            <string>Température</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_10">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QComboBox" name="tempAlt">
            <property name="sizeAdjustPolicy">
             <enum>QComboBox::AdjustToContents</enum>
            </property>
@@ -539,8 +652,8 @@
    <slot>slot_showTemp(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>44</x>
-     <y>82</y>
+     <x>54</x>
+     <y>251</y>
     </hint>
     <hint type="destinationlabel">
      <x>3</x>
@@ -555,8 +668,8 @@
    <slot>slot_smooth(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>180</x>
-     <y>81</y>
+     <x>140</x>
+     <y>88</y>
     </hint>
     <hint type="destinationlabel">
      <x>406</x>
@@ -571,8 +684,8 @@
    <slot>slot_frstArwType(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>309</x>
-     <y>125</y>
+     <x>313</x>
+     <y>124</y>
     </hint>
     <hint type="destinationlabel">
      <x>404</x>
@@ -603,8 +716,8 @@
    <slot>slot_secArwType(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>309</x>
-     <y>190</y>
+     <x>313</x>
+     <y>188</y>
     </hint>
     <hint type="destinationlabel">
      <x>405</x>
@@ -635,8 +748,8 @@
    <slot>slot_showBarbule(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>50</x>
-     <y>147</y>
+     <x>247</x>
+     <y>151</y>
     </hint>
     <hint type="destinationlabel">
      <x>1</x>
@@ -804,6 +917,54 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>tempAlt</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>DialogGribDrawing_ui</receiver>
+   <slot>slot_tempAlt(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>345</x>
+     <y>237</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>404</x>
+     <y>266</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_secArrowColor</sender>
+   <signal>clicked()</signal>
+   <receiver>DialogGribDrawing_ui</receiver>
+   <slot>slot_secArrowColor()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>64</x>
+     <y>205</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>3</x>
+     <y>232</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_frstArrowColor</sender>
+   <signal>clicked()</signal>
+   <receiver>DialogGribDrawing_ui</receiver>
+   <slot>slot_frstArrowColor()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>60</x>
+     <y>144</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>5</x>
+     <y>123</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>slot_bgDataType(int)</slot>
@@ -823,5 +984,8 @@
   <slot>slot_isoThermShowLabel(bool)</slot>
   <slot>slot_isoBarShowMinMax(bool)</slot>
   <slot>slot_finished()</slot>
+  <slot>slot_tempAlt(int)</slot>
+  <slot>slot_frstArrowColor()</slot>
+  <slot>slot_secArrowColor()</slot>
  </slots>
 </ui>

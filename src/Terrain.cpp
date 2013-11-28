@@ -590,11 +590,15 @@ void Terrain::drawGrib(QPainter &pnt)
 
         //printf("time show ColorMap = %d ms\n", t1.elapsed());
 
-    if(frstArwMode!=DATA_NOTDEF)
-        mapDataDrawer->drawArrowGeneric_DTC(pnt,proj,frstArwMode,frstArwLevelType,frstArwLevelValue,showBarbules);
+    if(frstArwMode!=DATA_NOTDEF) {
+        QColor color=Settings::getSetting("frstArrowColor",QColor(Qt::white)).value<QColor>();
+        mapDataDrawer->drawArrowGeneric_DTC(pnt,proj,color,frstArwMode,frstArwLevelType,frstArwLevelValue,showBarbules);
+    }
 
-    if(secArwMode!=DATA_NOTDEF)
-        mapDataDrawer->drawArrowGeneric_DTC(pnt,proj,secArwMode,secArwLevelType,secArwLevelValue,false);
+    if(secArwMode!=DATA_NOTDEF) {
+        QColor color=Settings::getSetting("secArrowColor",QColor(Qt::black)).value<QColor>();
+        mapDataDrawer->drawArrowGeneric_DTC(pnt,proj,color,secArwMode,secArwLevelType,secArwLevelValue,false);
+    }
 
     if (showIsobars) {
         pnt.setPen(isobarsPen);

@@ -93,10 +93,10 @@ class MapDataDrawer
                                                        bool smooth);
 
         // Affichage des fleches
-        void drawArrowGeneric_DTC(QPainter &pnt, Projection *proj,
+        void drawArrowGeneric_DTC(QPainter &pnt, Projection *proj,QColor color,
                                                  int dataType, int levelType, int levelValue,
                                                  bool barbules);
-        void drawArrowGeneric(QPainter &pnt, Projection *proj,bool barbules,
+        void drawArrowGeneric(QPainter &pnt, Projection *proj,bool barbules,QColor color,
                                       const time_t &now, const time_t &t1, const time_t &t2,
                                       GribRecord * recU1, GribRecord * recV1, GribRecord * recU2, GribRecord * recV2,
                                       const bool &UV, int interpolation_mode=INTERPOLATION_UKN);
@@ -111,11 +111,11 @@ class MapDataDrawer
         void draw_wavesSwl(QPainter &pnt, Projection *proj, bool smooth, bool showArrows);
         void draw_wavesMax(QPainter &pnt, Projection *proj, bool smooth, bool showArrows);
 
-        void drawWindArrow(QPainter &pnt, int i, int j, double ang);
+        void drawWindArrow(QPainter &pnt, int i, int j, double ang, QColor color=QColor(255,255,255));
         void drawWindArrowWithBarbs(
                                 QPainter &pnt, int i, int j,
                                 double vkn, double ang,
-                                bool south);
+                bool south,QColor color=QColor(255,255,255));
         void draw_PRESSURE_MinMax (QPainter &pnt, const Projection *proj);
 
         void  draw_Isobars (QPainter &pnt, const Projection *proj);

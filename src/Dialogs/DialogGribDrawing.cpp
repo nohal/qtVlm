@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QMessageBox>
 #include <QComboBox>
 #include <QDebug>
+#include <QColorDialog>
 
 #include "Terrain.h"
 #include "mycentralwidget.h"
@@ -119,9 +120,6 @@ bool DialogGribDrawing::init_state(void) {
             terrain->setColorMapMode(curData,res.a,res.b);
     }
 
-    // Temperature
-    chkShowTemp->setChecked(Settings::getSetting("showTemperatureLabels", false).toBool());
-
     // Smooth
     chkSmooth->setChecked(Settings::getSetting("colorMapSmooth", true).toBool());
 
@@ -149,6 +147,10 @@ bool DialogGribDrawing::init_state(void) {
     // Barbule
     chkShowBarbule->setChecked(Settings::getSetting("showBarbules", true).toBool());
 
+    // Color
+    QColor color=Settings::getSetting("frstArrowColor",QColor(Qt::white)).value<QColor>();
+    updateBtnColor(btn_frstArrowColor,color);
+
     //Second arrow
     curData=terrain->get_secArwMode();
     curLevelType=terrain->get_secArwLevelType();
@@ -168,12 +170,17 @@ bool DialogGribDrawing::init_state(void) {
             terrain->setSecArwMode(curData,res.a,res.b);
     }
 
-    int idx;
+    // Color
+    color=Settings::getSetting("secArrowColor",QColor(Qt::black)).value<QColor>();
+    updateBtnColor(btn_secArrowColor,color);
+
+    // Temperature
+    chkShowTemp->setChecked(Settings::getSetting("showTemperatureLabels", false).toBool());
 
     // IsoBar
     bool showIso=Settings::getSetting("showIsobars", false).toBool();
     chkShowIsoBar->setChecked(showIso);
-    idx = isoBarSpacing->findText(Settings::getSetting("isobarsStep", "2").toString());
+    int idx = isoBarSpacing->findText(Settings::getSetting("isobarsStep", "2").toString());
     if(idx!=-1)
         isoBarSpacing->setCurrentIndex(idx);
     isoBarSpacing->setEnabled(showIso);
@@ -448,12 +455,40 @@ void DialogGribDrawing::slot_showTemp(bool st) {
     terrain->show_temperatureLabels(st);
 }
 
+void DialogGribDrawing::slot_tempAlt(int /*idx*/) {
+
+}
+
 void DialogGribDrawing::slot_smooth(bool st) {
     terrain->setColorMapSmooth(st);
 }
 
 void DialogGribDrawing::slot_showBarbule(bool st) {
     terrain->setBarbules(st);
+}
+
+void DialogGribDrawing::slot_frstArrowColor(void) {
+    chg_color(btn_frstArrowColor,"frstArrowColor",QColor(Qt::white));
+}
+
+void DialogGribDrawing::slot_secArrowColor(void) {
+    chg_color(btn_secArrowColor,"secArrowColor",QColor(Qt::black));
+}
+
+void DialogGribDrawing::chg_color(QPushButton * btn,QString setting,QColor defaultColor) {
+    QColor color =Settings::getSetting(setting,defaultColor).value<QColor>();
+    color = QColorDialog::getColor(color, this);
+
+    if(color.isValid()) {
+        Settings::setSetting(setting,color);
+        updateBtnColor(btn,color);
+    }
+    terrain->redrawGrib();
+}
+
+void DialogGribDrawing::updateBtnColor(QPushButton * btn,QColor color) {
+    QString styleSheet=QString().sprintf("background-color: rgb(%d, %d, %d);",color.red(),color.green(),color.blue());
+    btn->setStyleSheet(styleSheet);
 }
 
 void DialogGribDrawing::slot_showIsoBar(bool st) {
