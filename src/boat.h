@@ -119,6 +119,7 @@ class boat: public QGraphicsWidget
 
         /*** Barrier ***/
         QList<BarrierSet *>* get_barrierSets(void) { return &barrierSets; }
+        bool has_barrierSet(BarrierSet * ptr) {return barrierSets.contains(ptr); }
         QList<QString> * get_barrierKeys(void) {return &barrierKeys; }
         void add_barrierSet(BarrierSet* set);
         void rm_barrierSet(BarrierSet* set);

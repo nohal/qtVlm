@@ -2658,6 +2658,9 @@ void MainWindow::slot_POI_input() {
  ***************************************************************/
 
 void MainWindow::slot_newBarrierSet() {
+    if(my_centralWidget->get_barrierEditMode()!=BARRIER_EDIT_NO_EDIT)
+        my_centralWidget->escKey_barrier();
+
     BarrierSet * barrierSet = new BarrierSet(this);
     barrierSet->set_name(tr("New set"));
 
@@ -2671,7 +2674,7 @@ void MainWindow::slot_newBarrierSet() {
     dialogEditBarrier.initDialog(barrierSet,my_centralWidget->get_boatList());
 
     if(dialogEditBarrier.exec() == QDialog::Rejected) {
-        if(selectedBoat) selectedBoat->rm_barrierSet(barrierSet);
+        //if(selectedBoat) selectedBoat->rm_barrierSet(barrierSet); not needed as remove is done in barrierSet destructor
         delete barrierSet;
     }
     else {

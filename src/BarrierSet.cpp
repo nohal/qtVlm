@@ -57,7 +57,9 @@ BarrierSet::~BarrierSet(void) {
         delete barrierList.at(i);
     }
     barrierList.clear();
-    disconnect(mainWindow->getMy_centralWidget(),SIGNAL(shBarSet(bool)),this,SLOT(slot_sh(bool)));
+    myCentralWidget * centralWidget=mainWindow->getMy_centralWidget();
+    disconnect(centralWidget,SIGNAL(shBarSet(bool)),this,SLOT(slot_sh(bool)));
+    centralWidget->rm_barrierSet(this);
 }
 
 bool BarrierSet::cross(QLineF line) {
@@ -101,6 +103,9 @@ void BarrierSet::cleanEmptyBarrier(Barrier * barrier, bool withMsgBox) {
 }
 
 void BarrierSet::slot_editBarrierSet(void) {
+    myCentralWidget * centralWidget=mainWindow->getMy_centralWidget();
+    if(centralWidget->get_barrierEditMode()!=BARRIER_EDIT_NO_EDIT)
+        centralWidget->escKey_barrier();
     DialogEditBarrier dialogEditBarrier(mainWindow);
     dialogEditBarrier.initDialog(this,mainWindow->getMy_centralWidget()->get_boatList());
     dialogEditBarrier.exec();
@@ -110,7 +115,7 @@ void BarrierSet::slot_editBarrierSet(void) {
 void BarrierSet::slot_delBarrierSet(void) {
     myCentralWidget * centralWidget=mainWindow->getMy_centralWidget();
     if(centralWidget->get_barrierEditMode()!=BARRIER_EDIT_NO_EDIT)
-        centralWidget->escKey_barrier();
+        centralWidget->escKey_barrier();    
     deleteLater();
 }
 

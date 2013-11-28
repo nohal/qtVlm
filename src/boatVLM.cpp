@@ -321,6 +321,10 @@ void boatVLM::doRequest(int requestCmd)
                 QTextStream(&page) << "/Polaires/"+this->polarVlm+".csv";
                 //qWarning()<<"requesting VLM_REQUEST_POLAR"<<pseudo;
                 break;
+            case VLM_REQUEST_FLAG:
+                QTextStream(&page) << "/cache/flags/" << country << ".png";
+                qWarning() << "requesting flag: " << page;
+                break;
             default:
                 qWarning() << "[boatVLM-doRequest] error: unknown request: " << requestCmd;
                 break;
@@ -348,6 +352,7 @@ void boatVLM::doRequest(int requestCmd)
 void boatVLM::requestFinished (QByteArray res_byte)
 {
     double latitude=0,longitude=0;
+    QString newCountry;
 
     //QString res(res_byte);
 
@@ -357,6 +362,18 @@ void boatVLM::requestFinished (QByteArray res_byte)
     {
         case VLM_REQUEST_WS:
             break;
+
+        case VLM_REQUEST_FLAG: {
+            QImage img;
+            if(img.loadFromData(res_byte))
+            {
+                img.save(appFolder.value("flags")+country+".png");
+                //qWarning()<<"saving flag"<<imgFileName;
+            }
+            update();
+            break;
+        }
+
 
         case VLM_REQUEST_BOAT:
         {
@@ -416,7 +433,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
                 loxo        = result["LOX"].toDouble();
                 vmg         = result["VMG"].toDouble();
                 windDir     = result["TWD"].toDouble();
-                country     = result["CNT"].toString();
+                newCountry  = result["CNT"].toString();
                 windSpeed   = result["TWS"].toDouble();
                 WP.setY(      result["WPLAT"].toDouble());
                 WP.setX(      result["WPLON"].toDouble());
@@ -461,6 +478,15 @@ void boatVLM::requestFinished (QByteArray res_byte)
 
                 lat = latitude/1000;
                 lon = longitude/1000;
+
+                if(country!=newCountry) {
+                    qWarning() << "New flag: " << newCountry;
+                    flag=QImage();
+                    country=newCountry;
+                }
+                else
+                    qWarning() << "country ok: " << newCountry << "(old: " << country << ")";
+
                 if(activated && !this->forcePolar && !polarVlm.isEmpty())
                 {
                     if(!this->polarData || this->polarData->getName()!=polarName)

@@ -1794,6 +1794,13 @@ void myCentralWidget::insert_barrierPointAfterPoint(BarrierPoint * point) {
     barrierEditMode=BARRIER_EDIT_ADD_POINT;
 }
 
+void myCentralWidget::rm_barrierSet(BarrierSet * barrierSet) {
+    if(barrierSet) {
+        for(int i=0;i<boat_list->count();++i)
+            boat_list->at(i)->rm_barrierSet(barrierSet);
+    }
+}
+
 /****************************************************************************/
 /* create a new barrier using point where context menu was oppened          */
 /* no need to check that point is inside map as it is done in contextMenu   */

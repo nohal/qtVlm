@@ -301,8 +301,10 @@ void boat::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
                     drawFlag=true;
                     prepareGeometryChange();
                 }
-                else
+                else { // can't load flag => get it
+                    ((boatVLM*)(this))->get_flag();
                     drawFlag=false;
+                }
             }
             else
             {

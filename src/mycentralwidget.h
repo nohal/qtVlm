@@ -154,6 +154,7 @@ class myCentralWidget : public QWidget
         /*** Barrier ***/
         FCT_GET(int,barrierEditMode)
         void escKey_barrier(void);
+        void rm_barrierSet(BarrierSet * barrierSet);
 
         void insert_barrierPointAfterPoint(BarrierPoint * point);
         FCT_SETGET(QPoint,cursorPositionOnPopup)
@@ -446,7 +447,7 @@ signals:
         DialogDownloadTracks * vlmTrackRetriever;
         DialogGribDrawing * dialogGribDrawing;
 
-        /* Lists, POI*/
+        /* Lists, Boat, POI, Route, routage, player; ///*/
         QList<POI*> poi_list;
         QList<ROUTE*> route_list;
         QList<ROUTAGE*> routage_list;
