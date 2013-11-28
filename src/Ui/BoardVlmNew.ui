@@ -1117,7 +1117,7 @@
      <string>°</string>
     </property>
     <property name="maximum">
-     <double>359.990000000000009</double>
+     <double>400.000000000000000</double>
     </property>
     <property name="value">
      <double>257.149999999999977</double>
@@ -1275,10 +1275,10 @@
      <string>°</string>
     </property>
     <property name="minimum">
-     <double>-179.990000000000009</double>
+     <double>-200.000000000000000</double>
     </property>
     <property name="maximum">
-     <double>180.000000000000000</double>
+     <double>200.000000000000000</double>
     </property>
     <property name="value">
      <double>-154.319999999999993</double>

@@ -249,12 +249,19 @@ void BoardVlmNew::slot_flipAngle()
 void BoardVlmNew::slot_TWAChanged()
 {
     if(!myBoat) return;
+    double twa=spin_TWA->value();
+    spin_TWA->blockSignals(true);
+    if(twa>180.0)
+        spin_TWA->setValue(twa-360.0);
+    else if(twa<-180.0)
+        spin_TWA->setValue(twa+360.0);
+    spin_TWA->blockSignals(false);
     if(blocking) return;
     blocking=true;
     currentRB=this->lab_TWA;
     if(myBoat->getPolarData())
     {
-        double twa=qAbs(qRound(spin_TWA->value()*10.0));
+        twa=qAbs(qRound(spin_TWA->value()*10.0));
         if(twa<qRound(myBoat->getPolarData()->getBvmgUp(myBoat->getWindSpeed())*10.0) ||
            twa>qRound(myBoat->getPolarData()->getBvmgDown(myBoat->getWindSpeed())*10.0))
             spin_TWA->setStyleSheet("QDoubleSpinBox {color: red;} QDoubleSpinBox QWidget {color:black;}");
@@ -281,12 +288,17 @@ void BoardVlmNew::slot_TWAChanged()
 void BoardVlmNew::slot_HDGChanged()
 {
     if(!myBoat) return;
+    double heading=spin_HDG->value();
+    spin_HDG->blockSignals(true);
+    if(heading>360)
+        spin_HDG->setValue(heading-360);
+    spin_HDG->blockSignals(false);
     if(blocking) return;
     blocking=true;
     currentRB=this->lab_HDG;
     spin_HDG->blockSignals(true);
     spin_TWA->blockSignals(true);
-    double heading=spin_HDG->value();
+    heading=spin_HDG->value();
     double angle=Util::A180(heading-myBoat->getWindDir());
     this->spin_TWA->setValue(angle);
     if(myBoat->getPolarData())
