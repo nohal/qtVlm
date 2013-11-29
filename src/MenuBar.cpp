@@ -465,11 +465,16 @@ void MenuBar::addMenuRoutage(ROUTAGE* routage)
 {
     QAction *action1;
     QAction *action2;
+    QPixmap iconI(20,10);
+    iconI.fill(routage->getColor());
+    QIcon icon(iconI);
     action1=addAction(mnRoutage_edit,routage->getName(),"","","");
     connect(action1, SIGNAL(triggered()), routage, SLOT(slot_edit()));
     action2=addAction(mnRoutage_delete,routage->getName(),"","","");
     action2->setData(QVariant(QMetaType::VoidStar, &routage));
     connect(action2, SIGNAL(triggered()), my_CentralWidget, SLOT(slot_deleteRoutage()));
+    action1->setIcon(icon);
+    action2->setIcon(icon);
 }
 //-------------------------------------------------
 void MenuBar::setCitiesNamesLevel(int level) {
