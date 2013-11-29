@@ -427,15 +427,19 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
 
     view = new MyView(proj,scene,this);
     view->setGeometry(0,0,width(),height());
+    if(Settings::getSetting("enableGesture","1").toString()=="1")
     view->viewport()->ungrabGesture(Qt::PanGesture);
-    view->viewport()->grabGesture(Qt::PinchGesture);
+    if(Settings::getSetting("enableGesture","1").toString()=="1")
+    {
+        view->viewport()->grabGesture(Qt::PinchGesture);
 #ifdef __ANDROIDD__
-    view->viewport()->grabGesture(Qt::PanGesture);
-    view->viewport()->grabGesture(Qt::TapGesture);
-    view->viewport()->grabGesture(Qt::TapAndHoldGesture);
-    view->viewport()->grabGesture(Qt::SwipeGesture);
-    view->viewport()->grabGesture(Qt::CustomGesture);
+        view->viewport()->grabGesture(Qt::PanGesture);
+        view->viewport()->grabGesture(Qt::TapGesture);
+        view->viewport()->grabGesture(Qt::TapAndHoldGesture);
+        view->viewport()->grabGesture(Qt::SwipeGesture);
+        view->viewport()->grabGesture(Qt::CustomGesture);
 #endif
+    }
     view->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
     view->setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
     this->setAccessibleName("centralWidget");

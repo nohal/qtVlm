@@ -37,14 +37,15 @@ class Settings : QObject
     public:
         static void     initSettings(void);
         static void     setSetting(const QString &key, const QVariant &value,
-                                   const QString &group="main",int boatType=BOAT_ANY);
+                                   const QString &group="main",const int &boatType=BOAT_ANY);
         static QVariant getSetting(const QString &key, const QVariant &defaultValue,
-                                   const QString &group="main",int boatType=BOAT_ANY);
+                                   const QString &group="main",const int &boatType=BOAT_ANY);
         static void     removeSetting(const QString &key,
-                                   const QString &group="main",int boatType=BOAT_ANY);
+                                   const QString &group="main",const int &boatType=BOAT_ANY);
 
-   private:
-        static QString computeGroupe(const QString &group,int boatType);
+        static QStringList getAllKeys(const QString &group="main", const int &boatType=BOAT_ANY);
+private:
+        static QString computeGroupe(const QString &group,const int &boatType);
 };
 Q_DECLARE_TYPEINFO(Settings,Q_MOVABLE_TYPE);
 

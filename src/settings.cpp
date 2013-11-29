@@ -34,7 +34,7 @@ void Settings::initSettings(void) {
         fileSettings = new QSettings(appFolder.value("userFiles")+SETTINGS_FILE, QSettings::IniFormat);
 }
 
-void Settings::setSetting(const QString &key, const QVariant &value, const QString &group,int boatType) {
+void Settings::setSetting(const QString &key, const QVariant &value, const QString &group, const int &boatType) {
     if (fileSettings) {
         fileSettings->beginGroup(Settings::computeGroupe(group,boatType));
         fileSettings->setValue(key, value);
@@ -42,8 +42,18 @@ void Settings::setSetting(const QString &key, const QVariant &value, const QStri
         fileSettings->sync();
     }
 }
+QStringList Settings::getAllKeys(const QString &group, const int &boatType)
+{
+    if (fileSettings != NULL) {
+        /* avons nous la clé avec boatType */
+        fileSettings->beginGroup (Settings::computeGroupe(group,boatType));
+        return fileSettings->allKeys();
+    }
+    else
+        return QStringList();
+}
 
-QVariant Settings::getSetting(const QString &key, const QVariant &defaultValue, const QString &group,int boatType) {
+QVariant Settings::getSetting(const QString &key, const QVariant &defaultValue, const QString &group, const int &boatType) {
     QVariant val=defaultValue;
     if (fileSettings != NULL) {
         /* avons nous la clé avec boatType */
@@ -81,7 +91,7 @@ QVariant Settings::getSetting(const QString &key, const QVariant &defaultValue, 
     return val;
 }
 
-void Settings::removeSetting(const QString &key, const QString &group,int boatType) {
+void Settings::removeSetting(const QString &key, const QString &group, const int &boatType) {
     if(key.isEmpty()) return ; /* prevent from deleting all key */
 
     fileSettings->beginGroup(Settings::computeGroupe(group,boatType));
@@ -90,9 +100,8 @@ void Settings::removeSetting(const QString &key, const QString &group,int boatTy
     fileSettings->sync();
 }
 
-QString Settings::computeGroupe(const QString &group,int boatType) {
-    if(boatType==BOAT_NOBOAT) boatType=BOAT_ANY;
-    if(boatType==BOAT_ANY)
+QString Settings::computeGroupe(const QString &group, const int &boatType) {
+    if(boatType==BOAT_ANY || boatType==BOAT_NOBOAT)
         return group;
     else
         return group+"_"+boatTypes[boatType];

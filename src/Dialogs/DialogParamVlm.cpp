@@ -49,6 +49,7 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     connect(this,SIGNAL(paramVLMChanged()),main,SLOT(slotParamChanged()));
     connect(this, SIGNAL(inetUpdated()), main, SLOT(slotInetUpdated()));
     connect(this,SIGNAL(redrawGrib()),centralWidget,SIGNAL(redrawGrib()));
+    connect(this->resetDialogPosition,SIGNAL(clicked()),this,SLOT(slot_resetDialogPosition()));
 
     /* Drawing / affichage */
     opp_labelType->addItem(tr("Pseudo"));
@@ -166,6 +167,8 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     /* GPS */
     chk_activateEmulation->setCheckState(
          Settings::getSetting("gpsEmulEnable", "0").toString()=="1"?Qt::Checked:Qt::Unchecked);
+    this->enableGesture->setCheckState(
+         Settings::getSetting("enableGesture", "1").toString()=="1"?Qt::Checked:Qt::Unchecked);
     serialName->setText(Settings::getSetting("serialName", "COM2").toString());
     spn_gpsDelay->setValue(Settings::getSetting("GPS_DELAY",30).toInt());
 
@@ -354,6 +357,7 @@ void DialogParamVlm::done(int result)
 
         /* advanced */
         Settings::setSetting("gpsEmulEnable",chk_activateEmulation->checkState()==Qt::Checked?"1":"0");
+        Settings::setSetting("enableGesture",this->enableGesture->checkState()==Qt::Checked?"1":"0");
         Settings::setSetting("serialName", serialName->text());
         Settings::setSetting("GPS_DELAY",spn_gpsDelay->value());
 
@@ -589,4 +593,14 @@ void DialogParamVlm::on_chk_scaleEstime_toggled(bool checked)
         this->radioBtn_time->setEnabled(true);
         this->radioBtn_dist->setEnabled(true);
     }
+}
+void DialogParamVlm::slot_resetDialogPosition()
+{
+    QStringList allKeys=Settings::getAllKeys();
+    for(int n=0;n<allKeys.size();++n)
+    {
+        if(allKeys.at(n).right(7)==".height" || allKeys.at(n).right(6)==".width" || allKeys.at(n).right(9)==".position")
+            Settings::removeSetting(allKeys.at(n));
+    }
+    Util::setFontDialog(this);
 }

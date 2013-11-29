@@ -428,20 +428,16 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Carte des precipitations</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Carte de l&apos;humidite relative</source>
-        <translation type="unfinished">Carte de l&apos;humidité relative</translation>
+        <translation type="obsolete">Carte de l&apos;humidité relative</translation>
     </message>
     <message>
         <source>Carte de la temperature</source>
-        <translation type="unfinished">Carte de la température</translation>
+        <translation type="obsolete">Carte de la température</translation>
     </message>
     <message>
         <source>Carte de la temperature potentielle</source>
-        <translation type="unfinished">Carte de la température potentielle</translation>
+        <translation type="obsolete">Carte de la température potentielle</translation>
     </message>
     <message>
         <source>Point de rosee</source>
@@ -522,6 +518,82 @@
     <message>
         <source>Ordered sequence</source>
         <translation type="unfinished">Sequence ordonnée</translation>
+    </message>
+    <message>
+        <source>Couv nuage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Precipitations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Precip</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Humidite relative</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Humid rel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation type="unfinished">Température</translation>
+    </message>
+    <message>
+        <source>Temp</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Temperature potentielle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Temp pot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pt rosee</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Neige</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pluie verg.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CAPE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>CIN</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wave comb</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wind wave</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Swell wave</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Max wave</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Whte cap</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3995,6 +4067,18 @@ Etes-vous sur de vouloir supprimer</translation>
         <source>POI imported from GeoData</source>
         <translation>POIs importés de geoData</translation>
     </message>
+    <message>
+        <source>Ortho </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>NM</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loxo </source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>POI_delete_ui</name>
@@ -4857,6 +4941,18 @@ waves height</source>
         <source>Pas de WP defini dans VLM</source>
         <translation>Pas de WP défini dans VLM</translation>
     </message>
+    <message>
+        <source>No barrier associate to current boat</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>oui</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>non</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ROUTAGE</name>
@@ -5679,16 +5775,8 @@ p, li { white-space: pre-wrap; }
         <translation>°</translation>
     </message>
     <message>
-        <source> Vent</source>
-        <translation></translation>
-    </message>
-    <message>
         <source> kts</source>
-        <translation>nds</translation>
-    </message>
-    <message>
-        <source> Courant</source>
-        <translation></translation>
+        <translation type="obsolete">nds</translation>
     </message>
     <message>
         <source>Selection: </source>
@@ -6338,6 +6426,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Ombre sur le nouveau tableau de board</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Reset dialogs position and size</source>
+        <translation>Réinitialiser les positions et tailles de fenêtres</translation>
+    </message>
+    <message>
+        <source>Touch screens management</source>
+        <translation>Gestion des écrans tactiles</translation>
+    </message>
+    <message>
+        <source>Enable gestures recognition</source>
+        <translation>Autoriser la détection des gestes</translation>
     </message>
 </context>
 <context>

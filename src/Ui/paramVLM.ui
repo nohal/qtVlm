@@ -1320,7 +1320,7 @@
          <property name="title">
           <string>Position et taille de qtVlm</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_14">
+         <layout class="QHBoxLayout" name="horizontalLayout_13">
           <item>
            <widget class="QCheckBox" name="saveWinGeometry">
             <property name="sizePolicy">
@@ -1331,6 +1331,45 @@
             </property>
             <property name="text">
              <string>Sauvegarde a la fermeture</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="resetDialogPosition">
+            <property name="text">
+             <string>Reset dialogs position and size</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_5">
+         <property name="title">
+          <string>Touch screens management</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_8">
+          <item>
+           <widget class="QCheckBox" name="enableGesture">
+            <property name="text">
+             <string>Enable gestures recognition</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -1539,6 +1578,8 @@
   <tabstop>spn_gpsDelay</tabstop>
   <tabstop>chk_activateEmulation</tabstop>
   <tabstop>saveWinGeometry</tabstop>
+  <tabstop>resetDialogPosition</tabstop>
+  <tabstop>enableGesture</tabstop>
   <tabstop>chk_forceUserAgent</tabstop>
   <tabstop>userAgent</tabstop>
   <tabstop>url_list</tabstop>

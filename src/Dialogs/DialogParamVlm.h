@@ -56,6 +56,7 @@ class DialogParamVlm : public QDialog, public Ui::VLM_param_ui
         void slot_chgMapFolder(void);
 
         void slot_changeParam();
+        void slot_resetDialogPosition();
 
 
     signals:
