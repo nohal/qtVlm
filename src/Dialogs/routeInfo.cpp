@@ -143,6 +143,8 @@ void routeInfo::resizeEvent(QResizeEvent *e)
     QDialog::resizeEvent(e);
     Settings::setSetting(this->objectName()+".height",this->height());
     Settings::setSetting(this->objectName()+".width",this->width());
+    Settings::setSetting(this->objectName()+".positionx",this->pos().x());
+    Settings::setSetting(this->objectName()+".positiony",this->pos().y());
 }
 
 void routeInfo::drawTransformedLine( QPainter &pnt,

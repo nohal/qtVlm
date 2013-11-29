@@ -197,10 +197,17 @@ void Util::setFontDialog(QWidget * o)
         o->setMaximumWidth(screenRect.width()-20);
     }
     o->resize(w,h);
-    QPoint center=screenRect.center();
-    center.setX(center.x()-w/2);
-    center.setY(center.y()-h/2);
-    o->move(center);
+    int px=Settings::getSetting(object->objectName()+".positionx",-1).toInt();
+    int py=Settings::getSetting(object->objectName()+".positiony",-1).toInt();
+    if(px<=0 || py<=0)
+    {
+        QPoint center=screenRect.center();
+        center.setX(center.x()-w/2);
+        center.setY(center.y()-h/2);
+        o->move(center);
+    }
+    else
+        o->move(px,py);
 
     setFontDialog(object);
 }

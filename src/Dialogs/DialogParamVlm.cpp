@@ -248,6 +248,8 @@ void DialogParamVlm::done(int result)
 {
     Settings::setSetting(this->objectName()+".height",this->height());
     Settings::setSetting(this->objectName()+".width",this->width());
+    Settings::setSetting(this->objectName()+".positionx",this->pos().x());
+    Settings::setSetting(this->objectName()+".positiony",this->pos().y());
     if(result == QDialog::Accepted)
     {
         /*drawing*/
@@ -599,7 +601,7 @@ void DialogParamVlm::slot_resetDialogPosition()
     QStringList allKeys=Settings::getAllKeys();
     for(int n=0;n<allKeys.size();++n)
     {
-        if(allKeys.at(n).right(7)==".height" || allKeys.at(n).right(6)==".width" || allKeys.at(n).right(9)==".position")
+        if(allKeys.at(n).right(7)==".height" || allKeys.at(n).right(6)==".width" || allKeys.at(n).right(10)==".positionx" || allKeys.at(n).right(10)==".positiony" )
             Settings::removeSetting(allKeys.at(n));
     }
     Util::setFontDialog(this);

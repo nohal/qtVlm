@@ -38,6 +38,8 @@ DialogChooseMultipleBarrierSet::DialogChooseMultipleBarrierSet(QWidget *parent):
 DialogChooseMultipleBarrierSet::~DialogChooseMultipleBarrierSet() {
     Settings::setSetting(this->objectName()+".height",this->height());
     Settings::setSetting(this->objectName()+".width",this->width());
+    Settings::setSetting(this->objectName()+".positionx",this->pos().x());
+    Settings::setSetting(this->objectName()+".positiony",this->pos().y());
 }
 
 void DialogChooseMultipleBarrierSet::init_dialog(QList<BarrierSet*> * activeSets, boat* myBoat) {

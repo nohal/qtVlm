@@ -269,6 +269,8 @@ DialogRoutage::~DialogRoutage()
 {
     Settings::setSetting(this->objectName()+".height",this->height());
     Settings::setSetting(this->objectName()+".width",this->width());
+    Settings::setSetting(this->objectName()+".positionx",this->pos().x());
+    Settings::setSetting(this->objectName()+".positiony",this->pos().y());
 }
 
 void DialogRoutage::slot_default()

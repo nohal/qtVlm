@@ -70,9 +70,11 @@ void DialogPoiInput::done(int result)
 {
     Settings::setSetting(this->objectName()+".height",this->height());
     Settings::setSetting(this->objectName()+".width",this->width());
+    Settings::setSetting(this->objectName()+".positionx",this->pos().x());
+    Settings::setSetting(this->objectName()+".positiony",this->pos().y());
     if(result == QDialog::Accepted)
     {
-        QStringList lsbuf,lsval1,lsval2,lsval3;
+        QStringList lsbuf;
         QString name;
         double lat,lon,wph;
         int tstamp;

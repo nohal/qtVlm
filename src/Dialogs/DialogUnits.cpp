@@ -103,6 +103,8 @@ void DialogUnits::slotBtOK()
 {
     Settings::setSetting(this->objectName()+".height",this->height());
     Settings::setSetting(this->objectName()+".width",this->width());
+    Settings::setSetting(this->objectName()+".positionx",this->pos().x());
+    Settings::setSetting(this->objectName()+".positiony",this->pos().y());
     QComboBox *cb;
 
 //    cb = cbWindSpeedUnit;
@@ -123,6 +125,8 @@ void DialogUnits::slotBtCancel()
 {
     Settings::setSetting(this->objectName()+".height",this->height());
     Settings::setSetting(this->objectName()+".width",this->width());
+    Settings::setSetting(this->objectName()+".positionx",this->pos().x());
+    Settings::setSetting(this->objectName()+".positiony",this->pos().y());
     reject();
 }
 
