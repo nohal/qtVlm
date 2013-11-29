@@ -128,6 +128,10 @@ DialogRace::~DialogRace()
     Settings::setSetting(this->objectName()+".width",this->width());
     Settings::setSetting(this->objectName()+".positionx",this->pos().x());
     Settings::setSetting(this->objectName()+".positiony",this->pos().y());
+    for(int c=0;c<model->columnCount();++c)
+        Settings::setSetting(this->objectName()+".model"+QString().setNum(c)+".width",this->ranking->columnWidth(c));
+    for(int c=0;c<modelResult->columnCount();++c)
+        Settings::setSetting(this->objectName()+".result"+QString().setNum(c)+".width",this->arrived->columnWidth(c));
     if(model)
         delete model;
     if(modelResult)
@@ -757,6 +761,12 @@ void DialogRace::chgRace(int id)
                 model->item(r,c)->setTextAlignment(Qt::AlignCenter | Qt::AlignVCenter);
         }
         ranking->resizeColumnToContents(c);
+        for(int c=0;c<model->columnCount();++c)
+        {
+            int w=Settings::getSetting(this->objectName()+".model"+QString().setNum(c)+".width",-1).toInt();
+            if(w>1)
+                ranking->setColumnWidth(c,w);
+        }
     }
     model->blockSignals(false);
     model->sort(1);
@@ -833,6 +843,12 @@ void DialogRace::chgRace(int id)
                 modelResult->item(r,c)->setTextAlignment(Qt::AlignCenter| Qt::AlignVCenter);
         }
         arrived->resizeColumnToContents(c);
+        for(int c=0;c<modelResult->columnCount();++c)
+        {
+            int w=Settings::getSetting(this->objectName()+".result"+QString().setNum(c)+".width",-1).toInt();
+            if(w>1)
+                arrived->setColumnWidth(c,w);
+        }
     }
     modelResult->blockSignals(false);
     modelResult->sort(0);
