@@ -43,6 +43,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "DialogFinePosit.h"
 #include "dialogpoiconnect.h"
 #include "XmlFile.h"
+#include "orthoSegment.h"
 
 /**************************/
 /* Init & Clean           */
@@ -84,6 +85,7 @@ POI::POI(QString name, int type, double lat, double lon,
     this->piloteWph=-1;
     this->sequence=0;
     this->autoRange = true;
+    this->drawLineOrtho=true;
     useRouteTstamp=false;
     routeTimeStamp=-1;
     route=NULL;
@@ -139,7 +141,8 @@ POI::POI(QString name, int type, double lat, double lon,
         show();
     else
         hide();
-    this->setAcceptTouchEvents(true);
+    if(Settings::getSetting("enableGesture","1").toString()=="1")
+        this->setAcceptTouchEvents(true);
     if(parent->getSelectedBoat()!=NULL)
     {
         this->slot_WPChanged(parent->getSelectedBoat()->getWPLat(),parent->getSelectedBoat()->getWPLon());
@@ -848,10 +851,12 @@ void POI::slot_relier()
         {
             if(lineBetweenPois!=NULL)
                 delete lineBetweenPois;
-            lineBetweenPois=new vlmLine(proj,parent->getScene(),Z_VALUE_LINE_POI);
-            connectedPoi->setLineBetweenPois(lineBetweenPois);
+            lineBetweenPois=NULL;
+            connectedPoi->setLineBetweenPois(NULL);
             QPen pen(lineColor);
             pen.setWidthF(lineWidth);
+            lineBetweenPois=new orthoSegment(proj,parent->getScene(),Z_VALUE_LINE_POI,false);
+            connectedPoi->setLineBetweenPois(lineBetweenPois);
             lineBetweenPois->setLinePen(pen);
             manageLineBetweenPois();
         }
@@ -860,18 +865,22 @@ void POI::slot_relier()
 void POI::manageLineBetweenPois()
 {
     if(lineBetweenPois==NULL) return;
-    lineBetweenPois->deleteAll();
-    lineBetweenPois->addVlmPoint(vlmPoint(this->lon,this->lat));
-    lineBetweenPois->addVlmPoint(vlmPoint(this->connectedPoi->lon,this->connectedPoi->lat));
     Orthodromie ooAB(this->lon,this->lat,connectedPoi->lon,connectedPoi->lat);
     Orthodromie ooBA(connectedPoi->lon,connectedPoi->lat,this->lon,this->lat);
-    QString mes(tr("Ortho ")+this->name+"->"+connectedPoi->name+QString().sprintf(" %.2f",ooAB.getAzimutDeg())+tr("deg")+"/"+QString().sprintf("%.2f",ooAB.getAzimutDeg())+tr("NM")+"<br>"+
-                tr("Ortho ")+connectedPoi->name+"->"+this->name+QString().sprintf(" %.2f",ooBA.getAzimutDeg())+tr("deg")+"/"+QString().sprintf("%.2f",ooBA.getAzimutDeg())+tr("NM")+"<br>"+
+    QString mes(tr("Ortho ")+this->name+"->"+connectedPoi->name+QString().sprintf(" %.2f",ooAB.getAzimutDeg())+tr("deg")+"/"+QString().sprintf("%.2f",ooAB.getDistance())+tr("NM")+"<br>"+
+                tr("Ortho ")+connectedPoi->name+"->"+this->name+QString().sprintf(" %.2f",ooBA.getAzimutDeg())+tr("deg")+"/"+QString().sprintf("%.2f",ooBA.getDistance())+tr("NM")+"<br>"+
                 tr("Loxo ")+this->name+"->"+connectedPoi->name+QString().sprintf(" %.2f",ooAB.getLoxoCap())+tr("deg")+"/"+QString().sprintf("%.2f",ooAB.getLoxoDistance())+tr("NM")+"<br>"+
                 tr("Loxo ")+connectedPoi->name+"->"+this->name+QString().sprintf(" %.2f",ooBA.getLoxoCap())+tr("deg")+"/"+QString().sprintf("%.2f",ooBA.getLoxoDistance())+tr("NM"));
+    lineBetweenPois->setOrthoMode(drawLineOrtho);
+    QPen pen(lineColor);
+    pen.setWidthF(lineWidth);
+    lineBetweenPois->setLinePen(pen);
+    double X1,Y1,X2,Y2;
+    proj->map2screenDouble(this->lon,this->lat,&X1,&Y1);
+    proj->map2screenDouble(connectedPoi->getLongitude(),connectedPoi->getLatitude(),&X2,&Y2);
+    lineBetweenPois->initSegment(qRound(X1),qRound(Y1),qRound(X2),qRound(Y2));
     lineBetweenPois->setToolTip(mes.replace(" ","&nbsp;"));
-    lineBetweenPois->set_zValue(Z_VALUE_LINE_POI);
-    lineBetweenPois->slot_showMe();
+    lineBetweenPois->show();
 }
 void POI::slot_poiRoute()
 {
@@ -939,6 +948,8 @@ void POI::slot_updateProjection()
     Util::computePos(proj,lat, lon, &pi, &pj);
     int dy = height/2;
     setPos(pi, pj-dy);
+    if(lineBetweenPois!=NULL)
+        manageLineBetweenPois();
 }
 void POI::slot_updateTip(boat * myBoat)
 {

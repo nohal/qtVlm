@@ -28,21 +28,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 orthoSegment::orthoSegment(Projection * proj, QGraphicsScene * myScene,int z_level,bool roundedEnd) : QGraphicsWidget()
 {
     xa=xb=ya=yb=0;
-    size=1;
     this->proj=proj;
     this->roundedEnd=roundedEnd;
     myScene->addItem(this);
     this->setZValue(z_level);
     this->alsoDrawLoxo=false;
     isOrtho=true;
-    setFocusPolicy(Qt::NoFocus);
     hide();
-    connect(this->proj,SIGNAL(projectionUpdated()),this,SLOT(projUpdated()));
+    connect(this->proj,SIGNAL(projectionUpdated()),this,SLOT(slot_update()));
 }
 
 QRectF orthoSegment::boundingRect() const
 {
-    return QRectF(0,0,4*size,4*size);
+    return myPath.boundingRect();
+}
+QPainterPath orthoSegment::shape() const
+{
+    return myPath;
 }
 
 void orthoSegment::initSegment(double xa,double ya,double xb, double yb)
@@ -51,26 +53,17 @@ void orthoSegment::initSegment(double xa,double ya,double xb, double yb)
     this->ya=ya;
     this->xb=xb;
     this->yb=yb;
-    show();
-    updateSizeAndPosition();    
-    setFocusPolicy(Qt::NoFocus);
     if(xa==xb && ya==yb) hide();
+    else show();
 }
 
 void orthoSegment::moveSegment(double x,double y)
 {
     this->xb=x;
     this->yb=y;
-    updateSizeAndPosition();
     update();
 }
 
-void orthoSegment::updateSizeAndPosition(void)
-{
-    prepareGeometryChange();
-    size=qMax(qAbs(xa-xb),qAbs(ya-yb));
-    setPos(xa-size,ya-size);
-}
 
 void orthoSegment::hideSegment(void)
 {
@@ -79,18 +72,27 @@ void orthoSegment::hideSegment(void)
 
 void orthoSegment::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
 {
+    QPainterPath path;
     pnt->setPen(linePen);
     pnt->setRenderHint(QPainter::Antialiasing);
     if(!isOrtho)
     {        
-        pnt->drawLine(xa-x(),ya-y(),xb-x(),yb-y());
+        QPolygonF p;
+        p.append(QPointF(xa-x(),ya-y()));
+        p.append(QPointF(xb-x(),yb-y()));
+        path.addPolygon(p);
     }
     else
     {
-        draw_orthoSegment(pnt,xa,ya,xb,yb);
+        draw_orthoSegment(pnt,xa,ya,xb,yb,0,&path);
     }
     if(alsoDrawLoxo && isOrtho)
-        pnt->drawLine(xa-x(),ya-y(),xb-x(),yb-y());
+    {
+        QPolygonF p;
+        p.append(QPointF(xa-x(),ya-y()));
+        p.append(QPointF(xb-x(),yb-y()));
+        path.addPolygon(p);
+    }
     if(roundedEnd)
     {
         double w=linePen.widthF();
@@ -100,29 +102,28 @@ void orthoSegment::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWid
         linePen.setWidthF(w);
         pnt->setPen(linePen);
     }
+    prepareGeometryChange();
+    myPath=path;
+    pnt->drawPath(myPath);
 }
 
-void orthoSegment::draw_orthoSegment(QPainter * pnt,double i0,double j0, double i1, double j1, int recurs)
+void orthoSegment::draw_orthoSegment(QPainter * pnt,double i0,double j0, double i1, double j1, int recurs, QPainterPath * path)
 {
-    if (recurs > 10) // this is bugging under win :100)
+    if (recurs > 1000)
     {
-        //qWarning() << "Stop recursing";
+        qWarning() << "Stop recursing";
         return;
     }
-
-    if (abs(i0-i1) > 10)
+    QLineF line(i0,j0,i1,j1);
+    if (line.length()>10)
     {
         double xm, ym,x0,y0,x1,y1;
-        int im,jm;
-        Orthodromie *ortho;
+        double im,jm;
 
-        proj->screen2map(i0, j0,&x0,&y0);
-        proj->screen2map(i1, j1,&x1,&y1);
-
-        ortho = new Orthodromie(x0, y0, x1, y1);
-        ortho->getMidPoint(&xm, &ym);
-        delete ortho;
-        ortho = NULL;
+        proj->screen2mapDouble(i0, j0,&x0,&y0);
+        proj->screen2mapDouble(i1, j1,&x1,&y1);
+        Orthodromie ortho(x0,y0,x1,y1);
+        ortho.getMidPoint(&xm, &ym);
 
         xm *= 180.0/M_PI;
         ym *= 180.0/M_PI;
@@ -130,12 +131,19 @@ void orthoSegment::draw_orthoSegment(QPainter * pnt,double i0,double j0, double 
             ym -= 180;
         while (ym < -90)
             ym += 180;
-        proj->map2screen(xm, ym, &im, &jm);
-        draw_orthoSegment(pnt, i0,j0, im,jm, recurs+1);
-        draw_orthoSegment(pnt, im,jm, i1,j1, recurs+1);
+        proj->map2screenDouble(xm, ym, &im, &jm);
+        draw_orthoSegment(pnt, i0,j0, im,jm, recurs+1,path);
+        draw_orthoSegment(pnt, im,jm, i1,j1, recurs+1,path);
     }
-    else {
-        pnt->drawLine(i0-x(),j0-y(), i1-x(),j1-y());
+    else
+    {
+        QPolygonF p;
+        p.append(QPointF(i0-x(),j0-y()));
+        p.append(QPointF(i1-x(),j1-y()));
+        path->addPolygon(p);
     }
-
+}
+void orthoSegment::slot_update()
+{
+    update();
 }

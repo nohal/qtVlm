@@ -42,25 +42,25 @@ class orthoSegment : public QGraphicsWidget
         void setLinePen ( const QPen & pen ) {linePen = pen;update(); }
         void setAlsoDrawLoxo(bool b){this->alsoDrawLoxo=b;}
 
-        QRectF boundingRect() const;
 
-    protected:
+public slots:
+        void slot_update();
+protected:
         void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
-    public slots:
-        void projUpdated(){updateSizeAndPosition();}
+        QRectF boundingRect() const;
+        QPainterPath shape() const;
 
     private:
-        int size;
         double xa,xb,ya,yb;
         bool isOrtho;
         QPen linePen;
 
         Projection * proj;
 
-        void draw_orthoSegment(QPainter * pnt,double i0,double j0, double i1, double j2, int recurs=0);
-        void updateSizeAndPosition(void);
+        void draw_orthoSegment(QPainter * pnt, double i0, double j0, double i1, double j2, int recurs, QPainterPath *path);
         bool roundedEnd;
         bool alsoDrawLoxo;
+        QPainterPath myPath;
 };
 Q_DECLARE_TYPEINFO(orthoSegment,Q_MOVABLE_TYPE);
 

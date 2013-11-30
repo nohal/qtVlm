@@ -103,7 +103,7 @@ class POI : public QGraphicsWidget
         POI * getConnectedPoi(){return connectedPoi;}
         void setConnectedPoi(POI * p){connectedPoi=p;}
         void setPosConnected(double lon,double lat){lonConnected=lon;latConnected=lat;}
-        void setLineBetweenPois(vlmLine * line){this->lineBetweenPois=line;}
+        void setLineBetweenPois(orthoSegment * line){this->lineBetweenPois=line;}
         bool getPiloteSelected(){return piloteSelected;}
         void setPiloteSelected(bool b){this->piloteSelected=b;this->ac_pilot->setChecked(b);}
         void setAutoRange (bool b) { autoRange = b; }
@@ -134,6 +134,7 @@ class POI : public QGraphicsWidget
         static void read_POIData(myCentralWidget * centralWidget);
         static void write_POIData(QList<POI*> & poi_list,myCentralWidget * centralWidget);
         static void cleanFile(QString fname);
+        FCT_SETGET_CST(bool,drawLineOrtho)
 
 public slots:
         void slot_updateProjection();
@@ -269,7 +270,8 @@ public slots:
         bool partOfTwa;
         bool notSimplificable;
         POI * connectedPoi;
-        vlmLine * lineBetweenPois;
+        orthoSegment * lineBetweenPois;
+        bool drawLineOrtho;
         QColor lineColor;
         double lineWidth;
         int colorPilototo;

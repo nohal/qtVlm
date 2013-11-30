@@ -97,6 +97,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "BarrierSet.h"
 #include "DialogChooseBarrierSet.h"
 #include "DialogGribDrawing.h"
+#include "orthoSegment.h"
 
 /*******************/
 /*    myScene      */
@@ -428,9 +429,8 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     view = new MyView(proj,scene,this);
     view->setGeometry(0,0,width(),height());
     if(Settings::getSetting("enableGesture","1").toString()=="1")
-    view->viewport()->ungrabGesture(Qt::PanGesture);
-    if(Settings::getSetting("enableGesture","1").toString()=="1")
     {
+        view->viewport()->ungrabGesture(Qt::PanGesture);
         view->viewport()->grabGesture(Qt::PinchGesture);
 #ifdef __ANDROIDD__
         view->viewport()->grabGesture(Qt::PanGesture);
@@ -762,7 +762,8 @@ void myCentralWidget::connectPois(void) {
                         poi2->setConnectedPoi(poi1);
                         poi2->setLineWidth(poi1->getLineWidth());
                         poi2->setLineColor(poi1->getLineColor());
-                        vlmLine * lineBetweenPois=new vlmLine(proj,this->getScene(),Z_VALUE_LINE_POI);
+                        poi2->set_drawLineOrtho(poi1->get_drawLineOrtho());
+                        orthoSegment * lineBetweenPois=new orthoSegment(proj,this->getScene(),Z_VALUE_LINE_POI,false);
                         poi1->setLineBetweenPois(lineBetweenPois);
                         poi2->setLineBetweenPois(lineBetweenPois);
                         poi1->manageLineBetweenPois();

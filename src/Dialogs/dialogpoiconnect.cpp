@@ -25,6 +25,7 @@ DialogPoiConnect::DialogPoiConnect(POI * poi,myCentralWidget *parent) :
                 this->comboPoi->setCurrentIndex(comboPoi->count()-1);
         }
     }
+    ortho->setChecked(poi->get_drawLineOrtho());
 }
 
 DialogPoiConnect::~DialogPoiConnect()
@@ -63,6 +64,8 @@ void DialogPoiConnect::done(int result)
         poi->setLineColor(inputLineColor->getLineColor());
         poi->getConnectedPoi()->setLineWidth(inputLineColor->getLineWidth());
         poi->getConnectedPoi()->setLineColor(inputLineColor->getLineColor());
+        poi->set_drawLineOrtho(ortho->isChecked());
+        poi->getConnectedPoi()->set_drawLineOrtho(ortho->isChecked());
     }
     QDialog::done(result);
 }
