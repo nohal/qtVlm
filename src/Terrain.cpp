@@ -109,13 +109,15 @@ Terrain::Terrain(myCentralWidget *centralWidget, Projection *proj_) : QGraphicsW
     frstArwLevelType = Settings::getSetting("frstArwLevelType", DATA_LV_ABOV_GND).toInt();
     frstArwLevelValue = Settings::getSetting("frstArwLevelValue", 10).toInt();
 
-
     secArwMode = Settings::getSetting("secArwMode", DATA_NOTDEF).toInt();
     secArwLevelType = Settings::getSetting("secArwLevelType", DATA_LV_NOTDEF).toInt();
     secArwLevelValue = Settings::getSetting("secArwLevelValue", 0).toInt();
 
+    labelMode = Settings::getSetting("labelMode", DATA_NOTDEF).toInt();
+    labelLevelType = Settings::getSetting("labelLevelType", DATA_LV_NOTDEF).toInt();
+    labelLevelValue = Settings::getSetting("labelLevelValue", 0).toInt();
 
-    showTemperatureLabels = Settings::getSetting("showTemperatureLabels", false).toBool();
+    //showTemperatureLabels = Settings::getSetting("showTemperatureLabels", false).toBool();
     //showGribGrid = Settings::getSetting("showGribGrid", false).toBool();
     //----------------------------------------------------------------------------
 
@@ -456,6 +458,25 @@ void Terrain::draw_GSHHSandGRIB()
 
     /*int save=0;
     if(save==1) imgEarth->save("test.jpg","JPG",100);*/
+
+    drawCartouche(pnt);
+
+    /*echelle*/
+    drawScale(pnt);
+
+    setCursor(oldcursor);
+    daylight(&pnt,vlmPoint(0,0));
+    centralWidget->getView()->resetTransform();
+    centralWidget->getView()->hideViewPix();
+    centralWidget->getScene()->setPinching(false);
+#ifdef traceTime
+        qWarning()<<"--------------------------------------";
+#endif
+//    if(gshhsReader)
+//        gshhsReader->clearCells();
+}
+
+void Terrain::drawCartouche(QPainter &pnt) {
     QString cartouche="";
     DataManager * dataManager=centralWidget->get_dataManager();
     if(dataManager) cartouche=dataManager->get_cartoucheData()+". ";
@@ -476,8 +497,14 @@ void Terrain::draw_GSHHSandGRIB()
     pnt.setPen(textcolor);
 
     pnt.drawText(5, 8+Fsize.height()/2, cartouche);// forecast validity date
+}
 
-    /*echelle*/
+void Terrain::drawScale(QPainter &pnt) {
+    if(Settings::getSetting("showScale",1).toInt()!=1) {
+        //qWarning() << "Not drawing scale";
+        return;
+    }
+
     double w=width/8.0;
     double lon1,lat1,lon2,lat2;
     proj->screen2map(scalePos.x(),scalePos.y(),&lon1,&lat1);
@@ -487,6 +514,19 @@ void Terrain::draw_GSHHSandGRIB()
     bool meters=false;
     bool centimeters=false;
     double distanceMeters=distance*1852.0;
+    QFont fontbig("TypeWriter", 12, QFont::Bold, false);
+    fontbig.setPointSizeF(12.0+Settings::getSetting("defaultFontSizeInc",0).toDouble());
+    fontbig.setStyleHint(QFont::TypeWriter);
+    fontbig.setStretch(QFont::Condensed);
+    QColor   transpcolor(255,255,255,120);
+    QColor   textcolor(20,20,20,255);
+    pnt.setBrush(transpcolor);
+    pnt.setFont(fontbig);
+    //pnt.setPen(transpcolor);
+    QFontMetrics fm(fontbig);
+    pnt.setPen(textcolor);
+
+
     if(distanceMeters<1)
     {
         centimeters=true;
@@ -565,17 +605,8 @@ void Terrain::draw_GSHHSandGRIB()
     pnt.drawLine(correctedScalePos,QPoint(sX+screenDist,correctedScalePos.y()));
     pnt.drawLine(correctedScalePos,QPoint(correctedScalePos.x(),correctedScalePos.y()-4));
     pnt.drawLine(QPoint(sX+screenDist,correctedScalePos.y()),QPoint(sX+screenDist,correctedScalePos.y()-4));
-    setCursor(oldcursor);
-    daylight(&pnt,vlmPoint(0,0));
-    centralWidget->getView()->resetTransform();
-    centralWidget->getView()->hideViewPix();
-    centralWidget->getScene()->setPinching(false);
-#ifdef traceTime
-        qWarning()<<"--------------------------------------";
-#endif
-//    if(gshhsReader)
-//        gshhsReader->clearCells();
 }
+
 
 void Terrain::drawGrib(QPainter &pnt)
 {
@@ -600,6 +631,11 @@ void Terrain::drawGrib(QPainter &pnt)
         mapDataDrawer->drawArrowGeneric_DTC(pnt,proj,color,secArwMode,secArwLevelType,secArwLevelValue,false);
     }
 
+    if(labelMode!=DATA_NOTDEF) {
+        QColor color=Settings::getSetting("labelColor",QColor(Qt::black)).value<QColor>();
+        mapDataDrawer->draw_labelGeneric(pnt,proj,labelMode,labelLevelType,labelLevelValue,color);
+    }
+
     if (showIsobars) {
         pnt.setPen(isobarsPen);
         mapDataDrawer->draw_Isobars(pnt, proj);
@@ -619,9 +655,9 @@ void Terrain::drawGrib(QPainter &pnt)
     if (showPressureMinMax) {
         mapDataDrawer->draw_PRESSURE_MinMax (pnt, proj);
     }
-    if (showTemperatureLabels) {
+    /*if (showTemperatureLabels) {
         mapDataDrawer->draw_TEMPERATURE_Labels (pnt, proj);
-    }
+    }*/
 }
 
 //=========================================================
@@ -680,6 +716,8 @@ void Terrain::slot_setDrawWindColors (bool b) {
         indicateWaitingMap();
     }
 }
+
+/*
 void Terrain::show_temperatureLabels(bool b) {
     if (showTemperatureLabels != b) {
         showTemperatureLabels = b;
@@ -688,6 +726,7 @@ void Terrain::show_temperatureLabels(bool b) {
         indicateWaitingMap();
     }
 }
+*/
 
 int Terrain::compute_dataType(DataManager * dataManager,
                      int currentMode, int defaultMode1, int defaultMode2,
@@ -867,6 +906,31 @@ void Terrain::update_mapDataAndLevel(void) {
                 secArwLevelValue=lv.b;
             }
         }
+
+        /**************/
+        /* Labels */
+        if(labelMode != DATA_NOTDEF) {
+            //data type
+            newType=compute_dataType(dataManager,labelLevelType,DATA_WIND_VX,DATA_NOTDEF,
+                                     dataManager->get_dataTypes());
+            if(newType==DATA_NOTDEF) {
+                labelMode=DATA_NOTDEF;
+                labelLevelType=DATA_LV_NOTDEF;
+                labelLevelValue=0;
+            }
+            else {
+                // level
+                lv = compute_level(dataManager,newType,labelLevelType,labelLevelValue,
+                                   dataManager->get_levelTypes());
+                if(lv.a==DATA_LV_NOTDEF) {
+                    newType=DATA_NOTDEF;
+                    lv.b=0;
+                }
+                labelMode=newType;
+                labelLevelType=lv.a;
+                labelLevelValue=lv.b;
+            }
+        }
     }
 
     // everything is updated
@@ -879,6 +943,9 @@ void Terrain::update_mapDataAndLevel(void) {
     Settings::setSetting("secArwMode", secArwMode);
     Settings::setSetting("secArwLevelType", secArwLevelType);
     Settings::setSetting("secArwLevelValue", secArwLevelValue);
+    Settings::setSetting("labelMode", labelMode);
+    Settings::setSetting("labelLevelType", labelLevelType);
+    Settings::setSetting("labelLevelValue", labelLevelValue);
 
     qWarning() << "[update_mapDataAndLevel] done";
 }
@@ -956,6 +1023,22 @@ void Terrain::setSecArwMode(int dataType,int levelType, int levelValue) {
     }
     else
         qWarning() << "[setSecArwMode] nothing changed => not redrawing";
+}
+
+void Terrain::setLabelMode(int dataType,int levelType, int levelValue) {
+    if(labelMode!=dataType || labelLevelType!=levelType || labelLevelValue!=levelValue) {
+        labelMode=dataType;
+        labelLevelType = levelType;
+        labelLevelValue = levelValue;
+        qWarning() << "[setLabelMode] new value: " << labelMode << " / " << labelLevelType << " / " << labelLevelValue;
+        Settings::setSetting("labelMode", labelMode);
+        Settings::setSetting("labelLevelType", labelLevelType);
+        Settings::setSetting("labelLevelValue", labelLevelValue);
+        mustRedraw = true;
+        indicateWaitingMap();
+    }
+    else
+        qWarning() << "[setLabelMode] nothing changed => not redrawing";
 }
 
 //-------------------------------------------------------

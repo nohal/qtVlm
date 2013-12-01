@@ -97,6 +97,7 @@ public slots:
         void paramChanged();
         void slot_shOpp(bool isHidden);
         void slot_shLab(bool state){this->labelHidden=state;update();}
+        void slot_shTrace(bool);
         void slot_resetTraceCache();
 
     protected:

@@ -186,45 +186,76 @@ void StatusBar::showGribData(double x,double y)
     DataManager * dataManager=my_centralWidget->get_dataManager();
     Terrain * terrain=my_centralWidget->getTerre();
     MapDataDrawer * mapDrawer=my_centralWidget->get_mapDataDrawer();
-    QMap<int,QStringList> * mapDataTypes=dataManager->get_dataTypes();
+
     res.clear();
 
     if(dataManager && terrain && mapDrawer) {
 
+        /* get BG data */
         int mode=terrain->get_colorMapMode();
         int levelType=terrain->get_colorMapLevelType();
         int levelValue=terrain->get_colorMapLevelValue();
-        dataDrawerInfo * drawerInfo=mapDrawer->get_drawerInfo(mode);
 
-        if(drawerInfo) {
-            /* interpolation */
-            if(drawerInfo->is2D) {
-                //qWarning() << "[showGribData] 2D";
-                double v1,v2;
-                int interpol=INTERPOLATION_UKN;
-                if(drawerInfo->forcedInterpol)
-                    interpol=drawerInfo->forcedInterpolType;
-                if(dataManager->getInterpolatedValue_2D(mode,drawerInfo->secData_2D,levelType,levelValue,
-                                                        x,y,dataManager->get_currentDate(),&v1,&v2,
-                                                        interpol,drawerInfo->UV)) {
-                    res = " - " + mapDataTypes->value(mode).at(1);
-                    res += " " + Util::formatData(mode,v1,v2);
-                }
-            }
-            else {
-                //qWarning() << "[showGribData] 1D " << mode << " / " << levelType << " / " << levelValue;
-                double v1=dataManager->getInterpolatedValue_1D(mode,levelType,levelValue,x,y,
-                                                               dataManager->get_currentDate());
-                //qWarning() << "[showGribData] val " << v1;
-                res = " - " + mapDataTypes->value(mode).at(1);
-                res += " " + Util::formatData(mode,v1);
-            }
+        if(mode!=DATA_NOTDEF)
+            res = compute_dataTxt(dataManager,mapDrawer,mode,levelType,levelValue,x,y);
+
+        /* frst arrow */
+        int arwMode=terrain->get_frstArwMode();
+        int arwLevelType=terrain->get_frstArwLevelType();
+        int arwLevelValue=terrain->get_frstArwLevelValue();
+
+        if(arwMode!=DATA_NOTDEF && (arwMode!=mode || arwLevelType!=levelType || arwLevelValue!=levelValue)) {
+            QString s=compute_dataTxt(dataManager,mapDrawer,arwMode,arwLevelType,arwLevelValue,x,y);
+            if(!s.isEmpty())
+                res += " - " + s;
         }
-        else
-            qWarning() << "[showGribData] no drawer info";
+
+        /* sec arrow */
+        arwMode=terrain->get_secArwMode();
+        arwLevelType=terrain->get_secArwLevelType();
+        arwLevelValue=terrain->get_secArwLevelValue();
+
+        if(arwMode!=DATA_NOTDEF && (arwMode!=mode || arwLevelType!=levelType || arwLevelValue!=levelValue)) {
+            res += compute_dataTxt(dataManager,mapDrawer,arwMode,arwLevelType,arwLevelValue,x,y);
+        }
     }
 
     stBar_label_2->setText(res);
+}
+
+QString StatusBar::compute_dataTxt(DataManager * dataManager, MapDataDrawer* mapDrawer,
+                                   int mode,int levelType,int levelValue,double x,double y) {
+    QString res="";
+    dataDrawerInfo * drawerInfo=mapDrawer->get_drawerInfo(mode);
+    QMap<int,QStringList> * mapDataTypes=dataManager->get_dataTypes();
+
+    if(drawerInfo) {
+        /* interpolation */
+        if(drawerInfo->is2D) {
+            //qWarning() << "[showGribData] 2D";
+            double v1,v2;
+            int interpol=INTERPOLATION_UKN;
+            if(drawerInfo->forcedInterpol)
+                interpol=drawerInfo->forcedInterpolType;
+            if(dataManager->getInterpolatedValue_2D(mode,drawerInfo->secData_2D,levelType,levelValue,
+                                                    x,y,dataManager->get_currentDate(),&v1,&v2,
+                                                    interpol,drawerInfo->UV)) {
+                res = " - " + mapDataTypes->value(mode).at(1);
+                res += " " + Util::formatData(mode,v1,v2);
+            }
+        }
+        else {
+            //qWarning() << "[showGribData] 1D " << mode << " / " << levelType << " / " << levelValue;
+            double v1=dataManager->getInterpolatedValue_1D(mode,levelType,levelValue,x,y,
+                                                           dataManager->get_currentDate());
+            //qWarning() << "[showGribData] val " << v1;
+            res = " - " + mapDataTypes->value(mode).at(1);
+            res += " " + Util::formatData(mode,v1);
+        }
+    }
+    else
+        qWarning() << "[showGribData] no drawer info for data " << mode;
+    return res;
 }
 
 void StatusBar::showSelectedZone(double x0, double y0, double x1, double y1)

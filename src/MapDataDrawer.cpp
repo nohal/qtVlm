@@ -897,6 +897,70 @@ void MapDataDrawer::draw_PRESSURE_MinMax(QPainter &pnt, const Projection *proj)
 }
 
 /****************************************************************************
+ * Label drawing
+ ***************************************************************************/
+void MapDataDrawer::draw_labelGeneric(QPainter &pnt,Projection *proj, int dataType,int levelType, int levelValue,QColor color) {
+    if(!dataManager || !dataManager->isOk()) return;
+
+    /* check if dataType can be drawn */
+    if(dataType<0 || dataType>=DATA_MAX || !drawerInfo[dataType].isOk) return;
+
+    GribRecord *recU1,*recV1,*recU2,*recV2;
+    time_t tPrev,tNxt;
+    time_t currentDate=dataManager->get_currentDate();
+    double val1,val2;
+    bool res;
+
+    double x, y;
+    int i, j, dimin, djmin;
+    dimin = 50;
+    djmin = 30;
+
+    QFont fontLabels("Times", 9, QFont::Bold, true);
+    QFontMetrics fmet(fontLabels);
+    pnt.setFont(fontLabels);
+    pnt.setPen(color);
+
+    /* getting the grib records */
+    if(drawerInfo[dataType].is2D)
+        res=dataManager->get_data2D(dataType,drawerInfo[dataType].secData_2D,levelType,levelValue,currentDate,&tPrev,&tNxt,
+                                    &recU1,&recV1,&recU2,&recV2);
+    else
+        res=dataManager->get_data1D(dataType,levelType,levelValue,currentDate,&tPrev,&tNxt,&recU1,&recV1);
+
+    int interpolMode=INTERPOLATION_DEFAULT;
+    if(drawerInfo[dataType].forcedInterpol)
+        interpolMode=drawerInfo[dataType].forcedInterpolType;
+
+    // get out of fct if we can't get the grib records
+    if(!res) return;
+
+    for (j=0; j<proj->getH(); j+= djmin) {
+        for (i=0; i<proj->getW(); i+= dimin) {
+            proj->screen2map(i,j, &x,&y);
+
+            // get the interpolated value
+            if(drawerInfo[dataType].is2D)
+                res=Grib::interpolateValue_2D(x,y,currentDate,tPrev,tNxt,
+                                              recU1,recV1,recU2,recV2,&val1,&val2,interpolMode,drawerInfo[dataType].UV);
+            else
+                res=Grib::interpolateValue_1D(x,y,currentDate,tPrev,tNxt,recU1,recU2,&val1);
+
+            QString strLabel;
+            if(res) {
+               strLabel = Util::formatSimpleData(dataType,val1);
+            }
+            /*else
+                strLabel= "U";*/
+
+            pnt.drawText(i-fmet.width("XXX")/2, j+fmet.ascent()/2, strLabel);
+
+        }
+    }
+
+}
+
+/****************************************************************************
  * Temperature label drawing
  ***************************************************************************/
 

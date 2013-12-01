@@ -110,6 +110,8 @@ MenuBar::MenuBar(MainWindow *parent)
         acOptions_SH_Lab->setCheckable(true);
         acOptions_SH_barSet = addAction(boatPoiSH, tr("Montrer les barrieres"), "D", tr(""));
         acOptions_SH_barSet->setCheckable(true);
+        acOptions_SH_trace = addAction(boatPoiSH, tr("Montrer les traces"), "", tr(""));
+        acOptions_SH_trace->setCheckable(true);
     menuView->addMenu(boatPoiSH);
     QMenu * compasSH = new QMenu(tr("Show/Hide compas"));
     acOptions_SH_Com = addAction(compasSH, tr("Cacher/Montrer le compas"), "C", tr(""));
@@ -120,6 +122,9 @@ MenuBar::MenuBar(MainWindow *parent)
     menuView->addMenu(compasSH);
 
     menuView->addSeparator();
+
+    acOptions_SH_Scale = addAction(menuView, tr("Montrer l'echelle"), "", tr(""));
+    acOptions_SH_Scale->setCheckable(true);
 
     acOptions_SH_Nig = addAction(menuView, tr("Montrer les zones de jour et nuit"), "N", tr(""));
     acOptions_SH_Nig->setCheckable(true);
@@ -506,6 +511,7 @@ void MenuBar::slot_showViewMenu(void) {
 
     acKeep->setChecked(Settings::getSetting("keepBoatPosOnScreen",1).toInt()==1);    
     acOptions_SH_Nig->setChecked(Settings::getSetting("showNight",1).toInt()==1);
+    acOptions_SH_Scale->setChecked(Settings::getSetting("showScale",1).toInt()==1);
 
     acOptions_SH_Fla->setChecked(Settings::getSetting("showFlag",0,"showHideItem").toInt()==1);
     acOptions_SH_Pol->setChecked(Settings::getSetting("showPolar",0,"showHideItem").toInt()==1);
@@ -517,6 +523,7 @@ void MenuBar::slot_showViewMenu(void) {
     acOptions_SH_Rou->setChecked(Settings::getSetting("hideRoute",0,"showHideItem").toInt()==0);
     acOptions_SH_Lab->setChecked(Settings::getSetting("hideLabel",0,"showHideItem").toInt()==0);
     acOptions_SH_barSet->setChecked(Settings::getSetting("hideBarrierSet",0,"showHideItem").toInt()==0);
+    acOptions_SH_trace->setChecked(Settings::getSetting("showTrace",1,"showHideItem").toInt()==1);
 }
 
 void MenuBar::slot_showBarrierMenu(void) {

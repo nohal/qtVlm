@@ -248,6 +248,7 @@ public slots:
         virtual void myCreatePopUpMenu(void)   {  }
         QString country;
         QImage flag;
+        bool flagBad;
         bool drawFlag;
         QString own;
         QTimer * estimeTimer;

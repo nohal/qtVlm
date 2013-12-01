@@ -61,6 +61,11 @@ public:
     FCT_GET(int,secArwLevelType)
     FCT_GET(int,secArwLevelValue)
 
+    void setLabelMode(int dataType,int levelType, int levelValue);
+    FCT_GET(int,labelMode)
+    FCT_GET(int,labelLevelType)
+    FCT_GET(int,labelLevelValue)
+
     void updateSize(int width, int height);
 
     QRectF boundingRect() const;
@@ -91,7 +96,7 @@ public slots :
     void setDrawIsobarsLabels (bool);
     void setIsobarsStep		  (double step);
     void setPressureMinMax    (bool);
-    void show_temperatureLabels(bool b);
+    //void show_temperatureLabels(bool b);
 
     void setDrawIsotherms0       (bool);
     void setDrawIsotherms0Labels (bool);
@@ -149,7 +154,7 @@ private:
     bool   showIsotherms0;
     bool   showIsotherms0Labels;
 
-    bool  showTemperatureLabels;
+    //bool  showTemperatureLabels;
 
     QPen    seaBordersPen;
     QPen    boundariesPen;
@@ -178,6 +183,7 @@ private:
     int	colorMapMode, colorMapLevelType, colorMapLevelValue;
     int frstArwMode, frstArwLevelType, frstArwLevelValue;
     int secArwMode, secArwLevelType, secArwLevelValue;
+    int labelMode,labelLevelType,labelLevelValue;
     //void update_colorMapLevel(int *mode, int *levelType, int *levelValue);
     int compute_dataType(DataManager * dataManager,
                          int currentMode, int defaultMode1, int defaultMode2,
@@ -190,6 +196,8 @@ private:
     void drawGrib(QPainter &pnt);
     void indicateWaitingMap(void);
     void updateRoutine(void);
+    void drawScale(QPainter &pnt);
+    void drawCartouche(QPainter &pnt);
     bool toBeRestarted;
     ROUTAGE * routageGrib;
     QMutex mutex;

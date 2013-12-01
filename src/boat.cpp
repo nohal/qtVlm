@@ -109,6 +109,7 @@ boat::boat(QString      pseudo, bool activated,
     this->country="";
     this->drawFlag=false;
     this->flag=QImage();
+    flagBad=false;
     updateBoatData();
     this->activated=activated;
     hide();
@@ -291,7 +292,7 @@ void boat::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
     pnt->setFont(QApplication::font());
     if(!labelHidden)
     {
-        if(Settings::getSetting("showFlag",0,"showHideItem").toInt()==1 && this->get_boatType()==BOAT_VLM)
+        if(Settings::getSetting("showFlag",0,"showHideItem").toInt()==1 && this->get_boatType()==BOAT_VLM && !flagBad)
         {
             if(flag.isNull())
             {

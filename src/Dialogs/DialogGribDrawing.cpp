@@ -37,8 +37,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /*****************************
  * A faire:
- * si affichage de fleche frst ou sec affichage aussi ?
- * => affichage des label de temp: dépendant du level si temp affichée ou combo de selection de level
  * => remettre le deltaDew
  * => parametre de level pour les Min/Max pression ?
  * => logique affichage des iso (utilisation de level ?)
@@ -47,8 +45,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * => ajouter un affichage de fleche '1D' => interpolation 1D sur angle
  * => quelle interpolation utilisée pour les vagues ? 1D en force et 1D en direction ou 2D
  * => modifier le cartouche pour afficher le type de data selectionné
- * => avoir la secArr d'une autre couleur
- * => texte isobar /isotherm
  */
 
 DialogGribDrawing::DialogGribDrawing(QWidget *parent, myCentralWidget *centralWidget) : QDialog(parent) {
@@ -94,39 +90,43 @@ bool DialogGribDrawing::init_state(void) {
     init_comboList(dataManager->get_dataTypes(),bgDataType);
     init_comboList(dataManager->get_arrowTypesFst(),frstArwType);
     init_comboList(dataManager->get_arrowTypesSec(),secArwType);
+    init_comboList(dataManager->get_dataTypes(),labelDataType);
 
     // uncomment in order to clear saved level associate with data type
     //clear_savArray();
 
     /* init current values */
     // BG part
-    int curData=terrain->get_colorMapMode();
-    int curLevelType=terrain->get_colorMapLevelType();
-    int curLevelValue=terrain->get_colorMapLevelValue();
-    qWarning() << "Color mode at start " << curData << " / " << curLevelType << " / " << curLevelValue;
-    if(curData==DATA_NOTDEF) {
+    int curBGData=terrain->get_colorMapMode();
+    int curBGLevelType=terrain->get_colorMapLevelType();
+    int curBGLevelValue=terrain->get_colorMapLevelValue();
+    qWarning() << "Color mode at start " << curBGData << " / " << curBGLevelType << " / " << curBGLevelValue;
+    if(curBGData==DATA_NOTDEF) {
         chkSmooth->setEnabled(false);
         bgDataAlt->setEnabled(false);        
     }
     else {
-        int idx=get_comboListItem(curData,bgDataType);
+        int idx=get_comboListItem(curBGData,bgDataType);
         bgDataType->blockSignals(true);
         bgDataType->setCurrentIndex(idx);
         bgDataType->blockSignals(false);
         chkSmooth->setEnabled(true);
         bgDataAlt->setEnabled(true);
-        Couple res = update_levelCb(curData,bgDataAlt,SAVINFO_MAPDATA,curLevelType,curLevelValue);
-        if(curLevelType!=res.a || curLevelValue!=res.b)
-            terrain->setColorMapMode(curData,res.a,res.b);
+        Couple res = update_levelCb(curBGData,bgDataAlt,SAVINFO_MAPDATA,curBGLevelType,curBGLevelValue);
+        if(curBGLevelType!=res.a || curBGLevelValue!=res.b) {
+            terrain->setColorMapMode(curBGData,res.a,res.b);
+            curBGLevelType=res.a;
+            curBGLevelValue=res.b;
+        }
     }
 
     // Smooth
     chkSmooth->setChecked(Settings::getSetting("colorMapSmooth", true).toBool());
 
     //First arrow
-    curData=terrain->get_frstArwMode();
-    curLevelType=terrain->get_frstArwLevelType();
-    curLevelValue=terrain->get_frstArwLevelValue();
+    int curData=terrain->get_frstArwMode();
+    int curLevelType=terrain->get_frstArwLevelType();
+    int curLevelValue=terrain->get_frstArwLevelValue();
     qWarning() << "frstArw mode at start " << curData;
     if(curData==DATA_NOTDEF) {
         chkShowBarbule->setEnabled(false);
@@ -174,8 +174,28 @@ bool DialogGribDrawing::init_state(void) {
     color=Settings::getSetting("secArrowColor",QColor(Qt::black)).value<QColor>();
     updateBtnColor(btn_secArrowColor,color);
 
-    // Temperature
-    chkShowTemp->setChecked(Settings::getSetting("showTemperatureLabels", false).toBool());
+    // Labels
+    curData=terrain->get_labelMode();
+    curLevelType=terrain->get_labelLevelType();
+    curLevelValue=terrain->get_labelLevelValue();
+    qWarning() << "label mode at start " << curData;
+    if(curData==DATA_NOTDEF) {
+        labelAlt->setEnabled(false);
+    }
+    else {
+        int idx=get_comboListItem(curData,labelDataType);
+        labelDataType->blockSignals(true);
+        labelDataType->setCurrentIndex(idx);
+        labelDataType->blockSignals(false);
+        labelAlt->setEnabled(true);
+        Couple res=update_levelCb(curData,labelAlt,SAVINFO_LABEL,curLevelType,curLevelValue);
+        if(curLevelType!=res.a || curLevelValue!=res.b)
+            terrain->setLabelMode(curData,res.a,res.b);
+    }
+    // Color
+    color=Settings::getSetting("labelColor",QColor(Qt::black)).value<QColor>();
+    updateBtnColor(btn_labelColor,color);
+
 
     // IsoBar
     bool showIso=Settings::getSetting("showIsobars", false).toBool();
@@ -325,6 +345,18 @@ Couple DialogGribDrawing::update_levelCb(int data,QComboBox * cb,int infoType, i
     return res;
 }
 
+void DialogGribDrawing::copy_cb(QComboBox * from, QComboBox * to) {
+    to->blockSignals(true);
+    to->clear();
+    for(int i=0;i<from->count();++i) {
+        to->addItem(from->itemText(i));
+        to->setItemData(i,from->itemData(i,Qt::UserRole),Qt::UserRole);
+        to->setItemData(i,from->itemData(i,Qt::UserRole+1),Qt::UserRole+1);
+    }
+    to->setCurrentIndex(from->currentIndex());
+    to->blockSignals(false);
+}
+
 int DialogGribDrawing::get_comboListItem(int data,QComboBox * cb) {
     return cb->findData(data);
 }
@@ -366,6 +398,7 @@ void DialogGribDrawing::slot_finished() {
 
 void DialogGribDrawing::slot_bgDataType(int idx) {
     int newType = bgDataType->itemData(idx).toInt();
+
     qWarning() << "New type: " << newType;
 
     if(newType==DATA_NOTDEF) {
@@ -375,6 +408,7 @@ void DialogGribDrawing::slot_bgDataType(int idx) {
         chkSmooth->setEnabled(false);
         bgDataAlt->setEnabled(false);
         terrain->setColorMapMode(DATA_NOTDEF,DATA_LV_NOTDEF,0);
+
     }
     else {
         Couple res=update_levelCb(newType,bgDataAlt,SAVINFO_MAPDATA);
@@ -451,13 +485,43 @@ void DialogGribDrawing::slot_secArwAlt(int idx) {
     terrain->setSecArwMode(curDataMode,newLevelType,newLevelValue);
 }
 
+void DialogGribDrawing::slot_labelDataType(int idx) {
+    int newType = labelDataType->itemData(idx).toInt();
+    qWarning() << "New type (label): " << newType;
+
+    if(newType==DATA_NOTDEF) {
+        labelAlt->blockSignals(true);
+        labelAlt->setCurrentIndex(0);
+        labelAlt->blockSignals(false);
+        labelAlt->setEnabled(false);
+        terrain->setLabelMode(DATA_NOTDEF,DATA_LV_NOTDEF,0);
+    }
+    else {
+        Couple res=update_levelCb(newType,labelAlt,SAVINFO_LABEL);
+        labelAlt->setEnabled(true);
+        terrain->setLabelMode(newType,res.a,res.b);
+    }
+}
+
+void DialogGribDrawing::slot_labelAlt(int idx) {
+    int newLevelType=labelAlt->itemData(idx,Qt::UserRole).toInt();
+    int newLevelValue=labelAlt->itemData(idx,Qt::UserRole+1).toInt();
+    int curDataMode=terrain->get_labelMode();
+    qWarning() << "Cb alt for label changed: " << newLevelType << ", " << newLevelValue;
+    /* saving info in prev array */
+    savLabelMode[curDataMode]=Couple(newLevelType,newLevelValue);
+    terrain->setLabelMode(curDataMode,newLevelType,newLevelValue);
+}
+
+/*
 void DialogGribDrawing::slot_showTemp(bool st) {
     terrain->show_temperatureLabels(st);
 }
 
-void DialogGribDrawing::slot_tempAlt(int /*idx*/) {
+void DialogGribDrawing::slot_tempAlt(int idx) {
 
 }
+*/
 
 void DialogGribDrawing::slot_smooth(bool st) {
     terrain->setColorMapSmooth(st);
@@ -473,6 +537,10 @@ void DialogGribDrawing::slot_frstArrowColor(void) {
 
 void DialogGribDrawing::slot_secArrowColor(void) {
     chg_color(btn_secArrowColor,"secArrowColor",QColor(Qt::black));
+}
+
+void DialogGribDrawing::slot_labelColor(void) {
+    chg_color(btn_labelColor,"labelColor",QColor(Qt::black));
 }
 
 void DialogGribDrawing::chg_color(QPushButton * btn,QString setting,QColor defaultColor) {

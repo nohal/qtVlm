@@ -292,7 +292,7 @@ void ROUTE::slot_recalculate(boat * boat)
     }
     if(boat!=NULL && this->myBoat!=boat) return;
     if(myBoat==NULL  || !myBoat->getStatus()) return;
-    if(this->hidden) return;
+    if(this->hidden || Settings::getSetting("hideRoute",0,"showHideItem").toInt()==1) return;
     if (frozen && initialized)
     {
         interpolatePos();
@@ -1067,7 +1067,8 @@ void ROUTE::slot_edit()
 }
 
 void ROUTE::slot_shRou(bool isHidden) {
-    bool toBeHidden=this->hidden || (Settings::getSetting("autoHideRoute",1).toInt()==1 && (this->myBoat==NULL || !this->myBoat->getIsSelected()));
+    bool toBeHidden=this->hidden || (Settings::getSetting("autoHideRoute",1).toInt()==1
+                                     && (this->myBoat==NULL || !this->myBoat->getIsSelected()));
     if(isHidden || toBeHidden) {
         if(line)
             line->hide();
@@ -1078,6 +1079,9 @@ void ROUTE::slot_shRou(bool isHidden) {
     else {
         if(line)
             line->show();
+
+        slot_recalculate(myBoat);
+
         if(showInterpolData)
             roadInfo->show();
     }

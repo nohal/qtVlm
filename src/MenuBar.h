@@ -194,10 +194,12 @@ public:
      QAction *acOptions_SH_Por;
      QAction *acOptions_SH_Lab;
      QAction *acOptions_SH_barSet;
+     QAction *acOptions_SH_trace;
      QAction *acOptions_SH_Pol;
      QAction *acOptions_SH_Boa;
      QAction *acOptions_SH_Fla;
      QAction *acOptions_SH_Nig;
+     QAction *acOptions_SH_Scale;
      QAction *acOptions_SH_Tdb;
      QAction *acKeep;
      QAction *acReplay;

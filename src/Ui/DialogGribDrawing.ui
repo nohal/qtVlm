@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>408</width>
-    <height>303</height>
+    <height>352</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -252,7 +252,7 @@
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_10">
+        <layout class="QHBoxLayout" name="horizontalLayout_11">
          <item>
           <widget class="QLabel" name="label_8">
            <property name="text">
@@ -304,9 +304,9 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_6">
          <item>
-          <widget class="QCheckBox" name="chkShowTemp">
+          <widget class="QLabel" name="label_9">
            <property name="text">
-            <string>Température</string>
+            <string>Label</string>
            </property>
           </widget>
          </item>
@@ -324,11 +324,67 @@
           </spacer>
          </item>
          <item>
-          <widget class="QComboBox" name="tempAlt">
+          <widget class="QComboBox" name="labelDataType">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="sizeAdjustPolicy">
             <enum>QComboBox::AdjustToContents</enum>
            </property>
           </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="labelAlt">
+           <property name="sizeAdjustPolicy">
+            <enum>QComboBox::AdjustToContents</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_10">
+         <item>
+          <widget class="QLabel" name="label_10">
+           <property name="text">
+            <string>Color</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btn_labelColor">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>23</width>
+             <height>23</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_16">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
        </item>
@@ -349,7 +405,7 @@
      </widget>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
-       <string>Isobar /Isotherme</string>
+       <string>Isobar / Isotherme</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
@@ -646,22 +702,6 @@
  <resources/>
  <connections>
   <connection>
-   <sender>chkShowTemp</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>DialogGribDrawing_ui</receiver>
-   <slot>slot_showTemp(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>54</x>
-     <y>251</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>3</x>
-     <y>80</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>chkSmooth</sender>
    <signal>toggled(bool)</signal>
    <receiver>DialogGribDrawing_ui</receiver>
@@ -765,7 +805,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>63</x>
-     <y>72</y>
+     <y>81</y>
     </hint>
     <hint type="destinationlabel">
      <x>402</x>
@@ -781,7 +821,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>151</x>
-     <y>108</y>
+     <y>121</y>
     </hint>
     <hint type="destinationlabel">
      <x>405</x>
@@ -797,7 +837,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>42</x>
-     <y>134</y>
+     <y>152</y>
     </hint>
     <hint type="destinationlabel">
      <x>5</x>
@@ -813,7 +853,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>384</x>
-     <y>134</y>
+     <y>152</y>
     </hint>
     <hint type="destinationlabel">
      <x>405</x>
@@ -829,7 +869,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>61</x>
-     <y>190</y>
+     <y>221</y>
     </hint>
     <hint type="destinationlabel">
      <x>4</x>
@@ -845,7 +885,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>153</x>
-     <y>220</y>
+     <y>255</y>
     </hint>
     <hint type="destinationlabel">
      <x>147</x>
@@ -861,7 +901,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>55</x>
-     <y>246</y>
+     <y>286</y>
     </hint>
     <hint type="destinationlabel">
      <x>66</x>
@@ -893,7 +933,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>349</x>
-     <y>284</y>
+     <y>327</y>
     </hint>
     <hint type="destinationlabel">
      <x>241</x>
@@ -918,7 +958,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>tempAlt</sender>
+   <sender>labelAlt</sender>
    <signal>currentIndexChanged(int)</signal>
    <receiver>DialogGribDrawing_ui</receiver>
    <slot>slot_tempAlt(int)</slot>
@@ -965,6 +1005,54 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>labelAlt</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>DialogGribDrawing_ui</receiver>
+   <slot>slot_labelAlt(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>372</x>
+     <y>251</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>407</x>
+     <y>296</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>labelDataType</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>DialogGribDrawing_ui</receiver>
+   <slot>slot_labelDataType(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>249</x>
+     <y>246</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>279</x>
+     <y>292</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_labelColor</sender>
+   <signal>clicked()</signal>
+   <receiver>DialogGribDrawing_ui</receiver>
+   <slot>slot_labelColor()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>57</x>
+     <y>277</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>4</x>
+     <y>330</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>slot_bgDataType(int)</slot>
@@ -984,8 +1072,10 @@
   <slot>slot_isoThermShowLabel(bool)</slot>
   <slot>slot_isoBarShowMinMax(bool)</slot>
   <slot>slot_finished()</slot>
-  <slot>slot_tempAlt(int)</slot>
+  <slot>slot_labelAlt(int)</slot>
   <slot>slot_frstArrowColor()</slot>
   <slot>slot_secArrowColor()</slot>
+  <slot>slot_labelDataType(int)</slot>
+  <slot>slot_labelColor()</slot>
  </slots>
 </ui>

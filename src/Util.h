@@ -83,6 +83,7 @@ class Util
     static QString formatSimpleIntUnit(int val,QString unit);
     static QString formatSimpleDoubleUnit(double val,QString unit);
     static QString formatData(int type,double val1,double val2=0);
+    static QString formatSimpleData(int type,double val);
 
     static int    kmhToBeaufort(const double &v);
     static double  kmhToBeaufort_F(const double &v);

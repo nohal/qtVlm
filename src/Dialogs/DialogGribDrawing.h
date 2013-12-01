@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define SAVINFO_MAPDATA 0
 #define SAVINFO_FRSTARW 1
 #define SAVINFO_SECARW  2
+#define SAVINFO_LABEL   3
 
 class DialogGribDrawing: public QDialog,  Ui::DialogGribDrawing_ui {
     Q_OBJECT
@@ -45,16 +46,21 @@ class DialogGribDrawing: public QDialog,  Ui::DialogGribDrawing_ui {
     public slots:
         void slot_bgDataType(int idx);
         void slot_bgDataAlt(int idx);
-        void slot_frstArwType(int idx);
-        void slot_showTemp(bool st);
-        void slot_tempAlt(int idx);
         void slot_smooth(bool st);
+
+        void slot_frstArwType(int idx);
         void slot_frstArwAlt(int idx);
-        void slot_secArwType(int idx);
-        void slot_secArwAlt(int idx);
         void slot_showBarbule(bool st);
         void slot_frstArrowColor(void);
+
+        void slot_secArwType(int idx);
+        void slot_secArwAlt(int idx);
         void slot_secArrowColor(void);
+
+        void slot_labelDataType(int idx);
+        void slot_labelAlt(int idx);
+        void slot_labelColor(void);
+
         void slot_showIsoBar(bool st);
         void slot_showIsoTherm(bool st);
         void slot_isoBarSpacing(int val);
@@ -62,6 +68,7 @@ class DialogGribDrawing: public QDialog,  Ui::DialogGribDrawing_ui {
         void slot_isoBarShowLabel(bool st);
         void slot_isoThermShowLabel(bool st);
         void slot_isoBarShowMinMax(bool st);
+
         void slot_finished();
 
     private:
@@ -72,6 +79,7 @@ class DialogGribDrawing: public QDialog,  Ui::DialogGribDrawing_ui {
         Couple * savDataMapMode;
         Couple * savFrstArwMode;
         Couple * savSecArwMode;
+        Couple * savLabelMode;
         void clear_savArray(void);
 
         bool init_state(void);
@@ -79,6 +87,7 @@ class DialogGribDrawing: public QDialog,  Ui::DialogGribDrawing_ui {
         int get_comboListItem(int data, QComboBox *cb);
         int get_comboListItem(int data1,int data2,QComboBox * cb);
         Couple update_levelCb(int data, QComboBox * cb, int infoType, int levelType=DATA_LV_NOTDEF, int levelValue=0);
+        void copy_cb(QComboBox * from, QComboBox * to);
 
         void updateBtnColor(QPushButton * btn,QColor color);
         void chg_color(QPushButton * btn,QString setting,QColor defaultColor);

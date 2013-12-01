@@ -72,15 +72,18 @@ QString Util::currentPath()
     return dir.absolutePath();
 }
 
+#define FORMAT_INT(STR,VAL) STR.sprintf("%d",VAL);
+#define FORMAT_DOUBLE(STR,VAL) STR.sprintf("%6.2f",VAL);
+
 QString Util::formatSimpleIntUnit(int val,QString unit) {
     QString s;
-    s.sprintf("%d",val);
+    FORMAT_INT(s,val)
     return s+" "+unit;
 }
 
 QString Util::formatSimpleDoubleUnit(double val,QString unit) {
     QString s;
-    s.sprintf("%6.2f",val);
+    FORMAT_DOUBLE(s,val)
     return s+" "+unit;
 }
 
@@ -104,6 +107,7 @@ QString Util::formatData(int type,double val1,double val2) {
             val2=Util::A360(radToDeg(val2)+180.0);
             res = Util::formatSimpleDoubleUnit(val2,"deg");
             res+= ", " +Util::formatSimpleDoubleUnit(val1,"kts");
+            break;
         case DATA_WIND_VX:
             val2=radToDeg(val2);
             res = Util::formatSimpleDoubleUnit(val2,"deg");
@@ -141,9 +145,53 @@ QString Util::formatData(int type,double val1,double val2) {
         case DATA_WAVES_MAX_HGT:
             res = Util::formatSimpleDoubleUnit(Util::A360(radToDeg(val2)+180.0),"deg");
             res+= ", " + Util::formatSimpleDoubleUnit(val1,"m");
+            break;
     }
     return res;
 }
+
+QString Util::formatSimpleData(int type,double val) {
+    QString res;
+    switch(type) {
+        case DATA_PRESSURE:
+            FORMAT_INT(res,(int)val)
+            break;
+        case DATA_GEOPOT_HGT:
+        case DATA_CURRENT_VX:
+        case DATA_WIND_VX:
+        case DATA_HUMID_SPEC:
+        case DATA_PRECIP_RATE:
+        case DATA_PRECIP_TOT:
+        case DATA_SNOW_DEPTH:
+        case DATA_WAVES_SIG_HGT_COMB:
+        case DATA_CIN:
+        case DATA_CAPE:
+        case DATA_WAVES_WND_HGT:
+        case DATA_WAVES_SWL_HGT:
+        case DATA_WAVES_MAX_HGT:
+            FORMAT_DOUBLE(res,val)
+            break;
+        case DATA_TEMP:
+        case DATA_TEMP_POT:
+        case DATA_TMAX:
+        case DATA_TMIN:
+        case DATA_DEWPOINT:
+            res=Util::formatTemperature_short(val);
+            break;
+        case DATA_HUMID_REL:
+        case DATA_CLOUD_TOT:
+        case DATA_WAVES_WHITE_CAP:
+            res=Util::formatPercentValue(val);
+            break;
+        case DATA_FRZRAIN_CATEG:
+        case DATA_SNOW_CATEG:
+            if(val) res=QObject::tr("oui");
+            else res=QObject::tr("non");
+            break;
+    }
+    return res;
+}
+
 
 //======================================================================
 void Util::setSpecificFont(QMap<QWidget *,QFont> widgets)

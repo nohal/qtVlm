@@ -99,6 +99,7 @@ void opponent::init(QColor color,bool isQtBoat,QString idu,QString race, double 
     trace_drawing->setLineMode();
     connect(parentWindow,SIGNAL(startReplay(bool)),trace_drawing,SLOT(slot_startReplay(bool)));
     connect(parentWindow,SIGNAL(replay(int)),trace_drawing,SLOT(slot_replay(int)));
+    connect(parentWindow,SIGNAL(shTrace(bool)),this,SLOT(slot_shTrace(bool)));
     this->flag=QImage();
     this->drawFlag=false;
     this->pavillon=QString();
@@ -375,7 +376,7 @@ void opponent::drawTrace()
             }
         }
     }
-    if(opp_trace==1 && !parentWindow->get_shOpp_st())
+    if(opp_trace==1 && !parentWindow->get_shOpp_st() && Settings::getSetting("showTrace","1").toInt()==1)
     {
         trace_drawing->slot_showMe();
     }
@@ -586,6 +587,11 @@ void opponent::slot_shOpp(bool isHidden) {
             trace_drawing->slot_showMe();
         }
     }
+}
+
+void opponent::slot_shTrace(bool /*state*/) {
+    qWarning() << "[slot_shTrace]";
+    slot_shOpp(Settings::getSetting("hideOpponent",0,"showHideItem").toInt());
 }
 
 /****************************************

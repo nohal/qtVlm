@@ -124,6 +124,8 @@ class MapDataDrawer
         void  draw_Isotherms0 (QPainter &pnt, const Projection *proj);
         void  draw_Isotherms0Labels (QPainter &pnt, const Projection *proj);
 
+        void draw_labelGeneric(QPainter &pnt,Projection *proj, int dataType,int levelType, int levelValue,QColor color);
+
         // Temperature (labels repartis sur la carte)
         void draw_TEMPERATURE_Labels(QPainter &pnt, const Projection *proj);
 

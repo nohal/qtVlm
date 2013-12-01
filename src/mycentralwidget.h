@@ -286,7 +286,9 @@ public slots :
         void slot_shPor(bool);
         void slot_shFla(bool);
         void slot_shNig(bool);
+        void slot_shScale(bool);
         void slot_shBarSet(bool);
+        void slot_shTrace(bool);
 
         /*Routes */
         void slot_addRouteFromMenu();
@@ -397,6 +399,7 @@ signals:
         void shPol(bool);
         void shLab(bool);
         void shBarSet(bool);
+        void shTrace(bool);
         void shFla();
 
 
@@ -480,6 +483,7 @@ signals:
         bool shOpp_st;
         bool shPor_st;
         bool shBarSet_st;
+        bool shTrace_st;
 
         void do_shLab(bool val);
         void do_shPoi(bool val);
@@ -487,6 +491,7 @@ signals:
         void do_shOpp(bool val);
         void do_shPor(bool val);
         void do_shBarSet(bool val);
+        void do_shTrace(bool val);
 
         QSound  *horn;
         bool    hornActivated;

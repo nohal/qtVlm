@@ -483,6 +483,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
                     qWarning() << "New flag: " << newCountry;
                     flag=QImage();
                     country=newCountry;
+                    flagBad=false;
                 }
                 else
                     qWarning() << "country ok: " << newCountry << "(old: " << country << ")";
@@ -800,6 +801,10 @@ void boatVLM::authFailed(void)
 
 void boatVLM::inetError()
 {
+    if(getCurrentRequest()==VLM_REQUEST_FLAG) {
+        qWarning() << "Error getting flag ==> flagBad set to true";
+        flagBad=true;
+    }
     updating=false;
     emit hasFinishedUpdating();
     //emit boatUpdated(this,newRace,doingSync);
