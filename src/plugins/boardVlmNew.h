@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class BoardVlmNew : public BoardInterface, public Ui::BoardVlmNew
 {
     Q_OBJECT
+    Q_INTERFACES(BoardInterface)
     
 public:
     BoardVlmNew(MainWindow *main);
@@ -92,5 +93,4 @@ private:
     void setFontDialog(QObject *o);
     bool confirmChange();
 };
-
 #endif // BOARDVLMNEW_H

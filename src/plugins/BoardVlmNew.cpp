@@ -18,6 +18,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
+#include <QtPlugin>
 #include <QBitmap>
 #include <QMessageBox>
 #include <QStyleFactory>
@@ -34,7 +35,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "boatVLM.h"
 #include "MapDataDrawer.h"
 #include "Util.h"
-
 BoardVlmNew::BoardVlmNew(MainWindow *main)
 
 {
@@ -1227,3 +1227,4 @@ void VlmCompass::setValues(const double &heading, const double &windDir, const d
     this->gateDir=gateDir;
     update();
 }
+Q_PLUGIN_METADATA(IID "qtVlm.plugins.boardInterface/1.0")

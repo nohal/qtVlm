@@ -174,7 +174,8 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     GribV1Record.h \
     GribV1.h \
     DataManager.h \
-    Dialogs/DialogGribDrawing.h
+    Dialogs/DialogGribDrawing.h \
+    BoardInterface.h
 
 
 FORMS += Ui/boatAccount_dialog.ui \
@@ -324,7 +325,8 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     GribV1Record.cpp \
     GribV1.cpp \
     DataManager.cpp \
-    Dialogs/DialogGribDrawing.cpp
+    Dialogs/DialogGribDrawing.cpp \
+    BoardInterface.cpp
 
 unix:!macx: DEFINES += _TTY_POSIX_ __TERRAIN_QIMAGE __UNIX_QTVLM
 win32:DEFINES += _TTY_WIN_ \

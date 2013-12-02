@@ -34,7 +34,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogPilototo.h"
 #include "DialogPilototoParam.h"
 #include "settings.h"
-#include "BoardVlmNew.h"
 
 DialogPilototo::DialogPilototo(MainWindow *main,myCentralWidget * parent,inetConnexion * inet):QDialog(parent), inetClient(inet)
 {
@@ -329,7 +328,7 @@ void DialogPilototo::done(int result)
 	    if (rep == QMessageBox::No)
 		return;
 	}
-    if(!BoardVlmNew::confirmChange()) return;
+    if(!confirmChange()) return;
 	/* creating list of pilototo.php requests*/
         QList<struct instruction*> * instructions = new QList<struct instruction*>;
         QJson::Serializer serializer;
@@ -593,7 +592,7 @@ void DialogPilototo::setInstructions(boat * pvBoat, QList<POI *> pois)
             }
         }
     }
-    if(!BoardVlmNew::confirmChange()) return;
+    if(!confirmChange()) return;
     QList<struct instruction*> * instructions = new QList<struct instruction*>;
     QJson::Serializer serializer;
     struct instruction * instr_ptr;
@@ -650,6 +649,15 @@ void DialogPilototo::setInstructions(boat * pvBoat, QList<POI *> pois)
     currentList=instructions;
     this->updateBoat=true;
     sendPilototo();
+}
+bool DialogPilototo::confirmChange()
+{
+    if(Settings::getSetting("askConfirmation","0").toInt()==0)
+        return true;
+
+    return QMessageBox::question(0,tr("Confirmation a chaque ordre vers VLM"),
+                                 tr("Confirmez-vous cet ordre?"),QMessageBox::Yes|QMessageBox::No,
+                             QMessageBox::Yes)==QMessageBox::Yes;
 }
 
 void DialogPilototo::updateNbInstruction(void)

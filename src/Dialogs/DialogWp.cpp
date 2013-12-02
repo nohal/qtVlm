@@ -25,7 +25,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "POI.h"
 #include "Util.h"
 #include "settings.h"
-#include "BoardVlmNew.h"
 #include <QMessageBox>
 
 

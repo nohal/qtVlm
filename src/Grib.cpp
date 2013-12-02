@@ -88,7 +88,7 @@ QString Grib::get_info(void) {
     info += tr("Taille : %1 octets") .arg(get_fileSize())+"\n";
     info += "\n";
 
-    int nbData=mapGribRecords.size();
+    int nbData=(int)(mapGribRecords.size());
     if(hasData(DATA_WIND_VX,DATA_LV_ABOV_GND,10)) nbData--;
     if(hasData(DATA_CURRENT_VX,DATA_LV_MSL,0)) nbData--;
     if(hasData(DATA_WAVES_WND_DIR,DATA_LV_GND_SURF,0)) nbData-=2;

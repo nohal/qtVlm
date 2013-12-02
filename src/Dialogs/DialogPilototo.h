@@ -190,6 +190,7 @@ class DialogPilototo : public QDialog, public Ui::pilototo_ui, public inetClient
         void sendPilototo(void);
         bool updateBoat;
         POI * poiToWp;
+        static bool confirmChange();
 };
 
 #endif
