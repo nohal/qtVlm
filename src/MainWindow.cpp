@@ -83,7 +83,8 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "dialogviewpolar.h"
 #include "DialogEditBarrier.h"
 #include "DialogRouteComparator.h"
-
+#include <QPluginLoader>
+#include "PluginExampleInterface.h"
 int INTERPOLATION_DEFAULT=INTERPOLATION_HYBRID;
 
 
@@ -791,6 +792,15 @@ void MainWindow::closeProgress(void)
     {
         progress->newStep(95,tr("Opening kap"));
         my_centralWidget->imgKap_open(Settings::getSetting("LastKap","").toString());
+    }
+    QPluginLoader plugin("pluginExamplePlugin");
+    plugin.load();
+    if(!plugin.isLoaded())
+        qWarning()<<"error loading plugin"<<plugin.errorString();
+    else
+    {
+        PluginExampleInterface * myPlugin=qobject_cast<PluginExampleInterface *>(plugin.instance());
+        myPlugin->initPluginExample();
     }
     delete progress;
     progress=NULL;

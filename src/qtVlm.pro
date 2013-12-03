@@ -14,7 +14,7 @@ INCLUDEPATH += objs \
     Dialogs \
     libs/bzip2 \
     libs/zlib-1.2.7 \
-    libs/qextserialport12/src \
+        libs/qextserialport12/src \
     libs/qjson \
     libs/nmealib/src/nmea \
     libs/libbsb \
@@ -175,7 +175,8 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     GribV1.h \
     DataManager.h \
     Dialogs/DialogGribDrawing.h \
-    BoardInterface.h
+    BoardInterface.h \
+    PluginExampleInterface.h
 
 
 FORMS += Ui/boatAccount_dialog.ui \

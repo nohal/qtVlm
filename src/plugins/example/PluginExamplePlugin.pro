@@ -8,9 +8,9 @@ contains ( QT_VERSION, "^5.*"){
 }
 CONFIG += plugin
 TEMPLATE = lib
-TARGET = boardVlmNew
+TARGET = pluginExamplePlugin
 DEPENDPATH += .
-INCLUDEPATH += objs . .. ../Dialogs ../objs
+INCLUDEPATH += . ../..
 
 
 asan {
@@ -22,22 +22,18 @@ asan {
     QMAKE_LFLAGS="-fsanitize=address -g -rdynamic"
 }
 
-MOC_DIR = objs
-OBJECTS_DIR = objs
-UI_DIR = objs
-SOURCES_DIR = src/plugins
-DESTDIR = ../../plugins
+MOC_DIR = objects
+OBJECTS_DIR = objects
+UI_DIR = objects
+DESTDIR = ../../..
 CODECFORTR = UTF-8
 CODECFORSRC = UTF-8
 TRANSLATIONS = ../../tr/qtVlm_en.ts \
     ../../tr/qtVlm_fr.ts \
     ../../tr/qtVlm_cz.ts \
     ../../tr/qtVlm_es.ts
-HEADERS += boardVlmNew.h ../BoardInterface.h
-
-FORMS += BoardVlmNew.ui
-
-SOURCES += BoardVlmNew.cpp ../BoardInterface.cpp
+HEADERS = PluginExamplePlugin.h
+SOURCES = PluginExamplePlugin.cpp
 
 unix:!macx: DEFINES += _TTY_POSIX_ __TERRAIN_QIMAGE __UNIX_QTVLM
 win32:DEFINES += _TTY_WIN_ \

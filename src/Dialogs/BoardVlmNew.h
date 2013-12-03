@@ -36,6 +36,7 @@ class BoardVlmNew : public BoardInterface, public Ui::BoardVlmNew
     
 public:
     BoardVlmNew(MainWindow *main);
+    void initBoard(MainWindow *main){Q_UNUSED(main)}
     ~BoardVlmNew();
 private slots:
     void slot_updateBtnWP();
