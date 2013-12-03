@@ -35,8 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "inetClient.h"
 
 class DialogVlmGrib : public QDialog, public Ui::DialogVLM_grib_ui, public inetClient
-{
-    Q_OBJECT
+{ Q_OBJECT
     public:
         DialogVlmGrib(MainWindow * main,myCentralWidget * parent, inetConnexion * inet);
         void done(int res);

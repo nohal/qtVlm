@@ -755,7 +755,7 @@ int Terrain::compute_dataType(DataManager * dataManager,
 
 Couple Terrain::compute_level(DataManager * dataManager,int newType,int curLevelType, int curLevelValue,
                      QMap<int,QStringList> * allowedLevel) {
-    qWarning() << "[compute_level] ";
+    //qWarning() << "[compute_level] ";
     QMap<int,QList<int>*> * levelList=NULL;
     levelList = dataManager->get_levelList(newType);
     bool found=false;
@@ -814,7 +814,7 @@ Couple Terrain::compute_level(DataManager * dataManager,int newType,int curLevel
 
 void Terrain::update_mapDataAndLevel(void) {
 
-    qWarning() << "[update_mapDataAndLevel] starting";
+    //qWarning() << "[update_mapDataAndLevel] starting";
 
     DataManager * dataManager=centralWidget->get_dataManager();
     if(!dataManager) return;
@@ -829,7 +829,7 @@ void Terrain::update_mapDataAndLevel(void) {
     newType=compute_dataType(dataManager,colorMapMode,DATA_WIND_VX,DATA_CURRENT_VX,
                              dataManager->get_dataTypes());
 
-    qWarning() << "mapData: newType=" << newType;
+    //qWarning() << "mapData: newType=" << newType;
     if(newType==DATA_NOTDEF) {
         /* no data to display ==> set everything to NOTDEF & out */
         colorMapMode=DATA_NOTDEF;
@@ -947,7 +947,7 @@ void Terrain::update_mapDataAndLevel(void) {
     Settings::setSetting("labelLevelType", labelLevelType);
     Settings::setSetting("labelLevelValue", labelLevelValue);
 
-    qWarning() << "[update_mapDataAndLevel] done";
+    //qWarning() << "[update_mapDataAndLevel] done";
 }
 
 void Terrain::setColorMapMode(int dataType,int levelType, int levelValue) {

@@ -25,12 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QMessageBox>
 #endif
 #include <QDebug>
-/* QJson */
-#include <serializer.h>
-#include <parser.h>
 
 #include "dataDef.h"
-
 #include "BoardVLM.h"
 #include "boatVLM.h"
 #include "Board.h"
@@ -43,6 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Polar.h"
 #include "POI.h"
 #include "DialogWp.h"
+
 /* VLM CMD type */
 #define VLM_CMD_HD     1
 #define VLM_CMD_ANG    2
@@ -1024,15 +1021,15 @@ void boardVLM::sendCmd(int cmdNum,double  val1,double val2, double val3)
             break;
     }
 
-    QJson::Serializer serializer;
-    QByteArray json = serializer.serialize(instruction);
+    QByteArray json;
+    if(inetClient::map_to_JSON(instruction,&json)) {
+        QTextStream(&url) << "/ws/boatsetup/" << phpScript;
 
-    QTextStream(&url) << "/ws/boatsetup/" << phpScript;
-
-    QTextStream(&data) << "parms=" << json;
-    QTextStream(&data) << "&select_idu=" << currentBoat()->getId();
-    //qWarning()<<"sending:"<<url<<data;
-    inetPost(VLM_DO_REQUEST,url,data,true);
+        QTextStream(&data) << "parms=" << json;
+        QTextStream(&data) << "&select_idu=" << currentBoat()->getId();
+        //qWarning()<<"sending:"<<url<<data;
+        inetPost(VLM_DO_REQUEST,url,data,true);
+    }
 }
 
 void boardVLM::requestFinished (QByteArray res)

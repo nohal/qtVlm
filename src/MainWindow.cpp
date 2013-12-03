@@ -278,111 +278,9 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     else
         showMaximized ();
     QString ver="qtVlm "+QString().setNum(sizeof(int*)*8)+" bits "+Version::getVersion();
-#ifdef __UNIX_QTVLM
-    ver+=" (UNIX)";
-#endif
-#ifdef __WIN_QTVLM
-    QString OS_versionName;
-    int windowsVersion=QSysInfo::windowsVersion();
-    switch(windowsVersion)
-    {
-        case QSysInfo::WV_32s:
-            OS_versionName="Windows 3.1 with Win 32s";
-            break;
-        case QSysInfo::WV_95:
-            OS_versionName="Windows 95";
-            break;
-        case QSysInfo::WV_98:
-            OS_versionName="Windows 98";
-            break;
-        case QSysInfo::WV_Me:
-            OS_versionName="Windows Me";
-            break;
-        case QSysInfo::WV_NT:
-            OS_versionName="Windows NT";
-            break;
-        case QSysInfo::WV_2000:
-            OS_versionName="Windows 2000";
-            break;
-        case QSysInfo::WV_XP:
-            OS_versionName="Windows XP";
-            break;
-        case QSysInfo::WV_2003:
-            OS_versionName="Windows Server 2003";
-            break;
-        case QSysInfo::WV_VISTA:
-            OS_versionName="Windows VISTA";
-            break;
-        case QSysInfo::WV_WINDOWS7:
-            OS_versionName="Windows 7";
-            break;
-        case QSysInfo::WV_WINDOWS8:
-            OS_versionName="Windows 8";
-            break;
-        case QSysInfo::WV_CE:
-            OS_versionName="Windows CE";
-            break;
-        case QSysInfo::WV_CENET:
-            OS_versionName="Windows CE .NET";
-            break;
-        case QSysInfo::WV_CE_5:
-            OS_versionName="Windows CE 5.x";
-            break;
-        case QSysInfo::WV_CE_6:
-            OS_versionName="Windows CE 6.x";
-            break;
-        default:
-            OS_versionName="Unknown Windows version";
-            break;
-    }
-    qWarning()<<"windows version:"<<OS_versionName;
-    ver+=" ("+OS_versionName+")";
-#endif
-#ifdef __MAC_QTVLM
-    QString OS_versionName;
-    int windowsVersion=QSysInfo::macVersion();
-    switch(windowsVersion)
-    {
-        case QSysInfo::MV_9:
-            OS_versionName="Mac OS 9 (unsupported)";
-            break;
-        case QSysInfo::MV_10_0:
-            OS_versionName="Mac OS X 10.0-CHEETAH (unsupported)";
-            break;
-        case QSysInfo::MV_10_1:
-            OS_versionName="Mac OS X 10.1-PUMA (unsupported)";
-            break;
-        case QSysInfo::MV_10_2:
-            OS_versionName="Mac OS X 10.2-JAGUAR (unsupported)";
-            break;
-        case QSysInfo::MV_10_3:
-            OS_versionName="Mac OS X 10.3-PANTHER (unsupported)";
-            break;
-        case QSysInfo::MV_10_4:
-            OS_versionName="Mac OS X 10.4-TIGER (unsupported)";
-            break;
-        case QSysInfo::MV_10_5:
-            OS_versionName="Mac OS X 10.5-LEOPARD (unsupported)";
-            break;
-        case QSysInfo::MV_10_6:
-            OS_versionName="Mac OS X 10.6-SNOWLEOPARD";
-            break;
-        case QSysInfo::MV_10_7:
-            OS_versionName="Mac OS X 10.7-LION";
-            break;
-        case QSysInfo::MV_10_8:
-            OS_versionName="Mac OS X 10.8-MONTAINLION";
-            break;
-        case QSysInfo::MV_10_9:
-            OS_versionName="Mac OS X 10.9-MAVERICKS";
-            break;
-        default:
-            OS_versionName="Unknown Macintosh version";
-            break;
-    }
-    qWarning()<<"mac version:"<<OS_versionName;
-    ver+=" ("+OS_versionName+")";
-#endif
+
+    ver+=get_OSVersion();
+
     Settings::setSetting("qtVlm_version",ver);
 }
 void MainWindow::continueSetup()
@@ -569,6 +467,115 @@ void MainWindow::continueSetup()
     Util::setFontDialog(menuBar);
 }
 
+QString MainWindow::get_OSVersion(void) {
+    QString ver="";
+#ifdef __UNIX_QTVLM
+    ver=" (UNIX)";
+#endif
+#ifdef __WIN_QTVLM
+    QString OS_versionName;
+    int windowsVersion=QSysInfo::windowsVersion();
+    switch(windowsVersion)
+    {
+        case QSysInfo::WV_32s:
+            OS_versionName="Windows 3.1 with Win 32s";
+            break;
+        case QSysInfo::WV_95:
+            OS_versionName="Windows 95";
+            break;
+        case QSysInfo::WV_98:
+            OS_versionName="Windows 98";
+            break;
+        case QSysInfo::WV_Me:
+            OS_versionName="Windows Me";
+            break;
+        case QSysInfo::WV_NT:
+            OS_versionName="Windows NT";
+            break;
+        case QSysInfo::WV_2000:
+            OS_versionName="Windows 2000";
+            break;
+        case QSysInfo::WV_XP:
+            OS_versionName="Windows XP";
+            break;
+        case QSysInfo::WV_2003:
+            OS_versionName="Windows Server 2003";
+            break;
+        case QSysInfo::WV_VISTA:
+            OS_versionName="Windows VISTA";
+            break;
+        case QSysInfo::WV_WINDOWS7:
+            OS_versionName="Windows 7";
+            break;
+        case QSysInfo::WV_WINDOWS8:
+            OS_versionName="Windows 8";
+            break;
+        case QSysInfo::WV_CE:
+            OS_versionName="Windows CE";
+            break;
+        case QSysInfo::WV_CENET:
+            OS_versionName="Windows CE .NET";
+            break;
+        case QSysInfo::WV_CE_5:
+            OS_versionName="Windows CE 5.x";
+            break;
+        case QSysInfo::WV_CE_6:
+            OS_versionName="Windows CE 6.x";
+            break;
+        default:
+            OS_versionName="Unknown Windows version";
+            break;
+    }
+    qWarning()<<"windows version:"<<OS_versionName;
+    ver=" ("+OS_versionName+")";
+#endif
+#ifdef __MAC_QTVLM
+    QString OS_versionName;
+    int windowsVersion=QSysInfo::macVersion();
+    switch(windowsVersion)
+    {
+        case QSysInfo::MV_9:
+            OS_versionName="Mac OS 9 (unsupported)";
+            break;
+        case QSysInfo::MV_10_0:
+            OS_versionName="Mac OS X 10.0-CHEETAH (unsupported)";
+            break;
+        case QSysInfo::MV_10_1:
+            OS_versionName="Mac OS X 10.1-PUMA (unsupported)";
+            break;
+        case QSysInfo::MV_10_2:
+            OS_versionName="Mac OS X 10.2-JAGUAR (unsupported)";
+            break;
+        case QSysInfo::MV_10_3:
+            OS_versionName="Mac OS X 10.3-PANTHER (unsupported)";
+            break;
+        case QSysInfo::MV_10_4:
+            OS_versionName="Mac OS X 10.4-TIGER (unsupported)";
+            break;
+        case QSysInfo::MV_10_5:
+            OS_versionName="Mac OS X 10.5-LEOPARD (unsupported)";
+            break;
+        case QSysInfo::MV_10_6:
+            OS_versionName="Mac OS X 10.6-SNOWLEOPARD";
+            break;
+        case QSysInfo::MV_10_7:
+            OS_versionName="Mac OS X 10.7-LION";
+            break;
+        case QSysInfo::MV_10_8:
+            OS_versionName="Mac OS X 10.8-MONTAINLION";
+            break;
+        case QSysInfo::MV_10_9:
+            OS_versionName="Mac OS X 10.9-MAVERICKS";
+            break;
+        default:
+            OS_versionName="Unknown Macintosh version";
+            break;
+    }
+    qWarning()<<"mac version:"<<OS_versionName;
+    ver=" ("+OS_versionName+")";
+#endif
+    return ver;
+}
 
 void MainWindow::loadBoard()
 {

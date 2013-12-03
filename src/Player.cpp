@@ -132,17 +132,12 @@ void Player::doRequest(int requestCmd)
     }
 }
 
-void Player::requestFinished (QByteArray res_byte)
-{
-    QJson::Parser parser;
-    bool ok;
+void Player::requestFinished (QByteArray res_byte) {
 
     //qWarning() << "Res=" << res_byte;
 
-    QVariantMap result = parser.parse (res_byte, &ok).toMap();
-    if (!ok) {
-        qWarning() << "Error parsing json data " << res_byte;
-        qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
+    QVariantMap result;
+    if (!inetClient::JSON_to_map(res_byte,&result)) {
         updating=false;
         emit playerUpdated(false,this);
         return;

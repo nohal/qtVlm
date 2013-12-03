@@ -33,6 +33,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "dataDef.h"
 #include "inetClient.h"
 #include "vlmLine.h"
+
 struct raceData {
     QString idrace;
     QString oppList;

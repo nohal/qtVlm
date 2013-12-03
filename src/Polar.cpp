@@ -779,13 +779,9 @@ void polarList::get_polarList(void)
 
 void polarList::requestFinished(QByteArray res)
 {
-    QJson::Parser parser;
-    bool ok;
-
-    QList<QVariant> result = parser.parse (res, &ok).toList();
-    if (!ok) {
-        qWarning() << "Error parsing json data " << res;
-        qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
+    QList<QVariant> result;
+    if (!inetClient::JSON_to_list(res,&result)) {
+        return;
     }
 
     qWarning() << "Polar list: " ;

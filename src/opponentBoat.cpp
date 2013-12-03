@@ -892,13 +892,9 @@ void opponentList::requestFinished (QByteArray res_byte)
     {
         case OPP_BOAT_REAL:
         {
-            QJson::Parser parser;
-            bool ok;
-
-            QVariantMap result = parser.parse (res_byte, &ok).toMap();
-            if (!ok) {
-                qWarning() << "Error parsing json data " << res_byte;
-                qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
+            QVariantMap result;
+            if (!inetClient::JSON_to_map(res_byte,&result)) {
+                return;
             }
             QVariantList vv=result["reals"].toList();
             QStringList idReals;
@@ -962,14 +958,9 @@ void opponentList::requestFinished (QByteArray res_byte)
         }
         case OPP_BOAT_DATA:
             {
-                QJson::Parser parser;
-                bool ok;
-
-                QVariantMap result = parser.parse (res_byte, &ok).toMap();
-                if (!ok) {
-                    qWarning() << "Error parsing json data " << res_byte;
-                    qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
-                }
+                QVariantMap result;
+                if (!inetClient::JSON_to_map(res_byte,&result))
+                    return;
 
                 if(checkWSResult(res_byte,"OppList_getOppData2",main))
                 {
@@ -1262,14 +1253,9 @@ void opponentList::requestFinished (QByteArray res_byte)
         case OPP_INFO_REAL:
         {
             //qWarning()<<"inside OPP_INFO_REAL";
-            QJson::Parser parser;
-            bool ok;
-
-            QVariantMap result=parser.parse (res_byte, &ok).toMap();
-            if (!ok) {
-                qWarning() << "Error parsing json data " << res_byte;
-                qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
-            }
+            QVariantMap result;
+            if (!inetClient::JSON_to_map(res_byte,&result))
+                return;
             QVariantMap real = result["profile"].toMap();
             opp->setRealData(real["shortname"].toString(),
                              real["boatname"].toString(),
@@ -1325,17 +1311,11 @@ QStringList opponentList::readData(QString in_data,int type)
 
 void opponentList::getTrace(QByteArray buff, QList<vlmPoint> * trace)
 {
-    QJson::Parser parser;
-    bool ok;
-
     /* clear current trace*/
     //trace->clear();
 
-    QVariantMap result = parser.parse (buff, &ok).toMap();
-    if (!ok) {
-        qWarning() << "Error parsing json data " << buff;
-        qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
-    }
+    QVariantMap result;
+    if (!inetClient::JSON_to_map(buff,&result)) return;
 
     if(checkWSResult(buff,"OppList_getTrack",main))
     {

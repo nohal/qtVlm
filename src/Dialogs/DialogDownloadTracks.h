@@ -3,10 +3,11 @@
 
 #include <QDialog>
 #include <QFileDialog>
+
 #include "inetClient.h"
 #include "ui_DialogDownloadTracks.h"
 #include "class_list.h"
-#include "parser.h"
+
 
 namespace Ui {
     class DialogDownloadTracks;
@@ -41,7 +42,6 @@ private:
     bool dlRunning;
 
     bool doRequest(int reqType);
-    void jsonError (QJson::Parser * parser);
     void updateFileName(bool truncTrack);
 
 private slots:

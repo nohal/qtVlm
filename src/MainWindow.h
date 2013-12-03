@@ -297,6 +297,8 @@ signals:
         bool use_old_board;
 
         void loadGrib2();
+
+        QString get_OSVersion(void);
 };
 
 #endif

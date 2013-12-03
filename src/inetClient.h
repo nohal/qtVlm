@@ -54,6 +54,10 @@ class inetClient
 
         int nbAuth;
 
+        static bool JSON_to_map(QByteArray buf,QVariantMap *map);
+        static bool JSON_to_list(QByteArray buf, QList<QVariant> *list);
+        static bool map_to_JSON(QVariantMap map, QByteArray *json);
+
     protected:
        void inetGet(int currentRequest,QString url,bool needAuth);
        void inetGetProgress(int currentRequest,QString requestUrl, bool needAuth);
@@ -67,6 +71,9 @@ class inetClient
        bool hasInet(void) {return (inet!=NULL); }
 
        bool checkWSResult(QByteArray res,QString caller,QWidget * parent,QString order=QString());
+
+
+
 
        void inetAbort();
 

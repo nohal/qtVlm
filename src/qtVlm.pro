@@ -15,7 +15,6 @@ INCLUDEPATH += objs \
     libs/bzip2 \
     libs/zlib-1.2.7 \
         libs/qextserialport12/src \
-    libs/qjson \
     libs/nmealib/src/nmea \
     libs/libbsb \
     libs/miniunz \
@@ -28,7 +27,6 @@ LIBS += -Llibs/build \
     -lminiunz \
     -lbz2 \
     -lz \
-    -lqjson \
     -lnmea \
     -lbsb \
     -lg2clib \
@@ -39,7 +37,9 @@ LIBS += -Llibs/build \
 QT_V5{
 LIBS += -lQt5ExtSerialPort
 } else {
-LIBS += -lqextserialport
+LIBS += -lqextserialport \
+    -lqjson
+INCLUDEPATH += libs/qjson
 }
 
 asan {

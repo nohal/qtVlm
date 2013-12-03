@@ -19,23 +19,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
 #include <QDebug>
+#include <QStandardItemModel>
+#include <QStandardItem>
+#include <QImage>
+#include <QDesktopWidget>
+#include <QDebug>
+#include <QInputDialog>
 
 #include "DialogRace.h"
 #include "Util.h"
-
 #include "opponentBoat.h"
 #include "mycentralwidget.h"
 #include "boatVLM.h"
 #include "MainWindow.h"
-#include "parser.h"
-#include <QStandardItemModel>
-#include <QStandardItem>
 #include "Orthodromie.h"
-#include <QImage>
-#include <QDesktopWidget>
 #include "settings.h"
-#include <QDebug>
-#include <QInputDialog>
 
 #define RACE_NO_REQUEST     0
 #define RACE_LIST_BOAT      1
@@ -376,15 +374,11 @@ void DialogRace::requestFinished (QByteArray res_byte)
 {
     struct boatParam * ptr;
 
-    QJson::Parser parser;
-    bool ok;
     QVariantMap result;
     if(getCurrentRequest()!=FLAG_REQUEST)
     {
-        result = parser.parse (res_byte, &ok).toMap();
-        if (!ok) {
-            qWarning() << "Error parsing json data " << res_byte;
-            qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
+        if (!inetClient::JSON_to_map(res_byte,&result)) {
+            return;
         }
 
         if(!checkWSResult(res_byte,"raceDialog->RACE_LIST_BOAT",main))

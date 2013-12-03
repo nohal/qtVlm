@@ -1,11 +1,32 @@
+/**********************************************************************
+qtVlm: Virtual Loup de mer GUI
+Copyright (C) 2013 - Christophe Thomas aka Oxygen77
+
+http://qtvlm.sf.net
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+***********************************************************************/
+
 #include <QMessageBox>
 #include <QTextStream>
 #include <QDebug>
+#include <QDir>
+
 #include "DialogDownloadTracks.h"
 #include "mycentralwidget.h"
 #include "Player.h"
 #include "settings.h"
-#include <QDir>
 #include "Util.h"
 
 #define VLM_RACE_INFO 2
@@ -22,7 +43,7 @@ DialogDownloadTracks::DialogDownloadTracks(MainWindow * ,myCentralWidget * paren
     ui->setupUi(this);
     Util::setFontDialog(this);
     this->raceIsValid=false;
-    this->setWhatsThis(tr("Permet de telecharger manuellement une trace pour une course VLM.\nLa boîte �  cocher trace partielle s'active apres l'entree d'un numero de course valide, et permet de requérir une trace tronquée."));
+    this->setWhatsThis(tr("Permet de telecharger manuellement une trace pour une course VLM.\nLa boÃŪte Ã  cocher trace partielle s'active apres l'entree d'un numero de course valide, et permet de requÃĐrir une trace tronquÃĐe."));
     ui->raceIDEdit->setToolTip(tr("Numero de la course\n http://www.v-l-m.org/races.php?fulllist=1"));
     ui->boatIDEdit->setToolTip(tr("Numero du bateau"));
     ui->startTimeEdit->setToolTip(tr("Debut de la trace"));
@@ -248,10 +269,8 @@ void DialogDownloadTracks::requestFinished (QByteArray data)
     switch(getCurrentRequest())
     {
     case VLM_GET_TRACK:
-    {
-        QJson::Parser parser;
-        bool ok;
-        QVariantMap result=parser.parse (data, &ok).toMap();
+    {        
+        QVariantMap result;
         if (routeName.isEmpty())
         {
             QMessageBox msgBox;
@@ -260,8 +279,7 @@ void DialogDownloadTracks::requestFinished (QByteArray data)
             msgBox.exec();
             return;
         }
-        if (!ok) {
-            jsonError(&parser);
+        if (!inetClient::JSON_to_map(data,&result)) {
             return;
         }
         if (result["nb_tracks"]!=0)
@@ -326,9 +344,7 @@ void DialogDownloadTracks::requestFinished (QByteArray data)
     break;
     case VLM_GET_PARTIAL_TRACK:
     {
-        QJson::Parser parser;
-        bool ok;
-        QVariantMap result=parser.parse (data, &ok).toMap();
+        QVariantMap result;
         if (routeName.isEmpty())
         {
             QMessageBox msgBox;
@@ -337,8 +353,7 @@ void DialogDownloadTracks::requestFinished (QByteArray data)
             msgBox.exec();
             return;
         }
-        if (!ok) {
-            jsonError(&parser);
+        if (!inetClient::JSON_to_map(data,&result)) {
             return;
         }
         if (result["nb_tracks"]!=0)
@@ -407,16 +422,13 @@ void DialogDownloadTracks::requestFinished (QByteArray data)
        // {"idraces":"20110524","racename":"Transatlantic NY - Lizard","started":"1","deptime":"1306263600","startlong":"-73837","startlat":"40458","boattype":"boat_VLM70","closetime":"1337820526","racetype":"1","firstpcttime":"200","depend_on":"0","qualifying_races":"","idchallenge":"","coastpenalty":"900","bobegin":"0","boend":"0","maxboats":"0","theme":"","vacfreq":"5","races_waypoints":{"1":{"idwaypoint":"2011052401","wpformat":"0","wporder":"1","wptype":"Finish","latitude1":"49960","longitude1":"-5201","latitude2":"49900","longitude2":"-5201","libelle":"Point Lizard","maparea":"12"}},"races_instructions":[{"idraces":"20110524","instructions":"http:\/\/www.virtual-winds.org\/forum\/index.php?s=&showtopic=6853&view=findpost&p=225544","flag":"13","autoid":"271"}]}
 
         //qWarning()<<"inside VLM_RACE_INFO";
-        QJson::Parser parser;
-        bool ok;
 
-        QVariantMap result=parser.parse (data, &ok).toMap();
-        if (!ok) {
+        QVariantMap result;
+        if (!inetClient::JSON_to_map(data,&result)) {
             if (data.startsWith("0"))
                 qWarning()<<"No race such as: "<<raceID;
             else
             {
-                jsonError(&parser);
                 return;
             }
             raceIsValid=false;
@@ -455,13 +467,8 @@ void DialogDownloadTracks::requestFinished (QByteArray data)
     case VLM_BOAT_INFO:
     {
         //qWarning()<<"inside VLM_BOAT_INFO";
-        QJson::Parser parser;
-        bool ok;
-
-        QVariantMap result=parser.parse (data, &ok).toMap();
-        if (!ok)
-        {
-            jsonError(&parser);
+        QVariantMap result;
+        if (!inetClient::JSON_to_map(data,&result)) {
             boatIsValid=false;
             ui->labelDisplayBoatName->setText("N/A");
             ui->fetchButton->setEnabled(false);
@@ -494,15 +501,6 @@ void DialogDownloadTracks::requestFinished (QByteArray data)
     }
 }
 
-void DialogDownloadTracks::jsonError (QJson::Parser * parser)
-{
-    //qWarning() << "Error parsing json data " << data;
-    qWarning() << "Error: " << parser->errorString() << " (line: " << parser->errorLine() << ")";
-    QMessageBox::critical (this,
-                           tr("Erreur"),
-                           tr("Erreur de lecture json."));
-}
-
 void DialogDownloadTracks::slot_fetch (void)
 {
     ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
@@ -525,13 +523,10 @@ void DialogDownloadTracks::slot_fetch (void)
             else
             {
                 QTextStream stream(&jsonFile);
-                QJson::Parser parser;
-                bool ok;
                 QByteArray data;
                 stream>>data;
-                QVariantMap result=parser.parse (data, &ok).toMap();
-                if (!ok) {
-                    jsonError(&parser);
+                QVariantMap result;
+                if (!inetClient::JSON_to_map(data,&result)) {
                     return;
                 }
                 if (result["nb_tracks"]!=0)
@@ -553,13 +548,10 @@ void DialogDownloadTracks::slot_fetch (void)
             else
             {
                 QTextStream stream(&jsonFile);
-                QJson::Parser parser;
-                bool ok;
                 QByteArray data;
                 stream>>data;
-                QVariantMap result=parser.parse (data, &ok).toMap();
-                if (!ok) {
-                    jsonError(&parser);
+                QVariantMap result;
+                if (!inetClient::JSON_to_map(data,&result)) {
                     return;
                 }
                 if (result["nb_tracks"]!=0)

@@ -20,8 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QMessageBox>
 #include <QDebug>
-#include <parser.h>
-#include <serializer.h>
 
 #include "boatVLM.h"
 
@@ -227,8 +225,8 @@ void boatVLM::sendPilotMode(QString phpScript,QVariantMap instruction) {
 
         instruction.insert("idu",getId());
 
-        QJson::Serializer serializer;
-        QByteArray json = serializer.serialize(instruction);
+        QByteArray json;
+        inetClient::map_to_JSON(instruction,&json);
 
         QTextStream(&url) << "/ws/boatsetup/" << phpScript;
 
@@ -377,13 +375,9 @@ void boatVLM::requestFinished (QByteArray res_byte)
 
         case VLM_REQUEST_BOAT:
         {
-            QJson::Parser parser;
-            bool ok;
-
-            QVariantMap result = parser.parse (res_byte, &ok).toMap();
-            if (!ok) {
-                qWarning() << "Error parsing json data " << res_byte;
-                qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
+            QVariantMap result;
+            if (!inetClient::JSON_to_map(res_byte,&result)) {
+                return;
             }
 
             if(1 /*checkWSResult(res_byte,"BoatVLM_boatf",mainWindow)*/) // pas de wsCheck car VLM ne renvoit pas "success"
@@ -480,13 +474,13 @@ void boatVLM::requestFinished (QByteArray res_byte)
                 lon = longitude/1000;
 
                 if(country!=newCountry) {
-                    qWarning() << "New flag: " << newCountry;
+                    //qWarning() << "New flag: " << newCountry;
                     flag=QImage();
                     country=newCountry;
                     flagBad=false;
                 }
-                else
-                    qWarning() << "country ok: " << newCountry << "(old: " << country << ")";
+                /*else
+                    qWarning() << "country ok: " << newCountry << "(old: " << country << ")";*/
 
                 if(activated && !this->forcePolar && !polarVlm.isEmpty())
                 {
@@ -593,13 +587,9 @@ void boatVLM::requestFinished (QByteArray res_byte)
         }
         case VLM_REQUEST_GATE:
             {
-                QJson::Parser parser;
-                bool ok;
-
-                QVariantMap result = parser.parse (res_byte, &ok).toMap();
-                if (!ok) {
-                    qWarning() << "Error parsing json data " << res_byte;
-                    qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
+                QVariantMap result;
+                if (!inetClient::JSON_to_map(res_byte,&result)) {
+                    return;
                 }
 
                 //qWarning() << "id Race: " << result["idraces"].toString();

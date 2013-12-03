@@ -20,8 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QTextStream>
 #include <QDebug>
-#include <parser.h>
-#include <serializer.h>
 
 #include "Util.h"
 #include "boat.h"
@@ -308,60 +306,59 @@ void DialogPilototo::done(int result)
     Settings::setSetting(this->objectName()+".positiony",this->pos().y());
     if(result==QDialog::Accepted)
     {
-	/* checking if there is un validated instructions */
-	bool hasUnValidated =false;
-    for(int i=0;i<instructions_list.count();++i)
-	{
-	    if(instructions_list[i]->getHasChanged())
-	    {
-		hasUnValidated=true;
-		break;
-	    }
-	}
+        /* checking if there is un validated instructions */
+        bool hasUnValidated =false;
+        for(int i=0;i<instructions_list.count();++i)
+        {
+            if(instructions_list[i]->getHasChanged())
+            {
+                hasUnValidated=true;
+                break;
+            }
+        }
 
-	if(hasUnValidated)
-	{
-	    int rep = QMessageBox::question (this,
-            tr("Instructions non Validees"),
-            tr("Il reste des instructions non validees. Elles ne seront pas envoyees a VLM\nContinuer la sauvegarde?"),
-	    QMessageBox::Yes | QMessageBox::No);
-	    if (rep == QMessageBox::No)
-		return;
-	}
-    if(!confirmChange()) return;
-	/* creating list of pilototo.php requests*/
+        if(hasUnValidated)
+        {
+            int rep = QMessageBox::question (this,
+                                             tr("Instructions non Validees"),
+                                             tr("Il reste des instructions non validees. Elles ne seront pas envoyees a VLM\nContinuer la sauvegarde?"),
+                                             QMessageBox::Yes | QMessageBox::No);
+            if (rep == QMessageBox::No)
+                return;
+        }
+        if(!confirmChange()) return;
+        /* creating list of pilototo.php requests*/
         QList<struct instruction*> * instructions = new QList<struct instruction*>;
-        QJson::Serializer serializer;
         struct instruction * instr_ptr;
-	/* processing del */
-    for(int i=0;i<delList.count();++i)
+        /* processing del */
+        for(int i=0;i<delList.count();++i)
         {
             QVariantMap cur_instruction;
             cur_instruction.insert("taskid",delList[i]);
             cur_instruction.insert("idu",myBoat->getBoatId().toInt());
             instr_ptr=new struct instruction();
             instr_ptr->script=PILOT_DEL;
-            instr_ptr->param=serializer.serialize(cur_instruction);
+            inetClient::map_to_JSON(cur_instruction,&instr_ptr->param);
             instructions->append(instr_ptr);
         }
-	/* processing others */
-    for(int i=0;i<instructions_list.count();++i)
-	{
+        /* processing others */
+        for(int i=0;i<instructions_list.count();++i)
+        {
             DialogPilototoInstruction * instr=instructions_list[i];
             if(instr->getTstamp()<(int)QDateTime::currentDateTime().toUTC().toTime_t()) continue;
-	    if(!instr->getHasChanged())
-	    { /* only processing activated and validated instructions */
+            if(!instr->getHasChanged())
+            { /* only processing activated and validated instructions */
                 QVariantMap cur_instruction;
                 QVariantMap pip;
                 int type;
                 int mode=instr->getMode()+1;
                 cur_instruction.insert("idu",myBoat->getBoatId().toInt());
-		if(instr->getRef()!=-1) /* updating */
+                if(instr->getRef()!=-1) /* updating */
                 {
                     type=PILOT_UPD;
                     cur_instruction.insert("taskid",instr->getRef());
                 }
-		else /* adding */
+                else /* adding */
                 {
                     type=PILOT_ADD;
                 }
@@ -386,11 +383,11 @@ void DialogPilototo::done(int result)
                 }
                 instr_ptr=new struct instruction();
                 instr_ptr->script=type;
-                instr_ptr->param=serializer.serialize(cur_instruction);
+                inetClient::map_to_JSON(cur_instruction,&instr_ptr->param);
                 instructions->append(instr_ptr);
-	    }
-	}
-	/* ready to send */
+            }
+        }
+        /* ready to send */
         currentList=instructions;
 
         for(int i=0;i<currentList->count();++i)
@@ -400,7 +397,7 @@ void DialogPilototo::done(int result)
     }
 
     while (!instructions_list.isEmpty())
-	delete instructions_list.takeFirst();
+        delete instructions_list.takeFirst();
 
     QDialog::done(result);
 }
@@ -594,7 +591,6 @@ void DialogPilototo::setInstructions(boat * pvBoat, QList<POI *> pois)
     }
     if(!confirmChange()) return;
     QList<struct instruction*> * instructions = new QList<struct instruction*>;
-    QJson::Serializer serializer;
     struct instruction * instr_ptr;
     QStringList plist = my_boat->getPilototo();
     for(int n=0;n<plist.count();++n)
@@ -606,7 +602,7 @@ void DialogPilototo::setInstructions(boat * pvBoat, QList<POI *> pois)
         cur_instruction.insert("idu",myBoat->getBoatId().toInt());
         instr_ptr=new struct instruction();
         instr_ptr->script=PILOT_DEL;
-        instr_ptr->param=serializer.serialize(cur_instruction);
+        inetClient::map_to_JSON(cur_instruction,&instr_ptr->param);
         instructions->append(instr_ptr);
     }
     for(int n=1;n<pois.count();++n)
@@ -631,7 +627,7 @@ void DialogPilototo::setInstructions(boat * pvBoat, QList<POI *> pois)
             pip.insert("targetandhdg",QString().sprintf("%.2f",poi->getPiloteWph()));
         cur_instruction.insert("pip",pip);
         cur_instruction.insert("idu",myBoat->getBoatId().toInt());
-        instr_ptr->param=serializer.serialize(cur_instruction);
+        inetClient::map_to_JSON(cur_instruction,&instr_ptr->param);
         instructions->append(instr_ptr);
         poi->setPiloteDate(-1);
         poi->setPiloteWph(-1);

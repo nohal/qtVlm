@@ -2358,12 +2358,9 @@ void myCentralWidget::slot_importRouteFromMenu(bool ortho)
             QString frName;
             QByteArray buff;
             buff.append(track);
-            QJson::Parser parser;
-            QVariantMap result = parser.parse (buff, &ok).toMap();
-            if (!ok)
+            QVariantMap result;
+            if (!inetClient::JSON_to_map(buff,&result))
             {
-                qWarning() << "Error parsing json data ";
-                qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
                 return;
             }
             if(track.contains("nom"))
