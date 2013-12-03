@@ -92,6 +92,7 @@ boatReal::boatReal(QString pseudo, bool activated, Projection * proj,MainWindow 
     this->lastUpdateTime=QDateTime().currentDateTimeUtc().toTime_t();
     this->displayNMEA=false;
     this->pause=true;
+    hide();
 }
 
 boatReal::~boatReal()
