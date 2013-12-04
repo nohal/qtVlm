@@ -67,7 +67,8 @@ class POI : public QGraphicsWidget
         bool    getOptimizing(void) {return this->optimizing;}
         bool    getWasWP(void) {return this->wasWP;}
         void    setWasWP(bool b){this->wasWP=b;}
-        static QString  getTypeStr(int index);
+        static QString  getTypeStr(int index){    QString type_str[3] = { "POI", "Marque", "Balise" };
+                                                  return type_str[index];}
         QString  getTypeStr(void)      {return getTypeStr(type); }
         int     getNavMode(){return this->navMode;}
         bool    getHas_eta(void)        {return useRouteTstamp;}

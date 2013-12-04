@@ -38,10 +38,12 @@ class BoardVlmNew;
 class DialogHorn;
 
 /* boat*.h */
+class BoatInterface;
 class boat;
 class boatVLM;
 class boatReal;
 class Player;
+
 
 /* DialogBoatAccount.h */
 class DialogBoatAccount;
@@ -114,6 +116,7 @@ class IsoLine;
 class LoadGribFile;
 
 /* MainWindow.h */
+class MainWindowInterface;
 class MainWindow;
 class Progress;
 
@@ -173,6 +176,7 @@ class DialogPoi;
 class DialogPoiDelete;
 
 /* Polar.h */
+class PolarInterface;
 class Polar;
 class polarList;
 

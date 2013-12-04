@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QMutex>
 
 #include "inetClient.h"
+#include "PolarInterface.h"
 
 #define PI     M_PI
 #define PI_2   M_PI_2
@@ -38,7 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define degToRad(angle) (((angle)/180.0) * PI)
 #define radToDeg(angle) (((angle)*180.0) / PI)
 
-class Polar : public QObject
+class Polar : public PolarInterface
 {Q_OBJECT
     public:
         Polar(MainWindow * mainWindow);

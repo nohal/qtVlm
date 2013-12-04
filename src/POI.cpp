@@ -749,11 +749,6 @@ void POI::setRouteTimeStamp(time_t date)
     //update();
 }
 
-QString POI::getTypeStr(int index)
-{
-    QString type_str[3] = { "POI", "Marque", "Balise" };
-    return type_str[index];
-}
 
 void POI::chkIsWP(void)
 {

@@ -91,6 +91,8 @@ class boatReal : public boat
         bool getDisplayNMEA(){return this->displayNMEA;}
         void setDisplayNMEA(bool b){this->displayNMEA=b;}
         bool getPause(){return pause;}
+        bool get_useSkin() const{return false;}
+        QString get_boardSkin() const{return QString();}
 
     public slots:
         void slot_selectBoat(void) { boat::slot_selectBoat(); }

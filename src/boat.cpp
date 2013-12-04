@@ -39,13 +39,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 boat::boat(QString      pseudo, bool activated,
            Projection * proj,MainWindow * main,myCentralWidget * parent):
-   QGraphicsWidget(),
    boatType (BOAT_NOBOAT),
    prevVac (0),
    nextVac (0),
    minSpeedForEngine (0),
    speedWithEngine (4)
 {
+    this->setParent(parent);
     this->mainWindow=main;
     this->parent=parent;
 

@@ -29,8 +29,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "mycentralwidget.h"
 
 #include "class_list.h"
-
-class boat: public QGraphicsWidget
+#include "BoatInterface.h"
+class boat: public BoatInterface
 { Q_OBJECT
     public:
         boat(QString pseudo, bool activated,
@@ -77,6 +77,7 @@ class boat: public QGraphicsWidget
         int getNWP(void)                {    return nWP; }
         QString getPolarName(void)      {    return polarName; }
         Polar * getPolarData(void)      {    return polarData; }
+        PolarInterface * getPolarDataInterface(){return (PolarInterface *)polarData;}
         bool getLockStatus(void)        {    return changeLocked;}
         bool getForceEstime(void)       {    return forceEstime; }
         int getEstimeType(void)         {    return estime_type; }

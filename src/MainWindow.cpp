@@ -226,8 +226,8 @@ void MainWindow::slot_gribFileReceived(QString fileName)
 
 //=============================================================
 MainWindow::MainWindow(int w, int h, QWidget *parent)
-    : QMainWindow(parent)
 {
+    this->setParent(parent);
     restartNeeded=false;
     setWindowIcon (QIcon (appFolder.value("icon")+"qtVlm_48x48.png"));
     noSave=false;
@@ -626,7 +626,10 @@ void MainWindow::loadBoard()
     Settings::setSetting("showDashBoard",1);
     this->showDashBoard();
 }
-
+QColor MainWindow::getWindColorStatic(const double &v, const bool &smooth)
+{
+    return MapDataDrawer::getWindColorStatic(v,smooth);
+}
 //-----------------------------------------------
 void MainWindow::listAllChildren(QObject * ptr,int depth=0)
 {
@@ -800,15 +803,15 @@ void MainWindow::closeProgress(void)
         progress->newStep(95,tr("Opening kap"));
         my_centralWidget->imgKap_open(Settings::getSetting("LastKap","").toString());
     }
-    QPluginLoader plugin("pluginExamplePlugin");
-    plugin.load();
-    if(!plugin.isLoaded())
-        qWarning()<<"error loading plugin"<<plugin.errorString();
-    else
-    {
-        PluginExampleInterface * myPlugin=qobject_cast<PluginExampleInterface *>(plugin.instance());
-        myPlugin->initPluginExample();
-    }
+//    QPluginLoader plugin("pluginExamplePlugin");
+//    plugin.load();
+//    if(!plugin.isLoaded())
+//        qWarning()<<"error loading plugin"<<plugin.errorString();
+//    else
+//    {
+//        PluginExampleInterface * myPlugin=qobject_cast<PluginExampleInterface *>(plugin.instance());
+//        myPlugin->initPluginExample(this);
+//    }
     delete progress;
     progress=NULL;
     if(restartNeeded)

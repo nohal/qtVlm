@@ -21,13 +21,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef BOARDINTERFACE_H
 #define BOARDINTERFACE_H
 #include <QDialog>
-#include <MainWindow.h>
+#include <MainWindowInterface.h>
 class BoardInterface : public QDialog
 {
     Q_OBJECT
 public:
-    virtual ~BoardInterface();
-    virtual void initBoard(MainWindow * main)=0;
+    virtual ~BoardInterface(){}
+    virtual void initBoard(MainWindowInterface * main)=0;
 };
 Q_DECLARE_INTERFACE(BoardInterface,"qtVlm.plugins.boardInterface/1.0")
 #endif // BOARDINTERFACE_H

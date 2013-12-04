@@ -42,8 +42,8 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include "class_list.h"
 #include "dataDef.h"
-
-class MainWindow: public QMainWindow
+#include "MainWindowInterface.h"
+class MainWindow: public MainWindowInterface
 {
     Q_OBJECT
 
@@ -95,6 +95,8 @@ class MainWindow: public QMainWindow
 
         void loadBoard();
         void showDashBoard();
+        BoatInterface * get_selectedBoatInterface(){return (BoatInterface*)this->getSelectedBoat();}
+        QColor getWindColorStatic(const double &v, const bool &smooth=true);
 public slots:
         void slot_POI_input();
         void slot_showPOI_input(POI *poi=NULL, const bool &fromMenu=false);        

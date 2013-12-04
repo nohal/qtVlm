@@ -27,16 +27,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "class_list.h"
 #include "BoardTools.h"
 #include "ui_BoardVlmNew.h"
-#include "MainWindow.h"
+#include "MainWindowInterface.h"
 #include "BoardInterface.h"
+#include "dataDef.h"
 
-class BoardVlmNew : public BoardInterface, public Ui::BoardVlmNew
+class Q_DECL_EXPORT BoardVlmNew : public BoardInterface, public Ui::BoardVlmNew
 {
     Q_OBJECT
-    
+    Q_PLUGIN_METADATA(IID "qtVlm.plugins.pluginInterfaceExample/1.0")
+    Q_INTERFACES(BoardInterface)
+
 public:
-    BoardVlmNew(MainWindow *main);
-    void initBoard(MainWindowInterface *main){Q_UNUSED(main)}
+    void initBoard(MainWindowInterface *main);
     ~BoardVlmNew();
 private slots:
     void slot_updateBtnWP();
@@ -65,8 +67,8 @@ private slots:
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
 private:
-    MainWindow * main;
-    boatVLM * myBoat;
+    MainWindowInterface * main;
+    BoatInterface * myBoat;
     void updateLcds();
     QString defaultStyleSheet;
     QTimer * timer;

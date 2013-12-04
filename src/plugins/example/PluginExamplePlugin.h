@@ -4,7 +4,7 @@
 
 #include <QDialog>
 #include "PluginExampleInterface.h"
-
+#include "MainWindowInterface.h"
 class Q_DECL_EXPORT PluginExamplePlugin : public QObject, public PluginExampleInterface
 {
     Q_OBJECT
@@ -12,6 +12,6 @@ class Q_DECL_EXPORT PluginExamplePlugin : public QObject, public PluginExampleIn
     Q_INTERFACES(PluginExampleInterface)
 
 public:
-    void initPluginExample(void);
+    void initPluginExample(MainWindowInterface * main);
 };
 #endif // PLUGINEXAMPLEPLUGIN_H
