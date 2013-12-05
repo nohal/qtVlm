@@ -715,38 +715,6 @@ QString Util::pos2String(const int &type, const double &value)
     return str;
 }
 
-
-QString  url_name[NB_URL] = { "std","s10","s11"
-#ifdef __QTVLM_WITH_TEST
-                 , "testing"
-#endif
-
-                          };
-QString  url_str[NB_URL] = { "v-l-m.org", "s10.v-l-m.org","s11.v-l-m.org"
-#ifdef __QTVLM_WITH_TEST
-                 , "testing.v-l-m.org"
-#endif
-             };
-
-QString Util::getHost()
-{
-//#ifdef __QTVLM_WITH_TEST
-#if 1
-    QString host;
-    host="http://";
-    int num = Settings::getSetting("vlm_url",0).toInt();
-    if(num>=NB_URL)
-    {
-        qWarning() << "Updating wrong config for VLM url";
-        num=0;
-        Settings::setSetting("vlm_url",0);
-    }
-    return host+url_str[num];
-#else
-    return "http://v-l-m.org";
-#endif
-}
-
 void Util::computePos(Projection * proj, const QPointF & position, QPoint * screenCoord) {
     int i,j;
     computePos(proj,position.y(),position.x(),&i,&j);

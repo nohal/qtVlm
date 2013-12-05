@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogInetProgess.h"
 #include "Util.h"
 #include "dataDef.h"
+#include "settings.h"
 
 #define REQUEST_GET  0
 #define REQUEST_POST 1
@@ -107,7 +108,7 @@ void inetConnexion::doRequest(int type,inetClient* client,QString requestUrl,QSt
     QNetworkReply * currentReply;
 
     if(host.isEmpty())
-        host=Util::getHost();
+        host=inetConnexion::getHost();
     Util::paramProxy(inetManager,host);
 
     page = host+requestUrl;
@@ -288,4 +289,35 @@ void inetConnexion::slot_progess(qint64 bytesReceived, qint64 bytesTotal )
         progressDialog->updateProgress(bytesReceived,bytesTotal);
         //qWarning() << "Progress " << bytesReceived << "/" << bytesTotal;
     }
+}
+
+QString  url_name[NB_URL] = { "std","s10","s11"
+#ifdef __QTVLM_WITH_TEST
+                 , "testing"
+#endif
+
+                          };
+QString  url_str[NB_URL] = { "v-l-m.org", "s10.v-l-m.org","s11.v-l-m.org"
+#ifdef __QTVLM_WITH_TEST
+                 , "testing.v-l-m.org"
+#endif
+             };
+
+QString inetConnexion::getHost()
+{
+//#ifdef __QTVLM_WITH_TEST
+#if 1
+    QString host;
+    host="http://";
+    int num = Settings::getSetting("vlm_url",0).toInt();
+    if(num>=NB_URL)
+    {
+        qWarning() << "Updating wrong config for VLM url";
+        num=0;
+        Settings::setSetting("vlm_url",0);
+    }
+    return host+url_str[num];
+#else
+    return "http://v-l-m.org";
+#endif
 }

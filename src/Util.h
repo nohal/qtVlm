@@ -45,15 +45,6 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include <QLineF>
 
-#ifdef __QTVLM_WITH_TEST
-#define NB_URL 4
-#else
-#define NB_URL 3
-#endif
-
-extern QString url_name[NB_URL];
-extern QString url_str[NB_URL];
-
 class Util
 {
     public:
@@ -107,7 +98,7 @@ class Util
     static void getCoordFromDistanceAngle2(const double &latitude, const double &longitude,
                                            const double &distance, const double &heading, double * res_lat,double * res_lon);
     static QString pos2String(const int &type,const double &value);
-    static QString getHost();
+
     static void computePos(Projection * proj, const QPointF &position, QPoint * screenCoord);
     static void computePos(Projection * proj, const double &lat, const double &lon, int * x, int * y);
     static void computePosDouble(Projection * proj, const double &lat, const double &lon, double * x, double * y);

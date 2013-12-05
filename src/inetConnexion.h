@@ -30,6 +30,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "class_list.h"
 
+#ifdef __QTVLM_WITH_TEST
+#define NB_URL 4
+#else
+#define NB_URL 3
+#endif
+
+extern QString url_name[NB_URL];
+extern QString url_str[NB_URL];
+
 class inetConnexion : public QObject
 {
     Q_OBJECT
@@ -47,6 +56,8 @@ class inetConnexion : public QObject
         void doRequestPost(inetClient* client,QString requestUrl,QString data, QString host,bool needAuth);
 
         bool isAvailable(void);
+
+        static QString getHost();
 
     signals:
         void errorDuringGet();
