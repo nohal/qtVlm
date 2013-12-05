@@ -157,7 +157,6 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     BoardVLM.h \
     BoardVLM_tools.h \
     Dialogs/BoardTools.h \
-    Dialogs/BoardVlmNew.h \
     BarrierSet.h \
     Barrier.h \
     Dialogs/DialogEditBarrier.h \
@@ -176,7 +175,6 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     DataManager.h \
     Dialogs/DialogGribDrawing.h \
     BoardInterface.h \
-    PluginExampleInterface.h \
     MainWindowInterface.h \
     BoatInterface.h \
     PolarInterface.h
@@ -217,7 +215,6 @@ FORMS += Ui/boatAccount_dialog.ui \
     Ui/dialogLoadImg.ui \
     Ui/routeInfo.ui \
     Ui/DialogRemovePoi.ui \
-    Ui/BoardVlmNew.ui \
     Ui/DialogEditBarrier.ui \
     Ui/DialogChooseMultipleBarrierSet.ui \
     Ui/DialogChooseMultipleBoat.ui \
@@ -312,7 +309,6 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Progress.cpp \
     StatusBar.cpp \
     Magnifier.cpp \
-    Dialogs/BoardVlmNew.cpp \
     BarrierSet.cpp \
     Barrier.cpp \
     Dialogs/DialogEditBarrier.cpp \

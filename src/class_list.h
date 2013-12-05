@@ -32,7 +32,6 @@ class BoardInterface;
 class board;
 class boardVLM;
 class boardReal;
-class BoardVlmNew;
 
 /* horn */
 class DialogHorn;

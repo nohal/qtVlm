@@ -111,247 +111,75 @@
     <name>BoardVlmNew</name>
     <message>
         <source>VLM Command Board</source>
-        <translation>Tableau de bord VLM</translation>
-    </message>
-    <message>
-        <source>Compas</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>BS</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>TWS</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>TWD</source>
-        <translation></translation>
+        <translation type="obsolete">Tableau de bord VLM</translation>
     </message>
     <message>
         <source>Details</source>
-        <translation>Détails</translation>
-    </message>
-    <message>
-        <source>Polaire</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>°</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>TWA</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>VMG</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>HDG</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>VBVMG</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>WP</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Pilototo</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>background-color: rgb(239, 243, 247);</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>VLM Sync</source>
-        <translation></translation>
+        <translation type="obsolete">Détails</translation>
     </message>
     <message>
         <source>Meilleurs angles au pres/portant:</source>
-        <translation>Meilleurs angles au près/portant:</translation>
+        <translation type="obsolete">Meilleurs angles au près/portant:</translation>
     </message>
     <message>
         <source>deg</source>
-        <translation>°</translation>
+        <translation type="obsolete">°</translation>
     </message>
     <message>
         <source>Pas de WP</source>
-        <translation>Pas de WP actif</translation>
-    </message>
-    <message>
-        <source>Pas de WP actif</source>
-        <translation></translation>
+        <translation type="obsolete">Pas de WP actif</translation>
     </message>
     <message>
         <source>WP defini dans VLM (pas de POI correspondant)</source>
-        <translation>WP défini dans VLM (pas de POI correspondant dans qtVLM)</translation>
-    </message>
-    <message>
-        <source>WP VLM</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>WP: </source>
-        <translation></translation>
+        <translation type="obsolete">WP défini dans VLM (pas de POI correspondant dans qtVLM)</translation>
     </message>
     <message>
         <source>WP defini dans VLM (</source>
-        <translation>WP défini dans VLM (</translation>
-    </message>
-    <message>
-        <source> dans qtVlm)</source>
-        <translation></translation>
+        <translation type="obsolete">WP défini dans VLM (</translation>
     </message>
     <message>
         <source>Le cap a suivre n&apos;est pas le meme</source>
-        <translation>Attention: le cap à suivre est différent</translation>
+        <translation type="obsolete">Attention: le cap à suivre est différent</translation>
     </message>
     <message>
         <source>WP defini dans VLM mais le mode de navigation n&apos;est pas coherent</source>
-        <translation>WP défini dans VLM mais le mode de navigation n&apos;est pas compatible</translation>
+        <translation type="obsolete">WP défini dans VLM mais le mode de navigation n&apos;est pas compatible</translation>
     </message>
     <message>
         <source>Annuler</source>
-        <translation>Annuler</translation>
-    </message>
-    <message>
-        <source>Bateau</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Position</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>BS:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>14.32kts</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>HDG:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>132.23d</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Moy:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Loch:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Ortho:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>DNM:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Angle:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>VMG:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>25.25kts</source>
-        <translation></translation>
+        <translation type="obsolete">Annuler</translation>
     </message>
     <message>
         <source>Wind</source>
-        <translation>Vent</translation>
-    </message>
-    <message>
-        <source>TWS:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>25.35kts</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>TWD:</source>
-        <translation></translation>
+        <translation type="obsolete">Vent</translation>
     </message>
     <message>
         <source>Pres:</source>
-        <translation>Près:</translation>
+        <translation type="obsolete">Près:</translation>
     </message>
     <message>
         <source>Port.:</source>
-        <translation>Portant:</translation>
+        <translation type="obsolete">Portant:</translation>
     </message>
     <message>
         <source>Race</source>
-        <translation>Course</translation>
-    </message>
-    <message>
-        <source>-&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Fasnet gate</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Dist:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>TextLabel</source>
-        <translation></translation>
+        <translation type="obsolete">Course</translation>
     </message>
     <message>
         <source>kts</source>
-        <translation>nds</translation>
-    </message>
-    <message>
-        <source>ORT</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>nm</source>
-        <translation></translation>
+        <translation type="obsolete">nds</translation>
     </message>
     <message>
         <source>pas de polaire chargee</source>
-        <translation>Pas de polaire chargée</translation>
-    </message>
-    <message>
-        <source>AWA</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>AWS</source>
-        <translation></translation>
+        <translation type="obsolete">Pas de polaire chargée</translation>
     </message>
     <message>
         <source>Confirmation a chaque ordre vers VLM</source>
-        <translation>Confirmation à chaque ordre vers VLM</translation>
-    </message>
-    <message>
-        <source>Confirmez-vous cet ordre?</source>
-        <translation></translation>
+        <translation type="obsolete">Confirmation à chaque ordre vers VLM</translation>
     </message>
     <message>
         <source> kts</source>
-        <translation> nds</translation>
+        <translation type="obsolete"> nds</translation>
     </message>
 </context>
 <context>
@@ -793,7 +621,7 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
     </message>
     <message>
         <source>Erreur de lecture json.</source>
-        <translation>Erreur de lecture json.</translation>
+        <translation type="obsolete">Erreur de lecture json.</translation>
     </message>
     <message>
         <source>Nom de route:</source>
@@ -828,7 +656,7 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
     </message>
     <message>
         <source>Permet de telecharger manuellement une trace pour une course VLM.
-La boîte �  cocher trace partielle s&apos;active apres l&apos;entree d&apos;un numero de course valide, et permet de requérir une trace tronquée.</source>
+La boÃŪte Ã  cocher trace partielle s&apos;active apres l&apos;entree d&apos;un numero de course valide, et permet de requÃĐrir une trace tronquÃĐe.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1050,10 +878,6 @@ La boîte �  cocher trace partielle s&apos;active apres l&apos;entree d&apos;u
         <translation></translation>
     </message>
     <message>
-        <source>Température</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Dégradé de couleur</source>
         <translation></translation>
     </message>
@@ -1067,10 +891,6 @@ La boîte �  cocher trace partielle s&apos;active apres l&apos;entree d&apos;u
     </message>
     <message>
         <source>Flèche secondaire</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Isobar /Isotherme</source>
         <translation></translation>
     </message>
     <message>
@@ -1160,6 +980,18 @@ La boîte �  cocher trace partielle s&apos;active apres l&apos;entree d&apos;u
     <message>
         <source>Fermer</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Color</source>
+        <translation type="unfinished">Couleur</translation>
+    </message>
+    <message>
+        <source>Label</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Isobar / Isotherme</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1517,6 +1349,10 @@ La boîte �  cocher trace partielle s&apos;active apres l&apos;entree d&apos;u
         <source>Selectionner un skin tableau de bord VLM</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Classical VLM board</source>
+        <translation>Tableau de bord VLM classique</translation>
+    </message>
 </context>
 <context>
     <name>DialogPilototo</name>
@@ -1573,6 +1409,14 @@ Continuer la sauvegarde?</source>
     <message>
         <source>Certains ordres ont des dates trop proches ou dans le passe</source>
         <translation>Certains ordres ont des dates trop proches ou dans le passé</translation>
+    </message>
+    <message>
+        <source>Confirmation a chaque ordre vers VLM</source>
+        <translation type="unfinished">Confirmation à chaque ordre vers VLM</translation>
+    </message>
+    <message>
+        <source>Confirmez-vous cet ordre?</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1787,6 +1631,14 @@ Etes-vous sur ?</source>
     <message>
         <source>Vous devez selectionner un poi dans la liste</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Ortho</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loxo</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3765,6 +3617,14 @@ Etes-vous sur ?</source>
         <source>Grib drawing config</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Montrer les traces</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Montrer l&apos;echelle</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>POI</name>
@@ -4947,11 +4807,19 @@ waves height</source>
     </message>
     <message>
         <source>oui</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>non</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Erreur</source>
+        <translation type="unfinished">Erreur</translation>
+    </message>
+    <message>
+        <source>Erreur de lecture json.</source>
+        <translation type="unfinished">Erreur de lecture json.</translation>
     </message>
 </context>
 <context>
@@ -6416,15 +6284,7 @@ p, li { white-space: pre-wrap; }
         <translation>Skin par défaut</translation>
     </message>
     <message>
-        <source>Tableau de bord VLM classique</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Supprimer automatiquement les gribs de plus de 3 jours</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Ombre sur le nouveau tableau de board</source>
         <translation></translation>
     </message>
     <message>
@@ -6438,6 +6298,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Enable gestures recognition</source>
         <translation>Autoriser la détection des gestes</translation>
+    </message>
+    <message>
+        <source>Tableau de board VLM</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Ombre</source>
+        <translation></translation>
     </message>
 </context>
 <context>

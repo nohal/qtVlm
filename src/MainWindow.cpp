@@ -64,7 +64,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Progress.h"
 #include "StatusBar.h"
 #include "BarrierSet.h"
-#include "BoardVlmNew.h"
+#include "BoardInterface.h"
 #include "Board.h"
 #include "BoardVLM.h"
 #include "BoardReal.h"
@@ -84,7 +84,6 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "DialogEditBarrier.h"
 #include "DialogRouteComparator.h"
 #include <QPluginLoader>
-#include "PluginExampleInterface.h"
 int INTERPOLATION_DEFAULT=INTERPOLATION_HYBRID;
 
 
@@ -227,6 +226,7 @@ void MainWindow::slot_gribFileReceived(QString fileName)
 //=============================================================
 MainWindow::MainWindow(int w, int h, QWidget *parent)
 {
+    pluginLoader=NULL;
     this->setParent(parent);
     restartNeeded=false;
     setWindowIcon (QIcon (appFolder.value("icon")+"qtVlm_48x48.png"));
@@ -348,7 +348,7 @@ void MainWindow::continueSetup()
     selPOI_instruction=NULL;
     isSelectingWP=false;
     myBoard=NULL;
-    newBoard=NULL;
+    boardPlugin=NULL;
     loadBoard();
 
     /* restore state */
@@ -581,19 +581,30 @@ void MainWindow::loadBoard()
 {
     qWarning()<<"loading board";
     use_old_board=true;
-    if(my_centralWidget->getPlayer() && my_centralWidget->getPlayer()->getType()==BOAT_VLM && Settings::getSetting("classicalVlmBoard",0).toInt()==0)
+    if(my_centralWidget->getPlayer() && my_centralWidget->getPlayer()->getType()==BOAT_VLM && Settings::getSetting("vlmBoard","0").toString()!="0")
         use_old_board=false;
     if(use_old_board && myBoard)
     {
         myBoard->playerChanged(my_centralWidget->getPlayer());
         return;
     }
-    if(!use_old_board && newBoard) return;
-    if(newBoard)delete newBoard;
+    if(!use_old_board && boardPlugin) return;
+    if(boardPlugin)
+    {
+        if(pluginLoader!=NULL)
+        {
+            pluginLoader->unload();
+            delete pluginLoader;
+            pluginLoader=NULL;
+        }
+        else
+            delete boardPlugin;
+        boardPlugin=NULL;
+    }
     if(myBoard){
         delete myBoard;
     }
-    newBoard=NULL;
+    boardPlugin=NULL;
     myBoard=NULL;
     if(use_old_board)
     {
@@ -621,7 +632,19 @@ void MainWindow::loadBoard()
     }
     else
     {
-        newBoard = new BoardVlmNew(this);
+        pluginLoader=new QPluginLoader(Settings::getSetting("vlmBoard","0").toString());
+        pluginLoader->load();
+        if(pluginLoader->isLoaded())
+        {
+            boardPlugin = qobject_cast<BoardInterface*>(pluginLoader->instance());
+            boardPlugin->initBoard(this);
+        }
+        else
+        {
+            qWarning()<<"error loadin board plugin"<<pluginLoader->fileName()<<pluginLoader->errorString();
+            Settings::setSetting("vlmBoard","0");
+            loadBoard();
+        }
     }
     Settings::setSetting("showDashBoard",1);
     this->showDashBoard();
@@ -1392,7 +1415,7 @@ void MainWindow::showDashBoard()
         menuBar->acOptions_SH_Tdb->setVisible(false);
     else
     {
-        newBoard->setVisible(shTdb);
+        boardPlugin->setVisible(shTdb);
         menuBar->acOptions_SH_Tdb->setVisible(true);
         menuBar->acOptions_SH_Tdb->setChecked(shTdb);
     }

@@ -43,6 +43,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "class_list.h"
 #include "dataDef.h"
 #include "MainWindowInterface.h"
+#include <QPluginLoader>
 class MainWindow: public MainWindowInterface
 {
     Q_OBJECT
@@ -294,13 +295,14 @@ signals:
         bool noSave;
         bool restartNeeded;
         void updateTitle();
-        BoardVlmNew * newBoard;
+        BoardInterface * boardPlugin;
         board * myBoard;
         bool use_old_board;
 
         void loadGrib2();
 
         QString get_OSVersion(void);
+        QPluginLoader * pluginLoader;
 };
 
 #endif

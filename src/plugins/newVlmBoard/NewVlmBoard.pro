@@ -8,7 +8,7 @@ contains ( QT_VERSION, "^5.*"){
 }
 CONFIG += plugin
 TEMPLATE = lib
-TARGET = pluginExamplePlugin
+TARGET = newVlmBoard
 DEPENDPATH += .
 INCLUDEPATH += . ../.. ../../Dialogs \
         ../../libs/qextserialport12/src \
@@ -30,10 +30,10 @@ UI_DIR = objects
 DESTDIR = ../../..
 CODECFORTR = UTF-8
 CODECFORSRC = UTF-8
-TRANSLATIONS = ../../tr/qtVlm_en.ts \
-    ../../tr/qtVlm_fr.ts \
-    ../../tr/qtVlm_cz.ts \
-    ../../tr/qtVlm_es.ts
+TRANSLATIONS = ../../../tr/pluginNewBoardVlm_en.ts \
+    ../../../tr/pluginNewBoardVlm_fr.ts \
+    ../../../tr/pluginNewBoardVlm_cz.ts \
+    ../../../tr/pluginNewBoardVlm_es.ts
 HEADERS = ../../BoardInterface.h BoardVlmNew.h DialogWp.h BoardTools.h ../../Util.h ../../Settings.h ../../Orthodromie.h
 SOURCES = BoardVlmNew.cpp DialogWp.cpp ../../Util.cpp ../../Settings.cpp ../../Orthodromie.cpp
 FORMS = BoardVlmNew.ui WP_dialog.ui

@@ -34,15 +34,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "BoatInterface.h"
 #include "MapDataDrawer.h"
 #include "Util.h"
+#include <QTranslator>
+#include <QDebug>
 QMap<QString,QString> appFolder; //necessary to avoid compilation errors in Settings.cpp
+BoardVlmNew::BoardVlmNew()
+{
+    translator=NULL;
+    wpDialog=NULL;
+}
 
 void BoardVlmNew::initBoard(MainWindowInterface *main)
 
 {
+    this->main=main;
+    this->setParent(main);
+    if(translator==NULL)
+    {
+        translator=new QTranslator(this);
+        QString lang = Settings::getSetting("appLanguage", "none").toString();
+        if(lang=="none") lang="fr";
+        translator->load( QString("boardVlmNew_") + lang,"tr");
+        QApplication::installTranslator(translator);
+        qWarning()<<"loading"<<lang<<"in plugin";
+    }
     this->setupUi(this);
     this->windAngle->setMain(main);
     tryMoving=false;
-    this->main=main;
     setWindowFlags(Qt::FramelessWindowHint|Qt::WindowStaysOnTopHint);
     this->setModal(false);
     this->move(1,qRound((main->height()-this->height())/2.0));
@@ -155,9 +172,19 @@ void BoardVlmNew::initBoard(MainWindowInterface *main)
     flipBS=false;
     this->setFontDialog(this);
 }
+QString BoardVlmNew::getName()
+{
+    QString lang = Settings::getSetting("appLanguage", "none").toString();
+    QString desc="New VLM board by Maitai";
+    if (lang=="fr" || lang=="none") desc=("Nouveau tableau de bord VLM par Maitai");
+    return desc;
+}
 BoardVlmNew::~BoardVlmNew()
 {
-    delete wpDialog;
+    if(wpDialog)
+        delete wpDialog;
+    if(translator)
+        QApplication::removeTranslator(translator);
 }
 void BoardVlmNew::setFontDialog(QObject * o)
 {

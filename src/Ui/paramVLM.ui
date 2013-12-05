@@ -134,19 +134,38 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="classicalBoard">
-            <property name="toolTip">
-             <string>Redemarrage de qtVlm necessaire</string>
+           <widget class="QFrame" name="frame_2">
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
             </property>
-            <property name="text">
-             <string>Tableau de bord VLM classique</string>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
             </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_16">
+             <item>
+              <widget class="QLabel" name="label_25">
+               <property name="text">
+                <string>Tableau de board VLM</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="comboBoard">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </widget>
           </item>
           <item>
            <widget class="QCheckBox" name="newBoardShadow">
             <property name="text">
-             <string>Ombre sur le nouveau tableau de board</string>
+             <string>Ombre</string>
             </property>
            </widget>
           </item>
@@ -1528,7 +1547,7 @@
   <tabstop>defFontName</tabstop>
   <tabstop>defFontSize</tabstop>
   <tabstop>chkFusion</tabstop>
-  <tabstop>classicalBoard</tabstop>
+  <tabstop>comboBoard</tabstop>
   <tabstop>newBoardShadow</tabstop>
   <tabstop>edt_skinFile</tabstop>
   <tabstop>btn_browseSkin</tabstop>

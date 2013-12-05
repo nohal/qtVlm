@@ -39,7 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "GshhsReader.h"
 #include "Util.h"
 #include "Player.h"
-
+#include "BoardInterface.h"
 DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDialog(parent)
 {
     centralWidget=parent;
@@ -59,7 +59,39 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
 
     this->chkPavillon->setCheckState(Settings::getSetting("showFlag",0,"showHideItem").toInt()==1?Qt::Checked:Qt::Unchecked);
     this->chkFusion->setChecked(Settings::getSetting("fusionStyle",0).toInt()==1);
-    this->classicalBoard->setChecked(Settings::getSetting("classicalVlmBoard",0).toInt()==1);
+    QDir dir(QApplication::applicationDirPath());
+    QStringList files=dir.entryList(QDir::Files);
+    QPluginLoader pgl;
+    comboBoard->addItem(tr("Classical VLM board"),0);
+    qWarning()<<"start loading plugins";
+    QString currentBoard=Settings::getSetting("vlmBoard","0").toString();
+    foreach(const QString &filename,files)
+    {
+        QFileInfo info(filename);
+        pgl.setFileName(info.baseName());
+        pgl.load();
+        if(!pgl.isLoaded())
+        {
+            //qWarning()<<"unable to load 1"<<pgl.fileName()<<pgl.errorString();
+            continue;
+        }
+        BoardInterface * plugin=qobject_cast<BoardInterface*>(pgl.instance());
+        if(!plugin || comboBoard->findText(plugin->getName())!=-1)
+        {
+            //qWarning()<<"unable to load 2"<<pgl.fileName()<<pgl.errorString();
+            pgl.unload();
+            continue;
+        }
+        this->comboBoard->addItem(plugin->getName(),pgl.fileName());
+        if(currentBoard!=pgl.fileName())
+            pgl.unload();
+    }
+    qWarning()<<"load plugins finished";
+    if(comboBoard->findData(currentBoard)!=-1)
+        comboBoard->setCurrentIndex(comboBoard->findData(currentBoard));
+    else
+        comboBoard->setCurrentIndex(0);
+
     this->newBoardShadow->setChecked(Settings::getSetting("newBoardShadow",0).toInt()==1);
     QString skinName=Settings::getSetting("defaultSkin",QFileInfo("img/skin_compas.png").absoluteFilePath()).toString();
     if(!QFile(skinName).exists())
@@ -256,15 +288,18 @@ void DialogParamVlm::done(int result)
         Settings::setSetting("opp_labelType",QString().setNum(opp_labelType->currentIndex()));
         Settings::setSetting("showFlag",this->chkPavillon->checkState()==Qt::Checked?"1":"0","showHideItem");
         Settings::setSetting("fusionStyle",this->chkFusion->isChecked()?1:0);
-        bool previousBoardSetting=Settings::getSetting("classicalVlmBoard",0).toInt()==1;
-        Settings::setSetting("classicalVlmBoard",this->classicalBoard->isChecked()?1:0);
+        QString previousBoardSetting=Settings::getSetting("vlmBoard","0").toString();
+        QString newBoardSetting=comboBoard->itemData(comboBoard->currentIndex()).toString();
         Settings::setSetting("newBoardShadow",this->newBoardShadow->isChecked()?1:0);
-        if(previousBoardSetting!=classicalBoard->isChecked())
-            centralWidget->getMainWindow()->loadBoard();
         QString skinName=edt_skinFile->text();
         if(!QFile(skinName).exists())
             skinName=QFileInfo("img/skin_compas.png").absoluteFilePath();
         Settings::setSetting("defaultSkin",skinName);
+        if(previousBoardSetting!=newBoardSetting)
+        {
+            Settings::setSetting("vlmBoard",newBoardSetting);
+            centralWidget->getMainWindow()->loadBoard();
+        }
         int gdm=2;
         if(this->gribAuto->isChecked())
             gdm=0;
@@ -562,7 +597,6 @@ void DialogParamVlm::slot_changeParam()
     chk_showCompass->setCheckState(Settings::getSetting("showCompass",0).toInt()==1?Qt::Checked:Qt::Unchecked);
     bool real=centralWidget->getPlayer()->getType()!=BOAT_VLM;
     concurrent_box->setVisible(!real);
-    classicalBoard->setVisible(!real);
     newBoardShadow->setVisible(!real);
     label_skin->setVisible(!real);
     edt_skinFile->setVisible(!real);

@@ -34,11 +34,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class Q_DECL_EXPORT BoardVlmNew : public BoardInterface, public Ui::BoardVlmNew
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "qtVlm.plugins.pluginInterfaceExample/1.0")
+    Q_PLUGIN_METADATA(IID "qtVlm.plugins.boardInterface/1.1")
     Q_INTERFACES(BoardInterface)
 
 public:
+    BoardVlmNew();
     void initBoard(MainWindowInterface *main);
+    QString getName();
     ~BoardVlmNew();
 private slots:
     void slot_updateBtnWP();
@@ -94,6 +96,7 @@ private:
     bool flipBS;
     void setFontDialog(QObject *o);
     bool confirmChange();
+    QTranslator * translator;
 };
 
 #endif // BOARDVLMNEW_H
