@@ -45,9 +45,11 @@ void Settings::setSetting(const QString &key, const QVariant &value, const QStri
 QStringList Settings::getAllKeys(const QString &group, const int &boatType)
 {
     if (fileSettings != NULL) {
-        /* avons nous la clé avec boatType */
+        /* avons nous la cle avec boatType */
         fileSettings->beginGroup (Settings::computeGroupe(group,boatType));
-        return fileSettings->allKeys();
+        QStringList result=fileSettings->allKeys();
+        fileSettings->endGroup();
+        return result;
     }
     else
         return QStringList();
@@ -56,7 +58,7 @@ QStringList Settings::getAllKeys(const QString &group, const int &boatType)
 QVariant Settings::getSetting(const QString &key, const QVariant &defaultValue, const QString &group, const int &boatType) {
     QVariant val=defaultValue;
     if (fileSettings != NULL) {
-        /* avons nous la clé avec boatType */
+        /* avons nous la cle avec boatType */
         fileSettings->beginGroup (Settings::computeGroupe(group,boatType));
         if(!fileSettings->contains(key)) {
             if(boatType!=BOAT_ANY && boatType!=BOAT_NOBOAT) {

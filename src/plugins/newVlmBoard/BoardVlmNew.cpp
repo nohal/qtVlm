@@ -46,6 +46,7 @@ BoardVlmNew::BoardVlmNew()
 void BoardVlmNew::initBoard(MainWindowInterface *main)
 
 {
+    qWarning()<<"start of init board for"<<this->getName();
     this->main=main;
     this->setParent(main);
     if(translator==NULL)
@@ -171,6 +172,7 @@ void BoardVlmNew::initBoard(MainWindowInterface *main)
     vibStates.append(0);
     flipBS=false;
     this->setFontDialog(this);
+    qWarning()<<"end of init board for"<<this->getName();
 }
 QString BoardVlmNew::getName()
 {
