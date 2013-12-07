@@ -40,7 +40,12 @@ orthoSegment::orthoSegment(Projection * proj, QGraphicsScene * myScene,int z_lev
 
 QRectF orthoSegment::boundingRect() const
 {
-    return myPath.boundingRect();
+    QRectF rect=myPath.boundingRect().normalized();
+    QPointF center=rect.center();
+    rect.setWidth(rect.width()+3*linePen.widthF());
+    rect.setHeight(rect.height()+3*linePen.widthF());
+    rect.moveCenter(center);
+    return rect;
 }
 QPainterPath orthoSegment::shape() const
 {
@@ -56,12 +61,18 @@ void orthoSegment::initSegment(double xa,double ya,double xb, double yb)
     if(xa==xb && ya==yb) hide();
     else show();
 }
+void orthoSegment::slot_update()
+{
+    myPrepareGeometryChange();
+    //update();
+}
 
 void orthoSegment::moveSegment(double x,double y)
 {
     this->xb=x;
     this->yb=y;
-    update();
+    myPrepareGeometryChange();
+    //update();
 }
 
 
@@ -72,39 +83,10 @@ void orthoSegment::hideSegment(void)
 
 void orthoSegment::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
 {
-    QPainterPath path;
     pnt->setPen(linePen);
     pnt->setRenderHint(QPainter::Antialiasing);
-    if(!isOrtho)
-    {        
-        QPolygonF p;
-        p.append(QPointF(xa-x(),ya-y()));
-        p.append(QPointF(xb-x(),yb-y()));
-        path.addPolygon(p);
-    }
-    else
-    {
-        draw_orthoSegment(pnt,xa,ya,xb,yb,0,&path);
-    }
-    if(alsoDrawLoxo && isOrtho)
-    {
-        QPolygonF p;
-        p.append(QPointF(xa-x(),ya-y()));
-        p.append(QPointF(xb-x(),yb-y()));
-        path.addPolygon(p);
-    }
-    if(roundedEnd)
-    {
-        double w=linePen.widthF();
-        linePen.setWidthF(w*3);
-        pnt->setPen(linePen);
-        pnt->drawPoint(xb-x(),yb-y());
-        linePen.setWidthF(w);
-        pnt->setPen(linePen);
-    }
-    prepareGeometryChange();
-    myPath=path;
     pnt->drawPath(myPath);
+    //pnt->drawRect(myPath.boundingRect());
 }
 
 void orthoSegment::draw_orthoSegment(QPainter * pnt,double i0,double j0, double i1, double j1, int recurs, QPainterPath * path)
@@ -143,7 +125,38 @@ void orthoSegment::draw_orthoSegment(QPainter * pnt,double i0,double j0, double 
         path->addPolygon(p);
     }
 }
-void orthoSegment::slot_update()
+void orthoSegment::myPrepareGeometryChange()
 {
-    update();
+    QPainterPath path;
+    if(roundedEnd)
+    {
+        double w=linePen.widthF()*1.5;
+        path.addEllipse(QPointF(xa-x(),ya-y()),w,w);
+    }
+    if(!isOrtho)
+    {
+        QPolygonF p;
+        p.append(QPointF(xa-x(),ya-y()));
+        p.append(QPointF(xb-x(),yb-y()));
+        path.addPolygon(p);
+    }
+    else
+    {
+        draw_orthoSegment(NULL,xa,ya,xb,yb,0,&path);
+    }
+    if(alsoDrawLoxo && isOrtho)
+    {
+        QPolygonF p;
+        p.append(QPointF(xa-x(),ya-y()));
+        p.append(QPointF(xb-x(),yb-y()));
+        path.addPolygon(p);
+    }
+    if(roundedEnd)
+    {
+        double w=linePen.widthF()*1.5;
+        path.addEllipse(QPointF(xb-x(),yb-y()),w,w);
+    }
+    prepareGeometryChange();
+    myPath=path;
 }
+

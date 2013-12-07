@@ -50,7 +50,8 @@ protected:
         QRectF boundingRect() const;
         QPainterPath shape() const;
 
-    private:
+private:
+        void myPrepareGeometryChange();
         double xa,xb,ya,yb;
         bool isOrtho;
         QPen linePen;
