@@ -40,11 +40,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * => remettre le deltaDew
  * => parametre de level pour les Min/Max pression ?
  * => logique affichage des iso (utilisation de level ?)
- * => revoir les enchainements drawGeneric_DTC => 1D/2D_DTC => 1D/2D, en particulier sur l'utilisation de a struct
- * soit tt ds generic soit ds dtc spécifique, supprimer un niveau
- * => ajouter un affichage de fleche '1D' => interpolation 1D sur angle
- * => quelle interpolation utilisée pour les vagues ? 1D en force et 1D en direction ou 2D
- * => modifier le cartouche pour afficher le type de data selectionné
  */
 
 DialogGribDrawing::DialogGribDrawing(QWidget *parent, myCentralWidget *centralWidget) : QDialog(parent) {
@@ -121,7 +116,7 @@ bool DialogGribDrawing::init_state(void) {
     }
 
     // Smooth
-    chkSmooth->setChecked(Settings::getSetting("colorMapSmooth", true).toBool());
+    chkSmooth->setChecked(Settings::getSetting("colorMapSmooth", true, "DataDrawing").toBool());
 
     //First arrow
     int curData=terrain->get_frstArwMode();
@@ -145,10 +140,10 @@ bool DialogGribDrawing::init_state(void) {
     }
 
     // Barbule
-    chkShowBarbule->setChecked(Settings::getSetting("showBarbules", true).toBool());
+    chkShowBarbule->setChecked(Settings::getSetting("showBarbules", true, "DataDrawing").toBool());
 
     // Color
-    QColor color=Settings::getSetting("frstArrowColor",QColor(Qt::white)).value<QColor>();
+    QColor color=Settings::getSetting("frstArrowColor",QColor(Qt::white), "DataDrawing").value<QColor>();
     updateBtnColor(btn_frstArrowColor,color);
 
     //Second arrow
@@ -171,7 +166,7 @@ bool DialogGribDrawing::init_state(void) {
     }
 
     // Color
-    color=Settings::getSetting("secArrowColor",QColor(Qt::black)).value<QColor>();
+    color=Settings::getSetting("secArrowColor",QColor(Qt::black), "DataDrawing").value<QColor>();
     updateBtnColor(btn_secArrowColor,color);
 
     // Labels
@@ -193,30 +188,30 @@ bool DialogGribDrawing::init_state(void) {
             terrain->setLabelMode(curData,res.a,res.b);
     }
     // Color
-    color=Settings::getSetting("labelColor",QColor(Qt::black)).value<QColor>();
+    color=Settings::getSetting("labelColor",QColor(Qt::black), "DataDrawing").value<QColor>();
     updateBtnColor(btn_labelColor,color);
 
 
     // IsoBar
-    bool showIso=Settings::getSetting("showIsobars", false).toBool();
+    bool showIso=Settings::getSetting("showIsobars", false, "DataDrawing").toBool();
     chkShowIsoBar->setChecked(showIso);
-    int idx = isoBarSpacing->findText(Settings::getSetting("isobarsStep", "2").toString());
+    int idx = isoBarSpacing->findText(Settings::getSetting("isobarsStep", "2", "DataDrawing").toString());
     if(idx!=-1)
         isoBarSpacing->setCurrentIndex(idx);
     isoBarSpacing->setEnabled(showIso);
-    chkShowIsoBarLabel->setChecked(Settings::getSetting("showIsobarsLabels", false).toBool());
+    chkShowIsoBarLabel->setChecked(Settings::getSetting("showIsobarsLabels", false, "DataDrawing").toBool());
     chkShowIsoBarLabel->setEnabled(showIso);
-    chkShowIsoBarMinMax->setChecked(Settings::getSetting("showPressureMinMax", false).toBool());
+    chkShowIsoBarMinMax->setChecked(Settings::getSetting("showPressureMinMax", false, "DataDrawing").toBool());
 
 
     // IsoTherm0
-    showIso=Settings::getSetting("showIsotherms0", false).toBool();
+    showIso=Settings::getSetting("showIsotherms0", false, "DataDrawing").toBool();
     chkShowIsoTherm->setChecked(showIso);
-    idx = isoThermSpacing->findText(Settings::getSetting("isotherms0Step", "50").toString());
+    idx = isoThermSpacing->findText(Settings::getSetting("isotherms0Step", "50", "DataDrawing").toString());
     if(idx!=-1)
         isoThermSpacing->setCurrentIndex(idx);
     isoThermSpacing->setEnabled(showIso);
-    chkShowIsoThermLabel->setChecked(Settings::getSetting("showIsotherms0Labels", false).toBool());
+    chkShowIsoThermLabel->setChecked(Settings::getSetting("showIsotherms0Labels", false, "DataDrawing").toBool());
     chkShowIsoThermLabel->setEnabled(showIso);
 
     qWarning() << "Init state .......... Done";
@@ -544,11 +539,11 @@ void DialogGribDrawing::slot_labelColor(void) {
 }
 
 void DialogGribDrawing::chg_color(QPushButton * btn,QString setting,QColor defaultColor) {
-    QColor color =Settings::getSetting(setting,defaultColor).value<QColor>();
+    QColor color =Settings::getSetting(setting,defaultColor, "DataDrawing").value<QColor>();
     color = QColorDialog::getColor(color, this);
 
     if(color.isValid()) {
-        Settings::setSetting(setting,color);
+        Settings::setSetting(setting,color, "DataDrawing");
         updateBtnColor(btn,color);
     }
     terrain->redrawGrib();

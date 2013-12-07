@@ -91,6 +91,10 @@ class DataManager: public QObject
         QMap<int,QStringList> * get_arrowTypesFst(void) { return &arrowTypesFst; }
         QMap<int,QStringList> * get_arrowTypesSec(void) { return &arrowTypesSec; }
 
+        QString format_dataType(int data,int levelType,int levelValue);
+        QString format_fstArrow(int data,int levelType,int levelValue);
+        QString format_secArrow(int data,int levelType,int levelValue);
+
         void load_forcedParam();
 
         enum { GRIB_NONE=0,
@@ -125,6 +129,7 @@ class DataManager: public QObject
         QMap<int,QStringList> arrowTypesFst;
         QMap<int,QStringList> arrowTypesSec;
         void init_stringList(void);
+        QString format_gribData(QMap<int,QStringList> * map,int data,int levelType,int levelValue);
 
         Couple * defaultLevel;
         void init_defaultLevel(void);

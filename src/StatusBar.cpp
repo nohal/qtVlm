@@ -197,7 +197,7 @@ void StatusBar::showGribData(double x,double y)
         int levelValue=terrain->get_colorMapLevelValue();
 
         if(mode!=DATA_NOTDEF)
-            res = compute_dataTxt(dataManager,mapDrawer,mode,levelType,levelValue,x,y);
+            res = compute_dataTxt(dataManager,mapDrawer,dataManager->get_dataTypes(),mode,levelType,levelValue,x,y);
 
         /* frst arrow */
         int arwMode=terrain->get_frstArwMode();
@@ -205,7 +205,7 @@ void StatusBar::showGribData(double x,double y)
         int arwLevelValue=terrain->get_frstArwLevelValue();
 
         if(arwMode!=DATA_NOTDEF && (arwMode!=mode || arwLevelType!=levelType || arwLevelValue!=levelValue)) {
-            QString s=compute_dataTxt(dataManager,mapDrawer,arwMode,arwLevelType,arwLevelValue,x,y);
+            QString s=compute_dataTxt(dataManager,mapDrawer,dataManager->get_arrowTypesFst(),arwMode,arwLevelType,arwLevelValue,x,y);
             if(!s.isEmpty())
                 res += " - " + s;
         }
@@ -216,7 +216,7 @@ void StatusBar::showGribData(double x,double y)
         arwLevelValue=terrain->get_secArwLevelValue();
 
         if(arwMode!=DATA_NOTDEF && (arwMode!=mode || arwLevelType!=levelType || arwLevelValue!=levelValue)) {
-            res += compute_dataTxt(dataManager,mapDrawer,arwMode,arwLevelType,arwLevelValue,x,y);
+            res += compute_dataTxt(dataManager,mapDrawer,dataManager->get_arrowTypesSec(),arwMode,arwLevelType,arwLevelValue,x,y);
         }
     }
 
@@ -224,12 +224,17 @@ void StatusBar::showGribData(double x,double y)
 }
 
 QString StatusBar::compute_dataTxt(DataManager * dataManager, MapDataDrawer* mapDrawer,
+                                   QMap<int,QStringList> * mapDataTypes,
                                    int mode,int levelType,int levelValue,double x,double y) {
     QString res="";
-    dataDrawerInfo * drawerInfo=mapDrawer->get_drawerInfo(mode);
-    QMap<int,QStringList> * mapDataTypes=dataManager->get_dataTypes();
+    dataDrawerInfo * drawerInfo=mapDrawer->get_drawerInfo(mode);    
 
-    if(drawerInfo) {
+    if(!mapDataTypes->contains(mode)) {
+        qWarning() << "Unkn mode fin dataType: " << mode;
+        return res;
+    }
+
+    if(drawerInfo && drawerInfo->isOk) {
         /* interpolation */
         if(drawerInfo->is2D) {
             //qWarning() << "[showGribData] 2D";

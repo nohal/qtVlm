@@ -96,10 +96,13 @@ class MapDataDrawer
         void drawArrowGeneric_DTC(QPainter &pnt, Projection *proj,QColor color,
                                                  int dataType, int levelType, int levelValue,
                                                  bool barbules);
-        void drawArrowGeneric(QPainter &pnt, Projection *proj,bool barbules,QColor color,
+        void drawArrowGeneric_2D(QPainter &pnt, Projection *proj,bool barbules,QColor color,
                                       const time_t &now, const time_t &t1, const time_t &t2,
                                       GribRecord * recU1, GribRecord * recV1, GribRecord * recU2, GribRecord * recV2,
                                       const bool &UV, int interpolation_mode=INTERPOLATION_UKN);
+        void drawArrowGeneric_1D(QPainter &pnt, Projection *proj,QColor color,
+                                      const time_t &now, const time_t &t1, const time_t &t2,
+                                      GribRecord * recU1, GribRecord * recU2);
         // Carte de couleurs des precipitations
         void drawTest_multi(QPainter &pnt, Projection *proj);
         void drawTest_mono(QPainter &pnt, const Projection *proj);

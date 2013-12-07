@@ -40,8 +40,8 @@ DataManager::DataManager() {
     grib=NULL;
     gribCurrent=NULL;
     currentDate=0;
-    isoBarsStep = Settings::getSetting("isobarsStep", 2).toDouble();
-    isoTherms0Step = Settings::getSetting("isoTherms0Step", 50).toInt();
+    isoBarsStep = Settings::getSetting("isobarsStep", 2,"DataDrawing").toDouble();
+    isoTherms0Step = Settings::getSetting("isoTherms0Step", 50,"DataDrawing").toInt();
 
     init_defaultLevel();
     init_stringList();
@@ -74,9 +74,9 @@ void DataManager::init_stringList(void) {
     dataTypes.insert(DATA_CAPE,               QStringList() << tr("CAPE (surface)")                     << tr("CAPE")        << "J/kg"  );
     dataTypes.insert(DATA_CIN,                QStringList() << tr("CIN (surface)")                      << tr("CIN")         << "J/kg"  );
     dataTypes.insert(DATA_WAVES_SIG_HGT_COMB, QStringList() << tr("Waves combined")                     << tr("Wave comb")   << "m"     );
-    dataTypes.insert(DATA_WAVES_WND_HGT,      QStringList() << tr("Wind waves")                         << tr("Wind wave")   << "m" << "deg");
-    dataTypes.insert(DATA_WAVES_SWL_HGT,      QStringList() << tr("Swell waves")                        << tr("Swell wave")  << "m" << "deg");
-    dataTypes.insert(DATA_WAVES_MAX_HGT,      QStringList() << tr("Max waves")                          << tr("Max wave")    << "m" << "deg");
+    dataTypes.insert(DATA_WAVES_WND_HGT,      QStringList() << tr("Wind waves")                         << tr("Wind wave")   << "m"     );
+    dataTypes.insert(DATA_WAVES_SWL_HGT,      QStringList() << tr("Swell waves")                        << tr("Swell wave")  << "m"     );
+    dataTypes.insert(DATA_WAVES_MAX_HGT,      QStringList() << tr("Max waves")                          << tr("Max wave")    << "m"     );
     dataTypes.insert(DATA_WAVES_WHITE_CAP,    QStringList() << tr("White cap prob")                     << tr("Whte cap")    << "%"     );
 
     /* arrow types */
@@ -84,13 +84,13 @@ void DataManager::init_stringList(void) {
     arrowTypesFst.insert(DATA_WIND_VX,        QStringList() << tr("Vent")        << tr("Vent")        << "kts" << "deg");
     arrowTypesFst.insert(DATA_CURRENT_VX,     QStringList() << tr("Courant")     << tr("Courant")     << "kts" << "deg");
 
-    arrowTypesSec.insert(DATA_NOTDEF,         QStringList() << tr("Aucun")       << tr("Aucun")       << "");
-    arrowTypesSec.insert(DATA_CURRENT_VX,     QStringList() << tr("Courant")     << tr("Courant")     << "kts" << "deg");
-    arrowTypesSec.insert(DATA_WAVES_WND_HGT,  QStringList() << tr("Wind waves")  << tr("Wind wave")   << "m" << "deg");
-    arrowTypesSec.insert(DATA_WAVES_SWL_HGT,  QStringList() << tr("Swell waves") << tr("Swell wave")  << "m" << "deg");
-    arrowTypesSec.insert(DATA_WAVES_MAX_HGT,  QStringList() << tr("Max waves")   << tr("Max wave")    << "m" << "deg");
-    //arrowTypesSec.insert(DATA_WAVES_PRIM_DIR, tr("Primary waves"));
-    //arrowTypesSec.insert(DATA_WAVES_SEC_DIR,  tr("Secondary waves"));
+    arrowTypesSec.insert(DATA_NOTDEF,         QStringList() << tr("Aucun")            << tr("Aucun")         << "");
+    arrowTypesSec.insert(DATA_CURRENT_VX,     QStringList() << tr("Courant")          << tr("Courant")       << "kts" << "deg");
+    arrowTypesSec.insert(DATA_WAVES_WND_DIR,  QStringList() << tr("Wind waves")       << tr("Wind wave")     << "deg" );
+    arrowTypesSec.insert(DATA_WAVES_SWL_DIR,  QStringList() << tr("Swell waves")      << tr("Swell wave")    << "deg" );
+    arrowTypesSec.insert(DATA_WAVES_MAX_DIR,  QStringList() << tr("Max waves")        << tr("Max wave")      << "deg" );
+    arrowTypesSec.insert(DATA_WAVES_PRIM_DIR, QStringList() << tr("Primary waves")    << tr("Primary waves") << "deg" );
+    arrowTypesSec.insert(DATA_WAVES_SEC_DIR,  QStringList() << tr("Secondary waves")  << tr("Primary waves") << "deg" );
 
     /* levels */
     levelTypes.insert(DATA_LV_GND_SURF,              QStringList() << tr("Surface")            << "");
@@ -101,6 +101,39 @@ void DataManager::init_stringList(void) {
     levelTypes.insert(DATA_LV_SIGMA,                 QStringList() << tr("Sigma")              << "?");
     levelTypes.insert(DATA_LV_ATMOS_ALL,             QStringList() << tr("Entire atmosphere")  << "");
     levelTypes.insert(DATA_LV_ORDERED_SEQUENCE_DATA, QStringList() << tr("Ordered sequence")   << "?");
+}
+
+QString DataManager::format_dataType(int data,int levelType,int levelValue) {
+    return format_gribData(&dataTypes,data,levelType,levelValue);
+}
+
+QString DataManager::format_fstArrow(int data,int levelType,int levelValue) {
+    return format_gribData(&arrowTypesFst,data,levelType,levelValue);
+}
+
+QString DataManager::format_secArrow(int data,int levelType,int levelValue) {
+    return format_gribData(&arrowTypesSec,data,levelType,levelValue);
+}
+
+QString DataManager::format_gribData(QMap<int,QStringList> * map,int data,int levelType,int levelValue) {
+    if(!map || !map->contains(data))
+        return QString();
+    QString resStr;
+    if (data==DATA_NOTDEF || levelType == DATA_LV_NOTDEF) {
+        resStr=tr("Aucun");
+    }
+    else {
+
+        resStr= map->value(data).at(1);
+
+        // build levelString
+        if(!levelTypes.contains(levelType)) return resStr;
+
+        resStr += " " + levelTypes.value(levelType).at(0);
+        if(!levelTypes.value(levelType).at(1).isEmpty())
+            resStr += " " + QString().setNum(levelValue) + " " + levelTypes.value(levelType).at(1);
+    }
+    return resStr;
 }
 
 void DataManager::init_defaultLevel(void) {
@@ -125,8 +158,13 @@ void DataManager::init_defaultLevel(void) {
     defaultLevel[DATA_WAVES_SIG_HGT_COMB].init(DATA_LV_GND_SURF,0);
     defaultLevel[DATA_WAVES_WND_HGT].init(DATA_LV_GND_SURF,0);
     defaultLevel[DATA_WAVES_SWL_HGT].init(DATA_LV_GND_SURF,0);
+    defaultLevel[DATA_WAVES_WND_DIR].init(DATA_LV_GND_SURF,0);
+    defaultLevel[DATA_WAVES_SWL_DIR].init(DATA_LV_GND_SURF,0);
     defaultLevel[DATA_WAVES_WHITE_CAP].init(DATA_LV_GND_SURF,0);
     defaultLevel[DATA_WAVES_MAX_HGT].init(DATA_LV_GND_SURF,0);
+    defaultLevel[DATA_WAVES_MAX_DIR].init(DATA_LV_GND_SURF,0);
+    defaultLevel[DATA_WAVES_PRIM_DIR].init(DATA_LV_GND_SURF,0);
+    defaultLevel[DATA_WAVES_SEC_DIR].init(DATA_LV_GND_SURF,0);
 }
 
 Couple DataManager::get_defaultLevel(int type) {

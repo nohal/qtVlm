@@ -49,7 +49,8 @@ class StatusBar : public QStatusBar
 
         bool showingSelectionMessage;
 
-        QString compute_dataTxt(DataManager * dataManager, MapDataDrawer* mapDrawer, int mode, int levelType, int levelValue, double x, double y);
+        QString compute_dataTxt(DataManager * dataManager, MapDataDrawer* mapDrawer, QMap<int,QStringList> * mapDataTypes,
+                                int mode, int levelType, int levelValue, double x, double y);
 
         QLabel       *stBar_label_1;
         QLabel       *stBar_label_2;

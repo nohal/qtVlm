@@ -107,13 +107,15 @@ void MapDataDrawer::init_drawerInfo(void) {
     init_1D_data(drawerInfo[DATA_CIN], &MapDataDrawer::getCINColor);
     init_1D_data(drawerInfo[DATA_CAPE], &MapDataDrawer::getCAPEColor);
     init_1D_data(drawerInfo[DATA_WAVES_SIG_HGT_COMB],&MapDataDrawer::getWavesColor);
-    init_2D_data(drawerInfo[DATA_WAVES_WND_HGT],DATA_WAVES_WND_DIR,false,"waves_m");
-    forceInterpol(drawerInfo[DATA_WAVES_WND_HGT],INTERPOLATION_TWSA);
-    init_2D_data(drawerInfo[DATA_WAVES_SWL_HGT],DATA_WAVES_SWL_DIR,false,"waves_m");
-    forceInterpol(drawerInfo[DATA_WAVES_SWL_HGT],INTERPOLATION_TWSA);
+    init_1D_data(drawerInfo[DATA_WAVES_WND_HGT],&MapDataDrawer::getWavesColor);
+    init_1D_data(drawerInfo[DATA_WAVES_WND_DIR],&MapDataDrawer::getWavesColor);
+    init_1D_data(drawerInfo[DATA_WAVES_SWL_HGT],&MapDataDrawer::getWavesColor);
+    init_1D_data(drawerInfo[DATA_WAVES_SWL_DIR],&MapDataDrawer::getWavesColor);
     init_1D_data(drawerInfo[DATA_WAVES_WHITE_CAP],&MapDataDrawer::getWavesWhiteCapColor);
-    init_2D_data(drawerInfo[DATA_WAVES_MAX_HGT],DATA_WAVES_MAX_DIR,false,"waves_m");
-    forceInterpol(drawerInfo[DATA_WAVES_MAX_HGT],INTERPOLATION_TWSA);
+    init_1D_data(drawerInfo[DATA_WAVES_MAX_HGT],&MapDataDrawer::getWavesColor);
+    init_1D_data(drawerInfo[DATA_WAVES_MAX_DIR],&MapDataDrawer::getWavesColor);
+    init_1D_data(drawerInfo[DATA_WAVES_PRIM_DIR],&MapDataDrawer::getWavesColor);
+    init_1D_data(drawerInfo[DATA_WAVES_SEC_DIR],&MapDataDrawer::getWavesColor);
 }
 
 dataDrawerInfo * MapDataDrawer::get_drawerInfo(int type) {
@@ -639,20 +641,31 @@ void MapDataDrawer::drawArrowGeneric_DTC(QPainter &pnt, Projection *proj,QColor 
     GribRecord *recU1,*recV1,*recU2,*recV2;
     time_t tPrev,tNxt;
 
-    if(dataType<0 || dataType>=DATA_MAX || !drawerInfo[dataType].isOk || !drawerInfo[dataType].is2D) return;
-    int interpolationType=INTERPOLATION_UKN;
-    if(drawerInfo[dataType].forcedInterpol)
-        interpolationType=drawerInfo[dataType].forcedInterpolType;
+    if(dataType<0 || dataType>=DATA_MAX || !drawerInfo[dataType].isOk) return;
 
-    time_t currentDate=dataManager->get_currentDate();
-    if(dataManager->get_data2D(dataType,drawerInfo[dataType].secData_2D,levelType,levelValue,currentDate,
-                                 &tPrev,&tNxt,&recU1,&recV1,&recU2,&recV2))
-        drawArrowGeneric(pnt,proj,barbules,color,
-                               currentDate,tPrev,tNxt,
-                               recU1,recV1,recU2,recV2,drawerInfo[dataType].UV,interpolationType);
+    if(drawerInfo[dataType].is2D) {
+        int interpolationType=INTERPOLATION_UKN;
+        if(drawerInfo[dataType].forcedInterpol)
+            interpolationType=drawerInfo[dataType].forcedInterpolType;
+
+        time_t currentDate=dataManager->get_currentDate();
+        if(dataManager->get_data2D(dataType,drawerInfo[dataType].secData_2D,levelType,levelValue,currentDate,
+                                   &tPrev,&tNxt,&recU1,&recV1,&recU2,&recV2))
+            drawArrowGeneric_2D(pnt,proj,barbules,color,
+                             currentDate,tPrev,tNxt,
+                             recU1,recV1,recU2,recV2,drawerInfo[dataType].UV,interpolationType);
+    }
+    else {
+        GribRecord *rec_prev,*rec_nxt;
+        time_t tPrev,tNxt;
+        time_t currentDate=dataManager->get_currentDate();
+        if(dataManager->get_data1D(dataType,levelType,levelValue,currentDate,
+                                     &tPrev,&tNxt,&rec_prev,&rec_nxt))
+            drawArrowGeneric_1D(pnt,proj,color,currentDate,tPrev,tNxt,rec_prev,rec_nxt);
+    }
 }
 
-void MapDataDrawer::drawArrowGeneric(QPainter &pnt, Projection *proj,bool barbules,QColor color,
+void MapDataDrawer::drawArrowGeneric_2D(QPainter &pnt, Projection *proj,bool barbules,QColor color,
                               const time_t &now, const time_t &t1, const time_t &t2,
                               GribRecord * recU1, GribRecord * recV1, GribRecord * recU2, GribRecord * recV2,
                               const bool &UV, int interpolation_mode) {
@@ -679,6 +692,27 @@ void MapDataDrawer::drawArrowGeneric(QPainter &pnt, Projection *proj,bool barbul
                     drawWindArrowWithBarbs(pnt, i*space,j*space, u,v, y<0,color);
                 else
                     drawWindArrow(pnt, i*space,j*space, v,color);
+            }
+        }
+    }
+}
+
+void MapDataDrawer::drawArrowGeneric_1D(QPainter &pnt, Projection *proj,QColor color,
+                              const time_t &now, const time_t &t1, const time_t &t2,
+                              GribRecord * recU1, GribRecord * recU2) {
+    int space =  windArrowSpace;
+    const int W = proj->getW()/space+1;
+    const int H = proj->getH()/space+1;
+    double x,y;
+    double val;
+
+    for (int i=0; i<W; ++i) {
+        for (int j=0; j<H; ++j) {
+            proj->screen2map(i*space,j*space, &x, &y);
+            if(Grib::interpolateValue_1D(x,y,now,t1,t2,recU1,recU2,&val)) {
+                //qWarning() << val;
+                val=degToRad(val);
+                drawWindArrow(pnt, i*space,j*space, val,color);
             }
         }
     }

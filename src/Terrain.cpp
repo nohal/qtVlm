@@ -87,37 +87,34 @@ Terrain::Terrain(myCentralWidget *centralWidget, Projection *proj_) : QGraphicsW
     showCountriesNames = Settings::getSetting("showCountriesNames", false).toBool();
     showWindColorMap  = Settings::getSetting("showWindColorMap", true).toBool();
 
-    colorMapSmooth = Settings::getSetting("colorMapSmooth", true).toBool();
-    showWindArrows  = Settings::getSetting("showWindArrows", true).toBool();
-    showWavesArrows  = Settings::getSetting("showWavesArrows", true).toBool();
-    showBarbules = Settings::getSetting("showBarbules", true).toBool();
+    colorMapSmooth = Settings::getSetting("colorMapSmooth", true,"DataDrawing").toBool();
+    showBarbules = Settings::getSetting("showBarbules", true,"DataDrawing").toBool();
 
-    showIsobars  = Settings::getSetting("showIsobars", true).toBool();
-    showIsobarsLabels = Settings::getSetting("showIsobarsLabels", false).toBool();
-    isobarsStep = Settings::getSetting("isobarsStep", 2).toDouble();
-    showPressureMinMax = Settings::getSetting("showPressureMinMax", false).toBool();
+    showIsobars  = Settings::getSetting("showIsobars", true,"DataDrawing").toBool();
+    showIsobarsLabels = Settings::getSetting("showIsobarsLabels", false,"DataDrawing").toBool();
+    isobarsStep = Settings::getSetting("isobarsStep", 2,"DataDrawing").toDouble();
+    showPressureMinMax = Settings::getSetting("showPressureMinMax", false,"DataDrawing").toBool();
 
-    showIsotherms0  = Settings::getSetting("showIsotherms0", false).toBool();
-    showIsotherms0Labels  = Settings::getSetting("showIsotherms0Labels", false).toBool();
-    isotherms0Step = Settings::getSetting("isotherms0Step", 50).toDouble();
+    showIsotherms0  = Settings::getSetting("showIsotherms0", false,"DataDrawing").toBool();
+    showIsotherms0Labels  = Settings::getSetting("showIsotherms0Labels", false,"DataDrawing").toBool();
+    isotherms0Step = Settings::getSetting("isotherms0Step", 50,"DataDrawing").toDouble();
 
-    colorMapMode = Settings::getSetting("colorMapMode", DATA_WIND_VX).toInt();
-    colorMapLevelType = Settings::getSetting("colorMapLevelType", DATA_LV_ABOV_GND).toInt();
-    colorMapLevelValue = Settings::getSetting("colorMapLevelValue", 10).toInt();
+    colorMapMode = Settings::getSetting("colorMapMode", DATA_WIND_VX,"DataDrawing").toInt();
+    colorMapLevelType = Settings::getSetting("colorMapLevelType", DATA_LV_ABOV_GND,"DataDrawing").toInt();
+    colorMapLevelValue = Settings::getSetting("colorMapLevelValue", 10,"DataDrawing").toInt();
 
-    frstArwMode = Settings::getSetting("frstArwMode", DATA_WIND_VX).toInt();
-    frstArwLevelType = Settings::getSetting("frstArwLevelType", DATA_LV_ABOV_GND).toInt();
-    frstArwLevelValue = Settings::getSetting("frstArwLevelValue", 10).toInt();
+    frstArwMode = Settings::getSetting("frstArwMode", DATA_WIND_VX,"DataDrawing").toInt();
+    frstArwLevelType = Settings::getSetting("frstArwLevelType", DATA_LV_ABOV_GND,"DataDrawing").toInt();
+    frstArwLevelValue = Settings::getSetting("frstArwLevelValue", 10,"DataDrawing").toInt();
 
-    secArwMode = Settings::getSetting("secArwMode", DATA_NOTDEF).toInt();
-    secArwLevelType = Settings::getSetting("secArwLevelType", DATA_LV_NOTDEF).toInt();
-    secArwLevelValue = Settings::getSetting("secArwLevelValue", 0).toInt();
+    secArwMode = Settings::getSetting("secArwMode", DATA_NOTDEF,"DataDrawing").toInt();
+    secArwLevelType = Settings::getSetting("secArwLevelType", DATA_LV_NOTDEF,"DataDrawing").toInt();
+    secArwLevelValue = Settings::getSetting("secArwLevelValue", 0,"DataDrawing").toInt();
 
-    labelMode = Settings::getSetting("labelMode", DATA_NOTDEF).toInt();
-    labelLevelType = Settings::getSetting("labelLevelType", DATA_LV_NOTDEF).toInt();
-    labelLevelValue = Settings::getSetting("labelLevelValue", 0).toInt();
+    labelMode = Settings::getSetting("labelMode", DATA_NOTDEF,"DataDrawing").toInt();
+    labelLevelType = Settings::getSetting("labelLevelType", DATA_LV_NOTDEF,"DataDrawing").toInt();
+    labelLevelValue = Settings::getSetting("labelLevelValue", 0,"DataDrawing").toInt();
 
-    //showTemperatureLabels = Settings::getSetting("showTemperatureLabels", false).toBool();
     //showGribGrid = Settings::getSetting("showGribGrid", false).toBool();
     //----------------------------------------------------------------------------
 
@@ -133,7 +130,7 @@ Terrain::Terrain(myCentralWidget *centralWidget, Projection *proj_) : QGraphicsW
 
     setPalette(QPalette(backgroundColor));
     int sX=Settings::getSetting("scalePosX",5).toInt();
-    int sY=Settings::getSetting("scalePosY",height-5).toInt();
+    int sY=Settings::getSetting("scalePosY",60).toInt();
     scalePos=QPoint(sX,sY);
     updateGraphicsParameters();    
 }
@@ -156,11 +153,11 @@ void Terrain::updateGraphicsParameters()
     riversPen.setColor(Settings::getSetting("riversLineColor", QColor(50,50,150)).value<QColor>());
     riversPen.setWidthF(Settings::getSetting("riversLineWidth", 1.0).toDouble());
 
-    isobarsPen.setColor(Settings::getSetting("isobarsLineColor", QColor(80,80,80)).value<QColor>());
-    isobarsPen.setWidthF(Settings::getSetting("isobarsLineWidth", 2.0).toDouble());
+    isobarsPen.setColor(Settings::getSetting("isobarsLineColor", QColor(80,80,80), "DataDrawing").value<QColor>());
+    isobarsPen.setWidthF(Settings::getSetting("isobarsLineWidth", 2.0, "DataDrawing").toDouble());
 
-    isotherms0Pen.setColor(Settings::getSetting("isotherms0LineColor", QColor(200,120,100)).value<QColor>());
-    isotherms0Pen.setWidthF(Settings::getSetting("isotherms0LineWidth", 1.6).toDouble());
+    isotherms0Pen.setColor(Settings::getSetting("isotherms0LineColor", QColor(200,120,100), "DataDrawing").value<QColor>());
+    isotherms0Pen.setWidthF(Settings::getSetting("isotherms0LineWidth", 1.6, "DataDrawing").toDouble());
 
     int v = 180;
     selectColor     = QColor(v,v,v);
@@ -478,10 +475,24 @@ void Terrain::draw_GSHHSandGRIB()
 
 void Terrain::drawCartouche(QPainter &pnt) {
     QString cartouche="";
+    QString cartoucheL2="";
     DataManager * dataManager=centralWidget->get_dataManager();
-    if(dataManager) cartouche=dataManager->get_cartoucheData()+". ";
-    if(this->gshhsReader)
+    if(dataManager) cartouche=dataManager->get_cartoucheData();
+    if(this->gshhsReader) {
+        if(!cartouche.isEmpty()) cartouche += " . ";
         cartouche=cartouche+tr("Niveau de detail des cotes: ")+QString().setNum(this->gshhsReader->getQuality()+1);
+    }
+    if(dataManager->isOk()) {
+        cartoucheL2=dataManager->format_dataType(colorMapMode,colorMapLevelType,colorMapLevelValue);
+        if(colorMapMode == frstArwMode && colorMapLevelType==frstArwLevelType && colorMapLevelValue==frstArwLevelValue)
+            cartoucheL2 += " - *";
+        else
+            cartoucheL2 += " - " + dataManager->format_dataType(frstArwMode,frstArwLevelType,frstArwLevelValue);
+        if(colorMapMode == secArwMode && colorMapLevelType==secArwLevelType && colorMapLevelValue==secArwLevelValue)
+            cartoucheL2 += " - *";
+        else
+            cartoucheL2 += " - " + dataManager->format_dataType(secArwMode,secArwLevelType,secArwLevelValue);
+    }
     QFont fontbig("TypeWriter", 12, QFont::Bold, false);
     fontbig.setPointSizeF(12.0+Settings::getSetting("defaultFontSizeInc",0).toDouble());
     fontbig.setStyleHint(QFont::TypeWriter);
@@ -496,7 +507,16 @@ void Terrain::drawCartouche(QPainter &pnt) {
     pnt.drawRect(3,3,Fsize.width()+2,Fsize.height());
     pnt.setPen(textcolor);
 
-    pnt.drawText(5, 8+Fsize.height()/2, cartouche);// forecast validity date
+    pnt.drawText(5, 8+Fsize.height()/2, cartouche);
+    if(!cartoucheL2.isEmpty()) {
+        int pos = 8+Fsize.height()+1;
+        Fsize=fm.size(Qt::TextSingleLine,cartoucheL2);
+        pnt.setPen(transpcolor);
+        pnt.drawRect(3,pos-5,Fsize.width()+2,Fsize.height());
+        pnt.setPen(textcolor);
+        pnt.drawText(5, pos+Fsize.height()/2, cartoucheL2);
+    }
+
 }
 
 void Terrain::drawScale(QPainter &pnt) {
@@ -622,17 +642,17 @@ void Terrain::drawGrib(QPainter &pnt)
         //printf("time show ColorMap = %d ms\n", t1.elapsed());
 
     if(frstArwMode!=DATA_NOTDEF) {
-        QColor color=Settings::getSetting("frstArrowColor",QColor(Qt::white)).value<QColor>();
+        QColor color=Settings::getSetting("frstArrowColor",QColor(Qt::white), "DataDrawing").value<QColor>();
         mapDataDrawer->drawArrowGeneric_DTC(pnt,proj,color,frstArwMode,frstArwLevelType,frstArwLevelValue,showBarbules);
     }
 
     if(secArwMode!=DATA_NOTDEF) {
-        QColor color=Settings::getSetting("secArrowColor",QColor(Qt::black)).value<QColor>();
+        QColor color=Settings::getSetting("secArrowColor",QColor(Qt::black), "DataDrawing").value<QColor>();
         mapDataDrawer->drawArrowGeneric_DTC(pnt,proj,color,secArwMode,secArwLevelType,secArwLevelValue,false);
     }
 
     if(labelMode!=DATA_NOTDEF) {
-        QColor color=Settings::getSetting("labelColor",QColor(Qt::black)).value<QColor>();
+        QColor color=Settings::getSetting("labelColor",QColor(Qt::black), "DataDrawing").value<QColor>();
         mapDataDrawer->draw_labelGeneric(pnt,proj,labelMode,labelLevelType,labelLevelValue,color);
     }
 
@@ -707,26 +727,6 @@ void Terrain::setCitiesNamesLevel  (int level) {
         indicateWaitingMap();
     }
 }
-
-void Terrain::slot_setDrawWindColors (bool b) {
-    if (showWindColorMap != b) {
-        showWindColorMap = b;
-        Settings::setSetting("showWindColorMap", b);
-        mustRedraw = true;
-        indicateWaitingMap();
-    }
-}
-
-/*
-void Terrain::show_temperatureLabels(bool b) {
-    if (showTemperatureLabels != b) {
-        showTemperatureLabels = b;
-        Settings::setSetting("showTemperatureLabels", b);
-        mustRedraw = true;
-        indicateWaitingMap();
-    }
-}
-*/
 
 int Terrain::compute_dataType(DataManager * dataManager,
                      int currentMode, int defaultMode1, int defaultMode2,
@@ -861,7 +861,7 @@ void Terrain::update_mapDataAndLevel(void) {
         /* Frst Arrow */
         if(frstArwMode != DATA_NOTDEF) {
             //data type
-            newType=compute_dataType(dataManager,frstArwLevelType,DATA_WIND_VX,DATA_CURRENT_VX,
+            newType=compute_dataType(dataManager,frstArwMode,DATA_WIND_VX,DATA_CURRENT_VX,
                                      dataManager->get_arrowTypesFst());
             if(newType==DATA_NOTDEF) {
                 frstArwMode=DATA_NOTDEF;
@@ -886,7 +886,7 @@ void Terrain::update_mapDataAndLevel(void) {
         /* Sec Arrow */
         if(secArwMode != DATA_NOTDEF) {
             //data type
-            newType=compute_dataType(dataManager,secArwLevelType,DATA_CURRENT_VX,DATA_NOTDEF,
+            newType=compute_dataType(dataManager,secArwMode,DATA_CURRENT_VX,DATA_NOTDEF,
                                      dataManager->get_arrowTypesSec());
             if(newType==DATA_NOTDEF) {
                 secArwMode=DATA_NOTDEF;
@@ -934,18 +934,18 @@ void Terrain::update_mapDataAndLevel(void) {
     }
 
     // everything is updated
-    Settings::setSetting("colorMapMode", colorMapMode);
-    Settings::setSetting("colorMapLevelType", colorMapLevelType);
-    Settings::setSetting("colorMapLevelValue", colorMapLevelValue);
-    Settings::setSetting("frstArwMode", frstArwMode);
-    Settings::setSetting("frstArwLevelType", frstArwLevelType);
-    Settings::setSetting("frstArwLevelValue", frstArwLevelValue);
-    Settings::setSetting("secArwMode", secArwMode);
-    Settings::setSetting("secArwLevelType", secArwLevelType);
-    Settings::setSetting("secArwLevelValue", secArwLevelValue);
-    Settings::setSetting("labelMode", labelMode);
-    Settings::setSetting("labelLevelType", labelLevelType);
-    Settings::setSetting("labelLevelValue", labelLevelValue);
+    Settings::setSetting("colorMapMode", colorMapMode,"DataDrawing");
+    Settings::setSetting("colorMapLevelType", colorMapLevelType,"DataDrawing");
+    Settings::setSetting("colorMapLevelValue", colorMapLevelValue,"DataDrawing");
+    Settings::setSetting("frstArwMode", frstArwMode,"DataDrawing");
+    Settings::setSetting("frstArwLevelType", frstArwLevelType,"DataDrawing");
+    Settings::setSetting("frstArwLevelValue", frstArwLevelValue,"DataDrawing");
+    Settings::setSetting("secArwMode", secArwMode,"DataDrawing");
+    Settings::setSetting("secArwLevelType", secArwLevelType,"DataDrawing");
+    Settings::setSetting("secArwLevelValue", secArwLevelValue,"DataDrawing");
+    Settings::setSetting("labelMode", labelMode,"DataDrawing");
+    Settings::setSetting("labelLevelType", labelLevelType,"DataDrawing");
+    Settings::setSetting("labelLevelValue", labelLevelValue,"DataDrawing");
 
     //qWarning() << "[update_mapDataAndLevel] done";
 }
@@ -957,9 +957,9 @@ void Terrain::setColorMapMode(int dataType,int levelType, int levelValue) {
         colorMapLevelType = levelType;
         colorMapLevelValue = levelValue;
         qWarning() << "[setColorMapMode] new value: " << colorMapMode << " / " << colorMapLevelType << " / " << colorMapLevelValue;
-        Settings::setSetting("colorMapMode", colorMapMode);
-        Settings::setSetting("colorMapLevelType", colorMapLevelType);
-        Settings::setSetting("colorMapLevelValue", colorMapLevelValue);
+        Settings::setSetting("colorMapMode", colorMapMode,"DataDrawing");
+        Settings::setSetting("colorMapLevelType", colorMapLevelType,"DataDrawing");
+        Settings::setSetting("colorMapLevelValue", colorMapLevelValue,"DataDrawing");
         mustRedraw = true;
         indicateWaitingMap();
     }
@@ -967,41 +967,15 @@ void Terrain::setColorMapMode(int dataType,int levelType, int levelValue) {
         qWarning() << "[setColorMapMode] nothing changed => not redrawing";
 }
 
-/*void Terrain::update_colorMapLevel(int * mode,int * levelType, int * levelValue) {
-    bool ok=false;
-    DataManager * dataManager=centralWidget->get_dataManager();
-    qWarning() << "Updating level";
-
-    if(*mode!=DATA_NOTDEF && dataManager) {
-        QMap<int,QList<int>*> * levelList = dataManager->get_levelList(*mode);
-        if(levelList && levelList->count() >0 ) {
-            *levelType=levelList->begin().key();
-            *levelValue=levelList->begin().value()->first();
-            ok=true;
-        }
-    }
-
-    if(!ok) {
-        qWarning() << "KO in updating level";
-        *mode=DATA_NOTDEF;
-        *levelType=DATA_LV_NOTDEF;
-        *levelValue=0;
-    }
-    qWarning() << "New Level: " << *levelType << "," << *levelValue;
-    Settings::setSetting("colorMapLevelType", *levelType);
-    Settings::setSetting("colorMapLevelValue", *levelValue);
-}
-*/
-
 void Terrain::setFrstArwMode(int dataType,int levelType, int levelValue) {
     if (frstArwMode != dataType || frstArwLevelType != levelType || frstArwLevelValue != levelValue) {
         frstArwMode=dataType;
         frstArwLevelType = levelType;
         frstArwLevelValue = levelValue;
         qWarning() << "[setFrstArwMode] new value: " << frstArwMode << " / " << frstArwLevelType << " / " << frstArwLevelValue;
-        Settings::setSetting("frstArwMode", frstArwMode);
-        Settings::setSetting("frstArwLevelType", frstArwLevelType);
-        Settings::setSetting("frstArwLevelValue", frstArwLevelValue);
+        Settings::setSetting("frstArwMode", frstArwMode,"DataDrawing");
+        Settings::setSetting("frstArwLevelType", frstArwLevelType,"DataDrawing");
+        Settings::setSetting("frstArwLevelValue", frstArwLevelValue,"DataDrawing");
         mustRedraw = true;
         indicateWaitingMap();
     }
@@ -1015,9 +989,9 @@ void Terrain::setSecArwMode(int dataType,int levelType, int levelValue) {
         secArwLevelType = levelType;
         secArwLevelValue = levelValue;
         qWarning() << "[setSecArwMode] new value: " << secArwMode << " / " << secArwLevelType << " / " << secArwLevelValue;
-        Settings::setSetting("secArwMode", secArwMode);
-        Settings::setSetting("secArwLevelType", secArwLevelType);
-        Settings::setSetting("secArwLevelValue", secArwLevelValue);
+        Settings::setSetting("secArwMode", secArwMode,"DataDrawing");
+        Settings::setSetting("secArwLevelType", secArwLevelType,"DataDrawing");
+        Settings::setSetting("secArwLevelValue", secArwLevelValue,"DataDrawing");
         mustRedraw = true;
         indicateWaitingMap();
     }
@@ -1031,9 +1005,9 @@ void Terrain::setLabelMode(int dataType,int levelType, int levelValue) {
         labelLevelType = levelType;
         labelLevelValue = levelValue;
         qWarning() << "[setLabelMode] new value: " << labelMode << " / " << labelLevelType << " / " << labelLevelValue;
-        Settings::setSetting("labelMode", labelMode);
-        Settings::setSetting("labelLevelType", labelLevelType);
-        Settings::setSetting("labelLevelValue", labelLevelValue);
+        Settings::setSetting("labelMode", labelMode,"DataDrawing");
+        Settings::setSetting("labelLevelType", labelLevelType,"DataDrawing");
+        Settings::setSetting("labelLevelValue", labelLevelValue,"DataDrawing");
         mustRedraw = true;
         indicateWaitingMap();
     }
@@ -1045,34 +1019,17 @@ void Terrain::setLabelMode(int dataType,int levelType, int levelValue) {
 void Terrain::setColorMapSmooth (bool b) {
     if (colorMapSmooth != b) {
         colorMapSmooth = b;
-        Settings::setSetting("colorMapSmooth", b);
+        Settings::setSetting("colorMapSmooth", b,"DataDrawing");
         mustRedraw = true;
         indicateWaitingMap();
     }
 }
-//-------------------------------------------------------
-void Terrain::setDrawWindArrows (bool b) {
-    if (showWindArrows != b) {
-        showWindArrows = b;
-        Settings::setSetting("showWindArrows", b);
-        mustRedraw = true;
-        indicateWaitingMap();
-    }
-}
-//-------------------------------------------------------
-void Terrain::setDrawWavesArrows (bool b) {
-    if (showWavesArrows != b) {
-        showWavesArrows = b;
-        Settings::setSetting("showWavesArrows", b);
-        mustRedraw = true;
-        indicateWaitingMap();
-    }
-}
+
 //-------------------------------------------------------
 void Terrain::setBarbules (bool b) {
     if (showBarbules != b) {
         showBarbules = b;
-        Settings::setSetting("showBarbules", b);
+        Settings::setSetting("showBarbules", b,"DataDrawing");
         mustRedraw = true;
         indicateWaitingMap();
     }
@@ -1082,7 +1039,7 @@ void Terrain::setBarbules (bool b) {
 void Terrain::setPressureMinMax (bool b) {
     if (showPressureMinMax != b) {
         showPressureMinMax = b;
-        Settings::setSetting("showPressureMinMax", b);
+        Settings::setSetting("showPressureMinMax", b,"DataDrawing");
         mustRedraw = true;
         indicateWaitingMap();
     }
@@ -1092,7 +1049,7 @@ void Terrain::setPressureMinMax (bool b) {
 void Terrain::setDrawIsobars(bool b) {
     if (showIsobars != b) {
         showIsobars = b;
-        Settings::setSetting("showIsobars", b);
+        Settings::setSetting("showIsobars", b,"DataDrawing");
         mustRedraw = true;
         indicateWaitingMap();
     }
@@ -1107,7 +1064,7 @@ void Terrain::setIsobarsStep(double step)
             dataManager->set_isoBarsStep(step);
         else
             qWarning() << "No grib present";
-        Settings::setSetting("isobarsStep", step);
+        Settings::setSetting("isobarsStep", step,"DataDrawing");
         isobarsStep = step;
         mustRedraw = true;
         indicateWaitingMap();
@@ -1117,7 +1074,7 @@ void Terrain::setIsobarsStep(double step)
 void Terrain::setDrawIsobarsLabels(bool b) {
     if (showIsobarsLabels != b) {
         showIsobarsLabels = b;
-        Settings::setSetting("showIsobarsLabels", b);
+        Settings::setSetting("showIsobarsLabels", b,"DataDrawing");
         mustRedraw = true;
         indicateWaitingMap();
     }
@@ -1127,7 +1084,7 @@ void Terrain::setDrawIsobarsLabels(bool b) {
 void Terrain::setDrawIsotherms0(bool b) {
     if (showIsotherms0 != b) {
         showIsotherms0 = b;
-        Settings::setSetting("showIsotherms0", b);
+        Settings::setSetting("showIsotherms0", b,"DataDrawing");
         mustRedraw = true;
         indicateWaitingMap();
     }
@@ -1139,7 +1096,7 @@ void Terrain::setIsotherms0Step(double step)
         DataManager * dataManager=centralWidget->get_dataManager();
         if(dataManager)
             dataManager->set_isoTherms0Step(step);
-        Settings::setSetting("isotherms0Step", step);
+        Settings::setSetting("isotherms0Step", step,"DataDrawing");
         isotherms0Step = step;
         mustRedraw = true;
         indicateWaitingMap();
@@ -1149,7 +1106,7 @@ void Terrain::setIsotherms0Step(double step)
 void Terrain::setDrawIsotherms0Labels(bool b) {
     if (showIsotherms0Labels != b) {
         showIsotherms0Labels = b;
-        Settings::setSetting("showIsotherms0Labels", b);
+        Settings::setSetting("showIsotherms0Labels", b,"DataDrawing");
         mustRedraw = true;
         indicateWaitingMap();
     }

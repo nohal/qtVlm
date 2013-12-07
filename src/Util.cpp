@@ -142,9 +142,15 @@ QString Util::formatData(int type,double val1,double val2) {
             break;
         case DATA_WAVES_WND_HGT:
         case DATA_WAVES_SWL_HGT:
-        case DATA_WAVES_MAX_HGT:
-            res = Util::formatSimpleDoubleUnit(Util::A360(radToDeg(val2)+180.0),"deg");
-            res+= ", " + Util::formatSimpleDoubleUnit(val1,"m");
+        case DATA_WAVES_MAX_HGT:            
+            res= Util::formatSimpleDoubleUnit(val1,"m");
+            break;
+        case DATA_WAVES_WND_DIR:
+        case DATA_WAVES_SWL_DIR:
+        case DATA_WAVES_MAX_DIR:
+        case DATA_WAVES_PRIM_DIR:
+        case DATA_WAVES_SEC_DIR:
+            res = Util::formatSimpleDoubleUnit(Util::A360(radToDeg(val1)+180.0),"deg");
             break;
     }
     return res;
@@ -170,6 +176,13 @@ QString Util::formatSimpleData(int type,double val) {
         case DATA_WAVES_SWL_HGT:
         case DATA_WAVES_MAX_HGT:
             FORMAT_DOUBLE(res,val)
+            break;
+        case DATA_WAVES_WND_DIR:
+        case DATA_WAVES_SWL_DIR:
+        case DATA_WAVES_MAX_DIR:
+        case DATA_WAVES_PRIM_DIR:
+        case DATA_WAVES_SEC_DIR:
+            FORMAT_DOUBLE(res,Util::A360(radToDeg(val)+180.0))
             break;
         case DATA_TEMP:
         case DATA_TEMP_POT:
