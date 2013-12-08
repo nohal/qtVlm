@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QColorDialog>
 #endif
 #include <QDebug>
+#include <QUiLoader>
 #include "DialogParamVlm.h"
 #include "settings.h"
 #include "MainWindow.h"
@@ -61,34 +62,53 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
 
     this->chkPavillon->setCheckState(Settings::getSetting("showFlag",0,"showHideItem").toInt()==1?Qt::Checked:Qt::Unchecked);
     this->chkFusion->setChecked(Settings::getSetting("fusionStyle",0).toInt()==1);
-    QDir dir(QApplication::applicationDirPath());
-    QStringList files=dir.entryList(QDir::Files);
-    QPluginLoader pgl;
+    // QDir dir(QApplication::applicationDirPath());
+    // QStringList files=dir.entryList(QDir::Files);
+    //QPluginLoader pgl;
     comboBoard->addItem(tr("Classical VLM board"),0);
-    qWarning()<<"start loading plugins";
-    QString currentBoard=Settings::getSetting("vlmBoard","0").toString();
+    //qWarning()<<"start loading plugins";
+    QDir        dir (QApplication::applicationDirPath() + "/boards");
+    QStringList files = dir.entryList (QStringList ("*.ui"));
+    QUiLoader   loader;
     foreach(const QString &filename,files)
     {
-        QFileInfo info(filename);
-        pgl.setFileName(info.baseName());
-        pgl.load();
-        if(!pgl.isLoaded())
-        {
-            //qWarning()<<"unable to load 1"<<pgl.fileName()<<pgl.errorString();
-            continue;
-        }
-        BoardInterface * plugin=qobject_cast<BoardInterface*>(pgl.instance());
-        if(!plugin || comboBoard->findText(plugin->getName())!=-1)
-        {
-            //qWarning()<<"unable to load 2"<<pgl.fileName()<<pgl.errorString();
-            pgl.unload();
-            continue;
-        }
-        this->comboBoard->addItem(plugin->getName(),pgl.fileName());
-        if(currentBoard!=pgl.fileName())
-            pgl.unload();
+       QFile    uiFile (dir.filePath (filename));
+       uiFile.open (QFile::ReadOnly);
+       QWidget* tst = loader.load (&uiFile);
+       uiFile.close();
+       if ((tst != NULL) && (qobject_cast<BoardInterface*> (tst) != NULL))
+       {
+          comboBoard->addItem(tst->objectName(), dir.filePath (filename));
+          delete tst;
+       } else {
+           qWarning() << "Could not load board definition"
+                      << filename
+                      << loader.errorString();
+       }
     }
-    qWarning()<<"load plugins finished";
+    QString currentBoard=Settings::getSetting("vlmBoard","0").toString();
+    // foreach(const QString &filename,files)
+    // {
+    //     QFileInfo info(filename);
+    //     pgl.setFileName(info.baseName());
+    //     pgl.load();
+    //     if(!pgl.isLoaded())
+    //     {
+    //         //qWarning()<<"unable to load 1"<<pgl.fileName()<<pgl.errorString();
+    //         continue;
+    //     }
+    //     BoardInterface * plugin=qobject_cast<BoardInterface*>(pgl.instance());
+    //     if(!plugin || comboBoard->findText(plugin->getName())!=-1)
+    //     {
+    //         //qWarning()<<"unable to load 2"<<pgl.fileName()<<pgl.errorString();
+    //         pgl.unload();
+    //         continue;
+    //     }
+    //     this->comboBoard->addItem(plugin->getName(),pgl.fileName());
+    //     if(currentBoard!=pgl.fileName())
+    //         pgl.unload();
+    // }
+    // qWarning()<<"load plugins finished";
     if(comboBoard->findData(currentBoard)!=-1)
         comboBoard->setCurrentIndex(comboBoard->findData(currentBoard));
     else

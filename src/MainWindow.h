@@ -43,7 +43,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "class_list.h"
 #include "dataDef.h"
 #include "MainWindowInterface.h"
-#include <QPluginLoader>
+//#include <QPluginLoader>
 class MainWindow: public MainWindowInterface
 {
     Q_OBJECT
@@ -302,7 +302,7 @@ signals:
         void loadGrib2();
 
         QString get_OSVersion(void);
-        QPluginLoader * pluginLoader;
+        //QPluginLoader * pluginLoader;
 };
 
 #endif

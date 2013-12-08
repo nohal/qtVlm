@@ -39,6 +39,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QDesktopServices>
 #include <QDesktopWidget>
 #include <QClipboard>
+#include <QUiLoader>
 
 #include <iostream>
 #include <fstream>
@@ -83,7 +84,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "dialogviewpolar.h"
 #include "DialogEditBarrier.h"
 #include "DialogRouteComparator.h"
-#include <QPluginLoader>
+//#include <QPluginLoader>
 int INTERPOLATION_DEFAULT=INTERPOLATION_HYBRID;
 
 
@@ -226,7 +227,7 @@ void MainWindow::slot_gribFileReceived(QString fileName)
 //=============================================================
 MainWindow::MainWindow(int w, int h, QWidget *parent)
 {
-    pluginLoader=NULL;
+    //pluginLoader=NULL;
     this->setParent(parent);
     restartNeeded=false;
     setWindowIcon (QIcon (appFolder.value("icon")+"qtVlm_48x48.png"));
@@ -591,13 +592,13 @@ void MainWindow::loadBoard()
     if(!use_old_board && boardPlugin) return;
     if(boardPlugin)
     {
-        if(pluginLoader!=NULL)
-        {
-            pluginLoader->unload();
-            delete pluginLoader;
-            pluginLoader=NULL;
-        }
-        else
+        // if(pluginLoader!=NULL)
+        // {
+        //     pluginLoader->unload();
+        //     delete pluginLoader;
+        //     pluginLoader=NULL;
+        // }
+        // else
             delete boardPlugin;
         boardPlugin=NULL;
     }
@@ -632,18 +633,34 @@ void MainWindow::loadBoard()
     }
     else
     {
-        pluginLoader=new QPluginLoader(Settings::getSetting("vlmBoard","0").toString());
-        pluginLoader->load();
-        if(pluginLoader->isLoaded())
-        {
-            boardPlugin = qobject_cast<BoardInterface*>(pluginLoader->instance());
-            boardPlugin->initBoard(this);
-        }
-        else
-        {
-            qWarning()<<"error loadin board plugin"<<pluginLoader->fileName()<<pluginLoader->errorString();
-            Settings::setSetting("vlmBoard","0");
-            loadBoard();
+        // pluginLoader=new QPluginLoader(Settings::getSetting("vlmBoard","0").toString());
+        // pluginLoader->load();
+        // if(pluginLoader->isLoaded())
+        // {
+        //     boardPlugin = qobject_cast<BoardInterface*>(pluginLoader->instance());
+        //     boardPlugin->initBoard(this);
+        // }
+        // else
+        // {
+        //     qWarning()<<"error loadin board plugin"<<pluginLoader->fileName()<<pluginLoader->errorString();
+        //     Settings::setSetting("vlmBoard","0");
+        //     loadBoard();
+        // }
+        QUiLoader   loader;
+        QFile       uiFile (Settings::getSetting("vlmBoard","0").toString());
+        uiFile.open (QFile::ReadOnly);
+        QWidget* w = loader.load (&uiFile, NULL);
+        boardPlugin = qobject_cast<BoardInterface*> (w);
+        uiFile.close();
+        if (boardPlugin != NULL) {
+           boardPlugin->initBoard(this);
+        } else {
+           if (w != NULL) delete w;
+           qWarning() << "Error loading board definition"
+                      << Settings::getSetting("vlmBoard","0").toString()
+                      << loader.errorString();
+           Settings::setSetting("vlmBoard","0");
+           loadBoard();
         }
     }
     Settings::setSetting("showDashBoard",1);

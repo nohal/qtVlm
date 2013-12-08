@@ -37,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QTranslator>
 #include <QDebug>
 QMap<QString,QString> appFolder; //necessary to avoid compilation errors in Settings.cpp
-BoardVlmNew::BoardVlmNew()
+BoardVlmNew::BoardVlmNew (QWidget* parent): BoardInterface (parent)
 {
     translator=NULL;
     wpDialog=NULL;

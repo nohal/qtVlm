@@ -34,11 +34,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class Q_DECL_EXPORT BoardVlmNew : public BoardInterface, public Ui::BoardVlmNew
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "qtVlm.plugins.boardInterface/1.1")
+    //Q_PLUGIN_METADATA(IID "qtVlm.plugins.boardInterface/1.1")
     Q_INTERFACES(BoardInterface)
 
 public:
-    BoardVlmNew();
+    BoardVlmNew (QWidget* parent = 0);
     void initBoard(MainWindowInterface *main);
     QString getName();
     ~BoardVlmNew();

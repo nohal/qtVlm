@@ -4,7 +4,7 @@ contains ( QT_VERSION, "^5.*"){
     warning("qt5 detected")
     DEFINES += QT_V5
     CONFIG += QT_V5
-    QT+=core gui widgets multimedia concurrent
+    QT+=core gui widgets multimedia concurrent uitools
 }
 CONFIG += qt
 TEMPLATE = app

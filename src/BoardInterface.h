@@ -26,6 +26,7 @@ class BoardInterface : public QDialog
 {
     Q_OBJECT
 public:
+    BoardInterface (QWidget* parent=0): QDialog (parent) {}
     virtual ~BoardInterface(){}
     virtual void initBoard(MainWindowInterface * main)=0;
     virtual QString getName() =0;

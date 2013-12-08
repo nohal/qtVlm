@@ -122,6 +122,7 @@ int main(int argc, char *argv[])
     appFolder.insert("userFiles",dataDir+"/");
     appFolder.insert("icon",appExeFolder+"/icon/");
 
+    QCoreApplication::addLibraryPath (appExeFolder+"/plugins");
     //qWarning() << appFolder;
 
     QList<QString> folderList=appFolder.values();

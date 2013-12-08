@@ -4,7 +4,7 @@ contains ( QT_VERSION, "^5.*"){
     warning("qt5 detected")
     DEFINES += QT_V5
     CONFIG += QT_V5
-    QT+=core gui widgets multimedia concurrent
+    QT+=core gui widgets multimedia concurrent designer
 }
 CONFIG += plugin
 TEMPLATE = lib
@@ -27,7 +27,7 @@ asan {
 MOC_DIR = objects
 OBJECTS_DIR = objects
 UI_DIR = objects
-DESTDIR = ../../..
+DESTDIR = ../../../plugins/designer
 CODECFORTR = UTF-8
 CODECFORSRC = UTF-8
 TRANSLATIONS = ../../../tr/pluginNewBoardVlm_en.ts \
@@ -35,7 +35,7 @@ TRANSLATIONS = ../../../tr/pluginNewBoardVlm_en.ts \
     ../../../tr/pluginNewBoardVlm_cz.ts \
     ../../../tr/pluginNewBoardVlm_es.ts
 HEADERS = ../../BoardInterface.h BoardVlmNew.h DialogWp.h BoardTools.h ../../Util.h ../../Settings.h ../../Orthodromie.h
-SOURCES = BoardVlmNew.cpp DialogWp.cpp ../../Util.cpp ../../Settings.cpp ../../Orthodromie.cpp
+SOURCES = BoardVlmNew.cpp DialogWp.cpp ../../Util.cpp ../../Settings.cpp ../../Orthodromie.cpp plugin.cpp
 FORMS = BoardVlmNew.ui WP_dialog.ui
 
 unix:!macx: DEFINES += _TTY_POSIX_ __TERRAIN_QIMAGE __UNIX_QTVLM
