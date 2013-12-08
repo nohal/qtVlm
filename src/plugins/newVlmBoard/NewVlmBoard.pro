@@ -10,9 +10,7 @@ CONFIG += plugin
 TEMPLATE = lib
 TARGET = newVlmBoard
 DEPENDPATH += .
-INCLUDEPATH += . ../.. ../../Dialogs \
-        ../../libs/qextserialport12/src \
-        ../../libs/nmealib/src/nmea
+INCLUDEPATH += . ../.. ../../Dialogs
 
 
 asan {

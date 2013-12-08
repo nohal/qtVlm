@@ -20,8 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "DialogWp.h"
 
-#include "boatVLM.h"
-#include "boatReal.h"
 #include "POI.h"
 #include "Util.h"
 #include "settings.h"
@@ -107,20 +105,7 @@ void DialogWp::done(int result)
             pos=QPointF(WP_lon->text().toDouble(),WP_lat->text().toDouble());
             wphd=WP_heading->text().isEmpty()?-1:WP_heading->text().toDouble();
         }
-        switch(currentBoat->get_boatType()) {
-            case BOAT_VLM: {
-                boatVLM * ptr=(boatVLM*)currentBoat;
-                ptr->setWP(pos,wphd);
-                break;
-            }
-            case BOAT_REAL: {
-                boatReal * ptr=(boatReal*)currentBoat;
-                ptr->setWP(pos,wphd);
-                break;
-            }
-            default:
-                break;
-        }
+        currentBoat->setWP(pos,wphd);
     }
     QDialog::done(result);
 }
