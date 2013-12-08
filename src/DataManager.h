@@ -30,8 +30,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class DataManager: public QObject
 { Q_OBJECT
     public:
-        DataManager();
+        DataManager(myCentralWidget * centralWidget);
         ~DataManager();
+
+        FCT_GET(myCentralWidget *,centralWidget)
 
         bool load_data(QString fileName,int gribType);
         void close_data(int gribType);
@@ -81,6 +83,7 @@ class DataManager: public QObject
 
         void set_isoBarsStep(double step);
         void set_isoTherms0Step(int step);
+        void update_isos(void);
 
 
         FCT_GET(double,isoBarsStep)
@@ -108,6 +111,8 @@ class DataManager: public QObject
         Couple get_defaultLevel(int type);
 
     private:
+
+        myCentralWidget *centralWidget;
 
         Grib * grib;
         Grib * gribCurrent;

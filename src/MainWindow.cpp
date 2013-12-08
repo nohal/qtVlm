@@ -764,7 +764,7 @@ void MainWindow::closeProgress(void)
             double yS=proj->getYmin();
             double yN=proj->getYmax();
             my_centralWidget->zoomOnGrib(DataManager::GRIB_GRIB);
-            QPixmap * imgAll = new QPixmap(my_centralWidget->getTerre()->getSize());
+            QPixmap * imgAll = new QPixmap(my_centralWidget->get_terrain()->getSize());
             imgAll->fill(Qt::transparent);
             QPainter pnt(imgAll);
             pnt.setRenderHint(QPainter::Antialiasing, true);
@@ -806,7 +806,7 @@ void MainWindow::closeProgress(void)
     if(gribFilePath.isEmpty())
         gribFilePath = appFolder.value("grib");
     QString fname = Settings::getSetting("gribFileName", "").toString();
-    //int curMode = my_centralWidget->getTerre()->get_colorMapMode();
+    //int curMode = my_centralWidget->get_terrain()->get_colorMapMode();
     if (fname != "" && QFile::exists(fname))
     {
         openGribFile(fname, false);
@@ -819,7 +819,7 @@ void MainWindow::closeProgress(void)
         gribFileNameCurrent=fname;
     }
     slot_updateGribMono();    
-    //my_centralWidget->getTerre()->setColorMapMode(curMode);
+    //my_centralWidget->get_terrain()->setColorMapMode(curMode);
     progress->close();\
     if(!Settings::getSetting("LastKap","").toString().isEmpty())
     {
@@ -1254,7 +1254,7 @@ void MainWindow::slotFile_Open()
         gribFilePath = finfo.absolutePath();
         bool zoom =  (Settings::getSetting("gribZoomOnLoad",0).toInt()==1);
         openGribFile(fileName, zoom);
-        //my_centralWidget->getTerre()->update_mapDataAndLevel();
+        //my_centralWidget->get_terrain()->update_mapDataAndLevel();
         if(my_centralWidget) my_centralWidget->fileInfo_GRIB(DataManager::GRIB_GRIB);
     }
     updateTitle();
@@ -1263,7 +1263,7 @@ void MainWindow::slotFile_Reopen()
 {
    if(!my_centralWidget->get_dataManager()->get_grib(DataManager::GRIB_GRIB)) return;
    openGribFile (my_centralWidget->get_dataManager()->get_grib(DataManager::GRIB_GRIB)->get_fileName(), (Settings::getSetting("gribZoomOnLoad",0).toInt() == 1));
-   //my_centralWidget->getTerre()->update_mapDataAndLevel();
+   //my_centralWidget->get_terrain()->update_mapDataAndLevel();
    updateTitle();
 }
 void MainWindow::slotFile_Open_Current()
@@ -1289,7 +1289,7 @@ void MainWindow::slotFile_Open_Current()
         gribFilePath = finfo.absolutePath();
         bool zoom =  (Settings::getSetting("gribZoomOnLoad",0).toInt()==1);
         openGribFile(fileName, zoom, true);
-        //my_centralWidget->getTerre()->update_mapDataAndLevel();
+        //my_centralWidget->get_terrain()->update_mapDataAndLevel();
         if(my_centralWidget) my_centralWidget->fileInfo_GRIB(DataManager::GRIB_CURRENT);
     }
     updateTitle();
@@ -1300,7 +1300,7 @@ void MainWindow::slotFile_Close_Current() {
     my_centralWidget->closeGribFileCurrent();
     toolBar->update_gribBtn();
     updateTitle();
-    my_centralWidget->getTerre()->update_mapDataAndLevel();
+    my_centralWidget->get_terrain()->update_mapDataAndLevel();
     my_centralWidget->emitUpdateRoute(NULL);
 }
 //-------------------------------------------------
@@ -1310,7 +1310,7 @@ void MainWindow::slotFile_Close()
     my_centralWidget->closeGribFile();
     toolBar->update_gribBtn();
     updateTitle();
-    my_centralWidget->getTerre()->update_mapDataAndLevel();
+    my_centralWidget->get_terrain()->update_mapDataAndLevel();
     my_centralWidget->emitUpdateRoute(NULL);
 }
 
@@ -1755,8 +1755,8 @@ void MainWindow::slot_positScale()
     qWarning() << "[slot_positScale()]";
     Settings::setSetting("scalePosX",this->mouseClicX);
     Settings::setSetting("scalePosY",this->mouseClicY);
-    my_centralWidget->getTerre()->setScalePos(this->mouseClicX,this->mouseClicY);
-    my_centralWidget->getTerre()->redrawGrib();
+    my_centralWidget->get_terrain()->setScalePos(this->mouseClicX,this->mouseClicY);
+    my_centralWidget->get_terrain()->redrawGrib();
     qWarning() << "[slot_positScale()] done";
 }
 

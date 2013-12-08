@@ -121,8 +121,8 @@ class MapDataDrawer
                 bool south,QColor color=QColor(255,255,255));
         void draw_PRESSURE_MinMax (QPainter &pnt, const Projection *proj);
 
-        void  draw_Isobars (QPainter &pnt, const Projection *proj);
-        void  draw_IsobarsLabels (QPainter &pnt, const Projection *proj);
+        void  draw_Isobars (QPainter &pnt, const Projection *proj, int levelType, int levelValue);
+        void  draw_IsobarsLabels (QPainter &pnt, const Projection *proj, int levelType, int levelValue);
 
         void  draw_Isotherms0 (QPainter &pnt, const Projection *proj);
         void  draw_Isotherms0Labels (QPainter &pnt, const Projection *proj);

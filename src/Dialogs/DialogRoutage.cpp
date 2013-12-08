@@ -511,10 +511,10 @@ void DialogRoutage::done(int result)
     {
 //        if(routage->getColorGrib())
 //            routage->setShowIso(false);
-        if(!routage->getColorGrib() && parent->getTerre()->getRoutageGrib()==routage)
-            parent->getTerre()->setRoutageGrib(NULL);
-        else if(routage->getColorGrib() && parent->getTerre()->getRoutageGrib()!=routage)
-            parent->getTerre()->setRoutageGrib(routage);
+        if(!routage->getColorGrib() && parent->get_terrain()->getRoutageGrib()==routage)
+            parent->get_terrain()->setRoutageGrib(NULL);
+        else if(routage->getColorGrib() && parent->get_terrain()->getRoutageGrib()!=routage)
+            parent->get_terrain()->setRoutageGrib(routage);
     }
     if(result == QDialog::Rejected)
     {

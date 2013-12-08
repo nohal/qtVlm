@@ -475,7 +475,7 @@ void ToolBar::slot_gribPlay(void) {
             {
                 acGrib_play->setIcon(QIcon(appFolder.value("img")+"player_end.png"));
                 acGrib_play->setData(1);
-                connect(centralWidget->getTerre(),SIGNAL(terrainUpdated()),mainWindow,SLOT(slotDateGribChanged_next()));
+                connect(centralWidget->get_terrain(),SIGNAL(terrainUpdated()),mainWindow,SLOT(slotDateGribChanged_next()));
                 mainWindow->slotDateGribChanged_next();
             }
         }
@@ -487,7 +487,7 @@ void ToolBar::slot_gribPlay(void) {
 void ToolBar::stopPlaying(void) {
     acGrib_play->setIcon(QIcon(appFolder.value("img")+"player_play.png"));
     acGrib_play->setData(0);
-    disconnect(centralWidget->getTerre(),SIGNAL(terrainUpdated()),mainWindow,SLOT(slotDateGribChanged_next()));
+    disconnect(centralWidget->get_terrain(),SIGNAL(terrainUpdated()),mainWindow,SLOT(slotDateGribChanged_next()));
 }
 
 void ToolBar::slot_gribDwnld(void) {

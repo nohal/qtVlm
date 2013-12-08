@@ -44,13 +44,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 DialogGribDrawing::DialogGribDrawing(QWidget *parent, myCentralWidget *centralWidget) : QDialog(parent) {
     this->centralWidget=centralWidget;
-    this->terrain=centralWidget->getTerre();
+    this->terrain=centralWidget->get_terrain();
     this->dataManager = centralWidget->get_dataManager();
 
     setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
 
     setupUi(this);
     Util::setFontDialog(this);
+
+    tabWidget->setCurrentWidget(tab_display);
 
     savDataMapMode = new Couple[DATA_MAX];
     savFrstArwMode = new Couple[DATA_MAX];
@@ -191,28 +193,62 @@ bool DialogGribDrawing::init_state(void) {
     color=Settings::getSetting("labelColor",QColor(Qt::black), "DataDrawing").value<QColor>();
     updateBtnColor(btn_labelColor,color);
 
+    // Pressure Min/Max
+    chkShowIsoBarMinMax->setChecked(Settings::getSetting("showPressureMinMax", false, "DataDrawing").toBool());
 
     // IsoBar
-    bool showIso=Settings::getSetting("showIsobars", false, "DataDrawing").toBool();
-    chkShowIsoBar->setChecked(showIso);
-    int idx = isoBarSpacing->findText(Settings::getSetting("isobarsStep", "2", "DataDrawing").toString());
-    if(idx!=-1)
-        isoBarSpacing->setCurrentIndex(idx);
-    isoBarSpacing->setEnabled(showIso);
-    chkShowIsoBarLabel->setChecked(Settings::getSetting("showIsobarsLabels", false, "DataDrawing").toBool());
-    chkShowIsoBarLabel->setEnabled(showIso);
-    chkShowIsoBarMinMax->setChecked(Settings::getSetting("showPressureMinMax", false, "DataDrawing").toBool());
+
+    // check if we have pressure data
+    if(dataManager->hasDataType(DATA_PRESSURE)) {
+        bool showIso=Settings::getSetting("showIsobars", false, "DataDrawing").toBool();
+        chkShowIsoBar->setChecked(showIso);
+        int idx = isoBarSpacing->findText(Settings::getSetting("isobarsStep", "2", "DataDrawing").toString());
+        if(idx!=-1)
+            isoBarSpacing->setCurrentIndex(idx);
+        isoBarSpacing->setEnabled(showIso);
+        chkShowIsoBarLabel->setChecked(Settings::getSetting("showIsobarsLabels", false, "DataDrawing").toBool());
+        chkShowIsoBarLabel->setEnabled(showIso);
+        if(showIso) {
+            curLevelType=terrain->get_isoBarLevelType();
+            curLevelValue=terrain->get_isoBarLevelValue();
+            Couple res=update_levelCb(DATA_PRESSURE,isoBarAlt,SAVINFO_NONE,curLevelType,curLevelValue);
+            if(curLevelType!=res.a || curLevelValue!=res.b)
+                terrain->setIsoBarAlt(res.a,res.b);
+            isoBarAlt->setEnabled(true);
+        }
+        else {
+            isoBarAlt->blockSignals(true);
+            isoBarAlt->clear();
+            isoBarAlt->setEnabled(false);
+            isoBarAlt->blockSignals(false);
+        }
+    }
+    else {
+        chkShowIsoBar->setEnabled(false);
+        isoBarSpacing->setEnabled(false);
+        chkShowIsoBarLabel->setEnabled(false);
+        isoBarAlt->setEnabled(false);
+    }
 
 
     // IsoTherm0
-    showIso=Settings::getSetting("showIsotherms0", false, "DataDrawing").toBool();
-    chkShowIsoTherm->setChecked(showIso);
-    idx = isoThermSpacing->findText(Settings::getSetting("isotherms0Step", "50", "DataDrawing").toString());
-    if(idx!=-1)
-        isoThermSpacing->setCurrentIndex(idx);
-    isoThermSpacing->setEnabled(showIso);
-    chkShowIsoThermLabel->setChecked(Settings::getSetting("showIsotherms0Labels", false, "DataDrawing").toBool());
-    chkShowIsoThermLabel->setEnabled(showIso);
+
+    // check if we have data
+    if(dataManager->hasData(DATA_GEOPOT_HGT,DATA_LV_ISOTHERM0,0)) {
+        bool showIso=Settings::getSetting("showIsotherms0", false, "DataDrawing").toBool();
+        chkShowIsoTherm->setChecked(showIso);
+        int idx = isoThermSpacing->findText(Settings::getSetting("isotherms0Step", "50", "DataDrawing").toString());
+        if(idx!=-1)
+            isoThermSpacing->setCurrentIndex(idx);
+        isoThermSpacing->setEnabled(showIso);
+        chkShowIsoThermLabel->setChecked(Settings::getSetting("showIsotherms0Labels", false, "DataDrawing").toBool());
+        chkShowIsoThermLabel->setEnabled(showIso);
+    }
+    else {
+        chkShowIsoTherm->setEnabled(false);
+        isoThermSpacing->setEnabled(false);
+        chkShowIsoThermLabel->setEnabled(false);
+    }
 
     qWarning() << "Init state .......... Done";
 
@@ -241,6 +277,9 @@ Couple DialogGribDrawing::update_levelCb(int data,QComboBox * cb,int infoType, i
             break;
         case SAVINFO_SECARW:
             prevVal=savSecArwMode[data];
+            break;
+        case SAVINFO_NONE:
+            prevVal=Couple(DATA_LV_NOTDEF,0);
             break;
     }
 
@@ -290,7 +329,7 @@ Couple DialogGribDrawing::update_levelCb(int data,QComboBox * cb,int infoType, i
 
                 }
 
-                if(lvType == prevVal.a && lvVal == prevVal.b)
+                if(infoType != SAVINFO_NONE && lvType == prevVal.a && lvVal == prevVal.b)
                     idx_prev=idx;
 
                 qWarning() << "Adding item: " << str << " - " << j.key() << "," << lst->at(i);
@@ -384,6 +423,11 @@ void DialogGribDrawing::init_comboList(QMap<int,QStringList> * map,QComboBox * c
             cb->addItem(i.value().first(),i.key());
     }
     cb->blockSignals(false);
+}
+
+void DialogGribDrawing::closeEvent(QCloseEvent * event) {
+    slot_finished();
+    event->ignore();
 }
 
 void DialogGribDrawing::slot_finished() {
@@ -558,6 +602,20 @@ void DialogGribDrawing::slot_showIsoBar(bool st) {
     terrain->setDrawIsobars(st);
     isoBarSpacing->setEnabled(st);
     chkShowIsoBarLabel->setEnabled(st);
+    if(st) {
+        int curLevelType=terrain->get_isoBarLevelType();
+        int curLevelValue=terrain->get_isoBarLevelValue();
+        Couple res=update_levelCb(DATA_PRESSURE,isoBarAlt,SAVINFO_NONE,curLevelType,curLevelValue);
+        if(curLevelType!=res.a || curLevelValue!=res.b)
+            terrain->setIsoBarAlt(res.a,res.b);
+        isoBarAlt->setEnabled(true);
+    }
+    else {
+        isoBarAlt->blockSignals(true);
+        isoBarAlt->clear();
+        isoBarAlt->setEnabled(false);
+        isoBarAlt->blockSignals(false);
+    }
 }
 
 void DialogGribDrawing::slot_showIsoTherm(bool st) {
@@ -582,7 +640,15 @@ void DialogGribDrawing::slot_isoThermShowLabel(bool st) {
     terrain->setDrawIsotherms0Labels(st);
 }
 
-void DialogGribDrawing::slot_isoBarShowMinMax(bool st) {
+void DialogGribDrawing::slot_isoBarAlt(int idx) {
+    int newLevelType=isoBarAlt->itemData(idx,Qt::UserRole).toInt();
+    int newLevelValue=isoBarAlt->itemData(idx,Qt::UserRole+1).toInt();
+    qWarning() << "Cb alt for isoBar changed: " << newLevelType << ", " << newLevelValue;
+    /* saving info in prev array */
+    terrain->setIsoBarAlt(newLevelType,newLevelValue);
+}
+
+void DialogGribDrawing::slot_pressureShowMinMax(bool st) {
     terrain->setPressureMinMax(st);
 }
 

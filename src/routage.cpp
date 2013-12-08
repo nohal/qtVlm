@@ -947,9 +947,9 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, DataManager *dataManager, QGrap
 }
 ROUTAGE::~ROUTAGE()
 {
-    if(parent->getTerre()->getRoutageGrib()==this)
+    if(parent->get_terrain()->getRoutageGrib()==this)
     {
-        parent->getTerre()->setRoutageGrib(NULL);
+        parent->get_terrain()->setRoutageGrib(NULL);
     }
     while(!isochrones.isEmpty())
         delete isochrones.takeFirst();
@@ -2705,7 +2705,7 @@ void ROUTAGE::slot_calculate()
             setShowIso(false);
         this->done=true;
         if(this->colorGrib && !multiRoutage)
-            parent->getTerre()->setRoutageGrib(this);
+            parent->get_terrain()->setRoutageGrib(this);
     }
     proj->setFrozen(false);
     if((multiRoutage || isConverted()) && !i_iso)

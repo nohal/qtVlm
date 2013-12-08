@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>408</width>
-    <height>352</height>
+    <height>385</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,9 +17,9 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
-     <widget class="QWidget" name="tab">
+     <widget class="QWidget" name="tab_display">
       <attribute name="title">
        <string>Affichage</string>
       </attribute>
@@ -389,6 +389,20 @@
         </layout>
        </item>
        <item>
+        <widget class="Line" name="line_5">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="chkShowIsoBarMinMax">
+         <property name="text">
+          <string>Min/Max Pression</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -403,11 +417,11 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_2">
+     <widget class="QWidget" name="tab_iso">
       <attribute name="title">
        <string>Isobar / Isotherme</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <widget class="QLabel" name="label_4">
          <property name="text">
@@ -439,6 +453,19 @@
             </size>
            </property>
           </spacer>
+         </item>
+         <item>
+          <widget class="QComboBox" name="isoBarAlt">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="sizeAdjustPolicy">
+            <enum>QComboBox::AdjustToContents</enum>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -531,13 +558,6 @@
             </size>
            </property>
           </spacer>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="chkShowIsoBarMinMax">
-           <property name="text">
-            <string>Min/Max</string>
-           </property>
-          </widget>
          </item>
         </layout>
        </item>
@@ -668,6 +688,19 @@
           </spacer>
          </item>
         </layout>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>84</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
@@ -804,8 +837,8 @@
    <slot>slot_showIsoBar(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>63</x>
-     <y>81</y>
+     <x>73</x>
+     <y>80</y>
     </hint>
     <hint type="destinationlabel">
      <x>402</x>
@@ -821,7 +854,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>151</x>
-     <y>121</y>
+     <y>90</y>
     </hint>
     <hint type="destinationlabel">
      <x>405</x>
@@ -836,28 +869,12 @@
    <slot>slot_isoBarShowLabel(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>42</x>
-     <y>152</y>
+     <x>52</x>
+     <y>137</y>
     </hint>
     <hint type="destinationlabel">
      <x>5</x>
      <y>138</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>chkShowIsoBarMinMax</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>DialogGribDrawing_ui</receiver>
-   <slot>slot_isoBarShowMinMax(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>384</x>
-     <y>152</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>405</x>
-     <y>5</y>
     </hint>
    </hints>
   </connection>
@@ -868,8 +885,8 @@
    <slot>slot_showIsoTherm(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>61</x>
-     <y>221</y>
+     <x>71</x>
+     <y>191</y>
     </hint>
     <hint type="destinationlabel">
      <x>4</x>
@@ -884,8 +901,8 @@
    <slot>slot_isoThermSpacing(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>153</x>
-     <y>255</y>
+     <x>155</x>
+     <y>220</y>
     </hint>
     <hint type="destinationlabel">
      <x>147</x>
@@ -900,8 +917,8 @@
    <slot>slot_isoThermShowLabel(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>55</x>
-     <y>286</y>
+     <x>65</x>
+     <y>247</y>
     </hint>
     <hint type="destinationlabel">
      <x>66</x>
@@ -932,8 +949,8 @@
    <slot>slot_finished()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>349</x>
-     <y>327</y>
+     <x>399</x>
+     <y>376</y>
     </hint>
     <hint type="destinationlabel">
      <x>241</x>
@@ -1053,6 +1070,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>chkShowIsoBarMinMax</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>DialogGribDrawing_ui</receiver>
+   <slot>slot_pressureShowMinMax(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>79</x>
+     <y>314</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>22</x>
+     <y>359</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>isoBarAlt</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>DialogGribDrawing_ui</receiver>
+   <slot>slot_isoBarAlt(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>349</x>
+     <y>70</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>90</x>
+     <y>353</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>slot_bgDataType(int)</slot>
@@ -1070,12 +1119,13 @@
   <slot>slot_isoThermSpacing(int)</slot>
   <slot>slot_isoBarShowLabel(bool)</slot>
   <slot>slot_isoThermShowLabel(bool)</slot>
-  <slot>slot_isoBarShowMinMax(bool)</slot>
+  <slot>slot_pressureShowMinMax(bool)</slot>
   <slot>slot_finished()</slot>
   <slot>slot_labelAlt(int)</slot>
   <slot>slot_frstArrowColor()</slot>
   <slot>slot_secArrowColor()</slot>
   <slot>slot_labelDataType(int)</slot>
   <slot>slot_labelColor()</slot>
+  <slot>slot_isoBarAlt(int)</slot>
  </slots>
 </ui>

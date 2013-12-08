@@ -108,7 +108,8 @@ bool GribV2::loadFile(QString fileName) {
 
     /* clean data structure + iso lines */
     clean_all_vectors();
-    Util::cleanListPointers(listIsobars);
+
+    clean_isoBars();
     Util::cleanListPointers(listIsotherms0);
 
     for(;;) {

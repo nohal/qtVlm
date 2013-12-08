@@ -447,10 +447,10 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     inetManager = new inetConnexion(mainW);
 
     gshhsDwnload = new GshhsDwnload(this,inetManager);
-    terre=NULL;
+    terrain=NULL;
     loadGshhs();
 
-    dataManager=new DataManager();
+    dataManager=new DataManager(this);
     mapDataDrawer = new MapDataDrawer(this);
 
 
@@ -460,12 +460,12 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     connect(replayTimer,SIGNAL(timeout()),this,SLOT(slot_replay()));
 
     /* item child */
-    // Terre
-    terre = new Terrain(this,proj);
-    terre->setGSHHS_map(gshhsReader);
-    terre->setCitiesNamesLevel(Settings::getSetting("showCitiesNamesLevel", 0).toInt());
+    // terrain
+    terrain = new Terrain(this,proj);
+    terrain->setGSHHS_map(gshhsReader);
+    terrain->setCitiesNamesLevel(Settings::getSetting("showCitiesNamesLevel", 0).toInt());
 //voir s'il faut mettre le slot ds centralWidget ou utiliser myScene
-    connect(terre,SIGNAL(showContextualMenu(QGraphicsSceneContextMenuEvent *)),
+    connect(terrain,SIGNAL(showContextualMenu(QGraphicsSceneContextMenuEvent *)),
             parent, SLOT(slotShowContextualMenu(QGraphicsSceneContextMenuEvent *)));
 
 
@@ -492,9 +492,9 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
 
     connect(this,SIGNAL(accountListUpdated()), parent, SLOT(slotAccountListUpdated()));
 
-    connect(&dialogUnits, SIGNAL(accepted()), terre, SLOT(redrawAll()));
-    connect(&dialogGraphicsParams, SIGNAL(accepted()), terre, SLOT(updateGraphicsParameters()));
-    scene->addItem(terre);
+    connect(&dialogUnits, SIGNAL(accepted()), terrain, SLOT(redrawAll()));
+    connect(&dialogGraphicsParams, SIGNAL(accepted()), terrain, SLOT(updateGraphicsParameters()));
+    scene->addItem(terrain);
     horn=new QSound(appFolder.value("img")+"boat_horn.wav");
     hornTimer=new QTimer(this);
     connect(hornTimer,SIGNAL(timeout()),this,SLOT(slot_playHorn()));
@@ -593,8 +593,8 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
 void myCentralWidget::loadGshhs(void) {
 
     if(gshhsReader) {
-        if(terre)
-            terre->setGSHHS_map(NULL);
+        if(terrain)
+            terrain->setGSHHS_map(NULL);
 
         delete gshhsReader;
         gshhsReader=NULL;
@@ -685,12 +685,8 @@ void myCentralWidget::loadGshhs(void) {
         progress->newStep(progress->value()+5,tr("Finishing map init"));
 
     if(gshhsOk)
-    {
-        if(terre)
-        {
-            terre->setGSHHS_map(gshhsReader);
-        }
-    }
+        if(terrain)
+            terrain->setGSHHS_map(gshhsReader);
 
 }
 
@@ -1067,7 +1063,7 @@ void myCentralWidget::resizeEvent (QResizeEvent * /*e*/)
     resizing=true;
     view->setGeometry(0,0,width(), height());
     scene->setSceneRect(QRect(0,0,width()-4, height()-4));
-    terre->updateSize(width()-4, height()-4);
+    terrain->updateSize(width()-4, height()-4);
     //qWarning()<<"calling resize due to resizeEvent in mcw";
     proj->setScreenSize( width()-4, height()-4);
     resizing=false;
@@ -1131,15 +1127,15 @@ void myCentralWidget::keyModif(QKeyEvent *)
 {
 #if 0
     if (e->modifiers() == Qt::ControlModifier) {
-        terre->setCursor(Qt::SizeAllCursor);
+        terrain->setCursor(Qt::SizeAllCursor);
         //cur_cursor=Qt::SizeAllCursor;
     }
     else if (e->modifiers() == Qt::ShiftModifier) {
-        terre->setCursor(Qt::UpArrowCursor);
+        terrain->setCursor(Qt::UpArrowCursor);
         //cur_cursor=Qt::SizeAllCursor;
     }
     else {
-        terre->setCursor(Qt::ArrowCursor);
+        terrain->setCursor(Qt::ArrowCursor);
         //cur_cursor=Qt::SizeAllCursor;
     }
 #endif
@@ -1210,7 +1206,7 @@ void myCentralWidget::zoomOnGrib(int grbType)
     if(grbType==DataManager::GRIB_NONE)
     {
         grbType=DataManager::GRIB_GRIB;
-        if(terre->get_colorMapMode()==DATA_CURRENT_VX)
+        if(terrain->get_colorMapMode()==DATA_CURRENT_VX)
             grbType=dataManager->hasData(DATA_CURRENT_VX,DATA_LV_MSL,0);
     }
     double x0,y0, x1,y1;
@@ -1249,7 +1245,7 @@ void myCentralWidget::loadGribFile(QString fileName, bool zoom) {
     dataManager->load_data(fileName,DataManager::GRIB_GRIB);
 
     // updating data type/level/value
-    terre->update_mapDataAndLevel();
+    terrain->update_mapDataAndLevel();
 
     if(!dataManager->isOk(DataManager::GRIB_GRIB)) {
         emit redrawAll();
@@ -4755,15 +4751,15 @@ void myCentralWidget::slot_map_CitiesNames()
     QAction *act = mb->acMap_GroupCitiesNames->checkedAction();
 
     if (act == mb->acMap_CitiesNames0)
-        terre->setCitiesNamesLevel(0);
+        terrain->setCitiesNamesLevel(0);
     else if (act == mb->acMap_CitiesNames1)
-        terre->setCitiesNamesLevel(1);
+        terrain->setCitiesNamesLevel(1);
     else if (act == mb->acMap_CitiesNames2)
-        terre->setCitiesNamesLevel(2);
+        terrain->setCitiesNamesLevel(2);
     else if (act == mb->acMap_CitiesNames3)
-        terre->setCitiesNamesLevel(3);
+        terrain->setCitiesNamesLevel(3);
     else if (act == mb->acMap_CitiesNames4)
-        terre->setCitiesNamesLevel(4);
+        terrain->setCitiesNamesLevel(4);
 }
 
 POI *  myCentralWidget::get_POIatPos(double lat,double lon) {

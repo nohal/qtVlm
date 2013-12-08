@@ -330,6 +330,14 @@ class Couple {
        // QDataStream & operator<<(QDataStream & stream, const Couple & couple);
 };
 
+inline bool operator<(const Couple &c1, const Couple &c2) {
+    if(c1.a == c2.a)
+        return c1.b < c2.b;
+    else
+        return c1.a < c2.a;
+}
+
+
 #ifndef M_PI
 #define M_E        2.71828182845904523536
 #define M_LOG2E    1.44269504088896340736

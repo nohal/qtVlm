@@ -31,7 +31,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "DataManager.h"
 
-DataManager::DataManager() {
+DataManager::DataManager(myCentralWidget *centralWidget) {
+    this->centralWidget=centralWidget;
     // init grib conversion matrix => should only be done once
     GribV1Record::init_conversionMatrix();
     GribV2Record::init_conversionMatrix();
@@ -260,6 +261,11 @@ void DataManager::close_data(int gribType) {
     }
 }
 
+void DataManager::update_isos(void) {
+    if(grib) grib->init_isos(currentDate);
+    if(gribCurrent) gribCurrent->init_isos(currentDate);
+}
+
 void DataManager::set_currentDate(time_t t) {
     if(t!=currentDate) {
         currentDate=t;
@@ -344,8 +350,7 @@ QString DataManager::get_cartoucheData(void)
 void DataManager::set_isoBarsStep(double step) {
     if(step!=isoBarsStep) {
         isoBarsStep=step;
-        if(grib) grib->init_isoBars(currentDate);
-        if(gribCurrent) gribCurrent->init_isoBars(currentDate);
+        update_isos();
     }
 }
 

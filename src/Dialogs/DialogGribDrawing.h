@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ui_DialogGribDrawing.h"
 
+#define SAVINFO_NONE    -1
 #define SAVINFO_MAPDATA 0
 #define SAVINFO_FRSTARW 1
 #define SAVINFO_SECARW  2
@@ -62,12 +63,15 @@ class DialogGribDrawing: public QDialog,  Ui::DialogGribDrawing_ui {
         void slot_labelColor(void);
 
         void slot_showIsoBar(bool st);
-        void slot_showIsoTherm(bool st);
         void slot_isoBarSpacing(int val);
-        void slot_isoThermSpacing(int val);
         void slot_isoBarShowLabel(bool st);
+        void slot_isoBarAlt(int idx);
+
+        void slot_showIsoTherm(bool st);        
+        void slot_isoThermSpacing(int val);
         void slot_isoThermShowLabel(bool st);
-        void slot_isoBarShowMinMax(bool st);
+
+        void slot_pressureShowMinMax(bool st);
 
         void slot_finished();
 
@@ -81,6 +85,8 @@ class DialogGribDrawing: public QDialog,  Ui::DialogGribDrawing_ui {
         Couple * savSecArwMode;
         Couple * savLabelMode;
         void clear_savArray(void);
+
+        void closeEvent(QCloseEvent * event);
 
         bool init_state(void);
         void init_comboList(QMap<int,QStringList> * map, QComboBox * cb);

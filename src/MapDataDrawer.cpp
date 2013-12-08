@@ -764,12 +764,18 @@ void MapDataDrawer::draw_DeltaDewpoint_Color(QPainter &pnt, const Projection *pr
  * Isobar / Isotherm0 drawing
  ***************************************************************************/
 
-void MapDataDrawer::draw_Isobars(QPainter &pnt, const Projection *proj) {
+void MapDataDrawer::draw_Isobars(QPainter &pnt, const Projection *proj,int levelType,int levelValue) {
     if(!dataManager) return;
     Grib * grib=dataManager->get_grib(DataManager::GRIB_GRIB);
     if(!grib || !grib->isOk()) return;
     std::list<IsoLine *>::iterator it;
-    std::list<IsoLine *> * listPtr=grib->get_isobars();
+    std::list<IsoLine *> * listPtr=grib->get_isobars(levelType,levelValue);
+    if(!listPtr) {
+        qWarning() << "non listPtr  for isoBar";
+        return;
+    }
+    else
+        qWarning() << listPtr->size() << " elem in listPtr isoBar";
     for(it=listPtr->begin(); it!=listPtr->end(); ++it)
     {
         (*it)->drawIsoLine(pnt, proj);
@@ -822,12 +828,13 @@ void MapDataDrawer::draw_Isotherms0Labels(QPainter &pnt, const Projection *proj)
     draw_IsoLinesLabels(pnt, couleur, proj, listPtr, 1.0);
 }
 
-void MapDataDrawer::draw_IsobarsLabels(QPainter &pnt, const Projection *proj) {
+void MapDataDrawer::draw_IsobarsLabels(QPainter &pnt, const Projection *proj,int levelType,int levelValue) {
     if(!dataManager) return;
     Grib * grib=dataManager->get_grib(DataManager::GRIB_GRIB);
     if(!grib || !grib->isOk())  return;
     QColor couleur(40,40,40);
-    std::list<IsoLine *> * listPtr=grib->get_isobars();
+    std::list<IsoLine *> * listPtr=grib->get_isobars(levelType,levelValue);
+    if(!listPtr) return;
     draw_IsoLinesLabels(pnt, couleur, proj, listPtr, 0.01);
 }
 

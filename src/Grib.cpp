@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <cassert>
 #include <QDebug>
 #include <QVector>
+#include <QMap>
 
 #include "Grib.h"
 #include "Util.h"
@@ -33,12 +34,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "IsoLine.h"
 #include "settings.h"
 #include "DataManager.h"
+#include "mycentralwidget.h"
+#include "Terrain.h"
 
 #include "GribV1.h"
 #include "GribV2.h"
 #include "GribV1Record.h"
 #include "GribV2Record.h"
-#include <QMap>
+
 
 #include "interpolation.h"
 
@@ -56,7 +59,8 @@ Grib::Grib(DataManager * dataManager) {
 Grib::~Grib() {
     if(ok)
         clean_all_vectors();
-    Util::cleanListPointers(listIsobars);
+
+    clean_isoBars();
     Util::cleanListPointers(listIsotherms0);
 }
 
@@ -600,8 +604,21 @@ bool Grib::interpolateValue_2D(double d_long, double d_lat, time_t now, time_t t
  *************************************************/
 
 void Grib::init_isos(time_t t) {
-    init_isoBars(t);
-    init_isoTherms0(t);
+    Terrain * terrain = dataManager->get_centralWidget()->get_terrain();
+    if(terrain && terrain->get_showIsobars())
+        init_isoBars(t);
+    if(terrain && terrain->get_showIsotherms0())
+        init_isoTherms0(t);
+}
+
+void Grib::clean_isoBars(void) {
+    // clean map
+    QMapIterator<Couple,std::list<IsoLine *> * > it(listIsobarsMap);
+    while(it.hasNext()) {
+        it.next();
+        Util::cleanListPointers(*it.value());
+        delete it.value();
+    }
 }
 
 void Grib::init_isoBars(time_t t) {
@@ -610,19 +627,36 @@ void Grib::init_isoBars(time_t t) {
 
     int step=dataManager->get_isoBarsStep();
 
-    Util::cleanListPointers(listIsobars);
+    clean_isoBars();
 
-    GribRecord *rec_prev,*rec_nxt;
-    time_t tPrev,tNxt;
-    if(get_recordsAndTime_1D(DATA_PRESSURE,DATA_LV_MSL,0,t,
-                                 &tPrev,&tNxt,&rec_prev,&rec_nxt))
-    {
-        Util::cleanListPointers(listIsobars);
-        IsoLine *iso;
-        for (double press=840; press<1120; press += step)
-        {
-                iso = new IsoLine(press*100, t, tPrev,tNxt, rec_prev,rec_nxt);
-                listIsobars.push_back(iso);
+    // get all levels
+    QMap<int,QList<int>*> * levelList = dataManager->get_levelList(DATA_PRESSURE);
+
+    if(levelList) {
+        QMapIterator<int,QList<int>*> j(*levelList);
+        while (j.hasNext()) {
+            j.next();
+            QList<int>* lst = j.value();
+            if(!lst) continue;
+
+            for(int i=0;i<lst->count();++i) {
+
+                GribRecord *rec_prev,*rec_nxt;
+                time_t tPrev,tNxt;
+                std::list<IsoLine *> * listIsobars= new std::list<IsoLine *>();
+                if(get_recordsAndTime_1D(DATA_PRESSURE,j.key(),lst->at(i),t,
+                                         &tPrev,&tNxt,&rec_prev,&rec_nxt))
+                {
+                    IsoLine *iso;
+                    for (double press=840; press<1120; press += step)
+                    {
+                        iso = new IsoLine(press*100, t, tPrev,tNxt, rec_prev,rec_nxt);
+                        listIsobars->push_back(iso);
+                    }
+                    // insert list in Qmap structure
+                    listIsobarsMap.insert(Couple(j.key(),lst->at(i)),listIsobars);
+                }
+            }
         }
     }
 }
@@ -648,6 +682,13 @@ void Grib::init_isoTherms0(time_t t) {
                 listIsotherms0.push_back(iso);
         }
     }
+}
+
+std::list<IsoLine *> * Grib::get_isobars(int levelType,int levelValue) {
+    Couple c(levelType,levelValue);
+    if(listIsobarsMap.contains(c))
+        return listIsobarsMap.value(c);
+    return NULL;
 }
 
 

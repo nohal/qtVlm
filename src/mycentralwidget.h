@@ -227,7 +227,7 @@ class myCentralWidget : public QWidget
         /*races*/
         void drawNSZ(int i);
         void removeOpponent(QString oppId, QString raceId);
-        Terrain * getTerre(){return terre;}
+        FCT_GET(Terrain *,terrain)
         time_t getNextVac();
         void setPilototo(QList<POI*> poiList);
         void treatRoute(ROUTE* route);
@@ -418,7 +418,7 @@ signals:
         ToolBar    *toolBar;
 
         /* item child */
-        Terrain * terre;        
+        Terrain * terrain;
         mapCompass * compass;
         selectionWidget * selection;
         opponentList * opponents;

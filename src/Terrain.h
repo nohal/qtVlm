@@ -66,6 +66,12 @@ public:
     FCT_GET(int,labelLevelType)
     FCT_GET(int,labelLevelValue)
 
+    void setIsoBarAlt(int levelType,int levelValue);
+    FCT_GET(int,isoBarLevelType)
+    FCT_GET(int,isoBarLevelValue)
+    FCT_GET(bool,showIsobars)
+    FCT_GET(bool,showIsotherms0)
+
     void updateSize(int width, int height);
 
     QRectF boundingRect() const;
@@ -178,6 +184,7 @@ private:
     int frstArwMode, frstArwLevelType, frstArwLevelValue;
     int secArwMode, secArwLevelType, secArwLevelValue;
     int labelMode,labelLevelType,labelLevelValue;
+    int isoBarLevelType,isoBarLevelValue;
     //void update_colorMapLevel(int *mode, int *levelType, int *levelValue);
     int compute_dataType(DataManager * dataManager,
                          int currentMode, int defaultMode1, int defaultMode2,

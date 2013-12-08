@@ -371,7 +371,7 @@ void DialogRoute::slotInterval()
         {
             vlmPoint p(roadItems.at(1),roadItems.at(2));
             p.eta=roadItems.at(0);
-            if(parent->getTerre()->daylight(NULL,p))
+            if(parent->get_terrain()->daylight(NULL,p))
                 img.fill(QColor(238,241,125));
             else
                 img.fill(QColor(105,109,124));

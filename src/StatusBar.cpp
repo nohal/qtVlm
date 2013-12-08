@@ -184,7 +184,7 @@ void StatusBar::showGribData(double x,double y)
     stBar_label_1->setText(label1);
 
     DataManager * dataManager=my_centralWidget->get_dataManager();
-    Terrain * terrain=my_centralWidget->getTerre();
+    Terrain * terrain=my_centralWidget->get_terrain();
     MapDataDrawer * mapDrawer=my_centralWidget->get_mapDataDrawer();
 
     res.clear();

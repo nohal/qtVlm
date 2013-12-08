@@ -756,7 +756,7 @@ void ROUTE::slot_recalculate(boat * boat)
                                     vlmPoint p(roadPoint.at(1),roadPoint.at(2));
                                     p.eta=roadPoint.at(0);
                                     bool night=false;
-                                    if(parent->getTerre()->daylight(NULL,p))
+                                    if(parent->get_terrain()->daylight(NULL,p))
                                         night=true;
                                     roadInfo->setValues(roadPoint.at(6),roadPoint.at(7),roadPoint.at(8),
                                                         roadPoint.at(4),roadPoint.at(3),roadPoint.at(11),
@@ -1718,7 +1718,7 @@ routeStats ROUTE::getStats()
         stats.minBS=qMin(stats.minBS,bs);
         if(engineUsed)
             stats.engineTime+=date-prevDate;
-        if(!parent->getTerre()->daylight(NULL,points->at(n)))
+        if(!parent->get_terrain()->daylight(NULL,points->at(n)))
             stats.nightTime+=date-prevDate;
         stats.rainTime+=dataManager->getInterpolatedValue_1D(DATA_PRECIP_TOT,DATA_LV_GND_SURF,0,lon, lat, prevDate)>0.0?date-prevDate:0;
         stats.maxWaveHeight=qMax(stats.maxWaveHeight,dataManager->getInterpolatedValue_1D(DATA_WAVES_MAX_HGT,DATA_LV_GND_SURF,0,lon,lat, prevDate));

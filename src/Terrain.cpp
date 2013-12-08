@@ -93,6 +93,9 @@ Terrain::Terrain(myCentralWidget *centralWidget, Projection *proj_) : QGraphicsW
     showIsobars  = Settings::getSetting("showIsobars", true,"DataDrawing").toBool();
     showIsobarsLabels = Settings::getSetting("showIsobarsLabels", false,"DataDrawing").toBool();
     isobarsStep = Settings::getSetting("isobarsStep", 2,"DataDrawing").toDouble();
+    isoBarLevelType = Settings::getSetting("isoBarLevelType",DATA_LV_MSL,"DAtaDrawing").toInt();
+    isoBarLevelValue = Settings::getSetting("isoBarLevelValue",0,"DAtaDrawing").toInt();
+
     showPressureMinMax = Settings::getSetting("showPressureMinMax", false,"DataDrawing").toBool();
 
     showIsotherms0  = Settings::getSetting("showIsotherms0", false,"DataDrawing").toBool();
@@ -658,9 +661,9 @@ void Terrain::drawGrib(QPainter &pnt)
 
     if (showIsobars) {
         pnt.setPen(isobarsPen);
-        mapDataDrawer->draw_Isobars(pnt, proj);
+        mapDataDrawer->draw_Isobars(pnt, proj,isoBarLevelType,isoBarLevelValue);
         if (showIsobarsLabels) {
-            mapDataDrawer->draw_IsobarsLabels(pnt, proj);
+            mapDataDrawer->draw_IsobarsLabels(pnt, proj,isoBarLevelType,isoBarLevelValue);
         }
     }
 
@@ -1015,6 +1018,20 @@ void Terrain::setLabelMode(int dataType,int levelType, int levelValue) {
         qWarning() << "[setLabelMode] nothing changed => not redrawing";
 }
 
+void Terrain::setIsoBarAlt(int levelType,int levelValue) {
+    if(isoBarLevelType!=levelType || isoBarLevelValue!=levelValue) {
+        isoBarLevelType=levelType;
+        isoBarLevelValue=levelValue;
+        qWarning() << "[setIsoBarAlt] new value: " <<  labelLevelType << " / " << labelLevelValue;
+        Settings::setSetting("isoBarLevelType", isoBarLevelType,"DataDrawing");
+        Settings::setSetting("isoBarLevelValue", isoBarLevelValue,"DataDrawing");
+        mustRedraw = true;
+        indicateWaitingMap();
+    }
+    else
+        qWarning() << "[setIsoBarAlt] nothing changed => not redrawing";
+}
+
 //-------------------------------------------------------
 void Terrain::setColorMapSmooth (bool b) {
     if (colorMapSmooth != b) {
@@ -1049,6 +1066,10 @@ void Terrain::setPressureMinMax (bool b) {
 void Terrain::setDrawIsobars(bool b) {
     if (showIsobars != b) {
         showIsobars = b;
+        DataManager * dataManager=centralWidget->get_dataManager();
+        if(showIsobars && dataManager)
+            dataManager->update_isos();
+        qWarning() << "Drawing isoBar: " << b;
         Settings::setSetting("showIsobars", b,"DataDrawing");
         mustRedraw = true;
         indicateWaitingMap();
@@ -1084,6 +1105,9 @@ void Terrain::setDrawIsobarsLabels(bool b) {
 void Terrain::setDrawIsotherms0(bool b) {
     if (showIsotherms0 != b) {
         showIsotherms0 = b;
+        DataManager * dataManager=centralWidget->get_dataManager();
+        if(showIsotherms0 && dataManager)
+            dataManager->update_isos();
         Settings::setSetting("showIsotherms0", b,"DataDrawing");
         mustRedraw = true;
         indicateWaitingMap();
