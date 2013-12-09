@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab_display">
       <attribute name="title">
@@ -971,22 +971,6 @@
     <hint type="destinationlabel">
      <x>400</x>
      <y>78</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>labelAlt</sender>
-   <signal>currentIndexChanged(int)</signal>
-   <receiver>DialogGribDrawing_ui</receiver>
-   <slot>slot_tempAlt(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>345</x>
-     <y>237</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>404</x>
-     <y>266</y>
     </hint>
    </hints>
   </connection>

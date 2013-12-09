@@ -679,7 +679,7 @@ void opponentList::setBoatList(QString list_txt,QString race,int showWhat, bool 
             qWarning() << "getOpponents bad state in inet - setBoatList: " << hasInet() << " " << hasRequest();
             return;
         }
-        qWarning()<<"Cancelling previous request (setBoatList)";
+        qWarning()<<"Cancelling previous request (setBoatList): " << getCurrentRequest();
         this->inetAbort();
 //        for(int n=opponent_list.count()-1;n>=0;--n)
 //        {

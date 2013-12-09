@@ -35,13 +35,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "DialogGribDrawing.h"
 
-/*****************************
- * A faire:
- * => remettre le deltaDew
- * => parametre de level pour les Min/Max pression ?
- * => logique affichage des iso (utilisation de level ?)
- */
-
 DialogGribDrawing::DialogGribDrawing(QWidget *parent, myCentralWidget *centralWidget) : QDialog(parent) {
     this->centralWidget=centralWidget;
     this->terrain=centralWidget->get_terrain();
@@ -57,6 +50,7 @@ DialogGribDrawing::DialogGribDrawing(QWidget *parent, myCentralWidget *centralWi
     savDataMapMode = new Couple[DATA_MAX];
     savFrstArwMode = new Couple[DATA_MAX];
     savSecArwMode = new Couple[DATA_MAX];
+    savLabelMode = new Couple[DATA_MAX];
 
     clear_savArray();
     connect(this,SIGNAL(hideDialog(bool)),centralWidget->get_menuBar()->acGrib_dialog,SLOT(setChecked(bool)));
@@ -67,6 +61,7 @@ DialogGribDrawing::~DialogGribDrawing(void) {
     delete[] savDataMapMode;
     delete[] savFrstArwMode;
     delete[] savSecArwMode;
+    delete[] savLabelMode;
 }
 
 void DialogGribDrawing::showDialog(void) {
@@ -278,6 +273,9 @@ Couple DialogGribDrawing::update_levelCb(int data,QComboBox * cb,int infoType, i
         case SAVINFO_SECARW:
             prevVal=savSecArwMode[data];
             break;
+        case SAVINFO_LABEL:
+            prevVal=savLabelMode[data];
+            break;
         case SAVINFO_NONE:
             prevVal=Couple(DATA_LV_NOTDEF,0);
             break;
@@ -373,6 +371,9 @@ Couple DialogGribDrawing::update_levelCb(int data,QComboBox * cb,int infoType, i
             break;
         case SAVINFO_SECARW:
             savSecArwMode[data]=res;
+            break;
+        case SAVINFO_LABEL:
+            savLabelMode[data]=res;
             break;
     }
 
@@ -662,5 +663,8 @@ void DialogGribDrawing::clear_savArray(void) {
 
         savSecArwMode[i].a=DATA_LV_NOTDEF;
         savSecArwMode[i].b=0;
+
+        savLabelMode[i].a=DATA_LV_NOTDEF;
+        savLabelMode[i].b=0;
     }
 }

@@ -30,7 +30,8 @@ else
 endif
 
 all: libs
-	$(CD) src $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make 
+	$(CD) src $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make
+	$(CD) $(call FixPath,src/plugins) $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make
 
 libs:
 	$(RMAPPNAME)
@@ -63,9 +64,11 @@ clean:
 	$(CD) $(call FixPath,src/libs/libbsb) $(SEP) $(RM) Makefile
 	$(CD) $(call FixPath,src/libs/g2clib-1.4.0) $(SEP) $(RM) Makefile
 	$(CD) src $(SEP) $(QMAKE) $(SEP) make clean
+	$(CD) $(call FixPath,src/plugins) $(SEP) $(QMAKE) $(SEP) make clean
 	$(CD) $(call FixPath,src) $(SEP) $(RM) Makefile Makefile.Release Makefile.Debug
 	$(RMFOLDER) $(call FixPath,src/libs/build)
 	$(RMFOLDER) $(call FixPath,src/objs)
+	$(RMFOLDER) $(call FixPath,plugins)
 
 install: all
 	@echo "***********************************************************"
@@ -73,7 +76,7 @@ install: all
 	@echo "***********************************************************"
 	mkdir -p $(prefix)
 	cp -Rf qtVlm tr/ $(prefix)
-	cp -Rf base_dir/icon base_dir/img base_dir/polar base_dir/dataColors.dat $(prefix)
+	cp -Rf base_dir/icon base_dir/img base_dir/polar base_dir/dataColors.dat base_dir/boards $(prefix)
 	mkdir -p $(prefix)/grib
 	mkdir -p $(prefix)/maps
 	@echo "***********************************************************"

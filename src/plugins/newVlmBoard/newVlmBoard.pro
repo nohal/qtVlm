@@ -22,9 +22,9 @@ asan {
     QMAKE_LFLAGS="-fsanitize=address -g -rdynamic"
 }
 
-MOC_DIR = objects
-OBJECTS_DIR = objects
-UI_DIR = objects
+MOC_DIR = obj
+OBJECTS_DIR = objs
+UI_DIR = obs
 DESTDIR = ../../../plugins/designer
 CODECFORTR = UTF-8
 CODECFORSRC = UTF-8
