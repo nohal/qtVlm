@@ -67,7 +67,7 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     //QPluginLoader pgl;
     comboBoard->addItem(tr("Classical VLM board"),0);
     //qWarning()<<"start loading plugins";
-    QDir        dir (QApplication::applicationDirPath() + "/boards");
+    QDir        dir (Util::currentPath() + "/boards");
     QStringList files = dir.entryList (QStringList ("*.ui"));
     QUiLoader   loader;
     foreach(const QString &filename,files)
