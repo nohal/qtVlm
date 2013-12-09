@@ -224,6 +224,7 @@ void boatVLM::sendPilotMode(QString phpScript,QVariantMap instruction) {
         QString data;
 
         instruction.insert("idu",getId());
+        //instruction.insert("debug","true");
 
         QByteArray json;
         inetClient::map_to_JSON(instruction,&json);
@@ -232,8 +233,10 @@ void boatVLM::sendPilotMode(QString phpScript,QVariantMap instruction) {
 
 
 
-        QTextStream(&data) << "parms=" << json;
+        QTextStream(&data) << "parms=" << QUrl::toPercentEncoding(json);
         //QTextStream(&data) << "&select_idu=" << getId();
+
+        //qWarning() << url << " - " << data;
 
         inetPost(VLM_REQUEST_SENDPILOT,url,data,QString(),true);
     }

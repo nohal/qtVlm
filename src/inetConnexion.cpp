@@ -112,12 +112,6 @@ void inetConnexion::doRequest(int type,inetClient* client,QString requestUrl,QSt
     Util::paramProxy(inetManager,host);
 
     page = host+requestUrl;
-    if(type == REQUEST_POST)
-        page += "?" + data;
-#if 0
-    //if(page.contains("track"))
-        qWarning() << "Doing inet request: " << page ;
-#endif
     QNetworkRequest request;
     request.setUrl(QUrl(page));
     Util::addAgent(request);
@@ -127,23 +121,20 @@ void inetConnexion::doRequest(int type,inetClient* client,QString requestUrl,QSt
     if(needAuth)
     {         
         QString concatenated = client->getAuthLogin() + ":" + client->getAuthPass();
-        //qWarning() << "Adding auth data: " <<concatenated ;
         QByteArray data = concatenated.toLocal8Bit().toBase64();
         QString headerData = "Basic " + data;
         request.setRawHeader("Authorization", headerData.toLocal8Bit());
-        //qWarning() << "Adding auth data: " <<concatenated << " - " << headerData;
-//        if(inetManager->cookieJar())
-//            delete inetManager->cookieJar();
         inetManager->setCookieJar(new QNetworkCookieJar());
-        //inetManager->cookieJar()->setParent(0);
-
     }
 
     if(type==REQUEST_POST)
     {
-        //qWarning() << "Posting data: " << data;
-        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/octet-stream");
-        currentReply=inetManager->post(request,"");
+        QByteArray dataUtf8 = data.toUtf8();
+        QByteArray postDataSize = QByteArray::number(dataUtf8.size());
+
+        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+        request.setHeader(QNetworkRequest::ContentLengthHeader,postDataSize);
+        currentReply=inetManager->post(request,dataUtf8);
     }
     else
     {

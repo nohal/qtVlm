@@ -47,9 +47,9 @@ class inetConnexion : public QObject
         DialogInetProgess * getProgressDialog() {return progressDialog;}
         ~inetConnexion(void);
 
-        void doRequestGet(inetClient* client,QString requestUrl,bool needAuth);
+        /*void doRequestGet(inetClient* client,QString requestUrl,bool needAuth);
         void doRequestGetProgress(inetClient* client,QString requestUrl,bool needAuth);
-        void doRequestPost(inetClient* client,QString requestUrl,QString data,bool needAuth);
+        void doRequestPost(inetClient* client,QString requestUrl,QString data,bool needAuth);*/
 
         void doRequestGet(inetClient* client,QString requestUrl, QString host,bool needAuth);
         void doRequestGetProgress(inetClient* client,QString requestUrl, QString host,bool needAuth);
@@ -69,11 +69,11 @@ class inetConnexion : public QObject
 
     private:
         bool hasProgress;
-	QNetworkAccessManager *inetManager;
+        QNetworkAccessManager *inetManager;
 
         DialogInetProgess * progressDialog;
 
-	void resetInet(void);
+        void resetInet(void);
         void doRequest(int type,inetClient* client,QString requestUrl,QString data, QString host, bool needAuth);
 
         QList<inetClient*> replyList;

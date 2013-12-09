@@ -183,7 +183,7 @@ bool inetClient::map_to_JSON( QVariantMap map,QByteArray * json) {
     if(!json) return false;
 #ifdef QT_V5
     QVariant v(map);
-    *json = QJsonDocument::fromVariant(v).toJson();
+    *json = QJsonDocument::fromVariant(v).toJson(QJsonDocument::Compact);
 #else
     QJson::Serializer serializer;
     *json = serializer.serialize(map);
