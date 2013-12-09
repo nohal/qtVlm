@@ -91,13 +91,15 @@ void orthoSegment::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWid
 
 void orthoSegment::draw_orthoSegment(QPainter * pnt,double i0,double j0, double i1, double j1, int recurs, QPainterPath * path)
 {
-    if (recurs > 1000)
+    if (recurs > 10)
     {
-        qWarning() << "Stop recursing";
+        QPolygonF p;
+        p.append(QPointF(i0-x(),j0-y()));
+        p.append(QPointF(i1-x(),j1-y()));
+        path->addPolygon(p);
         return;
     }
-    QLineF line(i0,j0,i1,j1);
-    if (line.length()>10)
+    if (qAbs(i0-i1) > 10)
     {
         double xm, ym,x0,y0,x1,y1;
         double im,jm;
