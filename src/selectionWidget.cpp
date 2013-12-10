@@ -115,7 +115,10 @@ void selectionWidget::slot_protect()
     show();
     if(showOrthodromie)
     {
-        seg->initSegment(xa,ya,xb,yb);
+        double X1,Y1,X2,Y2;
+        proj->screen2mapDouble(xa,ya,&X1,&Y1);
+        proj->screen2mapDouble(xb,yb,&X2,&Y2);
+        seg->initSegment(X1,Y1,X2,Y2);
         seg->show();
     }
 }
@@ -137,7 +140,10 @@ void selectionWidget::startSelection(int start_x,int start_y)
 
     if(showOrthodromie)
     {
-        seg->initSegment(xa,ya,xb,yb);
+        double X1,Y1,X2,Y2;
+        proj->screen2mapDouble(xa,ya,&X1,&Y1);
+        proj->screen2mapDouble(xb,yb,&X2,&Y2);
+        seg->initSegment(X1,Y1,X2,Y2);
         seg->show();
     }
 }
@@ -171,7 +177,11 @@ bool selectionWidget::tryMoving(int mouse_x,int mouse_y)
     update();
 
     if(showOrthodromie)
-        seg->moveSegment(xb,yb);
+    {
+        double X,Y;
+        proj->screen2mapDouble(xb,yb,&X,&Y);
+        seg->moveSegment(X,Y);
+    }
     return true;
 }
 
@@ -196,7 +206,12 @@ void selectionWidget::slot_setDrawOrthodromie(bool b)
         Settings::setSetting("showOrthodromie", b);
         update();
         if(showOrthodromie)
-            seg->initSegment(xa,ya,xb,yb);
+        {
+            double X1,Y1,X2,Y2;
+            proj->screen2mapDouble(xa,ya,&X1,&Y1);
+            proj->screen2mapDouble(xb,yb,&X2,&Y2);
+            seg->initSegment(X1,Y1,X2,Y2);
+        }
         else
             seg->hideSegment();
     }

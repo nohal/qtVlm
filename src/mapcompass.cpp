@@ -605,8 +605,9 @@ bool mapCompass::tryMoving(int x, int y)
         // show heading and wind angle label
         compassLine->show();
         updateCompassLineLabels(x, y);
-
-        compassLine->moveSegment(x,y);
+        double X,Y;
+        proj->screen2mapDouble(x,y,&X,&Y);
+        compassLine->moveSegment(X,Y);
         return true;
     }
 
@@ -638,9 +639,7 @@ void mapCompass::updateCompassLineLabels(int x, int y)
 {
     double pos_angle,pos_wind_angle,pos_distance;
     double xa,xb,ya,yb;
-    double XX,YY;
-    compassLine->getStartPoint(&XX,&YY);
-    proj->screen2map(XX,YY,&xa,&ya);
+    compassLine->getStartPoint(&xa,&ya);
     proj->screen2map(x,y,&xb,&yb);
     Orthodromie orth(xa,ya,xb,yb);
     pos_angle=orth.getAzimutDeg();
@@ -666,8 +665,6 @@ void mapCompass::updateCompassLineLabels(int x, int y)
         double loxo_dist=orth.getLoxoDistance();
         loxo_angle=qRound(loxo_angle*100.0)/100.0;
         Util::getCoordFromDistanceLoxo(ya,xa,loxo_dist,loxo_angle,&yb,&xb);
-        double X,Y;
-        proj->map2screenDouble(xb,yb,&X,&Y);
         orth.setEndPoint(xb,yb);
         pos_angle=orth.getAzimutDeg();
         pos_distance=orth.getDistance();
@@ -676,13 +673,16 @@ void mapCompass::updateCompassLineLabels(int x, int y)
             compassLine->setOrthoMode(false);
         else
             compassLine->setOrthoMode(true);
-        compassLine->initSegment(XX,YY,qRound(X),qRound(Y));
+        compassLine->initSegment(xa,ya,xb,yb);
         hdg_label->setDefaultTextColor(Qt::darkRed);
         QString meters;
         if(loxo_dist*1852<=.1)
             meters=QString().sprintf("<br>%.2f ",loxo_dist*185200)+tr("Centimetres");
         else if(loxo_dist*1852<=1000)
             meters=QString().sprintf("<br>%.2f ",loxo_dist*1852)+tr("Metres");
+        double XX,YY,X,Y;
+        proj->map2screenDouble(xa,ya,&XX,&YY);
+        proj->map2screenDouble(xb,yb,&X,&Y);
         if(map && map->crossing(QLineF(XX,YY,X,Y),QLineF(xa,ya,xb,yb)))
         {
             if(main->getSelectedBoat() && main->getSelectedBoat()->get_boatType()!=BOAT_VLM)
@@ -840,12 +840,18 @@ void mapCompass::slot_compassLine(double click_x, double click_y)
         {
             updateCompassLineLabels(click_x,click_y);
             compassLine->setAlsoDrawLoxo(true);
-            compassLine->initSegment(click_x, click_y, click_x+10,click_y);
+            double X1,Y1,X2,Y2;
+            proj->screen2mapDouble(click_x,click_y,&X1,&Y1);
+            proj->screen2mapDouble(click_x+10,click_y,&X2,&Y2);
+            compassLine->initSegment(X1,Y1,X2,Y2);
         }
         else
         {
             updateCompassLineLabels(click_x+10,click_y);
-            compassLine->initSegment(this->x()+size/2,this->y()+size/2, click_x,click_y);
+            double X1,Y1,X2,Y2;
+            proj->screen2mapDouble(this->x()+size/2,this->y()+size/2,&X1,&Y1);
+            proj->screen2mapDouble(click_x,click_y,&X2,&Y2);
+            compassLine->initSegment(X1,Y1,X2,Y2);
             compassLine->setAlsoDrawLoxo(false);
         }
     }

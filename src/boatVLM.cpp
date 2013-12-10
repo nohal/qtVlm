@@ -234,7 +234,8 @@ void boatVLM::sendPilotMode(QString phpScript,QVariantMap instruction) {
 
 
         QTextStream(&data) << "parms=" << QUrl::toPercentEncoding(json);
-        //QTextStream(&data) << "&select_idu=" << getId();
+        //QTextStream(&data) << "parms=" << json;
+        QTextStream(&data) << "&select_idu=" << getId();
 
         //qWarning() << url << " - " << data;
 

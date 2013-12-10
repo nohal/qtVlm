@@ -27,87 +27,73 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 orthoSegment::orthoSegment(Projection * proj, QGraphicsScene * myScene,int z_level,bool roundedEnd) : QGraphicsWidget()
 {
-    xa=xb=ya=yb=0;
+    lon1=lon2=lat1=lat2=0;
     this->proj=proj;
     this->roundedEnd=roundedEnd;
     myScene->addItem(this);
     this->setZValue(z_level);
     this->alsoDrawLoxo=false;
     isOrtho=true;
+    myLine = new vlmLine(proj,myScene,z_level);
+    myLine->setRoundedEnd(roundedEnd);
+    myLine->setParent(this);
     hide();
-    connect(this->proj,SIGNAL(projectionUpdated()),this,SLOT(slot_update()));
+    myLine->setHidden(true);
+}
+orthoSegment::~orthoSegment()
+{
+    delete myLine;
+}
+void orthoSegment::initSegment(const double &lon1, const double &lat1, const double &lon2, const double &lat2)
+{
+    this->lon1=lon1;
+    this->lat1=lat1;
+    this->lon2=lon2;
+    this->lat2=lat2;
+    if(lon1==lon2 && lat1==lat2)
+    {
+        hide();
+        myLine->setHidden(true);
+    }
+    else
+    {
+        calculatePoly();
+        show();
+        myLine->setHidden(false);
+    }
 }
 
-QRectF orthoSegment::boundingRect() const
+void orthoSegment::moveSegment(const double &lon2, const double &lat2)
 {
-    QRectF rect=myPath.boundingRect().normalized();
-    QPointF center=rect.center();
-    rect.setWidth(rect.width()+3*linePen.widthF());
-    rect.setHeight(rect.height()+3*linePen.widthF());
-    rect.moveCenter(center);
-    return rect;
-}
-QPainterPath orthoSegment::shape() const
-{
-    return myPath;
-}
-
-void orthoSegment::initSegment(double xa,double ya,double xb, double yb)
-{
-    this->xa=xa;
-    this->ya=ya;
-    this->xb=xb;
-    this->yb=yb;
-    if(xa==xb && ya==yb) hide();
-    else show();
-    myPrepareGeometryChange();
-}
-void orthoSegment::slot_update()
-{
-    myPrepareGeometryChange();
-    //update();
-}
-
-void orthoSegment::moveSegment(double x,double y)
-{
-    this->xb=x;
-    this->yb=y;
-    myPrepareGeometryChange();
-    //update();
+    this->lon2=lon2;
+    this->lat2=lat2;
+    calculatePoly();
 }
 
 
 void orthoSegment::hideSegment(void)
 {
     hide();
+    myLine->setHidden(true);
 }
 
-void orthoSegment::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
-{
-    pnt->setPen(linePen);
-    pnt->setRenderHint(QPainter::Antialiasing);
-    pnt->drawPath(myPath);
-    //pnt->drawRect(myPath.boundingRect());
-}
 
-void orthoSegment::draw_orthoSegment(QPainter * pnt,double i0,double j0, double i1, double j1, int recurs, QPainterPath * path)
+void orthoSegment::draw_orthoSegment(const double &longitude1, const double &latitude1, const double longitude2, const double latitude2, const int &recurs)
 {
     if (recurs > 10)
     {
-        QPolygonF p;
-        p.append(QPointF(i0-x(),j0-y()));
-        p.append(QPointF(i1-x(),j1-y()));
-        path->addPolygon(p);
+        myLine->addVlmPoint(vlmPoint(longitude1,latitude1));
+        myLine->addVlmPoint(vlmPoint(longitude2,latitude2));
         return;
     }
-    if (qAbs(i0-i1) > 10)
+    double i1,i2,j1,j2;
+    proj->map2screenDouble(longitude1,latitude1,&i1,&j1);
+    proj->map2screenDouble(longitude2,latitude2,&i2,&j2);
+    if (qAbs(i1-i2) > 10)
     {
-        double xm, ym,x0,y0,x1,y1;
-        double im,jm;
+        double xm, ym;
 
-        proj->screen2mapDouble(i0, j0,&x0,&y0);
-        proj->screen2mapDouble(i1, j1,&x1,&y1);
-        Orthodromie ortho(x0,y0,x1,y1);
+        Orthodromie ortho(longitude1,latitude1,longitude2,latitude2);
         ortho.getMidPoint(&xm, &ym);
 
         xm *= 180.0/M_PI;
@@ -116,50 +102,32 @@ void orthoSegment::draw_orthoSegment(QPainter * pnt,double i0,double j0, double 
             ym -= 180;
         while (ym < -90)
             ym += 180;
-        proj->map2screenDouble(xm, ym, &im, &jm);
-        draw_orthoSegment(pnt, i0,j0, im,jm, recurs+1,path);
-        draw_orthoSegment(pnt, im,jm, i1,j1, recurs+1,path);
+        draw_orthoSegment(longitude1,latitude1, xm,ym, recurs+1);
+        draw_orthoSegment(xm,ym, longitude2,latitude2, recurs+1);
     }
     else
     {
-        QPolygonF p;
-        p.append(QPointF(i0-x(),j0-y()));
-        p.append(QPointF(i1-x(),j1-y()));
-        path->addPolygon(p);
+        myLine->addVlmPoint(vlmPoint(longitude1,latitude1));
+        myLine->addVlmPoint(vlmPoint(longitude2,latitude2));
     }
 }
-void orthoSegment::myPrepareGeometryChange()
+void orthoSegment::calculatePoly()
 {
-    QPainterPath path;
-    if(roundedEnd)
-    {
-        double w=linePen.widthF()*1.5;
-        path.addEllipse(QPointF(xa-x(),ya-y()),w,w);
-    }
+    myLine->deleteAll();
     if(!isOrtho)
     {
-        QPolygonF p;
-        p.append(QPointF(xa-x(),ya-y()));
-        p.append(QPointF(xb-x(),yb-y()));
-        path.addPolygon(p);
+        myLine->addVlmPoint(vlmPoint(lon1,lat1));
+        myLine->addVlmPoint(vlmPoint(lon2,lat2));
     }
     else
     {
-        draw_orthoSegment(NULL,xa,ya,xb,yb,0,&path);
+        draw_orthoSegment(lon1,lat1,lon2,lat2,0);
     }
     if(alsoDrawLoxo && isOrtho)
     {
-        QPolygonF p;
-        p.append(QPointF(xa-x(),ya-y()));
-        p.append(QPointF(xb-x(),yb-y()));
-        path.addPolygon(p);
+        myLine->addVlmPoint(vlmPoint(lon1,lat1));
+        myLine->addVlmPoint(vlmPoint(lon2,lat2));
     }
-    if(roundedEnd)
-    {
-        double w=linePen.widthF()*1.5;
-        path.addEllipse(QPointF(xb-x(),yb-y()),w,w);
-    }
-    prepareGeometryChange();
-    myPath=path;
+    myLine->slot_showMe();
 }
 

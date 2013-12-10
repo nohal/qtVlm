@@ -936,11 +936,8 @@ void POI::manageLineBetweenPois()
     QPen pen(lineColor);
     pen.setWidthF(lineWidth);
     lineBetweenPois->setLinePen(pen);
-    double X1,Y1,X2,Y2;
-    proj->map2screenDouble(this->lon,this->lat,&X1,&Y1);
-    proj->map2screenDouble(connectedPoi->getLongitude(),connectedPoi->getLatitude(),&X2,&Y2);
-    lineBetweenPois->initSegment(qRound(X1),qRound(Y1),qRound(X2),qRound(Y2));
-    lineBetweenPois->setToolTip(mes.replace(" ","&nbsp;"));
+    lineBetweenPois->initSegment(this->lon,this->lat,connectedPoi->getLongitude(),connectedPoi->getLatitude());
+    lineBetweenPois->set_toolTip(mes.replace(" ","&nbsp;"));
     lineBetweenPois->show();
 }
 void POI::slot_poiRoute()

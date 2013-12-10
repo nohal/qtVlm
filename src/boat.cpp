@@ -531,8 +531,7 @@ void boat::drawEstime(double myHeading, double mySpeed)
         if(WP.x() != 0 && WP.y() != 0)
         {
             WPLine->setLinePen(penLine2);
-            proj->map2screenDouble(WP.x(),WP.y(),&I2,&J2);
-            WPLine->initSegment(I1,J1,I2,J2);
+            WPLine->initSegment(lon,lat,WP.x(),WP.y());
         }
         this->updateHint();
     }
@@ -712,9 +711,7 @@ void boat::updatePosition(void)
     drawEstime();
     if(selected && WP.x() != 0 && WP.y() != 0)
     {
-        double I2,J2;
-        proj->map2screenDouble(WP.x(),WP.y(),&I2,&J2);
-        WPLine->initSegment(I1,J1,I2,J2);
+        WPLine->initSegment(lon,lat,WP.x(),WP.y());
     }
 }
 
