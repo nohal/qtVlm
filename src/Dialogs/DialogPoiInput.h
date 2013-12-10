@@ -40,7 +40,7 @@ class DialogPoiInput : public QDialog, public Ui::POI_input_ui
         void slot_showPOI_input(void);
         
     signals:
-        void addPOI(QString,int,double,double,double,int,bool,boat*);
+        void addPOI(QString,int,double,double,double,int,bool);
 };
 
 

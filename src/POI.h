@@ -41,9 +41,9 @@ class POI : public QGraphicsWidget
 { Q_OBJECT
     public:
         /* constructeurs, destructeurs */
-        POI(QString name, int type, double lat, double lon,
+        POI(const QString &name, const int &type, const double &lat, const double &lon,
                     Projection *proj, MainWindow *ownerMeteotable, myCentralWidget *parentWindow,
-                    double wph, int tstamp,bool useTstamp, boat *boat);
+                    const double &wph, const int &tstamp, const bool &useTstamp);
 
         ~POI();
 
@@ -135,7 +135,10 @@ class POI : public QGraphicsWidget
         static void read_POIData(myCentralWidget * centralWidget);
         static void write_POIData(QList<POI*> & poi_list,myCentralWidget * centralWidget);
         static void cleanFile(QString fname);
-        FCT_SETGET_CST(bool,drawLineOrtho)
+        FCT_GET_CST(bool,drawLineOrtho)
+        FCT_SETGET_CST(int, myBoatId)
+        void set_drawLineOrtho(const bool &b){this->drawLineOrtho=b;manageBoatCircle();}
+        void setBoatCircle(const int &id);
 
 public slots:
         void slot_updateProjection();
@@ -147,7 +150,7 @@ public slots:
         void slot_copy();
         void slot_paramChanged();
         void slot_WPChanged(double tlat,double tlon);
-        void slot_updateTip(boat *);
+        void slot_updateTip();
         void slot_shPoi(bool isHidden){if(isHidden) hide(); else show();}
         void slot_shLab(bool state){this->labelHidden=state;update();}
         void slot_routeMenu(QAction* ptr_action);
@@ -171,7 +174,9 @@ public slots:
         void slot_timerSimp();
         void slot_centerOnBoat(void);
 
-    signals:
+        void slot_boatCircleMenu();
+        void manageBoatCircle();
+signals:
         void chgWP(double,double,double);
         void addPOI_list(POI*);
         void delPOI_list(POI*);
@@ -219,7 +224,7 @@ public slots:
         int      typeMask;
         bool     isMoving;
         int      mouse_x,mouse_y;
-        boat *   myBoat;
+        int      myBoatId;
         bool     autoRange;
 
         void update_myStr();
@@ -250,6 +255,7 @@ public slots:
         QAction * ac_modeList2;
         QAction * ac_modeList3;
         QAction * ac_connect;
+        QAction * ac_boatCircle;
         QAction * ac_pilot;
         QAction * ac_routage;
         QAction * ac_simplifiable;
@@ -283,6 +289,7 @@ public slots:
         double lonConnected,latConnected;
         int sequence;
         QTimer * timerSimp;
+        vlmLine * boatCircle;
 };
 Q_DECLARE_TYPEINFO(POI,Q_MOVABLE_TYPE);
 

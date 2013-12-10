@@ -3290,7 +3290,7 @@ void ROUTAGE::convertToRoute()
        QString poiName;
        poiName.sprintf("%.5i",list->size()-n);
        poiName=poiPrefix+poiName;
-       POI * poi = parent->slot_addPOI(poiName,0,list->at(n).convertionLat,list->at(n).convertionLon,-1,false,false,myBoat);
+       POI * poi = parent->slot_addPOI(poiName,0,list->at(n).convertionLat,list->at(n).convertionLon,-1,false,false);
        poi->setRoute(route);
        poi->setSequence(n*10);
        poi->setNotSimplificable(list->at(n).notSimplificable);

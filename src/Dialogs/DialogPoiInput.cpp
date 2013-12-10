@@ -31,8 +31,8 @@ DialogPoiInput::DialogPoiInput(myCentralWidget * parent) : QDialog(parent)
 {
     setupUi(this);
     Util::setFontDialog(this);
-    connect(this,SIGNAL(addPOI(QString,int,double,double,double,int,bool,boat*)),
-            parent,SLOT(slot_addPOI(QString,int,double,double,double,int,bool,boat*)));
+    connect(this,SIGNAL(addPOI(QString,int,double,double,double,int,bool)),
+            parent,SLOT(slot_addPOI(QString,int,double,double,double,int,bool)));
 }
 
 void DialogPoiInput::slot_showPOI_input(void)
@@ -82,7 +82,7 @@ void DialogPoiInput::done(int result)
         for (int i=0; i < lsbuf.size(); i++)
         {
             if(Util::convertPOI(lsbuf.at(i),&name,&lat,&lon,&wph,&tstamp,type->currentIndex()))
-                emit addPOI(name,type->currentIndex(),lat,lon,wph,tstamp,tstamp!=-1,NULL);
+                emit addPOI(name,type->currentIndex(),lat,lon,wph,tstamp,tstamp!=-1);
         }
     }
     POI_list->clear();

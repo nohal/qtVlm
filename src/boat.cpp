@@ -119,6 +119,7 @@ boat::boat(QString      pseudo, bool activated,
     estimeLine->setHidden(false);
     WPLine->hide();
     this->stopAndGo="0";
+    this->poiCircle=QPointF(0,0);
 
     /*if(activated)
         show();

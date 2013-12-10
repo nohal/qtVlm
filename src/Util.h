@@ -91,8 +91,8 @@ class Util
     static void setWPClipboard(double lat,double lon, double wph);
     static bool convertPOI(const QString & str,QString * name,double * lat,double * lon,double * wph,int * tstamp,
                            int type);
-    static void getCoordFromDistanceAngle(double latitude, double longitude,
-             double distance, double heading, double * res_lat, double * res_lon);
+    static void getCoordFromDistanceAngle(const double &latitude, const double &longitude,
+             const double &distance, const double &heading, double * res_lat, double * res_lon);
     static void getCoordFromDistanceLoxo(const double &latitude, const double &longitude,
              const double &distance,const double &heading, double * res_lat,double * res_lon);
     static void getCoordFromDistanceAngle2(const double &latitude, const double &longitude,
@@ -145,6 +145,8 @@ class Util
             ls.clear();
         }
 
+        static double getOrthoDistance(const double &latitude1, const double &longitude1, const double &latitude2, const double &longitude2);
+        static void getCoordFromDistanceAngle3(const double &latitude, const double &longitude, const double &distance, const double &heading, double *res_lat, double *res_lon);
 };
 
 //======================================================================
@@ -203,8 +205,23 @@ inline float Util::BeaufortToMs_F (float bf) {
     return sqrt (bf*bf*bf/1.44);
 }
 //-----------------------------------------------------------------------------
-inline void Util::getCoordFromDistanceAngle(double latitude, double longitude,
-             double distance,double heading, double * res_lat,double * res_lon)
+inline void Util::getCoordFromDistanceAngle3(const double &latitude, const double &longitude,
+             const double &distance,const double &heading, double * res_lat,double * res_lon)
+{
+    double lat1=degToRad(A360(latitude));
+    double lon1=degToRad(A360(longitude));
+    double hdg=degToRad(A360(heading));
+    double R=6371.0/1.852; // nm
+    double lat2 = asin( sin(lat1)*cos(distance/R) +
+                  cos(lat1)*sin(distance/R)*cos(hdg) );
+    double lon2 = lon1 + atan2(sin(hdg)*sin(distance/R)*cos(lat1),
+                         cos(distance/R)-sin(lat1)*sin(lat2));
+    *res_lon=radToDeg(lon2);
+    *res_lat=radToDeg(lat2);
+    return;
+}
+inline void Util::getCoordFromDistanceAngle(const double &latitude, const double &longitude,
+             const double &distance,const double &heading, double * res_lat,double * res_lon)
 {
     if(qAbs(latitude)>=89.9)
     {
@@ -212,6 +229,10 @@ inline void Util::getCoordFromDistanceAngle(double latitude, double longitude,
         *res_lon=longitude;
         return;
     }
+#if 1
+    getCoordFromDistanceAngle3(latitude,longitude,distance,heading,res_lat,res_lon);
+    return;
+#else
     double d, new_lat, t_lat, new_lon;
     latitude = degToRad(latitude);
     longitude = fmod(degToRad(longitude), TWO_PI);
@@ -230,6 +251,7 @@ inline void Util::getCoordFromDistanceAngle(double latitude, double longitude,
     }
     *res_lat = radToDeg(new_lat);
     *res_lon = radToDeg(new_lon);
+#endif
 }
 
 #endif

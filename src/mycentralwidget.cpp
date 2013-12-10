@@ -575,8 +575,8 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     this->NSZ=NULL;
 
     connect(mainW,SIGNAL(addPOI_list(POI*)),this,SLOT(slot_addPOI_list(POI*)));
-    connect(mainW,SIGNAL(addPOI(QString,int,double,double,double,int,bool,boat*)),
-            this,SLOT(slot_addPOI(QString,int,double,double,double,int,bool,boat*)));
+    connect(mainW,SIGNAL(addPOI(QString,int,double,double,double,int,bool)),
+            this,SLOT(slot_addPOI(QString,int,double,double,double,int,bool)));
     connect(this,SIGNAL(POI_selectAborted(POI*)),mainW,SLOT(slot_POIselected(POI*)));
     connect(mainW,SIGNAL(moveBoat(double,double)),this,SLOT(slot_moveBoat(double,double)));
 
@@ -1146,7 +1146,7 @@ void myCentralWidget::mouseDoubleClick(int x, int y, QGraphicsItem * )
     double lon, lat;
     proj->screen2map(x,y, &lon, &lat);
     //qWarning() << "Creating POI at: " << lat << "," << lon << " - " << Util::formatLatitude(lat) << "," << Util::formatLongitude(lon);
-    slot_addPOI("",POI_TYPE_POI,lat,lon,-1,-1,false,mainW->getSelectedBoat());
+    slot_addPOI("",POI_TYPE_POI,lat,lon,-1,-1,false);
 }
 
 void myCentralWidget::escapeKeyPressed(void)
@@ -1527,15 +1527,14 @@ void myCentralWidget::slotLoadSailsDocGrib(void) {
 /**************************/
 /* POI                    */
 /**************************/
-POI * myCentralWidget::slot_addPOI(QString name,int type,double lat,double lon, double wph,int timestamp,bool useTimeStamp,boat *boat)
+POI * myCentralWidget::slot_addPOI(QString name,const int &type,const double &lat,const double &lon, const double &wph, const int &timestamp, const bool &useTimeStamp)
 {
     POI * poi;
 
     if(name=="")
         name=QString(tr("POI"));
-    if(boat==NULL) boat=mainW->getSelectedBoat();
     poi = new POI(name,type,lat,lon, proj,
-                  mainW, this,wph,timestamp,useTimeStamp,boat);
+                  mainW, this,wph,timestamp,useTimeStamp);
 
     slot_addPOI_list(poi);
     //poi->show();
@@ -2242,7 +2241,7 @@ void myCentralWidget::slot_importRouteFromVlm()
     update_menuRoute();
     route->setFrozen(true);
     route->setTemp(true);
-    POI * poi = slot_addPOI(poiName+"0",0,boat->getWPLat(),boat->getWPLon(),boat->getWPHd(),false,false,mainW->getSelectedBoat());
+    POI * poi = slot_addPOI(poiName+"0",0,boat->getWPLat(),boat->getWPLon(),boat->getWPHd(),false,false);
     poi->setNavMode(0); //VBVMG
     if(boat->getPilotType()==3)
         poi->setNavMode(2); //ORTHO
@@ -2258,7 +2257,7 @@ void myCentralWidget::slot_importRouteFromVlm()
         if(parse.at(5)!="pending") continue;
         int mode  = parse.at (2).toInt();
         QStringList parse2 = parse.at(4).split("@");
-        poi = slot_addPOI(poiName+QString().setNum(++nPoi),0,parse.at(3).toDouble(),parse2.at(0).toDouble(),(parse2.length() == 2) ? parse2.at(1).toDouble() : -1,false,false,mainW->getSelectedBoat());
+        poi = slot_addPOI(poiName+QString().setNum(++nPoi),0,parse.at(3).toDouble(),parse2.at(0).toDouble(),(parse2.length() == 2) ? parse2.at(1).toDouble() : -1,false,false);
         poi->setNavMode(0); //VBVMG
         if(mode==3)
             poi->setNavMode(2); //ORTHO
@@ -2417,7 +2416,7 @@ void myCentralWidget::slot_importRouteFromMenu(bool ortho)
                 double lon=p.value().x();
                 double lat=p.value().y();
                 QString poiName=route->getName()+QString().sprintf("%.5i",nPoi);
-                POI * poi = slot_addPOI(poiName,0,lat,lon,-1,false,false,mainW->getSelectedBoat());
+                POI * poi = slot_addPOI(poiName,0,lat,lon,-1,false,false);
                 if(ortho)
                     poi->setNavMode(2);
                 poi->setRoute(route);
@@ -2618,7 +2617,7 @@ void myCentralWidget::slot_importRouteFromMenu(bool ortho)
             QString poiN;
             poiN.sprintf("%.5i",n);
             poiName=route->getName()+poiN;
-            POI * poi = slot_addPOI(poiName,0,lat,lon,-1,false,false,mainW->getSelectedBoat());
+            POI * poi = slot_addPOI(poiName,0,lat,lon,-1,false,false);
             if(ortho)
                 poi->setNavMode(2);
             poi->setRoute(route);
@@ -2724,7 +2723,7 @@ void myCentralWidget::slot_importRouteFromMenu(bool ortho)
                 lat=trackPoint.firstChildElement("Coords").firstChildElement("Lat").firstChild().toText().data().toDouble();
                 poiN.sprintf("%.5i",n);
                 poiName="I"+poiN;
-                POI * poi = slot_addPOI(poiName,0,lat,lon,-1,false,false,mainW->getSelectedBoat());
+                POI * poi = slot_addPOI(poiName,0,lat,lon,-1,false,false);
                 if(ortho)
                     poi->setNavMode(2);
                 poi->setRoute(route);
@@ -3079,7 +3078,7 @@ void myCentralWidget::importRouteFromMenuKML(QString fileName,bool toClipboard, 
             QStringList position=point.firstChildElement("coordinates").firstChild().toText().data().split(",");
             double lon=position.at(0).toDouble();
             double lat=position.at(1).toDouble();
-            POI * poi = slot_addPOI(name,0,lat,lon,-1,false,false,mainW->getSelectedBoat());
+            POI * poi = slot_addPOI(name,0,lat,lon,-1,false,false);
             if(ortho)
                 poi->setNavMode(2);
             QDomElement extData=placeMark.firstChildElement("ExtendedData");
@@ -3730,7 +3729,7 @@ void myCentralWidget::withdrawRouteFromBank(QString routeName,QList<QVariant> de
         double lon=p.value().x();
         double lat=p.value().y();
         QString poiName=route->getName()+QString().sprintf("%.5i",nPoi);
-        POI * poi = slot_addPOI(poiName,0,lat,lon,-1,false,false,mainW->getSelectedBoat());
+        POI * poi = slot_addPOI(poiName,0,lat,lon,-1,false,false);
         if(ortho)
             poi->setNavMode(2);
         poi->setRoute(route);

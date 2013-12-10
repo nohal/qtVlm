@@ -60,6 +60,7 @@ void orthoSegment::initSegment(double xa,double ya,double xb, double yb)
     this->yb=yb;
     if(xa==xb && ya==yb) hide();
     else show();
+    myPrepareGeometryChange();
 }
 void orthoSegment::slot_update()
 {

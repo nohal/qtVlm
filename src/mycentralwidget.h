@@ -49,6 +49,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define Z_VALUE_LOADIMG    0.4
 #define Z_VALUE_FAXMETEO   0.5
 #define Z_VALUE_ROUTAGE    1
+#define Z_VALUE_BOATCIRCLE 1.2
 #define Z_VALUE_OPP        2
 #define Z_VALUE_GATE       3
 #define Z_VALUE_NEXT_GATE  3.5
@@ -258,7 +259,7 @@ public slots :
         void slot_magnify();
 
         /* POI */
-        POI * slot_addPOI(QString name,int type,double lat,double lon, double wph,int timestamp,bool useTimeStamp, boat *boat);
+        POI * slot_addPOI(QString name, const int &type, const double &lat, const double &lon, const double &wph, const int &timestamp, const bool &useTimeStamp);
         void slot_addPOI_list(POI * poi);
         void slot_delPOI_list(POI * poi);
         void slot_POISave(void);

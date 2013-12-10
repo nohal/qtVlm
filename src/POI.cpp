@@ -44,14 +44,15 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "dialogpoiconnect.h"
 #include "XmlFile.h"
 #include "orthoSegment.h"
+#include "vlmLine.h"
 
 /**************************/
 /* Init & Clean           */
 /**************************/
 
-POI::POI(QString name, int type, double lat, double lon,
+POI::POI(const QString &name, const int &type, const double &lat, const double &lon,
                  Projection *proj, MainWindow *main, myCentralWidget *parentWindow,
-                 double wph,int tstamp,bool useTstamp,boat *myBoat)
+                 const double &wph,const int &tstamp, const bool &useTstamp)
     : QGraphicsWidget()
 {
     this->parent = parentWindow;
@@ -65,7 +66,7 @@ POI::POI(QString name, int type, double lat, double lon,
     this->useTstamp=useTstamp;
     this->type=type;
     this->typeMask=1<<type;
-    this->myBoat=myBoat;
+    this->myBoatId=-2;
     this->searchRangeLon=1;
     this->searchRangeLat=1;
     this->searchStep=0.01;
@@ -129,7 +130,7 @@ POI::POI(QString name, int type, double lat, double lon,
 
     connect(main,SIGNAL(paramVLMChanged()),this,SLOT(slot_paramChanged()));
     connect(main,SIGNAL(WPChanged(double,double)),this,SLOT(slot_WPChanged(double,double)));
-    connect(main,SIGNAL(boatHasUpdated(boat*)),this,SLOT(slot_updateTip(boat*)));
+    connect(main,SIGNAL(boatHasUpdated(boat*)),this,SLOT(slot_updateTip()));
     connect(parent,SIGNAL(stopCompassLine()),this,SLOT(slot_abort()));
     if (main->getSelectedBoat() && main->getSelectedBoat()!=NULL && !parent->getPlayer()->getWrong() && main->getSelectedBoat()->get_boatType()==BOAT_VLM)
         connect(this,SIGNAL(wpChanged()),main,SIGNAL(wpChanged()));
@@ -147,6 +148,7 @@ POI::POI(QString name, int type, double lat, double lon,
     {
         this->slot_WPChanged(parent->getSelectedBoat()->getWPLat(),parent->getSelectedBoat()->getWPLon());
     }
+    this->boatCircle=NULL;
 }
 
 POI::~POI()
@@ -164,6 +166,8 @@ POI::~POI()
         isWp=false;
         emit wpChanged();
     }
+    if(this->boatCircle)
+        delete boatCircle;
     if(popup && !parent->getAboutToQuit())
         popup->deleteLater();
     delete timerSimp;
@@ -189,7 +193,7 @@ void POI::rmSignal(void)
 
     disconnect(owner,SIGNAL(paramVLMChanged()),this,SLOT(slot_paramChanged()));
     disconnect(owner,SIGNAL(WPChanged(double,double)),this,SLOT(slot_WPChanged(double,double)));
-    disconnect(owner,SIGNAL(boatHasUpdated(boat*)),this,SLOT(slot_updateTip(boat*)));
+    disconnect(owner,SIGNAL(boatHasUpdated(boat*)),this,SLOT(slot_updateTip()));
 
 }
 
@@ -337,6 +341,13 @@ void POI::createPopUpMenu(void)
     ac_connect=new QAction(tr("Tracer/Editer une ligne avec un autre POI"),popup);
     connect(ac_connect,SIGNAL(triggered()),this,SLOT(slot_relier()));
     popup->addAction(ac_connect);
+
+    ac_boatCircle = new QAction(tr("Tracer un cerce orthodromique au bateau"),popup);
+    popup->addAction(ac_boatCircle);
+    connect(ac_boatCircle,SIGNAL(triggered()),this,SLOT(slot_boatCircleMenu()));
+    ac_boatCircle->setCheckable(true);
+    ac_boatCircle->setChecked(false);
+
 }
 
 /**************************/
@@ -392,7 +403,7 @@ bool POI::tryMoving(int x, int y)
             Util::computePos(proj,lat, lon, &pi, &pj);
             emit poiMoving();
         }
-        if(lineBetweenPois!=NULL)
+        if(lineBetweenPois!=NULL || boatCircle!=NULL)
         {
             double newlon,newlat;
             new_x=scenePos().x();
@@ -402,6 +413,7 @@ bool POI::tryMoving(int x, int y)
             setLatitude(newlat);
             Util::computePos(proj,lat, lon, &pi, &pj);
             manageLineBetweenPois();
+            manageBoatCircle();
         }
         return true;
     }
@@ -439,6 +451,7 @@ void POI::mouseReleaseEvent(QGraphicsSceneMouseEvent * e)
             route->slot_recalculate();
         }
         manageLineBetweenPois();
+        manageBoatCircle();
         return;
     }
 
@@ -662,7 +675,7 @@ void POI::setTip(QString tip)
     boat * w_boat;
     tip=tip.replace(" ","&nbsp;");
     if(route==NULL)
-        w_boat=myBoat;
+        w_boat=parent->getSelectedBoat();
     else
         w_boat=route->getBoat();
     QString pilot;
@@ -857,6 +870,59 @@ void POI::slot_relier()
         }
     }
 }
+void POI::setBoatCircle(const int &id)
+{
+    if(this->boatCircle)
+    {
+        delete boatCircle;
+        boatCircle=NULL;
+        myBoatId=-2;
+        ac_boatCircle->setChecked(false);
+        return;
+    }
+    if(!parent->getSelectedBoat()){
+        myBoatId=-2;
+        ac_boatCircle->setChecked(false);
+        return;
+    }
+    if(id==-2)
+        myBoatId=parent->getSelectedBoat()->getId();
+    else
+        myBoatId=id;
+    boatCircle=new vlmLine(proj,parent->getScene(),Z_VALUE_BOATCIRCLE);
+    qWarning()<<"creating boat circle with id="<<myBoatId;
+    connect(parent->getSelectedBoat(),SIGNAL(boatUpdated(boat*,bool,bool)),this,SLOT(manageBoatCircle()));
+    connect(parent->getMainWindow(),SIGNAL(selectedBoatChanged()),this,SLOT(manageBoatCircle()));
+    manageBoatCircle();
+}
+void POI::slot_boatCircleMenu()
+{
+    setBoatCircle(-2);
+}
+void POI::manageBoatCircle()
+{
+    if(!boatCircle) return;
+    boatCircle->deleteAll();
+    if(!parent->getSelectedBoat() || parent->getSelectedBoat()->getId()!=myBoatId){
+        qWarning()<<"hidding boatCircle";
+        boatCircle->setHidden(true);
+        return;
+    }
+    else
+        boatCircle->setHidden(false);
+    qWarning()<<"drawing ortho circle for"<<parent->getSelectedBoat()->getBoatName();
+    double dist=Util::getOrthoDistance(this->lat,this->lon,parent->getSelectedBoat()->getLat(),parent->getSelectedBoat()->getLon());
+    QPen pen(Qt::darkBlue);
+    pen.setWidthF(1.8);
+    boatCircle->setLinePen(pen);
+    double X,Y;
+    for(double n=0;n<=360;n+=.1)
+    {
+        Util::getCoordFromDistanceAngle(this->lat,this->lon,dist,n,&Y,&X);
+        boatCircle->addPoint(Y,X);
+    }
+    boatCircle->slot_showMe();
+}
 void POI::manageLineBetweenPois()
 {
     if(lineBetweenPois==NULL) return;
@@ -946,9 +1012,8 @@ void POI::slot_updateProjection()
     if(lineBetweenPois!=NULL)
         manageLineBetweenPois();
 }
-void POI::slot_updateTip(boat * myBoat)
+void POI::slot_updateTip()
 {
-    this->myBoat=myBoat;
     if(route==NULL) setTip("");
 }
 
@@ -1206,11 +1271,11 @@ void POI::slot_finePosit(bool silent)
         if (route->getHas_eta())
         {
             tm.setTime_t(route->getEta());
-            previousMe=new POI(tr("ETA du prochain POI: ")+tm.toString("dd MMM-hh:mm"),0,savedLat,savedLon,this->proj,this->owner,this->parent,0,0,false,this->myBoat);
+            previousMe=new POI(tr("ETA du prochain POI: ")+tm.toString("dd MMM-hh:mm"),0,savedLat,savedLon,this->proj,this->owner,this->parent,0,0,false);
         }
         else
             previousMe=new POI(tr("Dist. restante du prochain POI: ")+r.sprintf("%.2f milles",route->getRemain()),
-                               0,savedLat,savedLon,this->proj,this->owner,this->parent,0,0,false,route->getBoat());
+                               0,savedLat,savedLon,this->proj,this->owner,this->parent,0,0,false);
         parent->slot_addPOI_list(previousMe);
     }
 
@@ -1251,7 +1316,7 @@ void POI::slot_finePosit(bool silent)
                         + QString().sprintf(" (%+.3f milles)",simplex[0].remain), \
                         0,                                              \
                         simplex[0].lat, simplex[0].lon,                 \
-                        this->proj, this->owner, this->parent, 0, 0, false, route->getBoat()); \
+                        this->proj, this->owner, this->parent, 0, 0, false); \
         parent->slot_addPOI_list (best);                                \
     } while (0)
 
@@ -1695,7 +1760,7 @@ void POI::importZyGrib(myCentralWidget * centralWidget) {
 
         if(foundName && foundLat && foundLon) {
             qWarning() << "All data ok: " << curCode << " - " << name << " - " << lat << "," << lon;
-            POI * poi = new POI(name, POI_TYPE_POI,lat,lon,centralWidget->getProj(),centralWidget->getMainWindow(),centralWidget,-1,-1,false,NULL);
+            POI * poi = new POI(name, POI_TYPE_POI,lat,lon,centralWidget->getProj(),centralWidget->getMainWindow(),centralWidget,-1,-1,false);
             centralWidget->slot_addPOI_list(poi);
             foundName=foundLon=foundLat=false;
             nbPOI++;
@@ -1762,7 +1827,7 @@ void POI::importGeoData(myCentralWidget * centralWidget) {
         }
         if(letter=="W") pLon=-pLon;
         QString pTime=list1[4];
-        POI * poi = new POI(pId, POI_TYPE_BALISE,pLat,pLon,centralWidget->getProj(),centralWidget->getMainWindow(),centralWidget,-1,-1,false,NULL);
+        POI * poi = new POI(pId, POI_TYPE_BALISE,pLat,pLon,centralWidget->getProj(),centralWidget->getMainWindow(),centralWidget,-1,-1,false);
         poi->setTip(tr("Classement ")+pRank+"<br>"+pTime);
         centralWidget->slot_addPOI_list(poi);
         nbPOI++;
@@ -1784,6 +1849,8 @@ void POI::importGeoData(myCentralWidget * centralWidget) {
 #define LON_NAME          "Lon"
 #define LAT_NAME_CONNECTED "LatConnected"
 #define LON_NAME_CONNECTED "LonConnected"
+#define POI_BOAT_ID       "PoiBoatId"
+#define LINE_ORTHO        "lineOrtho"
 #define LINE_COLOR_R      "LineColorR"
 #define LINE_COLOR_G      "LineColorG"
 #define LINE_COLOR_B      "LineColorB"
@@ -1841,6 +1908,8 @@ void POI::read_POIData(myCentralWidget * centralWidget) {
              QColor lineColor=Qt::blue;
              double lineWidth=2;
              int sequence=0;
+             bool lineOrtho=false;
+             int poiBoatId=-2;
 
              while(!subNode.isNull()) {
                   if(subNode.toElement().tagName() == POI_NAME) {
@@ -1871,6 +1940,21 @@ void POI::read_POIData(myCentralWidget * centralWidget) {
                      dataNode = subNode.firstChild();
                      if(dataNode.nodeType() == QDomNode::TextNode)
                          lonConnected = dataNode.toText().data().toDouble();
+                  }
+
+                  if(subNode.toElement().tagName() == POI_BOAT_ID) {
+                       dataNode = subNode.firstChild();
+                       if(dataNode.nodeType() == QDomNode::TextNode)
+                       {
+                           poiBoatId=dataNode.toText().data().toInt();
+                       }
+                  }
+                  if(subNode.toElement().tagName() == LINE_ORTHO) {
+                       dataNode = subNode.firstChild();
+                       if(dataNode.nodeType() == QDomNode::TextNode)
+                       {
+                           lineOrtho=dataNode.toText().data().toInt()==1;
+                       }
                   }
 
                   if(subNode.toElement().tagName() == LINE_COLOR_R) {
@@ -1966,16 +2050,19 @@ void POI::read_POIData(myCentralWidget * centralWidget) {
              }
              if(!name.isEmpty() && lat!=-1 && lon != -1) {
                   if(type==-1) type=POI_TYPE_POI;
-                  POI * poi = new POI(name,type,lat,lon,centralWidget->getProj(),centralWidget->getMainWindow(),centralWidget,wph,tstamp,useTstamp,NULL);
+                  POI * poi = new POI(name,type,lat,lon,centralWidget->getProj(),centralWidget->getMainWindow(),centralWidget,wph,tstamp,useTstamp);
                   poi->setRouteName(routeName);
                   poi->setNavMode(navMode);
                   poi->setMyLabelHidden(labelHidden);
                   poi->setNotSimplificable(notSimplificable);
                   poi->setPiloteSelected(pilote);
                   poi->setPosConnected(lonConnected,latConnected);
+                  poi->set_drawLineOrtho(lineOrtho);
                   poi->setLineColor(lineColor);
                   poi->setLineWidth(lineWidth);
                   poi->setSequence(sequence);
+                  if(poiBoatId!=-2)
+                    poi->setBoatCircle(poiBoatId);
                   centralWidget->slot_addPOI_list(poi);
              }
              else
@@ -2067,6 +2154,14 @@ void POI::write_POIData(QList<POI*> & poi_list,myCentralWidget * /*centralWidget
              t = doc.createTextNode(QString().sprintf("%.10f",poi->getConnectedPoi()->getLatitude()));
              tag.appendChild(t);
          }
+         tag = doc.createElement(POI_BOAT_ID);
+         group.appendChild(tag);
+         t = doc.createTextNode(QString().setNum(poi->get_myBoatId()));
+         tag.appendChild(t);
+         tag = doc.createElement(LINE_ORTHO);
+         group.appendChild(tag);
+         t = doc.createTextNode(poi->get_drawLineOrtho()?"1":"0");
+         tag.appendChild(t);
          tag = doc.createElement(LINE_COLOR_R);
          group.appendChild(tag);
          t = doc.createTextNode(QString().setNum(poi->getLineColor().red()));

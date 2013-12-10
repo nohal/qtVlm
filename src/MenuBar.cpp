@@ -563,7 +563,6 @@ void MenuBar::setPlayerType(const int &type)
     acRace->setVisible(!real);
     acVLMSync->setVisible(!real);
     acPilototo->setVisible(!real);
-    acShowPolar->setVisible(!real);
     acFile_Lock->setEnabled(!real);
     acFile_Lock->setVisible(!real);
     separator1->setVisible(!real);

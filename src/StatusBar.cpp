@@ -152,7 +152,7 @@ void StatusBar::showGribData(double x,double y)
 //        closest.distArrival=oo.getDistance();
 //        closest.capArrival=oo.getAzimutDeg();
         if(debugPOI==NULL)
-            debugPOI = this->my_centralWidget->slot_addPOI("debug",0,b,a,-1,false,false,this->selectedBoat);
+            debugPOI = this->my_centralWidget->slot_addPOI("debug",0,b,a,-1,false,false);
         else
         {
             debugPOI->setLatitude(b);

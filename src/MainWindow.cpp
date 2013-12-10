@@ -2331,7 +2331,7 @@ void MainWindow::slotpastePOI()
     if(!Util::getWPClipboard(&name,&lat,&lon,&wph,&tstamp))
         return;
 
-    emit addPOI(name,POI_TYPE_POI,lat,lon,wph,tstamp,tstamp!=-1, selectedBoat);
+    emit addPOI(name,POI_TYPE_POI,lat,lon,wph,tstamp,tstamp!=-1);
 }
 
 void MainWindow::slotBoatLockStatusChanged(boat* boat,bool status)
@@ -2700,7 +2700,7 @@ void MainWindow::slot_showPOI_input(POI* poi, const bool &fromMenu)
         else
             proj->screen2map(mouseClicX,mouseClicY, &lon, &lat);
         poi=new POI(tr("POI"), POI_TYPE_POI,lat, lon, proj, this,
-                    my_centralWidget, -1,-1,false, this->selectedBoat);
+                    my_centralWidget, -1,-1,false);
     }
     DialogPoi dp(this,my_centralWidget);
     dp.initPOI(poi,creationMode);

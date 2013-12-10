@@ -626,6 +626,24 @@ void Util::setWPClipboard(double lat,double lon, double wph)
     else*/
         QApplication::clipboard()->setText(QString("%1,%2@%3").arg(lat).arg(lon).arg(wph));
 }
+double Util::getOrthoDistance(const double &latitude1, const double &longitude1,const double &latitude2, const double &longitude2)
+{
+    double R = 6371.0/1.852; // nm
+    double lat1 = degToRad(A360(latitude1));
+    double lon1 = degToRad(A360(longitude1));
+    double lat2 = degToRad(A360(latitude2));
+    double lon2 = degToRad(A360(longitude2));
+    double dLat = lat2 - lat1;
+    double dLon = lon2 - lon1;
+
+    double a = sin(dLat/2.0) * sin(dLat/2.0) +
+             cos(lat1) * cos(lat2) *
+             sin(dLon/2.0) * sin(dLon/2.0);
+    double c = 2.0 * atan2(sqrt(a), sqrt(1.0-a));
+    double d = R * c;
+    return d;
+}
+
 
 void Util::getCoordFromDistanceAngle2(const double &latitude, const double &longitude,
              const double &distance,const double &heading, double * res_lat,double * res_lon)

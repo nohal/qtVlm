@@ -131,6 +131,7 @@ class boat: public BoatInterface
         void setSetKeys(QList<QString> keys) { barrierKeys = keys; }
         void cleanBarrierList(void);
         bool cross(QLineF line);
+        void setPoiCircle(double lon, double lat);
 
 public slots:
         void slot_projectionUpdated();
@@ -261,6 +262,7 @@ public slots:
         double declinaison;
         double minSpeedForEngine;
         double speedWithEngine;
+        QPointF poiCircle;
 };
 Q_DECLARE_TYPEINFO(boat,Q_MOVABLE_TYPE);
 #endif // BOAT_H

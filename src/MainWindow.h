@@ -206,7 +206,7 @@ signals:
         void updateInet(void);
         void showCompassLine(double,double);
         void addPOI_list(POI*);
-        void addPOI(QString name,int type,double lat,double lon, double wph,int timestamp,bool useTimeStamp, boat *);
+        void addPOI(QString name,int type,double lat,double lon, double wph,int timestamp,bool useTimeStamp);
         void updateRoute(boat * boat);
         void showCompassCenterBoat();
         void showCompassCenterWp();

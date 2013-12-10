@@ -324,7 +324,7 @@ void DialogTwaLine::traceIt()
             tm.setTime_t(eta);
         //QString name;
         //name.sprintf("Twa %.1f",twa[page]);
-        POI * arrival=parent->slot_addPOI(tr("ETA: ")+tm.toString("dd MMM-hh:mm"),0,lat,lon,-1,0,false,myBoat);
+        POI * arrival=parent->slot_addPOI(tr("ETA: ")+tm.toString("dd MMM-hh:mm"),0,lat,lon,-1,0,false);
         arrival->setPartOfTwa(true);
         list.append(arrival);
     }

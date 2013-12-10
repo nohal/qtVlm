@@ -43,15 +43,20 @@ Orthodromie::Orthodromie(QPointF p1, QPointF p2)
 //------------------------------------------------------------------------------
 void Orthodromie::setPoints(double x0,double y0, double x1,double y1)
 {
-    lon0 = x0 *M_PI/180.0;
-    lat0 = y0 *M_PI/180.0;
-    lon1 = x1 *M_PI/180.0;
-    lat1 = y1 *M_PI/180.0;
+    lon0 = degToRad(Util::A360(x0));
+    lat0 = degToRad(Util::A360(y0));
+    lon1 = degToRad(Util::A360(x1));
+    lat1 = degToRad(Util::A360(y1));
+//    lon0 = x0 *M_PI/180.0;
+//    lat0 = y0 *M_PI/180.0;
+//    lon1 = x1 *M_PI/180.0;
+//    lat1 = y1 *M_PI/180.0;
     initOrthodromie();
 }
 //------------------------------------------------------------------------------
 void Orthodromie::initOrthodromie()
 {
+    double R = 6371.0/1.852; // nm
     sinStartLat = sin(lat0);
     cosStartLat = cos(lat0);
     sinEndLat = sin(lat1);
@@ -60,16 +65,32 @@ void Orthodromie::initOrthodromie()
     cosDeltaLng = cos(deltaLng);
     sinDeltaLng = sin(deltaLng);
 
-    double cosang = sinStartLat*sinEndLat + cosStartLat*cosEndLat*cosDeltaLng;
-    cosang = (cosang < -1.0) ? -1.0 : (cosang > 1.0) ? 1.0 : cosang;
-    distanceNM = 6378.0/1.852 * acos(cosang);
+//    double cosang = sinStartLat*sinEndLat + cosStartLat*cosEndLat*cosDeltaLng;
+//    cosang = (cosang < -1.0) ? -1.0 : (cosang > 1.0) ? 1.0 : cosang;
+//    distanceNM = 6378.0/1.852 * acos(cosang);
+    double dLat = lat1 - lat0;
+    double dLon = lon1 - lon0;
 
-    azimut = reduceAzimut(
-                 atan2(sin(lon1-lon0)*cos(lat1),
-                       cos(lat0)*sin(lat1)-sin(lat0)*cos(lat1)*cos(lon1-lon0)));
+    double a = sin(dLat/2.0) * sin(dLat/2.0) +
+             cos(lat0) * cos(lat1) *
+             sin(dLon/2.0) * sin(dLon/2.0);
+    double c = 2.0 * atan2(sqrt(a), sqrt(1.0-a));
+    distanceNM = R * c;
+//    var y = Math.sin(dLon) * Math.cos(lat2);
+//    var x = Math.cos(lat1)*Math.sin(lat2) -
+//            Math.sin(lat1)*Math.cos(lat2)*Math.cos(dLon);
+//    var brng = Math.atan2(y, x).toDeg();
+    double y = sin(dLon) * cos(lat1);
+    double x = cos(lat0)*sin(lat1) -
+               sin(lat0)*cos(lat1)*cos(dLon);
+    azimut = reduceAzimut(atan2(y, x));
+//    azimut = reduceAzimut(
+//                 atan2(sin(lon1-lon0)*cos(lat1),
+//                       cos(lat0)*sin(lat1)-sin(lat0)*cos(lat1)*cos(lon1-lon0)));
     sinAzimut = sin(azimut);
     cosAzimut = cos(azimut);
-    azimutDeg = 180.0/M_PI*azimut;
+//    azimutDeg = 180.0/M_PI*azimut;
+    azimutDeg=Util::A360(radToDeg(azimut));
 }
 
 //------------------------------------------------------------------------------
@@ -118,60 +139,60 @@ double Orthodromie::reduceAzimut(double azimut) const
 
 //-------------------------------------------------------
 // Trace recursif
-void Orthodromie::draw_OrthodromieSegment(Projection * proj, QPainter * pnt,
-                            double x0,double y0, double x1,double y1,
-                            int recurs
-                            )
-{
-    if (recurs > 10) // this is bugging under win :100)
-        return;
-    int i0,j0, i1,j1, im,jm;
-    double eps = 0.5;
-    if (y0 > 90-eps) y0 = 90-eps;
-    if (y0 <-90+eps) y0 =-90+eps;
-    if (y1 > 90-eps) y1 = 90-eps;
-    if (y1 <-90+eps) y1 =-90+eps;
+//void Orthodromie::draw_OrthodromieSegment(Projection * proj, QPainter * pnt,
+//                            double x0,double y0, double x1,double y1,
+//                            int recurs
+//                            )
+//{
+//    if (recurs > 10) // this is bugging under win :100)
+//        return;
+//    int i0,j0, i1,j1, im,jm;
+//    double eps = 0.5;
+//    if (y0 > 90-eps) y0 = 90-eps;
+//    if (y0 <-90+eps) y0 =-90+eps;
+//    if (y1 > 90-eps) y1 = 90-eps;
+//    if (y1 <-90+eps) y1 =-90+eps;
 
-    if (fabs(x0-x1)>180)  // il faut faire le tour du monde par derriere
-    {
-        if (x0 < x1) {
-            Orthodromie::draw_OrthodromieSegment(proj,pnt, x1-360,y1, x0,y0, recurs+1);
-            Orthodromie::draw_OrthodromieSegment(proj,pnt, x0+360,y0, x1,y1, recurs+1);
-        }
-        else {
-            Orthodromie::draw_OrthodromieSegment(proj,pnt, x0-360,y0, x1,y1, recurs+1);
-            Orthodromie::draw_OrthodromieSegment(proj,pnt, x1+360,y1, x0,y0, recurs+1);
-        }
-    }
-    else
-    {
-        proj->map2screen(x0, y0, &i0, &j0);
-        proj->map2screen(x1, y1, &i1, &j1);
-        if (abs(i0-i1) > 10)
-        {
-            double xm, ym;
+//    if (fabs(x0-x1)>180)  // il faut faire le tour du monde par derriere
+//    {
+//        if (x0 < x1) {
+//            Orthodromie::draw_OrthodromieSegment(proj,pnt, x1-360,y1, x0,y0, recurs+1);
+//            Orthodromie::draw_OrthodromieSegment(proj,pnt, x0+360,y0, x1,y1, recurs+1);
+//        }
+//        else {
+//            Orthodromie::draw_OrthodromieSegment(proj,pnt, x0-360,y0, x1,y1, recurs+1);
+//            Orthodromie::draw_OrthodromieSegment(proj,pnt, x1+360,y1, x0,y0, recurs+1);
+//        }
+//    }
+//    else
+//    {
+//        proj->map2screen(x0, y0, &i0, &j0);
+//        proj->map2screen(x1, y1, &i1, &j1);
+//        if (abs(i0-i1) > 10)
+//        {
+//            double xm, ym;
 
-            Orthodromie *ortho = new Orthodromie(x0, y0, x1, y1);
-            ortho->getMidPoint(&xm, &ym);
-            delete ortho;
-            ortho = NULL;
+//            Orthodromie *ortho = new Orthodromie(x0, y0, x1, y1);
+//            ortho->getMidPoint(&xm, &ym);
+//            delete ortho;
+//            ortho = NULL;
 
-            xm *= 180.0/M_PI;
-            ym *= 180.0/M_PI;
-            while (ym > 90)
-                ym -= 180;
-            while (ym < -90)
-                ym += 180;
-            proj->map2screen(xm, ym, &im, &jm);
-            //printf("%5d: (%5d %5d) (%5d %5d) (%5d %5d)      %f %f   %f %f\n",recurs,i0,j0, im,jm, i1,j1,x0,y0,x1,y1);
-            Orthodromie::draw_OrthodromieSegment(proj,pnt, x0,y0, xm,ym, recurs+1);
-            Orthodromie::draw_OrthodromieSegment(proj,pnt, xm,ym, x1,y1, recurs+1);
-        }
-        else {
-                pnt->drawLine(i0,j0, i1,j1);
-        }
-    }
-}
+//            xm *= 180.0/M_PI;
+//            ym *= 180.0/M_PI;
+//            while (ym > 90)
+//                ym -= 180;
+//            while (ym < -90)
+//                ym += 180;
+//            proj->map2screen(xm, ym, &im, &jm);
+//            //printf("%5d: (%5d %5d) (%5d %5d) (%5d %5d)      %f %f   %f %f\n",recurs,i0,j0, im,jm, i1,j1,x0,y0,x1,y1);
+//            Orthodromie::draw_OrthodromieSegment(proj,pnt, x0,y0, xm,ym, recurs+1);
+//            Orthodromie::draw_OrthodromieSegment(proj,pnt, xm,ym, x1,y1, recurs+1);
+//        }
+//        else {
+//                pnt->drawLine(i0,j0, i1,j1);
+//        }
+//    }
+//}
 double Orthodromie::getLoxoCap() const
 {
     double L0=log(tan(M_PI_4+lat0/2));
