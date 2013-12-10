@@ -183,6 +183,9 @@ struct boatParam {
     double longitude;
     double latitude;
     QString dnm;
+    double distNextMark;
+    QString nextMark;
+    QString ecartMark;
 };
 Q_DECLARE_TYPEINFO(boatParam,Q_PRIMITIVE_TYPE);
 

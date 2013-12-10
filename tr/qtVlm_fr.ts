@@ -423,6 +423,14 @@
         <source>Whte cap</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Primary waves</source>
+        <translation type="unfinished">Vagues primaires</translation>
+    </message>
+    <message>
+        <source>Secondary waves</source>
+        <translation type="unfinished">Vagues secondaires</translation>
+    </message>
 </context>
 <context>
     <name>DialogBoatAccount</name>
@@ -942,10 +950,6 @@ La boÃŪte Ã  cocher trace partielle s&apos;active apres l&apos;entree d&apos;
         <translation></translation>
     </message>
     <message>
-        <source>Min/Max</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Isotherme 0°C</source>
         <translation></translation>
     </message>
@@ -991,6 +995,10 @@ La boÃŪte Ã  cocher trace partielle s&apos;active apres l&apos;entree d&apos;
     </message>
     <message>
         <source>Isobar / Isotherme</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Min/Max Pression</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1634,11 +1642,11 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Ortho</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Loxo</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -3929,15 +3937,19 @@ Etes-vous sur de vouloir supprimer</translation>
     </message>
     <message>
         <source>Ortho </source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>NM</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Loxo </source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Tracer un cerce orthodromique au bateau</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -4820,6 +4832,10 @@ waves height</source>
     <message>
         <source>Erreur de lecture json.</source>
         <translation type="unfinished">Erreur de lecture json.</translation>
+    </message>
+    <message>
+        <source>Ecart 1er</source>
+        <translation></translation>
     </message>
 </context>
 <context>

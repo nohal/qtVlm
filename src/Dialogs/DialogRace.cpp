@@ -53,7 +53,7 @@ DialogRace::DialogRace(MainWindow * main,myCentralWidget * parent, inetConnexion
     Util::setFontDialog(this);
 
     model= new QStandardItemModel(this);
-    model->setColumnCount(10);
+    model->setColumnCount(11);
     model->setHeaderData(0,Qt::Horizontal,QObject::tr("Sel"));
     model->setHeaderData(1,Qt::Horizontal,QObject::tr("Rang"));
     switch (Settings::getSetting("opp_labelType",0).toInt())
@@ -74,7 +74,8 @@ DialogRace::DialogRace(MainWindow * main,myCentralWidget * parent, inetConnexion
     model->setHeaderData(6,Qt::Horizontal,QObject::tr("Loch 3h"));
     model->setHeaderData(7,Qt::Horizontal,QObject::tr("Loch 24h"));
     model->setHeaderData(8,Qt::Horizontal,QObject::tr("DNM"));
-    model->setHeaderData(9,Qt::Horizontal,QObject::tr("Dist 1er"));
+    model->setHeaderData(9,Qt::Horizontal,QObject::tr("Ecart 1er"));
+    model->setHeaderData(10,Qt::Horizontal,QObject::tr("Dist 1er"));
     model->setSortRole(Qt::UserRole);
     ranking->setModel(model);
     connect(this,SIGNAL(updateOpponent()),main,SLOT(slotUpdateOpponent()));
@@ -395,11 +396,17 @@ void DialogRace::requestFinished (QByteArray res_byte)
             QMapIterator<QString,QVariant> it(ranking);
             QString tt;
             Orthodromie orth(0,0,0,0);
+            double firstDNM=0;
+            QString firstM=0;
             while (it.hasNext())
             {
                 QVariantMap data=it.next().value().toMap();
                 if(data["rank"].toInt()==1)
+                {
                     orth.setStartPoint(data["longitude"].toFloat(),data["latitude"].toFloat());
+                    firstM=data["nwp"].toString();
+                    firstDNM=data["dnm"].toFloat();
+                }
                 ptr = new boatParam();
                 ptr->pseudo=data["boatpseudo"].toString();
                 ptr->name=data["boatname"].toString();
@@ -410,6 +417,8 @@ void DialogRace::requestFinished (QByteArray res_byte)
                 ptr->last3h=tt.sprintf("%.2f",data["last3h"].toFloat());
                 ptr->last24h=tt.sprintf("%.2f",data["last24h"].toFloat());
                 ptr->dnm=data["nwp"].toString()+"->"+tt.sprintf("%10.2f",data["dnm"].toFloat());
+                ptr->nextMark=data["nwp"].toString();
+                ptr->distNextMark=data["dnm"].toFloat();
                 if(data["deptime"].toString()=="-1")
                     ptr->statusVLM=tr("Au mouillage");
                 else
@@ -424,6 +433,12 @@ void DialogRace::requestFinished (QByteArray res_byte)
             {
                 orth.setEndPoint(param_list[currentRace]->boats[ii]->longitude,param_list[currentRace]->boats[ii]->latitude);
                 param_list[currentRace]->boats[ii]->fromFirst=tt.sprintf("%.2f",orth.getDistance());
+                QString ecartMark;
+                if(param_list[currentRace]->boats[ii]->nextMark==firstM)
+                    ecartMark=QString().sprintf("%.2f",qAbs(param_list[currentRace]->boats[ii]->distNextMark-firstDNM));
+                else
+                    ecartMark="-";
+                param_list[currentRace]->boats[ii]->ecartMark=ecartMark;
             }
             param_list[currentRace]->displayNSZ=currentDisplayNSZ;
             param_list[currentRace]->latNSZ=currentLatNSZ;
@@ -727,8 +742,10 @@ void DialogRace::chgRace(int id)
         items[7]->setData(param_list[numRace]->boats[i]->last24h.toFloat(),Qt::UserRole);
         items.append(new QStandardItem(param_list[numRace]->boats[i]->dnm));
         items[8]->setData(param_list[numRace]->boats[i]->dnm,Qt::UserRole);
+        items.append(new QStandardItem(param_list[numRace]->boats[i]->ecartMark));
+        items[9]->setData(param_list[numRace]->boats[i]->ecartMark,Qt::UserRole);
         items.append(new QStandardItem(param_list[numRace]->boats[i]->fromFirst));
-        items[9]->setData(param_list[numRace]->boats[i]->fromFirst.toFloat(),Qt::UserRole);
+        items[10]->setData(param_list[numRace]->boats[i]->fromFirst.toFloat(),Qt::UserRole);
         if(!items[0]->isEnabled())
         {
             for(int it=0;it<items.count();it++)
