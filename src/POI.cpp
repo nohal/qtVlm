@@ -893,6 +893,7 @@ void POI::setBoatCircle(const int &id)
     qWarning()<<"creating boat circle with id="<<myBoatId;
     connect(parent->getSelectedBoat(),SIGNAL(boatUpdated(boat*,bool,bool)),this,SLOT(manageBoatCircle()));
     connect(parent->getMainWindow(),SIGNAL(selectedBoatChanged()),this,SLOT(manageBoatCircle()));
+    ac_boatCircle->setChecked(true);
     manageBoatCircle();
 }
 void POI::slot_boatCircleMenu()
