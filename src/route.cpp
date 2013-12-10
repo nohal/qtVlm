@@ -280,7 +280,6 @@ void ROUTE::slot_recalculate(boat * boat)
     if(temp) return;
     QTime timeTotal;
     timeTotal.start();
-    line->setCoastDetection(false);
     //QTime timeDebug;
     //int timeD=0;
     int nbLoop=0;
