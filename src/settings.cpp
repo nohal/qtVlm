@@ -27,6 +27,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "settings.h"
 #include "dataDef.h"
 
+QMap<QString,QString> appFolder;
+
 QSettings *fileSettings;
 
 void Settings::initSettings(void) {

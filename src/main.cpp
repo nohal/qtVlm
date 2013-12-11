@@ -36,8 +36,6 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "MainWindow.h"
 #include "settings.h"
 
-QMap<QString,QString> appFolder;
-
 #if 0 /*put 1 to force crash on assert, useful for debugging*/
 void crashingMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg){
     QByteArray localMsg = msg.toLocal8Bit();
