@@ -43,6 +43,7 @@ class orthoSegment : public QGraphicsWidget
         void setAlsoDrawLoxo(const bool &b){this->alsoDrawLoxo=b;}
         void set_toolTip(const QString &mes){this->myLine->setToolTip(mes);}
 
+        void showSegment();
 private:
         double lon1,lat1,lon2,lat2;
         bool isOrtho;

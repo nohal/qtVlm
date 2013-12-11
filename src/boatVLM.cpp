@@ -344,6 +344,7 @@ void boatVLM::doRequest(int requestCmd)
          vacLen=300;
          race_name = "Test race";
          updating=false;
+         //qWarning()<<"updateBoatData 1";
          updateBoatData();
          emit hasFinishedUpdating();
     }
@@ -401,6 +402,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
                     /* clearing trace */
                     trace_drawing->deleteAll();
                     /*updating everything*/
+                    //qWarning()<<"updateBoatData 2";
                     updateBoatData();
                     updating=false;
                     QMessageBox::warning(0,QObject::tr("Bateau au ponton"),
@@ -510,6 +512,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
             {
                 /* clearing trace */
                 trace_drawing->deleteAll();
+                //qWarning()<<"updateBoatData 3";
                 updateBoatData();
                 updating=false;
                 setStatus(false);
@@ -568,6 +571,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
 #endif
             trace_drawing->slot_showMe();
             /* we can now update everything */
+            //qWarning()<<"updateBoatData 4";
             updateBoatData();
             updateTraceColor();
 
@@ -720,7 +724,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
             break;
         case VLM_REQUEST_SENDPILOT:
             /* pilot data send => updating boat*/
-            qWarning() << "Pilot data send, result= " << res_byte;
+            //qWarning() << "Pilot data send, result= " << res_byte;
             slot_getDataTrue();
             break;
         default:
@@ -766,6 +770,7 @@ void boatVLM::endOfUpdating()
         /* clearing trace */
         trace_drawing->deleteAll();
         /*updating everything*/
+        //qWarning()<<"updateBoatData 5";
         updateBoatData();
         updating=false;
         QMessageBox::warning(0,QObject::tr("Bateau au ponton"),

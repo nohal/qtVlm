@@ -76,20 +76,22 @@ void orthoSegment::hideSegment(void)
     hide();
     myLine->setHidden(true);
 }
+void orthoSegment::showSegment(void)
+{
+    show();
+    myLine->setHidden(false);
+}
 
 
 void orthoSegment::draw_orthoSegment(const double &longitude1, const double &latitude1, const double longitude2, const double latitude2, const int &recurs)
 {
-    if (recurs > 10)
+    if (recurs > 10 || myLine->getPoints()->size()>10000)
     {
         myLine->addVlmPoint(vlmPoint(longitude1,latitude1));
         myLine->addVlmPoint(vlmPoint(longitude2,latitude2));
         return;
     }
-    double i1,i2,j1,j2;
-    proj->map2screenDouble(longitude1,latitude1,&i1,&j1);
-    proj->map2screenDouble(longitude2,latitude2,&i2,&j2);
-    if (qAbs(i1-i2) > 10)
+    if (Util::getOrthoDistance(latitude1,longitude1,latitude2,longitude2) > 5.0)
     {
         double xm, ym;
 
@@ -129,5 +131,6 @@ void orthoSegment::calculatePoly()
         myLine->addVlmPoint(vlmPoint(lon2,lat2));
     }
     myLine->slot_showMe();
+    //qWarning()<<"line has "<<myLine->getPoints()->size()<<"points";
 }
 

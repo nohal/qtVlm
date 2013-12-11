@@ -114,10 +114,13 @@ boat::boat(QString      pseudo, bool activated,
     this->activated=activated;
     hide();
     this->WPLine->setParent(this);
+    QPen penLine2(QColor(Qt::black),1,Qt::DotLine);
+    penLine2.setWidthF(1.2);
+    WPLine->setLinePen(penLine2);
     estimeTimer->stop();
     estimeLine->slot_showMe();
     estimeLine->setHidden(false);
-    WPLine->hide();
+    WPLine->hideSegment();
     this->stopAndGo="0";
 
     /*if(activated)
@@ -231,8 +234,8 @@ void boat::slot_selectBoat()
     }
     selected = true;
     trace_drawing->show();
-    WPLine->show();
     drawEstime();
+    updatePosition(false);
     if(boatType==BOAT_REAL) return;
     updateTraceColor();
     cleanBarrierList();
@@ -242,7 +245,7 @@ void boat::slot_selectBoat()
 void boat::unSelectBoat(bool needUpdate)
 {
     selected = false;
-    WPLine->hide();
+    WPLine->hideSegment();
     if(needUpdate)
     {
         drawEstime();
@@ -432,15 +435,12 @@ void boat::drawEstime(double myHeading, double mySpeed)
 {
 
     estimeLine->deleteAll();
-    WPLine->hideSegment();
     /*should we draw something?*/
     if(isUpdating() || !getStatus())
         return;
     estimeLine->setHidden(false);
     QPen penLine1(QColor(Settings::getSetting("estimeLineColor", QColor(Qt::darkMagenta)).value<QColor>()),1,Qt::SolidLine);
     penLine1.setWidthF(Settings::getSetting("estimeLineWidth", 1.6).toDouble());
-    QPen penLine2(QColor(Qt::black),1,Qt::DotLine);
-    penLine2.setWidthF(1.2);
 
     /* draw estime */
     if(getIsSelected() || getForceEstime())
@@ -528,11 +528,12 @@ void boat::drawEstime(double myHeading, double mySpeed)
         estimeLine->slot_showMe();
         //estimeLine->initSegment(i1,j1,i2,j2);
         /* draw ortho to wp */
-        if(WP.x() != 0 && WP.y() != 0)
-        {
-            WPLine->setLinePen(penLine2);
-            WPLine->initSegment(lon,lat,WP.x(),WP.y());
-        }
+//        if(WP.x() != 0 && WP.y() != 0)
+//        {
+//            WPLine->setLinePen(penLine2);
+//            qWarning()<<"iniSegment(2)";
+//            WPLine->initSegment(lon,lat,WP.x(),WP.y());
+//        }
         this->updateHint();
     }
 }
@@ -615,7 +616,7 @@ void boat::updateBoatData()
     }
     updateBoatString();
     reloadPolar();
-    updatePosition();
+    updatePosition(false);
     updateHint();
 }
 void boat::drawOnMagnifier(Projection * mProj, QPainter * pnt)
@@ -700,7 +701,7 @@ void boat::drawOnMagnifier(Projection * mProj, QPainter * pnt)
     //drawEstime();
 }
 
-void boat::updatePosition(void)
+void boat::updatePosition(const bool &fromZoom)
 {
     double I1,J1;
     proj->map2screenDouble(lon,lat,&I1,&J1);
@@ -708,10 +709,18 @@ void boat::updatePosition(void)
     boat_i=qRound(I1)-3;
     boat_j=qRound(J1)-(height/2);
     setPos(boat_i, boat_j);
-    drawEstime();
-    if(selected && WP.x() != 0 && WP.y() != 0)
+    //qWarning()<<"updatePosition with"<<fromZoom<<selected<<WP.x()<<WP.y();
+    if(!fromZoom)
     {
-        WPLine->initSegment(lon,lat,WP.x(),WP.y());
+        drawEstime();
+        if(selected && WP.x() != 0 && WP.y() != 0)
+        {
+            WPLine->showSegment();
+            //qWarning()<<"iniSegment(1)";
+            WPLine->initSegment(lon,lat,WP.x(),WP.y());
+        }
+        else
+            WPLine->hideSegment();
     }
 }
 
@@ -735,7 +744,7 @@ void boat::setWP(QPointF ,double ) {
 void boat::slot_projectionUpdated()
 {
     if(activated)
-        updatePosition();
+        updatePosition(true);
 }
 
 void boat::setStatus(bool activated)
@@ -757,14 +766,17 @@ void boat::setStatus(bool activated)
 
      if(!activated)
      {
-        WPLine->hide();
+        WPLine->hideSegment();
         estimeTimer->stop();
         estimeLine->setHidden(true);;
         if(boatType==BOAT_REAL)
             this->stopRead();
      }
      else
+     {
          estimeLine->setHidden(false);
+         WPLine->showSegment();
+     }
 }
 
 void boat::playerDeActivated(void)
@@ -775,7 +787,7 @@ void boat::playerDeActivated(void)
     this->hide();
     setVisible(false);
     trace_drawing->hide();
-    WPLine->hide();
+    WPLine->hideSegment();
     estimeTimer->stop();
     estimeLine->setHidden(true);;
     if(boatType==BOAT_REAL)

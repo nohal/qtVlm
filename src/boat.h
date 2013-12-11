@@ -226,7 +226,7 @@ public slots:
         myCentralWidget * parent;
         MainWindow * mainWindow;
 
-        void updatePosition(void);
+        void updatePosition(const bool &fromZoom);
 
         bool forceEstime;
 

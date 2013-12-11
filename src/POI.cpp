@@ -1007,8 +1007,8 @@ void POI::slot_updateProjection()
     Util::computePos(proj,lat, lon, &pi, &pj);
     int dy = height/2;
     setPos(pi, pj-dy);
-    if(lineBetweenPois!=NULL)
-        manageLineBetweenPois();
+//    if(lineBetweenPois!=NULL)
+//        manageLineBetweenPois();
 }
 void POI::slot_updateTip()
 {
