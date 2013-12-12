@@ -432,6 +432,10 @@ void DialogGribDrawing::closeEvent(QCloseEvent * event) {
 }
 
 void DialogGribDrawing::slot_finished() {
+    Settings::setSetting(this->objectName()+".height",this->height());
+    Settings::setSetting(this->objectName()+".width",this->width());
+    Settings::setSetting(this->objectName()+".positionx",this->pos().x());
+    Settings::setSetting(this->objectName()+".positiony",this->pos().y());
     hide();
     emit hideDialog(false);
 }

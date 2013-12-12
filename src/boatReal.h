@@ -35,30 +35,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "mycentralwidget.h"
 #include <QListWidget>
 
-class ReceiverThread : public QThread
-{ Q_OBJECT
-    public:
-        ReceiverThread(boatReal * parent);
-        ~ReceiverThread(void);
-        void run();
-
-        bool initPort(void);
-    public slots:
-        void copyClipBoard();
-
-    signals:
-        void decodeData(QByteArray data);
-        void updateBoat(nmeaINFO info);
-
-    private:
-        QextSerialPort * port;
-        boatReal *parent;
-        nmeaINFO info;
-        nmeaPARSER parser;
-        QListWidget * listNMEA;
-
-};
-
 class boatReal : public boat
 { Q_OBJECT
     public:
@@ -68,6 +44,8 @@ class boatReal : public boat
         void stopRead();
         void startRead();
         void unSelectBoat(bool needUpdate);
+
+        void restartGPS(void) { stopRead(); startRead(); }
 
         void updateAll(void);
 
@@ -108,6 +86,7 @@ class boatReal : public boat
 
     private:
         ReceiverThread * gpsReader;
+        int gpsReaderType;
         int cnt;
 
         nmeaINFO info;

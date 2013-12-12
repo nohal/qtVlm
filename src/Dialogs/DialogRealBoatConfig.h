@@ -34,9 +34,19 @@ class DialogRealBoatConfig: public QDialog, public Ui::realBoatConfig
         DialogRealBoatConfig(myCentralWidget *parent);
         void launch(boatReal * boat);
         void done(int result);
+
+    public slots:
+        void slot_selectFile(void);
+        void slot_serial(bool st);
+        void slot_file(bool st);
+        void slot_gpsd(bool st);
+
     private:
         boatReal * curBoat;
         myCentralWidget *parent;
+
+        QString gpsFileName;
+        int gpsSource;
 };
 
 #endif // DIALOGREALBOATCONFIG_H

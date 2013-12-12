@@ -43,6 +43,12 @@ class boatVLM;
 class boatReal;
 class Player;
 
+/* GPS */
+class ReceiverThread;
+class FileReceiverThread;
+class SerialReceiverThread;
+class GPSdReceiverThread;
+
 
 /* DialogBoatAccount.h */
 class DialogBoatAccount;
