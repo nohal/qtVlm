@@ -3190,6 +3190,8 @@ void ROUTAGE::convertToRoute()
     QMessageBox msgBox(QMessageBox::Question,tr("Conversion d'un routage en route"),
                        tr("Voulez-vous que le point de depart de la route suive le bateau maintenant?"));
     QCheckBox simplify(tr("Simplifier/Optimiser automatiquement"),0);
+    QString tip=tr("Ce bouton a 3 etats:<br><b>Non coche:</b> La route ne sera pas simplifiee.<br><b>Partiellement coche:</b> La route sera simplifiee en mode minimum, c'est le meilleur mode.<br><b>Completement coche:</b> La route sera simplifiee au maximum. Ce mode peut degrader la qualite du routage.");
+    simplify.setToolTip(tip.replace(" ","&nbsp;"));
     simplify.setTristate(true);
     simplify.blockSignals(true);
     int i=Settings::getSetting("convertAndSimplify",Qt::Checked).toInt();

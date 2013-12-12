@@ -1928,6 +1928,10 @@ Etes-vous sur ?</source>
         <source>m</source>
         <translation>m</translation>
     </message>
+    <message>
+        <source>Ce bouton a 3 etats:&lt;br&gt;&lt;b&gt;Non coche:&lt;/b&gt; La route ne sera pas simplifiee.&lt;br&gt;&lt;b&gt;Partiellement coche:&lt;/b&gt; La route sera simplifiee en mode minimum, c&apos;est le meilleur mode.&lt;br&gt;&lt;b&gt;Completement coche:&lt;/b&gt; La route sera simplifiee au maximum. Ce mode peut degrader la qualite du routage.</source>
+        <translation type="unfinished">Ce bouton a 3 états:&lt;br&gt;&lt;b&gt;Non coché:&lt;/b&gt; La route ne sera pas simplifiée.&lt;br&gt;&lt;b&gt;Partiellement coché:&lt;/b&gt; La route sera simplifiée en mode minimum, c&apos;est le meilleur mode.&lt;br&gt;&lt;b&gt;Complètement coché:&lt;/b&gt; La route sera simplifiée au maximum. Ce mode peut dégrader la qualité de la route.</translation>
+    </message>
 </context>
 <context>
     <name>DialogRouteComparator</name>
@@ -4967,6 +4971,10 @@ waves height</source>
     <message>
         <source>Supprimer les autres routages</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Ce bouton a 3 etats:&lt;br&gt;&lt;b&gt;Non coche:&lt;/b&gt; La route ne sera pas simplifiee.&lt;br&gt;&lt;b&gt;Partiellement coche:&lt;/b&gt; La route sera simplifiee en mode minimum, c&apos;est le meilleur mode.&lt;br&gt;&lt;b&gt;Completement coche:&lt;/b&gt; La route sera simplifiee au maximum. Ce mode peut degrader la qualite du routage.</source>
+        <translation>Ce bouton a 3 états:&lt;br&gt;&lt;b&gt;Non coché:&lt;/b&gt; La route ne sera pas simplifiée.&lt;br&gt;&lt;b&gt;Partiellement coché:&lt;/b&gt; La route sera simplifiée en mode minimum, c&apos;est le meilleur mode.&lt;br&gt;&lt;b&gt;Complètement coché:&lt;/b&gt; La route sera simplifiée au maximum. Ce mode peut dégrader la qualité de la route.</translation>
     </message>
 </context>
 <context>
