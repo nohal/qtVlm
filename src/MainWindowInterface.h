@@ -10,6 +10,7 @@ class MainWindowInterface: public QMainWindow
         virtual BoatInterface * get_selectedBoatInterface()=0;
         virtual QList<POI *> * getPois()=0;
         virtual QColor getWindColorStatic(const double &v, const bool &smooth=true)=0;
+        virtual QVariant getSetting(const QString &key, const QVariant & defaultValue) const =0;
     public slots:
         virtual void slotVLM_Sync()=0;
         virtual void slot_clearPilototo()=0;

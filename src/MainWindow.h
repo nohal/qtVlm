@@ -98,6 +98,7 @@ class MainWindow: public MainWindowInterface
         void showDashBoard();
         BoatInterface * get_selectedBoatInterface(){return (BoatInterface*)this->getSelectedBoat();}
         QColor getWindColorStatic(const double &v, const bool &smooth=true);
+        QVariant getSetting(const QString &key, const QVariant & defaultValue) const;
 public slots:
         void slot_POI_input();
         void slot_showPOI_input(POI *poi=NULL, const bool &fromMenu=false);        

@@ -2758,3 +2758,7 @@ void MainWindow::slot_barrierAddMenu(void) {
     else
         my_centralWidget->escKey_barrier();
 }
+QVariant MainWindow::getSetting(const QString &key, const QVariant &defaultValue) const
+{
+    return Settings::getSetting(key,defaultValue);
+}

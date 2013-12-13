@@ -29,7 +29,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "POI.h"
 #include "DialogWp.h"
 #include "PolarInterface.h"
-#include "settings.h"
 #include "vlmLine.h"
 #include "BoatInterface.h"
 #include "MapDataDrawer.h"
@@ -52,14 +51,15 @@ void BoardVlmNew::initBoard(MainWindowInterface *main)
     if(translator==NULL)
     {
         translator=new QTranslator(this);
-        QString lang = Settings::getSetting("appLanguage", "none").toString();
+        QString lang = main->getSetting("appLanguage", "none").toString();
         if(lang=="none") lang="fr";
-        translator->load( QString("boardVlmNew_") + lang,"tr");
+        translator->load( QString("pluginNewBoardVlm_") + lang,"tr");
         QApplication::installTranslator(translator);
         qWarning()<<"loading"<<lang<<"in plugin";
     }
     this->setupUi(this);
     this->windAngle->setMain(main);
+    windAngle->loadSkin();
     tryMoving=false;
     setWindowFlags(Qt::FramelessWindowHint|Qt::WindowStaysOnTopHint);
     this->setModal(false);
@@ -144,7 +144,7 @@ void BoardVlmNew::initBoard(MainWindowInterface *main)
     this->lab_backTab2->installEventFilter(this);
     this->lab_backTab3->installEventFilter(this);
     this->lab_back->installEventFilter(this);
-    if(Settings::getSetting("newBoardShadow",1).toInt()==1)
+    if(main->getSetting("newBoardShadow",1).toInt()==1)
     {
         QGraphicsDropShadowEffect *shadow=new QGraphicsDropShadowEffect(this);
         this->setGraphicsEffect(shadow);
@@ -176,10 +176,10 @@ void BoardVlmNew::initBoard(MainWindowInterface *main)
 }
 QString BoardVlmNew::getName()
 {
-    QString lang = Settings::getSetting("appLanguage", "none").toString();
-    QString desc="New VLM board by Maitai";
-    if (lang=="fr" || lang=="none") desc=("Nouveau tableau de bord VLM par Maitai");
-    return desc;
+//    QString lang = main->getSetting("appLanguage", "none").toString();
+//    QString desc="New VLM board by Maitai";
+//    if (lang=="fr" || lang=="none") desc=("Nouveau tableau de bord VLM par Maitai");
+    return "Nouveau tableau de bord VLM par Maitai";
 }
 BoardVlmNew::~BoardVlmNew()
 {
@@ -191,7 +191,7 @@ BoardVlmNew::~BoardVlmNew()
 void BoardVlmNew::setFontDialog(QObject * o)
 {
 
-    QFont myFont(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
+    QFont myFont(main->getSetting("defaultFontName",QApplication::font().family()).toString());
     if(o->isWidgetType())
     {
         QWidget * widget=qobject_cast<QWidget*> (o);
@@ -229,7 +229,7 @@ void BoardVlmNew::slot_tabChanged(int tabNb)
 
 void BoardVlmNew::slot_reloadSkin()
 {
-    if(Settings::getSetting("newBoardShadow",1).toInt()==1)
+    if(main->getSetting("newBoardShadow",1).toInt()==1)
     {
         QGraphicsDropShadowEffect *shadow=new QGraphicsDropShadowEffect(this);
         this->setGraphicsEffect(shadow);
@@ -237,7 +237,7 @@ void BoardVlmNew::slot_reloadSkin()
     else
         this->setGraphicsEffect(NULL);
     QPixmap skin;
-    QString skinName=Settings::getSetting("defaultSkin",QFileInfo("img/skin_compas.png").absoluteFilePath()).toString();
+    QString skinName=main->getSetting("defaultSkin",QFileInfo("img/skin_compas.png").absoluteFilePath()).toString();
     if(!QFile(skinName).exists())
         skinName=QFileInfo("img/skin_compas.png").absoluteFilePath();
     if(myBoat && myBoat->get_useSkin())
@@ -587,7 +587,7 @@ void BoardVlmNew::slot_drawPolar()
     }
     lab_polarName->setText(polar->getName());
     polarPnt.begin(&polarImg);
-    QFont myFont(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
+    QFont myFont(main->getSetting("defaultFontName",QApplication::font().family()).toString());
     myFont.setPointSizeF(8.0);
     polarPnt.setFont(myFont);
     polarPnt.setRenderHint(QPainter::Antialiasing);
@@ -691,7 +691,7 @@ void BoardVlmNew::slot_drawPolar()
         s=s.sprintf("%d",angle);
         polarPnt.drawText(line.p2(),s);
     }
-    pen.setColor(main->getWindColorStatic(myBoat->getWindSpeed(),Settings::getSetting("colorMapSmooth", true).toBool()));
+    pen.setColor(main->getWindColorStatic(myBoat->getWindSpeed(),main->getSetting("colorMapSmooth", true).toBool()));
     pen.setWidthF(2.0);
     polarPnt.setPen(pen);
     QLineF line(center,QPointF(polarImg.width(),polarImg.height()/2.0));
@@ -718,7 +718,7 @@ void BoardVlmNew::updateLcds()
     s.sprintf("%.2f",(double)qRound(myBoat->getWindDir()*100.0)/100.0);
     lcd_TWD->setDigitCount(s.count());
     this->lcd_TWD->display(s);
-    QColor color=main->getWindColorStatic(myBoat->getWindSpeed(),Settings::getSetting("colorMapSmooth", true).toBool());
+    QColor color=main->getWindColorStatic(myBoat->getWindSpeed(),main->getSetting("colorMapSmooth", true).toBool());
     this->lcd_TWS->setStyleSheet((QString().sprintf("background-color: rgb(%d, %d, %d);",color.red(),color.green(),color.blue())));
     color=Qt::white;
     this->lcd_TWD->setStyleSheet((QString().sprintf("background-color: rgba(%d, %d, %d,%d);",color.red(),color.green(),color.blue(),180)));
@@ -1116,7 +1116,7 @@ bool BoardVlmNew::eventFilter(QObject *obj, QEvent *event)
 }
 bool BoardVlmNew::confirmChange()
 {
-    if(Settings::getSetting("askConfirmation","0").toInt()==0)
+    if(main->getSetting("askConfirmation","0").toInt()==0)
         return true;
 
     return QMessageBox::question(0,tr("Confirmation a chaque ordre vers VLM"),
@@ -1130,7 +1130,6 @@ bool BoardVlmNew::confirmChange()
 VlmCompass::VlmCompass(QWidget * parent):QWidget(parent)
 {
     setFixedSize(200,200);
-    loadSkin();
     WPdir = -1;
     newHeading=-1;
     rotation=0;
@@ -1141,7 +1140,7 @@ void VlmCompass::loadSkin(const QString &SkinName)
     QString skinName=SkinName;
     if(skinName.isEmpty())
     {
-        skinName=Settings::getSetting("defaultSkin",QFileInfo("img/skin_compas.png").absoluteFilePath()).toString();
+        skinName=main->getSetting("defaultSkin",QFileInfo("img/skin_compas.png").absoluteFilePath()).toString();
         if(!QFile(skinName).exists())
             skinName=QFileInfo("img/skin_compas.png").absoluteFilePath();
     }
@@ -1244,7 +1243,7 @@ void VlmCompass::draw(QPainter * painter)
 QColor VlmCompass::windSpeed_toColor()
 {
     if(!main) return QColor(Qt::black);
-    return main->getWindColorStatic(windSpeed,Settings::getSetting("colorMapSmooth", true).toBool());
+    return main->getWindColorStatic(windSpeed,main->getSetting("colorMapSmooth", true).toBool());
 }
 
 void VlmCompass::setValues(const double &heading, const double &windDir, const double &windSpeed, const double &WPdir, const double &gateDir, const double &newHeading)
