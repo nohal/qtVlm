@@ -14,6 +14,7 @@ class MainWindowInterface: public QMainWindow
     public slots:
         virtual void slotVLM_Sync()=0;
         virtual void slot_clearPilototo()=0;
+        virtual void slotPilototo(void)=0;
         virtual void slot_POIselected(POI* poi)=0;
         virtual void slotSelectWP_POI(void)=0;
 };
