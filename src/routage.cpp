@@ -1113,11 +1113,11 @@ void ROUTAGE::calculate()
                 break;
         }
         const double    angle = ortho.getLoxoCap();
-        Util::getCoordFromDistanceLoxo (start.y(), start.x(), ratio*distance/2, angle+90, &yTmp, &xTmp);
+        Util::getCoordFromDistanceAngle (start.y(), start.x(), ratio*distance/2, angle+90, &yTmp, &xTmp);
         xW = xE = xTmp;
         yN = yS = yTmp;
         //qWarning()<<"1"<<xW<<xE<<xTmp;
-        Util::getCoordFromDistanceLoxo (start.y(), start.x(), ratio*distance/2, angle-90, &yTmp, &xTmp);
+        Util::getCoordFromDistanceAngle (start.y(), start.x(), ratio*distance/2, angle-90, &yTmp, &xTmp);
         if(mySignedDiffAngle(Util::A360(xW),Util::A360(xTmp))<0) xW=xTmp;
         if(mySignedDiffAngle(Util::A360(xTmp),Util::A360(xE))<0) xE=xTmp;
 //        if (xTmp < xW) xW = xTmp;
@@ -1125,7 +1125,7 @@ void ROUTAGE::calculate()
         if (yTmp < yS) yS = yTmp;
         if (yTmp > yN) yN = yTmp;
         //qWarning()<<"2"<<xW<<xE<<xTmp;
-        Util::getCoordFromDistanceLoxo (arrival.y(), arrival.x(), ratio*distance/2, angle+90, &yTmp, &xTmp);
+        Util::getCoordFromDistanceAngle (arrival.y(), arrival.x(), ratio*distance/2, angle+90, &yTmp, &xTmp);
         if(mySignedDiffAngle(Util::A360(xW),Util::A360(xTmp))<0) xW=xTmp;
         if(mySignedDiffAngle(Util::A360(xTmp),Util::A360(xE))<0) xE=xTmp;
 //        if (xTmp < xW) xW = xTmp;
@@ -1133,7 +1133,7 @@ void ROUTAGE::calculate()
         if (yTmp < yS) yS = yTmp;
         if (yTmp > yN) yN = yTmp;
         //qWarning()<<"3"<<xW<<xE<<xTmp;
-        Util::getCoordFromDistanceLoxo (arrival.y(), arrival.x(), ratio*distance/2, angle-90, &yTmp, &xTmp);
+        Util::getCoordFromDistanceAngle (arrival.y(), arrival.x(), ratio*distance/2, angle-90, &yTmp, &xTmp);
         if(mySignedDiffAngle(Util::A360(xW),Util::A360(xTmp))<0) xW=xTmp;
         if(mySignedDiffAngle(Util::A360(xTmp),Util::A360(xE))<0) xE=xTmp;
 //        if (xTmp < xW) xW = xTmp;
