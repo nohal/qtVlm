@@ -113,7 +113,7 @@ QList<vlmPoint> ROUTAGE::findPointThreaded(const QList<vlmPoint> &list)
                 cap=p.y(); //in this case cap is COG
             }
             distanceParcourue=newSpeed*pt.routage->getTimeStep()/60.0;
-            Util::getCoordFromDistanceAngle(lat, lon, distanceParcourue, cap, &res_lat, &res_lon);
+            Util::getCoordFromDistanceLoxo(lat, lon, distanceParcourue, cap, &res_lat, &res_lon);
             pt.lon=res_lon;
             pt.lat=res_lat;
             pt.distOrigin=distanceParcourue;
@@ -610,7 +610,7 @@ QList<vlmPoint> ROUTAGE::findRoute(const QList<vlmPoint> & pointList)
             int oldTime=timeStepSec;
             /*first, trying to be clever*/
             distanceParcourue=distanceParcourue*oldTime/realTime;
-            Util::getCoordFromDistanceAngle(lat, lon, distanceParcourue, cap, &res_lat, &res_lon);
+            Util::getCoordFromDistanceLoxo(lat, lon, distanceParcourue, cap, &res_lat, &res_lon);
             to.lon=res_lon;
             to.lat=res_lat;
             realTime=ROUTAGE::calculateTimeRoute(from, to, &dataThread, &lastLonFound, &lastLatFound);
@@ -639,7 +639,7 @@ QList<vlmPoint> ROUTAGE::findRoute(const QList<vlmPoint> & pointList)
                     {
                         found=true;
                         double res_lon,res_lat;
-                        Util::getCoordFromDistanceAngle(from.lat, from.lon, x, from.capOrigin, &res_lat, &res_lon);
+                        Util::getCoordFromDistanceLoxo(from.lat, from.lon, x, from.capOrigin, &res_lat, &res_lon);
                         to=vlmPoint(res_lon,res_lat);
                         resultP.foundByNewtonRaphson=true;
                         break;
@@ -671,7 +671,7 @@ QList<vlmPoint> ROUTAGE::findRoute(const QList<vlmPoint> & pointList)
 inline int ROUTAGE::routeFunction(const double &x,const vlmPoint &from, double * lastLonFound, double * lastLatFound, const datathread * dataThread)
 {
     double res_lon,res_lat;
-    Util::getCoordFromDistanceAngle(from.lat, from.lon, x, from.capOrigin, &res_lat, &res_lon);
+    Util::getCoordFromDistanceLoxo(from.lat, from.lon, x, from.capOrigin, &res_lat, &res_lon);
     vlmPoint to(res_lon,res_lat);
     return ROUTAGE::calculateTimeRoute(from,to,dataThread,lastLonFound,lastLatFound);
 }
@@ -800,7 +800,7 @@ inline int ROUTAGE::calculateTimeRoute(const vlmPoint &routeFrom,const vlmPoint 
                 ignoreTackLoss=false;
             lastTwa=angle;
             distanceParcourue=newSpeed*vacLen/3600.00;
-            Util::getCoordFromDistanceAngle(lat, lon, distanceParcourue, cap,&res_lat,&res_lon);
+            Util::getCoordFromDistanceLoxo(lat, lon, distanceParcourue, cap,&res_lat,&res_lon);
             double p_remaining_distance=orth.getDistance();
             orth.setStartPoint(res_lon, res_lat);
             remaining_distance=orth.getDistance();
@@ -1113,11 +1113,11 @@ void ROUTAGE::calculate()
                 break;
         }
         const double    angle = ortho.getLoxoCap();
-        Util::getCoordFromDistanceAngle (start.y(), start.x(), ratio*distance/2, angle+90, &yTmp, &xTmp);
+        Util::getCoordFromDistanceLoxo (start.y(), start.x(), ratio*distance/2, angle+90, &yTmp, &xTmp);
         xW = xE = xTmp;
         yN = yS = yTmp;
         //qWarning()<<"1"<<xW<<xE<<xTmp;
-        Util::getCoordFromDistanceAngle (start.y(), start.x(), ratio*distance/2, angle-90, &yTmp, &xTmp);
+        Util::getCoordFromDistanceLoxo (start.y(), start.x(), ratio*distance/2, angle-90, &yTmp, &xTmp);
         if(mySignedDiffAngle(Util::A360(xW),Util::A360(xTmp))<0) xW=xTmp;
         if(mySignedDiffAngle(Util::A360(xTmp),Util::A360(xE))<0) xE=xTmp;
 //        if (xTmp < xW) xW = xTmp;
@@ -1125,7 +1125,7 @@ void ROUTAGE::calculate()
         if (yTmp < yS) yS = yTmp;
         if (yTmp > yN) yN = yTmp;
         //qWarning()<<"2"<<xW<<xE<<xTmp;
-        Util::getCoordFromDistanceAngle (arrival.y(), arrival.x(), ratio*distance/2, angle+90, &yTmp, &xTmp);
+        Util::getCoordFromDistanceLoxo (arrival.y(), arrival.x(), ratio*distance/2, angle+90, &yTmp, &xTmp);
         if(mySignedDiffAngle(Util::A360(xW),Util::A360(xTmp))<0) xW=xTmp;
         if(mySignedDiffAngle(Util::A360(xTmp),Util::A360(xE))<0) xE=xTmp;
 //        if (xTmp < xW) xW = xTmp;
@@ -1133,7 +1133,7 @@ void ROUTAGE::calculate()
         if (yTmp < yS) yS = yTmp;
         if (yTmp > yN) yN = yTmp;
         //qWarning()<<"3"<<xW<<xE<<xTmp;
-        Util::getCoordFromDistanceAngle (arrival.y(), arrival.x(), ratio*distance/2, angle-90, &yTmp, &xTmp);
+        Util::getCoordFromDistanceLoxo (arrival.y(), arrival.x(), ratio*distance/2, angle-90, &yTmp, &xTmp);
         if(mySignedDiffAngle(Util::A360(xW),Util::A360(xTmp))<0) xW=xTmp;
         if(mySignedDiffAngle(Util::A360(xTmp),Util::A360(xE))<0) xE=xTmp;
 //        if (xTmp < xW) xW = xTmp;

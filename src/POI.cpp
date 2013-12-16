@@ -1288,8 +1288,8 @@ void POI::slot_finePosit(bool silent)
     /* Note that if the route did not reach the target, then getEta
      * returns the last date of the grib. */
 #define TRYPOINT(P) do {                                \
-        if ((P).lat > 85)        (P).lat = 85;          \
-        else if ((P).lat < -85)  (P).lat = -85;         \
+        if ((P).lat > 88)        (P).lat = 88;          \
+        else if ((P).lat < -88)  (P).lat = -88;         \
         setLongitude ((P).lon);                         \
         setLatitude ((P).lat);                          \
         route->slot_recalculate();                      \

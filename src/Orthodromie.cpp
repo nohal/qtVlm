@@ -56,7 +56,6 @@ void Orthodromie::setPoints(double x0,double y0, double x1,double y1)
 //------------------------------------------------------------------------------
 void Orthodromie::initOrthodromie()
 {
-    double R = 6371.0/1.852; // nm
     sinStartLat = sin(lat0);
     cosStartLat = cos(lat0);
     sinEndLat = sin(lat1);
@@ -64,10 +63,8 @@ void Orthodromie::initOrthodromie()
     double deltaLng = reduceLng(lon1 - lon0);
     cosDeltaLng = cos(deltaLng);
     sinDeltaLng = sin(deltaLng);
-
-//    double cosang = sinStartLat*sinEndLat + cosStartLat*cosEndLat*cosDeltaLng;
-//    cosang = (cosang < -1.0) ? -1.0 : (cosang > 1.0) ? 1.0 : cosang;
-//    distanceNM = 6378.0/1.852 * acos(cosang);
+#if 1
+    double R = 6371.0/1.852; // nm
     double dLat = lat1 - lat0;
     double dLon = lon1 - lon0;
 
@@ -76,21 +73,25 @@ void Orthodromie::initOrthodromie()
              sin(dLon/2.0) * sin(dLon/2.0);
     double c = 2.0 * atan2(sqrt(a), sqrt(1.0-a));
     distanceNM = R * c;
-//    var y = Math.sin(dLon) * Math.cos(lat2);
-//    var x = Math.cos(lat1)*Math.sin(lat2) -
-//            Math.sin(lat1)*Math.cos(lat2)*Math.cos(dLon);
-//    var brng = Math.atan2(y, x).toDeg();
     double y = sin(dLon) * cos(lat1);
     double x = cos(lat0)*sin(lat1) -
                sin(lat0)*cos(lat1)*cos(dLon);
     azimut = reduceAzimut(atan2(y, x));
-//    azimut = reduceAzimut(
-//                 atan2(sin(lon1-lon0)*cos(lat1),
-//                       cos(lat0)*sin(lat1)-sin(lat0)*cos(lat1)*cos(lon1-lon0)));
     sinAzimut = sin(azimut);
     cosAzimut = cos(azimut);
-//    azimutDeg = 180.0/M_PI*azimut;
-    azimutDeg=Util::A360(radToDeg(azimut));
+    azimutDeg = 180.0/M_PI*azimut;
+    //qWarning()<<"new method"<<azimutDeg<<distanceNM;
+#else
+    double cosang = sinStartLat*sinEndLat + cosStartLat*cosEndLat*cosDeltaLng;
+    cosang = (cosang < -1.0) ? -1.0 : (cosang > 1.0) ? 1.0 : cosang;
+    distanceNM = 6378.0/1.852 * acos(cosang);
+    azimut = reduceAzimut(atan2(sin(lon1-lon0)*cos(lat1),
+                          cos(lat0)*sin(lat1)-sin(lat0)*cos(lat1)*cos(lon1-lon0)));
+    sinAzimut = sin(azimut);
+    cosAzimut = cos(azimut);
+    azimutDeg = 180.0/M_PI*azimut;
+    qWarning()<<"old method"<<azimutDeg<<distanceNM;
+#endif
 }
 
 //------------------------------------------------------------------------------

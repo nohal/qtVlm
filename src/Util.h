@@ -216,6 +216,14 @@ inline void Util::getCoordFromDistanceAngle3(const double &latitude, const doubl
                   cos(lat1)*sin(distance/R)*cos(hdg) );
     double lon2 = lon1 + atan2(sin(hdg)*sin(distance/R)*cos(lat1),
                          cos(distance/R)-sin(lat1)*sin(lat2));
+    if (lon2 > PI)
+    {
+        lon2 -= TWO_PI;
+    }
+    else if (lon2 < -PI)
+    {
+        lon2 += TWO_PI;
+    }
     *res_lon=radToDeg(lon2);
     *res_lat=radToDeg(lat2);
     return;
@@ -234,13 +242,13 @@ inline void Util::getCoordFromDistanceAngle(const double &latitude, const double
     return;
 #else
     double d, new_lat, t_lat, new_lon;
-    latitude = degToRad(latitude);
-    longitude = fmod(degToRad(longitude), TWO_PI);
-    heading=degToRad(heading);
+    double lat = degToRad(latitude);
+    double lon = fmod(degToRad(longitude), TWO_PI);
+    double hdg=degToRad(heading);
     d = degToRad(distance/60.0);
-    new_lat = latitude + d*cos(heading);
-    t_lat = (latitude + new_lat) / 2.0;
-    new_lon =  longitude + (d*sin(heading))/cos(t_lat);
+    new_lat = lat + d*cos(hdg);
+    t_lat = (lat + new_lat) / 2.0;
+    new_lon =  lon + (d*sin(hdg))/cos(t_lat);
     if (new_lon > PI)
     {
         new_lon -= TWO_PI;

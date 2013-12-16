@@ -695,7 +695,7 @@ void ROUTE::slot_recalculate(boat * boat)
                                     break;
                                 }
                             }
-                            Util::getCoordFromDistanceAngle(lat, lon, distanceParcourue, cap,&res_lat,&res_lon);
+                            Util::getCoordFromDistanceLoxo(lat, lon, distanceParcourue, cap,&res_lat,&res_lon);
                         }
                         previous_remaining_distance=orth.getDistance();
                         orth.setStartPoint(res_lon, res_lat);

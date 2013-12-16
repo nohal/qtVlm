@@ -673,6 +673,32 @@ void Util::getCoordFromDistanceLoxo(const double &latitude, const double &longit
     double g=(La-Ld)*tan(degToRad(heading));
     *res_lon=longitude+g;
 #else
+#if 1 //pure VLM routine
+    double ld, la, target_lat, target_lon;
+    double angle=degToRad(heading);
+    double lat=degToRad(latitude);
+    double lon=degToRad(longitude);
+    target_lat = lat + degToRad( (cos(angle)*distance)/60.0 );
+    if (fabs(target_lat - lat) > degToRad(0.001))
+    {
+        ld = log(tan(M_PI_4 + (lat/2.0)));
+        la = log(tan(M_PI_4 + (target_lat/2.0)));
+        target_lon = lon + (la-ld)*tan(angle);
+    }
+    else
+    {
+        target_lon = lon+sin(angle)*degToRad(distance/(60.0*cos(lat)));
+    }
+
+    if(target_lon > PI)
+        target_lon-=TWO_PI;
+    else if (target_lon < -PI)
+        target_lon+=TWO_PI;
+    *res_lon=radToDeg(target_lon);
+    *res_lat=radToDeg(target_lat);
+
+#else
+
     double vac_l=degToRad(distance/60.0);
     double lat=degToRad(latitude) + vac_l*cos(degToRad(heading));
     double t_lat=(lat+degToRad(latitude))/2.0;
@@ -683,6 +709,7 @@ void Util::getCoordFromDistanceLoxo(const double &latitude, const double &longit
         new_longitude+=TWO_PI;
     *res_lat=radToDeg(lat);
     *res_lon=radToDeg(new_longitude);
+#endif
 #endif
 }
 #if 0

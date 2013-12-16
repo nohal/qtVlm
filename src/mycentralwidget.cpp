@@ -3927,6 +3927,8 @@ void myCentralWidget::treatRoute(ROUTE* route)
                         if(selRect.contains(x,y))
                             selectedPOIs.append(poi);
                     }
+                    if(selectedPOIs.isEmpty())
+                        onlySelected=false;
                 }
                 for (int maxLoop=0;maxLoop<10;++maxLoop)
                 {
@@ -4092,6 +4094,8 @@ void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
                 if(selRect.contains(x,y))
                     selectedPOIs.append(poi);
             }
+            if(selectedPOIs.isEmpty())
+                onlySelected=false;
         }
         for (int n=firstPOI;n<pois.count()-2;++n)
         {
