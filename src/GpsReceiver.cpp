@@ -22,6 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDebug>
 #include <QClipboard>
 
+#include <errno.h>
+
 #include "GpsReceiver.h"
 #include "boatReal.h"
 
@@ -34,15 +36,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ReceiverThread::ReceiverThread(boatReal * parent) {
     this->parent=parent;
 
-    qRegisterMetaType<nmeaINFO>("nmeaINFO");
-    connect(this,SIGNAL(updateBoat(nmeaINFO)),parent,SLOT(updateBoat(nmeaINFO)));
+    qRegisterMetaType<GpsData>("GpsData");
+
+    connect(this,SIGNAL(updateBoat(GpsData)),parent,SLOT(updateBoat(GpsData)));
     connect(this,SIGNAL(finished()),parent,SLOT(slot_threadStartedOrFinished()));
     connect(this,SIGNAL(started()),parent,SLOT(slot_threadStartedOrFinished()));
 
-    nmea_zero_INFO(&info);
-    nmea_parser_init(&parser);
-    if(parser.buff_size==0)
-        qWarning()<<"no parser!!!";
+    clearGpsData(&gpsData);
+
     this->listNMEA=NULL;
 }
 
@@ -77,6 +78,12 @@ void ReceiverThread::copyClipBoard() {
 
 FileReceiverThread::FileReceiverThread(boatReal * parent): ReceiverThread(parent) {
     deviceType=GPS_FILE;
+
+    qRegisterMetaType<nmeaINFO>("nmeaINFO");
+    nmea_zero_INFO(&info);
+    nmea_parser_init(&parser);
+    if(parser.buff_size==0)
+        qWarning()<<"no parser!!!";
 }
 
 FileReceiverThread::~FileReceiverThread(void) {
@@ -91,6 +98,8 @@ void FileReceiverThread::run(void) {
         qWarning()<<"failed to open " << fileName;
         return;
     }
+
+    clearGpsData(&gpsData);
 
     while (!parent->getPause() && fakeGPS.isOpen())
     {
@@ -119,11 +128,14 @@ void FileReceiverThread::run(void) {
                     data.push_back('\n');
                     char * record=data.data();
                     nmea_parse(&parser, record, data.size(), &info);
+
+                    nmea2gps(&info,&gpsData);
+
                     if(listNMEA)
                         listNMEA->addItem(temp);
                 }
             }
-            emit updateBoat(info);
+            emit updateBoat(gpsData);
 
         }
         this->msleep(3000);
@@ -144,6 +156,12 @@ bool FileReceiverThread::initDevice(void) {
 SerialReceiverThread::SerialReceiverThread(boatReal * parent): ReceiverThread(parent) {
     port=NULL;
     deviceType=GPS_SERIAL;
+
+    qRegisterMetaType<nmeaINFO>("nmeaINFO");
+    nmea_zero_INFO(&info);
+    nmea_parser_init(&parser);
+    if(parser.buff_size==0)
+        qWarning()<<"no parser!!!";
 }
 
 SerialReceiverThread::~SerialReceiverThread(void) {
@@ -180,6 +198,8 @@ void SerialReceiverThread::run(void) {
         }
     }
 
+    clearGpsData(&gpsData);
+
     while (!parent->getPause() && port && port->isOpen())
     {
 
@@ -201,13 +221,14 @@ void SerialReceiverThread::run(void) {
                     data.push_back('\n');
                     char * record=data.data();
                     nmea_parse(&parser, record, data.size(), &info);
+                    nmea2gps(&info,&gpsData);
                     if(listNMEA)
                     {
                         listNMEA->addItem(temp);
                     }
                 }
             }
-            emit updateBoat(info);
+            emit updateBoat(gpsData);
         }
         this->msleep(3000);
     }
@@ -255,9 +276,10 @@ bool SerialReceiverThread::initDevice(void) {
 /***************************
  * Gpsd instance         *
  ***************************/
-
+#ifdef __UNIX_QTVLM
 GPSdReceiverThread::GPSdReceiverThread(boatReal * parent): ReceiverThread(parent) {
     deviceType=GPS_GPSD;
+    ok=false;
 }
 
 GPSdReceiverThread::~GPSdReceiverThread(void) {
@@ -265,10 +287,82 @@ GPSdReceiverThread::~GPSdReceiverThread(void) {
 }
 
 void GPSdReceiverThread::run(void) {
+    if(!isOk()) {
+        qWarning() << "GPSD device not ok";
+        if(!this->initDevice()) {
+            qWarning() << "Can't initDevice";
+            exit();
+        }
+    }
 
+    while (!parent->getPause() && isOk()) {
+        if (!gps_waiting(&gps_data,500))
+            continue;
+
+        qWarning() << "We have data";
+
+        if (gps_read(&gps_data) == -1) {
+            qWarning() << "Read error.\n";
+            break ;
+        }
+
+
+        if(gps_data.status==STATUS_NO_FIX) {
+            qWarning() << "Bad fix";
+            continue;
+        }
+        /* position ... */
+        qWarning() << "Data ok";
+        gpsData.latitude=gps_data.fix.latitude;
+        gpsData.longitude=gps_data.fix.longitude;
+        gpsData.declination=0;
+        gpsData.elevation=gps_data.fix.altitude;
+        gpsData.direction=gps_data.fix.track;
+        gpsData.speed=gps_data.fix.speed;
+        gpsData.fix=gps_data.fix.mode;
+        gpsData.HDOP=gps_data.dop.hdop;
+        gpsData.PDOP=gps_data.dop.pdop;
+        gpsData.VDOP=gps_data.dop.vdop;
+        gpsData.sig=gps_data.status;
+
+        gpsData.inuse=gps_data.satellites_used;
+        gpsData.inview=gps_data.satellites_visible;
+        for(int i=0; i<MAXCHANNELS ;++i) {
+            gpsData.sat[i].azimuth=gps_data.azimuth[i];
+            gpsData.sat[i].elevation=gps_data.elevation[i];
+            gpsData.sat[i].id=gps_data.PRN[i];
+            gpsData.sat[i].in_use=gps_data.used[i];
+            gpsData.sat[i].sigQ=gps_data.ss[i];
+        }
+        emit updateBoat(gpsData);
+
+    }
+
+    gps_stream(&gps_data,WATCH_DISABLE,NULL);
+    gps_close(&gps_data);
+    ok=false;
+    exit();
 }
 
 bool GPSdReceiverThread::initDevice(void) {
+    if(isOk()) {
+        gps_stream(&gps_data,WATCH_DISABLE,NULL);
+        gps_close(&gps_data);
+    }
 
-    return ReceiverThread::initDevice();
+    memset(&gps_data,0,sizeof(struct gps_data_t));
+    ok=false;
+
+    if(gps_open("localhost", DEFAULT_GPSD_PORT,&gps_data)==-1) {
+        qWarning() << "Error opening gpsd connection: " << errno << ": " << gps_errstr(errno);
+        return false;
+    }
+
+    gps_stream(&gps_data,WATCH_ENABLE|WATCH_JSON,NULL);
+
+    if(ReceiverThread::initDevice())
+        ok=true;
+
+    return ok;
 }
+#endif

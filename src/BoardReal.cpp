@@ -223,16 +223,16 @@ void boardReal::boatUpdated(void)
     QString status;
     if(!myBoat->getPause() && !this->gpsInfo->isHidden())
     {
-        nmeaINFO info=myBoat->getInfo();
+        GpsData info=myBoat->getInfo();
         imgInfo.fill(Qt::white);
         for(int n=0;n<12;n++)
         {
-            if(info.satinfo.sat[n].in_use==0)
+            if(info.sat[n].in_use==0)
                 pntImgInfo.setBrush(Qt::red);
             else
                 pntImgInfo.setBrush(Qt::green);
-            pntImgInfo.drawRect(1+n*19,50,16,-info.satinfo.sat[n].sig*.7);
-            pntImgInfo.drawText(1+n*19,52,16,18,Qt::AlignHCenter | Qt::AlignVCenter,QString().setNum(info.satinfo.sat[n].id));
+            pntImgInfo.drawRect(1+n*19,50,16,-info.sat[n].sigQ*.7);
+            pntImgInfo.drawText(1+n*19,52,16,18,Qt::AlignHCenter | Qt::AlignVCenter,QString().setNum(info.sat[n].id));
         }
         gpsInfo->setPixmap(imgInfo);
         status=tr("Running")+"<br>";

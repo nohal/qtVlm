@@ -48,6 +48,8 @@ class ReceiverThread;
 class FileReceiverThread;
 class SerialReceiverThread;
 class GPSdReceiverThread;
+struct SatData;
+struct GpsData;
 
 
 /* DialogBoatAccount.h */

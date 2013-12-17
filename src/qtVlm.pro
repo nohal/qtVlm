@@ -20,7 +20,6 @@ INCLUDEPATH += objs \
     libs/miniunz \
     libs/g2clib-1.4.0 \
     libs/jasper/include \
-#    libs/libgps \
     .
 
 LIBS += -Llibs/build \
@@ -33,7 +32,7 @@ LIBS += -Llibs/build \
     -ljpc \
     -ljp2 \
     -lbase
-#    -lgps
+
 QT_V5{
 LIBS += -lQt5ExtSerialPort
 } else {
@@ -329,6 +328,9 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     GpsReceiver.cpp
 
 unix:!macx: DEFINES += _TTY_POSIX_ __TERRAIN_QIMAGE __UNIX_QTVLM
+unix: LIBS += -lgps
+unix: INCLUDEPATH += libs/libgps
+
 win32:DEFINES += _TTY_WIN_ \
     QWT_DLL \
     QT_DLL \

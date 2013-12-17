@@ -13,6 +13,8 @@ ifdef SystemRoot
 	RMAPPNAME = $(RM) qtVlm.exe
 	QMAKE = qmake
 	MKDIR = mkdir
+	OPTLIB =
+	OPTCLEAN =
 else
 	RM = rm -f
 	RMFOLDER = rm -Rf
@@ -23,13 +25,17 @@ else
 	QMAKE = qmake
 	ifeq ($(shell uname), Linux)
 		RMAPPNAME = $(RM) qtVlm
+		OPTLIB = libgps
+		OPTCLEAN = libgps_clean
 	else
 		RMAPPNAME = $(RMFOLDER) qtVlm.app
+		OPTLIB =
+		OPTCLEAN =
 	endif
 	MKDIR = mkdir
 endif
 
-all: libs
+all: libs $(OPTLIB)
 	$(CD) src $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make
 	$(CD) $(call FixPath,src/plugins) $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make
 
@@ -44,7 +50,11 @@ libs:
 	$(CD) $(call FixPath,src/libs/miniunz) $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make
 	$(CD) $(call FixPath,src/libs/jasper) $(SEP) make
 	$(CD) $(call FixPath,src/libs/g2clib-1.4.0) $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make
-clean:
+
+libgps:
+	$(CD) $(call FixPath,src/libs/libgps) $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make
+
+clean: $(OPTCLEAN)
 	$(RMAPPNAME)
 	$(CD) $(call FixPath,src/libs/bzip2) $(SEP) $(QMAKE) $(SEP) make clean
 	$(CD) $(call FixPath,src/libs/zlib-1.2.7) $(SEP) $(QMAKE) $(SEP) make clean
@@ -69,6 +79,10 @@ clean:
 	$(RMFOLDER) $(call FixPath,src/libs/build)
 	$(RMFOLDER) $(call FixPath,src/objs)
 	$(RMFOLDER) $(call FixPath,plugins)
+
+libgps_clean:
+	$(CD) $(call FixPath,src/libs/libgps) $(SEP) $(QMAKE) $(SEP) make clean
+	$(CD) $(call FixPath,src/libs/libgps) $(SEP) $(RM) Makefile
 
 install: all
 	@echo "***********************************************************"

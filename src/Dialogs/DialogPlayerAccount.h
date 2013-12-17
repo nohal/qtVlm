@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef PLAYERACCOUNT_H
 #define PLAYERACCOUNT_H
+
 #ifdef QT_V5
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QMessageBox>

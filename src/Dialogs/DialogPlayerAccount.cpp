@@ -23,21 +23,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QWidget>
 #endif
 #include <QDebug>
+#include <QTranslator>
+#include <QCoreApplication>
 
 
 #include "DialogPlayerAccount.h"
 
 #include "boatVLM.h"
+#include "boatReal.h"
 #include "dataDef.h"
 #include "mycentralwidget.h"
 #include "MainWindow.h"
 #include "route.h"
 #include "routage.h"
-#include "boatReal.h"
 #include "Util.h"
 #include "settings.h"
-#include <QTranslator>
-#include <QCoreApplication>
+
 
 
 DialogPlayerAccount::DialogPlayerAccount(Projection * proj, MainWindow * main,

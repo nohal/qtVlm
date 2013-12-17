@@ -29,11 +29,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <qextserialport.h>
 #include <nmea.h>
 
+#include "class_list.h"
+
 #include "boat.h"
 #include "vlmLine.h"
-#include "class_list.h"
 #include "mycentralwidget.h"
-#include <QListWidget>
+#include "GpsReceiver.h"
+
 
 class boatReal : public boat
 { Q_OBJECT
@@ -64,7 +66,7 @@ class boatReal : public boat
         time_t getEta(){return eta;}
         void setWP(QPointF point,double w);
         void setWP(double lat, double lon, double wph);
-        nmeaINFO getInfo(void){return info;}
+        GpsData getInfo(void){return info;}
         void emitMoveBoat(){emit boatUpdated(this,false,false);}
         bool getDisplayNMEA(){return this->displayNMEA;}
         void setDisplayNMEA(bool b){this->displayNMEA=b;}
@@ -76,7 +78,7 @@ class boatReal : public boat
         void slot_selectBoat(void) { boat::slot_selectBoat(); }
         void slot_threadStartedOrFinished(void);
         void slot_chgPos(void);
-        void updateBoat(nmeaINFO info);
+        void updateBoat(GpsData info);
 
     signals:
 
@@ -89,7 +91,7 @@ class boatReal : public boat
         int gpsReaderType;
         int cnt;
 
-        nmeaINFO info;
+        GpsData info;
 
         QString parseMask(int mask);
 

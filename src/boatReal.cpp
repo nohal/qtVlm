@@ -55,7 +55,7 @@ boatReal::boatReal(QString pseudo, bool activated, Projection * proj,MainWindow 
     /* init thread */
     gpsReader = NULL;
     gpsReaderType=GPS_NONE;
-    nmea_zero_INFO(&info);
+    clearGpsData(&info);
     this->lat=0;
     this->lon=0;
     this->vacLen=300;
@@ -154,6 +154,11 @@ void boatReal::startRead() {
 
     if(!gpsReader) {
         switch(curDeviceType) {
+            case GPS_GPSD:
+#ifdef __UNIX_QTVLM
+                gpsReader = new GPSdReceiverThread(this);
+                break;
+#endif
             case GPS_NONE:
                 return;
             case GPS_SERIAL:
@@ -162,9 +167,8 @@ void boatReal::startRead() {
             case GPS_FILE:
                 gpsReader = new FileReceiverThread(this);
                 break;
-            case GPS_GPSD:
-                gpsReader = new GPSdReceiverThread(this);
-                break;
+
+
         }
     }
 
@@ -201,14 +205,14 @@ bool boatReal::gpsIsRunning()
     return true;
 }
 
-void boatReal::updateBoat(nmeaINFO info)
+void boatReal::updateBoat(GpsData info)
 {
     this->info=info;
     QDateTime now;
     now=now.currentDateTime();
-//    QString s=now.toString("hh:mm:ss");
-//    qWarning()<<s<<
-//        "speed:"<<info.speed<<"cap:"<<info.direction<<"lat:"<<info.lat;
+    QString s=now.toString("hh:mm:ss");
+    qWarning()<<s<<"speed:"<<info.speed<<"cap:"<<info.direction<<"lat:"<<info.latitude<<"lon:"<<info.longitude;
+    qWarning()<<s<<"sig:" << info.sig << "fix:" << info.fix;
     this->fix=info.fix;
     this->sig=info.sig;
     if(info.declination!=0)
@@ -218,16 +222,16 @@ void boatReal::updateBoat(nmeaINFO info)
     this->pdop=info.PDOP;
     if(sig<0 || sig>3)
         qWarning()<<"strange sig value:"<<sig;
-    this->speed=info.speed/1.852;
+    this->speed=info.speed;
     this->heading=info.direction;
     if(info.fix==1)
     {
-//        qWarning()<<"bad gps signal, fix="<<info.fix<<",sig="<<info.sig;
+        qWarning()<<"bad gps signal, fix="<<info.fix<<",sig="<<info.sig;
         emit(boatUpdated(this,false,false));
         return;
     }
-    this->lat=nmea_ndeg2degree(info.lat);
-    this->lon=nmea_ndeg2degree(info.lon);
+    this->lat=info.latitude;
+    this->lon=info.longitude;
     this->lastUpdateTime=QDateTime().currentDateTimeUtc().toTime_t();
     if(previousLon!=lon || previousLat!=lat)
         updateBoatData();

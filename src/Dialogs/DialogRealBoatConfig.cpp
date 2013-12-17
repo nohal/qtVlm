@@ -65,16 +65,22 @@ void DialogRealBoatConfig::launch(boatReal * boat)
     baudRate->setEnabled(false);
     btnFile->setEnabled(false);
 
+#ifndef __UNIX_QTVLM
+    rdGPSd->setChecked(false);
+#endif
+
     gpsSource = Settings::getSetting("DeviceType",GPS_SERIAL,"GPS").toInt();
     switch(gpsSource) {
+        case GPS_GPSD:
+#ifdef __UNIX_QTVLM
+        rdGPSd->setChecked(true);
+        break;
+#endif
         case GPS_SERIAL:
             rdSerial->setChecked(true);
             break;
         case GPS_FILE:
             rdFile->setChecked(true);
-            break;
-        case GPS_GPSD:
-            rdGPSd->setChecked(true);
             break;
     }
 
