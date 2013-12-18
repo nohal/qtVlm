@@ -67,7 +67,7 @@ bool DialogViewPolar::eventFilter(QObject *obj, QEvent *event)
     if(event->type()==QEvent::MouseButtonRelease)
     {
         imageContainer->setPixmap(image);
-        info->clear();
+        info->setText(stringMaxSpeed);
         return true;
     }
     if(event->type()!=QEvent::MouseMove)
@@ -132,6 +132,9 @@ void DialogViewPolar::drawIt()
     if(!polar) return;
     image.fill(Qt::white);
     double maxSpeed=-1;
+    double maxSpeedTws=0;
+    double maxSpeedTwa=0;
+    double maxSpeedKts=0;
     if(this->allSpeed->isChecked())
         maxSpeed=polar->getMaxSpeed();
     pen.setBrush(Qt::red);
@@ -175,8 +178,14 @@ void DialogViewPolar::drawIt()
         {
             double speed=polar->getSpeed(ws,angle,false);
             polarValues.append(speed);
-            if(speed>maxSpeed && !this->allSpeed->isChecked()) maxSpeed=speed;
+            if(speed>maxSpeed && !this->allSpeed->isChecked())
+            {
+                maxSpeed=speed;
+                maxSpeedTwa=angle;
+                maxSpeedTws=ws;
+            }
         }
+        maxSpeedKts=maxSpeed;
         maxSpeed=ceil(maxSpeed);
         for (int angle=0;angle<=180;++angle)
         {
@@ -230,4 +239,15 @@ void DialogViewPolar::drawIt()
         pnt.drawText(line.p2(),s);
     }
     this->imageContainer->setPixmap(image);
+    double Pbs,Ptwa,Ptws;
+    polar->getMaxSpeedData(&Pbs,&Ptws,&Ptwa);
+    stringMaxSpeed.clear();
+    if(!this->allSpeed->isChecked())
+        stringMaxSpeed="<qt>"+tr("Max Speed:")+QString().sprintf("<br>%.2f ",maxSpeedKts)+tr("kts")+
+                      " "+tr("at")+" "+QString().sprintf("%.2f",maxSpeedTwa)+tr("deg")+"<br><br>";
+    stringMaxSpeed +=tr("Absolute max speed:")+"<table>"
+                   "<tr><td>"+tr("TWS:")+"</td><td>"+QString().sprintf("%.2f ",Ptws)+tr("kts")+"</td></tr>"+
+                   "<tr><td>"+tr("TWA:")+"</td><td>"+QString().sprintf("%.2f",Ptwa)+tr("deg")+"</td></tr>"+
+                   "<tr><td>"+tr("BS:")+"</td><td>"+QString().sprintf("%.2f ",Pbs)+tr("kts")+"</td></tr>";
+    info->setText(stringMaxSpeed);
 }

@@ -32,5 +32,6 @@ private:
     boat * myBoat;
     QPolygonF polarLine,polarGreen;
     QList<double> polarValues;
+    QString stringMaxSpeed;
 };
 #endif // DIALOGVIEWPOLAR_H

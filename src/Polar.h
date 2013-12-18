@@ -59,6 +59,7 @@ class Polar : public PolarInterface
                           double *heading, double *wangle);
         void    bvmgWind(double w_angle, double w_speed,double *wangle);
         void    getBvmg(double twaOrtho,double tws,double *twa);
+        void    getMaxSpeedData(double *bs,double *tws,double *twa) const;
 
     private:
         MainWindow * mainWindow;
@@ -80,6 +81,7 @@ class Polar : public PolarInterface
         void    setPolarName(QString fname);
         void    printPolar(void);
         double   maxSpeed;
+        double maxSpeedTws,maxSpeedTwa;
         bool    isCsv;
         double   A180(double angle);
         void    myBvmgWind(double w_angle, double w_speed,double *wangle);

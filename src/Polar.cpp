@@ -219,7 +219,7 @@ void Polar::setPolarName(QString fname)
     double ws=0.0;
     double wa=0.0;
     double bvmg,bvmg_d,bvmg_u,wa_u,wa_d,wa_limit;
-    maxSpeed=0.0;
+    maxSpeed=-1.0;
     do
     {
         wa_u=0.0;
@@ -229,7 +229,12 @@ void Polar::setPolarName(QString fname)
         do
         {
             speed=myGetSpeed(ws,wa,true);
-            if(speed>maxSpeed) maxSpeed=speed;
+            if(speed>maxSpeed)
+            {
+                maxSpeed=speed;
+                maxSpeedTwa=wa;
+                maxSpeedTws=ws;
+            }
             bvmg=speed*cos(degToRad(wa));
             if(bvmg_u<bvmg) //bvmg is positive here
             {
@@ -252,7 +257,12 @@ void Polar::setPolarName(QString fname)
         do
         {
             speed=myGetSpeed(ws,wa,true);
-            if(speed>maxSpeed) maxSpeed=speed;
+            if(speed>maxSpeed)
+            {
+                maxSpeed=speed;
+                maxSpeedTwa=wa;
+                maxSpeedTws=ws;
+            }
             bvmg=speed*cos(degToRad(wa));
             if(bvmg_u<bvmg)
             {
@@ -270,7 +280,12 @@ void Polar::setPolarName(QString fname)
         do
         {
             speed=myGetSpeed(ws,wa,true);
-            if(speed>maxSpeed) maxSpeed=speed;
+            if(speed>maxSpeed)
+            {
+                maxSpeed=speed;
+                maxSpeedTwa=wa;
+                maxSpeedTws=ws;
+            }
             bvmg=speed*cos(degToRad(wa));
             if(bvmg_d>bvmg)
             {
@@ -336,6 +351,12 @@ void Polar::setPolarName(QString fname)
         qWarning()<<"fileVMG could not be re-opened!";
     progress->close();
     delete progress;
+}
+void Polar::getMaxSpeedData(double *bs, double *tws, double *twa) const
+{
+    *bs=maxSpeed;
+    *tws=maxSpeedTws;
+    *twa=maxSpeedTwa;
 }
 
 void Polar::printPolar(void)

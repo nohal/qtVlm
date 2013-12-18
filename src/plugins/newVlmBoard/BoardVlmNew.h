@@ -97,6 +97,7 @@ private:
     void setFontDialog(QObject *o);
     bool confirmChange();
     QTranslator * translator;
+    QString stringMaxSpeed;
 };
 
 #endif // BOARDVLMNEW_H

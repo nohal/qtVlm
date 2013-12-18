@@ -592,6 +592,8 @@ void BoardVlmNew::slot_drawPolar()
     polarPnt.setFont(myFont);
     polarPnt.setRenderHint(QPainter::Antialiasing);
     double maxSpeed=-1;
+    double maxSpeedKts=maxSpeed;
+    double maxSpeedTwa=0;
 //    if(this->allSpeed->isChecked())
 //        maxSpeed=polar->getMaxSpeed();
     QPen pen;
@@ -632,8 +634,13 @@ void BoardVlmNew::slot_drawPolar()
         {
             double speed=polar->getSpeed(ws,angle,false);
             polarValues.append(speed);
-            if(speed>maxSpeed /*&& !this->allSpeed->isChecked()*/) maxSpeed=speed;
+            if(speed>maxSpeed )
+            {
+                maxSpeed=speed;
+                maxSpeedTwa=angle;
+            }
         }
+        maxSpeedKts=maxSpeed;
         maxSpeed=ceil(maxSpeed);
         for (int angle=0;angle<=180;++angle)
         {
@@ -700,6 +707,15 @@ void BoardVlmNew::slot_drawPolar()
     polarPnt.drawLine(line);
     polarPnt.end();
     this->lab_polar->setPixmap(polarImg);
+    double Pbs,Ptwa,Ptws;
+    polar->getMaxSpeedData(&Pbs,&Ptws,&Ptwa);
+    stringMaxSpeed=tr("Max Speed:")+QString().sprintf("<br>%.2f ",maxSpeedKts)+tr("kts")+
+                      " "+tr("at")+"<br>"+QString().sprintf("%.2f",maxSpeedTwa)+tr("deg")+"<br><br>"+
+                   tr("Absolute<br>max speed:")+"<br>"+
+                   tr("TWS:")+"<br>"+QString().sprintf("%.2f ",Ptws)+tr("kts")+"<br>"+
+                   tr("TWA:")+"<br>"+QString().sprintf("%.2f",Ptwa)+tr("deg")+"<br>"+
+                   tr("BS:")+"<br>"+QString().sprintf("%.2f ",Pbs)+tr("kts");
+    lab_polarData->setText(stringMaxSpeed);
 }
 void BoardVlmNew::slot_outDatedVlmData()
 {
@@ -1010,7 +1026,7 @@ bool BoardVlmNew::eventFilter(QObject *obj, QEvent *event)
         if(event->type()==QEvent::MouseButtonRelease)
         {
             lab_polar->setPixmap(polarImg);
-            lab_polarData->clear();
+            lab_polarData->setText(stringMaxSpeed);
             return true;
         }
         if(event->type()!=QEvent::MouseMove || polarLine.isEmpty())
