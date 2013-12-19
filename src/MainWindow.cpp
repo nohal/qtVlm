@@ -2589,41 +2589,84 @@ void MainWindow::slotLoadVLMGrib(void)
 /*************************************/
 #ifdef __QTVLM_WITH_TEST
 
-//#include "libgps.h"
-//#include "gps.h"
-
+#include <QDomDocument>
 
 void MainWindow::slotVLM_Test(void)
 {
-//    struct gps_data_t gps_data;
-//    memset(&gps_data,0,sizeof(struct gps_data_t));
+    QFile file("polar.xml");
+    file.open(QIODevice::ReadOnly | QIODevice::Text);
+    QString  errorStr;
+    int errorLine;
+    int errorColumn;
+    QDomDocument doc;
+    if(!doc.setContent(&file,true,&errorStr,&errorLine,&errorColumn))
+    {
+        QMessageBox::warning(0,QObject::tr("Lecture de polaire ("),
+                             QString("Erreur ligne %1, colonne %2:\n%3")
+                             .arg(errorLine)
+                             .arg(errorColumn)
+                             .arg(errorStr));
+        return ;
+    }
 
-//    if(gps_open("localhost", DEFAULT_GPSD_PORT,&gps_data)==-1) {
-//        qWarning() << "Error opening gpsd connection";
-//        return;
-//    }
+    QDomElement root = doc.documentElement();
 
-//    gps_stream(&gps_data,WATCH_ENABLE|WATCH_JSON,NULL);
+    qWarning() << "Root: " << root.tagName();
+    qWarning() << "Name: " << root.firstChild().toText().data().simplified();
 
-//    for (;;) {
-//        if (!gps_waiting(&gps_data,500))
-//            continue;
+    QDomNode subNode= root.firstChild().nextSibling();
+    QMap <int,QMap<int,double>> dataMap;
 
-//        if (gps_read(&gps_data) == -1) {
-//            qWarning() << "Read error.\n";
-//            break ;
-//        } else {
-//            qWarning() << "Sat visible: " << gps_data.satellites_visible;
-//            qWarning() << "Fix: " << gps_data.fix.mode;
-//            qWarning() << "Pos: " << gps_data.fix.latitude << "," << gps_data.fix.longitude;
-//        }
-//    }
-//    gps_stream(&gps_data,WATCH_DISABLE,NULL);
-//    gps_close(&gps_data);
+    while(!subNode.isNull())
+    {
+        qWarning() << i;
+        if(subNode.toElement().tagName() == "PolarCurve") {
+            QDomNode polarCurve=subNode.firstChild();
+            int curveIndex=0;
+            bool hasCurveIndex=false;
+            QMap<int,double> curveMap;
+            while(!polarCurve.isNull())
+            {
+                if(polarCurve.toElement().tagName()=="PolarCurveIndex") {
+                    curveIndex=polarCurve.toElement().attribute("value").toInt(&hasCurveIndex);
+                }
+                if(polarCurve.toElement().tagName()=="PolarItem") {
+                    QDomNode polarItem=polarCurve.firstChild();
+                    int angle;
+                    bool hasAngle=true;
+                    double val;
+                    bool hasVal=false;
+                    while(!polarItem.isNull()) {
+                        if(polarItem.toElement().tagName()=="Angle") {
+                            angle=polarItem.toElement().attribute("value").toInt(&hasAngle);
+                        }
+                        if(polarItem.toElement().tagName()=="Value") {
+                            val=polarItem.toElement().attribute("value").toInt(&hasVal);
+                        }
+                        polarItem=polarItem.nextSibling();
+                    }
+                    if(hasAngle && hasVal) {
+                        curveMap.insert(angle,val);
+                    }
+                }
+                polarCurve = polarCurve.nextSibling();
+            }
+            if(hasCurveIndex) {
+                dataMap.insert(curveIndex,curveMap);
+            }
+        }
+        subNode = subNode.nextSibling();
+    }
+
+    if(!dataMap.isEmpty()) {
+
+    }
+
 }
 #else
 void MainWindow::slotVLM_Test(void)
 {
+
 }
 #endif
 void MainWindow::slotGribInterpolation(void)

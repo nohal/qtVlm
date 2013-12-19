@@ -635,6 +635,7 @@ void interpolation::get_wind_info_latlong_hybrid_compute(double longitude,  doub
 
     double ratioLat,ratioLon;
 #ifdef __QTVLM_WITH_TEST
+#if 0
     double ratioLonDebug,ratioLatDebug;
     d_long = longitude; /* is there a +180 drift? see grib */
     if (d_long < 0) {
@@ -647,6 +648,7 @@ void interpolation::get_wind_info_latlong_hybrid_compute(double longitude,  doub
     d_lat = (d_lat-gridOriginLat)/lat_step;
     ratioLatDebug=d_lat - floor(d_lat);
     ratioLonDebug=d_long - floor(d_long);
+#endif
 #endif
     int i0 = (int) floor ((longitude-gridOriginLon)/lon_step);
     int j0 = (int) floor ((latitude-gridOriginLat)/lat_step);

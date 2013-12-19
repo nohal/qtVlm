@@ -931,8 +931,8 @@ void boatVLM::updateHint(void)
     }
     QString desc;
     if(!polarData) desc=tr(" (pas de polaire chargee)");
-    else if (polarData->getIsCsv()) desc=polarData->getName() + tr(" (format CSV)");
-    else desc=polarData->getName() + tr(" (format POL)");
+    desc = polarData->getName() + " (" + tr("format") + " " + polarData->get_fileTypeStr() + ")";
+
     if(stopAndGo!="0")
     {
         int secs=stopAndGo.toInt()-QDateTime().currentDateTimeUtc().toTime_t();

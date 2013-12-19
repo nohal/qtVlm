@@ -93,6 +93,8 @@ void DialogRealBoatConfig::launch(boatReal * boat)
     extStr.append("*.POL");
     extStr.append("*.csv");
     extStr.append("*.CSV");
+    extStr.append("*.xml");
+    extStr.append("*.XML");
     QFileInfoList fileList=polarDir.entryInfoList(extStr,QDir::Files);
 
     /* default value */

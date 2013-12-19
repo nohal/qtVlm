@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "inetClient.h"
 #include "PolarInterface.h"
+#include "dataDef.h"
 
 #define PI     M_PI
 #define PI_2   M_PI_2
@@ -38,6 +39,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #define degToRad(angle) (((angle)/180.0) * PI)
 #define radToDeg(angle) (((angle)*180.0) / PI)
+
+#define POLAR_NONE 0
+#define POLAR_CSV  1
+#define POLAR_POL  2
+#define POLAR_XML  3
 
 class Polar : public PolarInterface
 {Q_OBJECT
@@ -51,7 +57,10 @@ class Polar : public PolarInterface
         double   getBvmgDown(double windSpeed, bool engine=true);
         bool    isLoaded() { return loaded; }
         double   getMaxSpeed() {return maxSpeed;}
-        bool    getIsCsv(){return this->isCsv;}
+
+        FCT_GET(int,fileType)
+        QString get_fileTypeStr(void);
+
         int     nbUsed;
 
         void    bvmg(double bt_longitude,double bt_latitude, double wp_longitude, double wp_latitude,
@@ -81,13 +90,15 @@ class Polar : public PolarInterface
         void    setPolarName(QString fname);
         void    printPolar(void);
         double   maxSpeed;
-        double maxSpeedTws,maxSpeedTwa;
-        bool    isCsv;
+        int    fileType;
         double   A180(double angle);
         void    myBvmgWind(double w_angle, double w_speed,double *wangle);
         double  A360(double hdg);
         QFile   fileVMG;
         double  coeffPolar;
+
+        void loadPolar_csvPol(QFile * file,int fileType,QString fname);
+        void loadPolar_xml(QFile * file,int fileType,QString fname);
 };
 Q_DECLARE_TYPEINFO(Polar,Q_MOVABLE_TYPE);
 

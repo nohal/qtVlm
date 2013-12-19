@@ -286,7 +286,6 @@ QString  url_name[NB_URL] = { "std","s10","s11"
 #ifdef __QTVLM_WITH_TEST
                  , "testing"
 #endif
-
                           };
 QString  url_str[NB_URL] = { "v-l-m.org", "s10.v-l-m.org","s11.v-l-m.org"
 #ifdef __QTVLM_WITH_TEST

@@ -769,10 +769,8 @@ void boardVLM::disp_boatInfo()
         {
             if(currentBoat()->getPolarState())
                 polar_str+= " ("+tr("forcee")+")";
-            if (currentBoat()->getPolarData()->getIsCsv())
-                polar_str += " - format csv";
-            else
-                polar_str += " - format pol";
+
+            polar_str += " " + tr("format") + " " + currentBoat()->getPolarData()->get_fileTypeStr();
         }
         else
             polar_str+= " ("+tr("erreur chargement")+")";
