@@ -90,6 +90,7 @@ class Polar : public PolarInterface
         void    setPolarName(QString fname);
         void    printPolar(void);
         double   maxSpeed;
+        double  maxSpeedTwa,maxSpeedTws;
         int    fileType;
         double   A180(double angle);
         void    myBvmgWind(double w_angle, double w_speed,double *wangle);

@@ -931,7 +931,8 @@ void boatVLM::updateHint(void)
     }
     QString desc;
     if(!polarData) desc=tr(" (pas de polaire chargee)");
-    desc = polarData->getName() + " (" + tr("format") + " " + polarData->get_fileTypeStr() + ")";
+    else
+        desc = polarData->getName() + " (" + tr("format") + " " + polarData->get_fileTypeStr() + ")";
 
     if(stopAndGo!="0")
     {

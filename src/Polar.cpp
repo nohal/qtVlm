@@ -88,7 +88,7 @@ void Polar::setPolarName(QString fname)
     else
         coeffPolar=1.0;
 
-    //qWarning() << "Opening polar" << fname<<"with coeff"<<coeffPolar;
+    qWarning() << "Opening polar" << fname<<"with coeff"<<coeffPolar;
 
     name=fname;
     QString nameF;
@@ -410,7 +410,7 @@ void Polar::loadPolar_csvPol(QFile *file,int fileType,QString fname) {
         tws.prepend(0.0);
 }
 
-void Polar::loadPolar_xml(QFile * file,int fileType,QString fname) {
+void Polar::loadPolar_xml(QFile * file,int /*fileType*/,QString /*fname*/) {
     QString  errorStr;
     int errorLine;
     int errorColumn;
