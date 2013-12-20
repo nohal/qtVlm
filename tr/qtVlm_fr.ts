@@ -1705,6 +1705,10 @@ Etes-vous sur ?</source>
         <source>&lt;Aucun&gt;</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Choisir un fichier</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DialogRemovePoi</name>
@@ -2153,6 +2157,34 @@ Etes-vous sur ?</source>
     <message>
         <source>deg</source>
         <translation>°</translation>
+    </message>
+    <message>
+        <source>Max Speed:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>kts</source>
+        <translation type="unfinished">nds</translation>
+    </message>
+    <message>
+        <source>at</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Absolute max speed:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TWS:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TWA:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BS:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4841,6 +4873,10 @@ waves height</source>
         <source>Ecart 1er</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Lecture de polaire (</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ROUTAGE</name>
@@ -5610,18 +5646,6 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ReceiverThread</name>
     <message>
-        <source>Activation du GPS</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Impossible d&apos;ouvrir le port </source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Erreur: </source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Copier</source>
         <translation></translation>
     </message>
@@ -5647,6 +5671,21 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Sujet du mail indifferent</source>
         <translation>Sujet du mail indifférent</translation>
+    </message>
+</context>
+<context>
+    <name>SerialReceiverThread</name>
+    <message>
+        <source>Activation du GPS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Impossible d&apos;ouvrir le port </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Erreur: </source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6763,6 +6802,10 @@ p, li { white-space: pre-wrap; }
         <source>Afficher le compas</source>
         <translation></translation>
     </message>
+    <message>
+        <source>format</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>boardVLM_ui</name>
@@ -7131,14 +7174,6 @@ p, li { white-space: pre-wrap; }
         <translation>(pas de polaire chargée)</translation>
     </message>
     <message>
-        <source> (format CSV)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source> (format POL)</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Passer au moins une fois au Sud de cette ligne&lt;br&gt;</source>
         <translation></translation>
     </message>
@@ -7277,6 +7312,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Instruction pour </source>
         <translation></translation>
+    </message>
+    <message>
+        <source>format</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7425,7 +7464,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name </source>
-        <translation>Nom: </translation>
+        <translation type="obsolete">Nom: </translation>
     </message>
     <message>
         <source>Projection: </source>
@@ -7446,6 +7485,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Error while loading</source>
         <translation>Erreur au chargement de </translation>
+    </message>
+    <message>
+        <source>Name:</source>
+        <translation type="obsolete">Nom:</translation>
+    </message>
+    <message>
+        <source>Name: </source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8666,10 +8713,6 @@ Please select another point or press esc to exit barrier creation mode</source>
         <translation></translation>
     </message>
     <message>
-        <source>Port serie</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Nom</source>
         <translation></translation>
     </message>
@@ -8816,6 +8859,30 @@ Please select another point or press esc to exit barrier creation mode</source>
     <message>
         <source>Vitesse au moteur</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Acces aux données GPS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mode série</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Utiliser un fichier</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fichier...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Utiliser GPSd</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
