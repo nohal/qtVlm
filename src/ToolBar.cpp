@@ -65,7 +65,10 @@ ToolBar::ToolBar(MainWindow *mainWindow)
 
     /* adding all toolBar to mainWindow dock */
     for(int i=0;i<toolBarList.count();++i)
+    {
         mainWindow->addToolBar(toolBarList.at(i));
+        mainWindow->addToolBarBreak();
+    }
 
     /* font */
     QFontInfo finfo = gribToolBar->fontInfo();

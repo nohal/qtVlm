@@ -2375,11 +2375,11 @@ void ROUTAGE::slot_calculate()
 #ifdef traceTime
         time.start();
 #endif
-        if(++refresh%4==0)
+        if(false || ++refresh%4==0)
         {
             if(showBestLive && !this->i_iso)
                 this->slot_drawWay();
-            QCoreApplication::processEvents();
+            QApplication::processEvents();
         }
 #ifdef traceTime
         msecs_11+=time.elapsed();
@@ -2395,6 +2395,7 @@ void ROUTAGE::slot_calculate()
             i_isochrones.append(iso);
         else
             isochrones.append(iso);
+        qWarning()<<"routage iso nb"<<isochrones.size();
 #ifdef traceTime
         time.start();
 #endif

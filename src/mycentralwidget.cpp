@@ -351,20 +351,16 @@ bool myScene::event(QEvent * event)
         {
             qWarning()<<"TapGesture detected";
         }
-        else if (/*QGesture *pg=*/gestureEvent->gesture(Qt::TapAndHoldGesture))
+        else if (QGesture *pg=gestureEvent->gesture(Qt::TapAndHoldGesture))
         {
             qWarning()<<"TapAndHoldGesture detected";
-            parent->slot_resetGestures();
-#if 0
             QTapAndHoldGesture *p=static_cast<QTapAndHoldGesture*>(pg);
-            QGraphicsSceneContextMenuEvent ce(QEvent::GraphicsSceneContextMenu);
-            QPointF scenePos=parent->getView()->mapToScene(parent->getView()->mapFromGlobal(p->position().toPoint()));
-            ce.setScenePos(scenePos);
-            ce.setReason(QGraphicsSceneContextMenuEvent::Other);
-            QGraphicsItem * item=parent->getScene()->itemAt(scenePos,parent->getView()->transform());
-            bool a =parent->getScene()->sendEvent(item,&ce);
-            return true;
-#endif
+            if(p->state()==Qt::GestureFinished)
+            {
+                event->accept();
+                parent->getMainWindow()->showContextualMenu(p->position().x(),p->position().y());
+                return true;
+            }
         }
         else if (gestureEvent->gesture(Qt::PanGesture))
         {
@@ -384,7 +380,8 @@ bool myScene::event(QEvent * event)
         }
     }
 #endif
-    return QGraphicsScene::event(event);}
+    return QGraphicsScene::event(event);
+}
 
 /*******************/
 /* myCentralWidget */
@@ -432,13 +429,13 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     {
         view->viewport()->ungrabGesture(Qt::PanGesture);
         view->viewport()->grabGesture(Qt::PinchGesture);
-#ifdef __ANDROIDD__
+#ifdef __ANDROID__
         view->viewport()->grabGesture(Qt::PanGesture);
+#endif
         view->viewport()->grabGesture(Qt::TapGesture);
         view->viewport()->grabGesture(Qt::TapAndHoldGesture);
         view->viewport()->grabGesture(Qt::SwipeGesture);
         view->viewport()->grabGesture(Qt::CustomGesture);
-#endif
     }
     view->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
     view->setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
@@ -4319,6 +4316,7 @@ void myCentralWidget::slot_editRoutage(ROUTAGE * routage,bool createMode,POI *en
     {
         delete routage_editor;
         update_menuRoutage();
+        QApplication::processEvents();
         if(routage && (createMode || routage->getIsNewPivot()))
             routage->calculate();
         else if(routage && routage->getI_iso() && !routage->getI_done() && !routage->isConverted())

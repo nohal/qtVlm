@@ -35,6 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Util.h"
 #include <QTranslator>
 #include <QDebug>
+#include <QStyleFactory>
 
 BoardVlmNew::BoardVlmNew (QWidget* parent): BoardInterface (parent)
 {
@@ -58,6 +59,7 @@ void BoardVlmNew::initBoard(MainWindowInterface *main)
         qWarning()<<"loading"<<lang<<"in plugin";
     }
     this->setupUi(this);
+    this->setFontDialog(this);
     this->windAngle->setMain(main);
     windAngle->loadSkin();
     tryMoving=false;
@@ -140,6 +142,7 @@ void BoardVlmNew::initBoard(MainWindowInterface *main)
     tabStyle+="QTabBar::tab:selected { background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #CC9900, stop: 0.8 #FFE085);margin-left:0;}";
     tabStyle+="QTabBar::tab:!selected { background: #C2C7CB;margin-right: 4px;}";
     tabWidget->setStyleSheet(tabStyle);
+    //spin_HDG->setStyleSheet("QDoubleSpinBox::up-arrow {background-color: rgb(100, 100, 100);}");
     this->lab_backTab1->installEventFilter(this);
     this->lab_backTab2->installEventFilter(this);
     this->lab_backTab3->installEventFilter(this);
@@ -171,7 +174,6 @@ void BoardVlmNew::initBoard(MainWindowInterface *main)
     vibStates.append(-1);
     vibStates.append(0);
     flipBS=false;
-    this->setFontDialog(this);
     qWarning()<<"end of init board for"<<this->getName();
 }
 QString BoardVlmNew::getName()
@@ -203,7 +205,14 @@ void BoardVlmNew::setFontDialog(QObject * o)
         myFont.setBold(widget->font().bold());
         myFont.setItalic(widget->font().italic());
         widget->setFont(myFont);
+        widget->setPalette(QPalette());
         widget->setLocale(QLocale::system());
+        widget->setPalette(main->getOriginalPalette());
+//        QPalette p=widget->palette();
+//        p.setColor(QPalette::Text, QColor(Qt::black));
+//        p.setColor(QPalette::ButtonText, QColor(Qt::black));
+//        p.setColor(QPalette::WindowText, QColor(Qt::black));
+//        widget->setPalette(p);
     }
     foreach(QObject * object,o->children())
     {

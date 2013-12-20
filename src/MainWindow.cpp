@@ -84,6 +84,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "dialogviewpolar.h"
 #include "DialogEditBarrier.h"
 #include "DialogRouteComparator.h"
+#include <QStyleFactory>
 //#include <QPluginLoader>
 int INTERPOLATION_DEFAULT=INTERPOLATION_HYBRID;
 
@@ -232,6 +233,20 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     restartNeeded=false;
     setWindowIcon (QIcon (appFolder.value("icon")+"qtVlm_48x48.png"));
     noSave=false;
+    originalPalette=QApplication::palette();
+    if(Settings::getSetting("fusionStyle",0).toInt()==1)
+    {
+        qWarning()<<"setting up Black fusion style";
+        QApplication::setStyle(QStyleFactory::create("Fusion"));
+        QPalette p;
+        p = QApplication::palette();
+        p.setColor(QPalette::Window, QColor(53,53,53));
+        p.setColor(QPalette::Button, QColor(53,53,53));
+        p.setColor(QPalette::Highlight, QColor(142,45,197));
+        p.setColor(QPalette::ButtonText, QColor(255,255,255));
+        p.setColor(QPalette::WindowText, QColor(255,255,255));
+        QApplication::setPalette(p);
+    }
     isStartingUp=true;
     finishStart=true;
     nBoat=0;
@@ -239,6 +254,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
 
     updateTitle();
     selectedBoat = NULL;
+    this->setUnifiedTitleAndToolBarOnMac(true);
 
     INTERPOLATION_DEFAULT=Settings::getSetting("defaultInterpolation",INTERPOLATION_HYBRID).toInt();
 
@@ -894,7 +910,7 @@ void MainWindow::closeProgress(void)
     }
     statusBar->show();
     menuBar->show();
-#ifdef __ANDROIDD__
+#ifdef __ANDROID__
     menuBar->setNativeMenuBar(true);
     menuBar->hide();
 #endif
@@ -1526,8 +1542,12 @@ QList<POI*> * MainWindow::getPois()
 
 void MainWindow::slotShowContextualMenu(QGraphicsSceneContextMenuEvent * e)
 {
-    mouseClicX = e->scenePos().x();
-    mouseClicY = e->scenePos().y();
+    showContextualMenu(e->scenePos().x(),e->scenePos().y());
+}
+void MainWindow::showContextualMenu(const int &xPos,const int &yPos)
+{
+    mouseClicX = xPos;
+    mouseClicY = yPos;
     int compassMode = my_centralWidget->getCompassMode(mouseClicX,mouseClicY);
     my_centralWidget->set_cursorPositionOnPopup(QPoint(mouseClicX,mouseClicY));
 
@@ -2804,4 +2824,8 @@ void MainWindow::slot_barrierAddMenu(void) {
 QVariant MainWindow::getSetting(const QString &key, const QVariant &defaultValue) const
 {
     return Settings::getSetting(key,defaultValue);
+}
+QPalette MainWindow::getOriginalPalette() const
+{
+    return originalPalette;
 }

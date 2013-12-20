@@ -132,7 +132,6 @@ void DialogViewPolar::drawIt()
     if(!polar) return;
     image.fill(Qt::white);
     double maxSpeed=-1;
-    double maxSpeedTws=0;
     double maxSpeedTwa=0;
     double maxSpeedKts=0;
     if(this->allSpeed->isChecked())
@@ -182,7 +181,6 @@ void DialogViewPolar::drawIt()
             {
                 maxSpeed=speed;
                 maxSpeedTwa=angle;
-                maxSpeedTws=ws;
             }
         }
         maxSpeedKts=maxSpeed;

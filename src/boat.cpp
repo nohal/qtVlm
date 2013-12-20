@@ -36,6 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogChooseMultipleBarrierSet.h"
 #include "BarrierSet.h"
 #include "Projection.h"
+#include <QGestureEvent>
 
 boat::boat(QString      pseudo, bool activated,
            Projection * proj,MainWindow * main,myCentralWidget * parent):
@@ -136,6 +137,11 @@ boat::boat(QString      pseudo, bool activated,
 
 
     connect(this,SIGNAL(releasePolar(QString)),main,SLOT(releasePolar(QString)));
+    if(Settings::getSetting("enableGesture","1").toString()=="1")
+    {
+        this->setAcceptTouchEvents(true);
+        this->grabGesture(Qt::TapAndHoldGesture);
+    }
 }
 
 boat::~boat()
@@ -589,7 +595,9 @@ void boat::slotCompassLine()
 QPainterPath boat::shape() const
 {
     QPainterPath path;
-    path.addRect(0,0,width,height);
+    QRect R(0,0,width*4,height*4);
+    R.moveCenter(QPoint(width/2,height/2));
+    path.addRect(R);
     return path;
 }
 
@@ -962,11 +970,15 @@ bool boat::cross(QLineF line) {
 //    }
 //}
 
-void boat::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
+void boat::contextMenuEvent(QGraphicsSceneContextMenuEvent * )
+{
+    this->showContextualMenu(QCursor::pos().x(),QCursor::pos().y());
+}
+void boat::showContextualMenu(const int &xPos, const int &yPos)
 {
     bool onlyLineOff = false;
 
-    switch(parent->getCompassMode(e->scenePos().x(),e->scenePos().y()))
+    switch(parent->getCompassMode(this->x(),this->y()))
     {
         case 0:
             /* not showing menu line, default text*/
@@ -1001,10 +1013,26 @@ void boat::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
         ac_select->setEnabled(!mainWindow->get_selPOI_instruction());
         ac_estime->setEnabled(!selected);
     }
-
-
-
-    popup->exec(QCursor::pos());
+    popup->exec(QPoint(xPos,yPos));
+}
+bool boat::event(QEvent *event)
+{
+    if (event->type() == QEvent::Gesture)
+    {
+        QGestureEvent * gestureEvent=static_cast<QGestureEvent*>(event);
+        if (QGesture *pg=gestureEvent->gesture(Qt::TapAndHoldGesture))
+        {
+            qWarning()<<"TapAndHoldGesture detected in boat";
+            QTapAndHoldGesture *p=static_cast<QTapAndHoldGesture*>(pg);
+            event->accept();
+            if(p->state()==Qt::GestureFinished)
+            {
+                this->showContextualMenu(p->position().x(),p->position().y());
+                return true;
+            }
+        }
+    }
+    return QGraphicsWidget::event(event);
 }
 QList<vlmLine*> boat::getGates()
 {

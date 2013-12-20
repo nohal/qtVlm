@@ -132,6 +132,7 @@ class boat: public BoatInterface
         void cleanBarrierList(void);
         bool cross(QLineF line);
 
+        void showContextualMenu(const int &xPos, const int &yPos);
 public slots:
         void slot_projectionUpdated();
         void slot_paramChanged();
@@ -165,6 +166,7 @@ public slots:
     protected:
         void contextMenuEvent(QGraphicsSceneContextMenuEvent * event);
         void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
+        bool event(QEvent * event);
 
         /* DATA */
         int boatType;

@@ -99,6 +99,8 @@ class MainWindow: public MainWindowInterface
         BoatInterface * get_selectedBoatInterface(){return (BoatInterface*)this->getSelectedBoat();}
         QColor getWindColorStatic(const double &v, const bool &smooth=true);
         QVariant getSetting(const QString &key, const QVariant & defaultValue) const;
+        void showContextualMenu(const int &xPos, const int &yPos);
+        QPalette getOriginalPalette() const;
 public slots:
         void slot_POI_input();
         void slot_showPOI_input(POI *poi=NULL, const bool &fromMenu=false);        
@@ -303,6 +305,7 @@ signals:
         void loadGrib2();
 
         QString get_OSVersion(void);
+        QPalette originalPalette;
         //QPluginLoader * pluginLoader;
 };
 

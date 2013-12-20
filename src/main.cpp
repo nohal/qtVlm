@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
     QApplication * app=new QApplication(argc, argv);
     qsrand(QTime::currentTime().msec());
     QString appExeFolder=QApplication::applicationDirPath();
-#ifdef __ANDROIDD__
+#ifdef __ANDROID__
     QDir::setCurrent("/storage/emulated/0/qtVlm");
 #elif defined (__UNIX_QTVLM)
     QString curDir=QDir::currentPath();
@@ -139,10 +139,19 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("utf8"));
 #endif
     Settings::initSettings();
-#ifndef __ANDROIDD__
-    if(Settings::getSetting("fusionStyle",0).toInt()==1)
-        app->setStyle(QStyleFactory::create("fusion"));
-#endif
+//    if(Settings::getSetting("fusionStyle",0).toInt()==1)
+//    {
+//        qWarning()<<"setting up Black fusion style";
+//        app->setStyle(QStyleFactory::create("Fusion"));
+//        QPalette p;
+//        p = app->palette();
+//        p.setColor(QPalette::Window, QColor(53,53,53));
+//        p.setColor(QPalette::Button, QColor(53,53,53));
+//        p.setColor(QPalette::Highlight, QColor(142,45,197));
+//        p.setColor(QPalette::ButtonText, QColor(255,255,255));
+//        p.setColor(QPalette::WindowText, QColor(255,255,255));
+//        app->setPalette(p);
+//    }
     double fontInc=Settings::getSetting("defaultFontSizeInc",0).toDouble();
     QFont def(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
     double fontSize=8.0+fontInc;

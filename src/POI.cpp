@@ -45,6 +45,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "XmlFile.h"
 #include "orthoSegment.h"
 #include "vlmLine.h"
+#include <QStyleFactory>
 
 /**************************/
 /* Init & Clean           */
@@ -347,7 +348,6 @@ void POI::createPopUpMenu(void)
     connect(ac_boatCircle,SIGNAL(triggered()),this,SLOT(slot_boatCircleMenu()));
     ac_boatCircle->setCheckable(true);
     ac_boatCircle->setChecked(false);
-
 }
 
 /**************************/
