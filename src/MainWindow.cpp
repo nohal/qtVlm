@@ -2825,7 +2825,13 @@ QVariant MainWindow::getSetting(const QString &key, const QVariant &defaultValue
 {
     return Settings::getSetting(key,defaultValue);
 }
+
+QString MainWindow::get_folder(QString str) const {
+    return appFolder.value(str);
+}
+
 QPalette MainWindow::getOriginalPalette() const
 {
     return originalPalette;
 }
+

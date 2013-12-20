@@ -11,6 +11,7 @@ class MainWindowInterface: public QMainWindow
         virtual QList<POI *> * getPois()=0;
         virtual QColor getWindColorStatic(const double &v, const bool &smooth=true)=0;
         virtual QVariant getSetting(const QString &key, const QVariant & defaultValue) const =0;
+        virtual QString get_folder(QString str) const =0;
         virtual QPalette getOriginalPalette() const =0;
     public slots:
         virtual void slotVLM_Sync()=0;

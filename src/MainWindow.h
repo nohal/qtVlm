@@ -99,6 +99,7 @@ class MainWindow: public MainWindowInterface
         BoatInterface * get_selectedBoatInterface(){return (BoatInterface*)this->getSelectedBoat();}
         QColor getWindColorStatic(const double &v, const bool &smooth=true);
         QVariant getSetting(const QString &key, const QVariant & defaultValue) const;
+        QString get_folder(QString str) const;
         void showContextualMenu(const int &xPos, const int &yPos);
         QPalette getOriginalPalette() const;
 public slots:
