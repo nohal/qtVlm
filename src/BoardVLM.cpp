@@ -225,6 +225,8 @@ bool boardVLM::eventFilter(QObject *obj, QEvent *event)
     if(event->type()==QEvent::KeyPress)
     {
         QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+#ifdef __QTVLM_SHIFT_INC_MOD
+#warning SHIFT key inc
         if(keyEvent->key()==Qt::Key_Shift)
         {
             if(obj==editHeading)
@@ -246,11 +248,30 @@ bool boardVLM::eventFilter(QObject *obj, QEvent *event)
             else
                 editAngle->setSingleStep(0.01);
         }
+#else
+        if(keyEvent->key()==Qt::Key_Control)
+        {
+            if(obj==editHeading)
+                editHeading->setSingleStep(0.1);
+            else
+                editAngle->setSingleStep(0.1);
+        }
+        else if(keyEvent->key()==Qt::Key_Alt)
+        {
+            if(obj==editHeading)
+                editHeading->setSingleStep(0.01);
+            else
+                editAngle->setSingleStep(0.01);
+        }
+#endif
     }
     if (event->type()==QEvent::KeyRelease)
     {
         QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
-        if(keyEvent->key()==Qt::Key_Shift ||
+        if(
+#ifdef __QTVLM_SHIFT_INC_MOD
+                keyEvent->key()==Qt::Key_Shift ||
+#endif
            keyEvent->key()==Qt::Key_Control ||
            keyEvent->key()==Qt::Key_Alt)
         {
@@ -268,9 +289,9 @@ bool boardVLM::eventFilter(QObject *obj, QEvent *event)
         if(wheelEvent->modifiers()==Qt::ControlModifier)
         {
             if(obj==editHeading)
-                editHeading->setSingleStep(1);
+                editHeading->setSingleStep(0.01);
             else
-                editAngle->setSingleStep(1);
+                editAngle->setSingleStep(0.01);
         }
     }
     return false;

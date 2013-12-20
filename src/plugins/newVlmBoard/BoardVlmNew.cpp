@@ -1116,17 +1116,28 @@ bool BoardVlmNew::eventFilter(QObject *obj, QEvent *event)
     if(event->type()==QEvent::KeyPress)
     {
         QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+#ifdef __QTVLM_SHIFT_INC_MOD
         if(keyEvent->key()==Qt::Key_Shift)
             spinBox->setSingleStep(0.1);
         else if(keyEvent->key()==Qt::Key_Control)
             spinBox->setSingleStep(10.0);
         else if(keyEvent->key()==Qt::Key_Alt)
             spinBox->setSingleStep(0.01);
+#else
+        if(keyEvent->key()==Qt::Key_Control)
+            spinBox->setSingleStep(0.1);
+        else if(keyEvent->key()==Qt::Key_Alt)
+            spinBox->setSingleStep(0.01);
+#endif
     }
     else if (event->type()==QEvent::KeyRelease)
     {
         QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
-        if(keyEvent->key()==Qt::Key_Shift || keyEvent->key()==Qt::Key_Control || keyEvent->key()==Qt::Key_Alt)
+        if(
+#ifdef __QTVLM_SHIFT_INC_MOD
+                keyEvent->key()==Qt::Key_Shift ||
+#endif
+            keyEvent->key()==Qt::Key_Control || keyEvent->key()==Qt::Key_Alt)
             spinBox->setSingleStep(1.0);
     }
     if(event->type()==QEvent::Wheel)
@@ -1135,7 +1146,7 @@ bool BoardVlmNew::eventFilter(QObject *obj, QEvent *event)
           so to get 10 you need to put 1...*/
         QWheelEvent *wheelEvent = static_cast<QWheelEvent*>(event);
         if(wheelEvent->modifiers()==Qt::ControlModifier)
-            spinBox->setSingleStep(1);
+            spinBox->setSingleStep(0.01);
     }
     return false;
 }
