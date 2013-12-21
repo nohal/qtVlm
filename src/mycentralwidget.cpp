@@ -2012,7 +2012,7 @@ void myCentralWidget::slot_shTrace(bool) {
 
 void myCentralWidget::do_shTrace(bool val) {
     shTrace_st=val;
-    Settings::setSetting("showTrace",val?1:0,"showHideItem");
+    Settings::setSetting("hideTrace",val?1:0,"showHideItem");
     emit shTrace(shTrace_st);
 }
 

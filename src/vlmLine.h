@@ -63,7 +63,7 @@ class vlmLine : public QGraphicsWidget
         void setTip(QString tip);
         void setNbVacPerHour(const int &nbVacPerHour) {this->nbVacPerHour=nbVacPerHour;}
         void setPorteOnePoint(void){this->onePoint=true;}
-        void setHidden(const bool &hidden) {this->hidden=hidden;update();}
+        void setHidden(const bool &hidden);
         bool getHidden(void) const {return this->hidden;}
         QList<vlmPoint> * getPoints(){return & this->line;}
         void setSolid(const bool &solid){this->solid=solid;}

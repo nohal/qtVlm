@@ -162,9 +162,19 @@ void vlmLine::setTip(QString tip)
     setToolTip(tip);
     myToolTip=tip;
 }
-
+void vlmLine::setHidden(const bool &hidden)
+{
+    qWarning()<<"inside vlmline setHidden with"<<hidden;
+    this->hidden=hidden;
+    this->setVisible(!hidden);
+    calculatePoly();
+    update();
+}
 void vlmLine::calculatePoly(void)
 {
+    collision.clear();
+    polyList.clear();
+    if(hidden) return;
     int n=0;
     double X,Y,previousX=0,previousY=0;
     QPainterPath myPath2;
@@ -300,7 +310,7 @@ void vlmLine::calculatePoly(void)
 }
 void vlmLine::drawInMagnifier(QPainter * pnt, Projection * tempProj)
 {
-    if(!this->isVisible()) return;
+    if(!this->isVisible() || this->hidden) return;
     drawingInMagnifier=true;
     Projection * myProj=proj;
     proj=tempProj;
@@ -341,7 +351,7 @@ void vlmLine::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
 //    int debug;
 //    if(this->desc=="WP1: Latitude Cap Vert") //for debug point
 //        debug=0;
-    if(!this->isVisible()) return;
+    if(!this->isVisible() || this->hidden) return;
     pnt->setRenderHint(QPainter::Antialiasing);
     pnt->setPen(linePen);
     QPen coastedPen=linePen;

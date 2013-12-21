@@ -152,7 +152,8 @@ public slots:
 
         void slot_centerOnBoat();
 
-    signals:
+        void slot_shTrace(const bool &b);
+signals:
         void boatSelected(boat*);
         void boatUpdated(boat*,bool,bool);
         void boatLockStatusChanged(boat*,bool);
@@ -163,11 +164,10 @@ public slots:
         void getTrace(QByteArray,QList<vlmPoint> *);
         void showMessage(QString,int);
 
-    protected:
+protected:
         void contextMenuEvent(QGraphicsSceneContextMenuEvent * event);
         void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
         bool event(QEvent * event);
-
         /* DATA */
         int boatType;
 

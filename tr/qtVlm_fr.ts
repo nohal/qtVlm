@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="fr_FR" sourcelanguage="fr_FR">
+<TS version="2.1" language="fr_FR" sourcelanguage="fr_FR">
 <context>
     <name>Barrier</name>
     <message>
@@ -3651,7 +3651,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Combine grib files</source>
-        <translation type="unfinished"></translation>
+        <translation>Combiner des fichiers grib</translation>
     </message>
     <message>
         <source>Depuis le pilototo VLM</source>
@@ -3659,15 +3659,15 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Grib drawing config</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuration de l&apos;affichage du grib</translation>
     </message>
     <message>
         <source>Montrer les traces</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Montrer l&apos;echelle</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -5125,9 +5125,7 @@ waves height</source>
     </message>
     <message>
         <source> min</source>
-        <extracomment>min
-----------
-min</extracomment>
+        <extracomment>min</extracomment>
         <translation></translation>
     </message>
     <message>
@@ -5137,13 +5135,7 @@ min</extracomment>
     </message>
     <message>
         <source> nds</source>
-        <extracomment>nds
-----------
-nds
-----------
-nds
-----------
-nds</extracomment>
+        <extracomment>nds</extracomment>
         <translation></translation>
     </message>
     <message>
@@ -5833,11 +5825,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>15 m</source>
-        <translation></translation>
+        <translation>15 mn</translation>
     </message>
     <message>
         <source>30 m</source>
-        <translation></translation>
+        <translation>30 mn</translation>
     </message>
     <message>
         <source>1 h</source>
@@ -5953,11 +5945,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>5 m</source>
-        <translation></translation>
+        <translation>5 mn</translation>
     </message>
     <message>
         <source>Grib drawing config</source>
-        <translation type="unfinished"></translation>
+        <translation>Configuration d&apos;affichage du grib</translation>
     </message>
 </context>
 <context>

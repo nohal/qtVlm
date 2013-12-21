@@ -122,6 +122,7 @@ void opponent::init(QColor color,bool isQtBoat,QString idu,QString race, double 
     this->loch24h="";
     this->rank=0;
     updatePosition();
+    trace_drawing->setHidden(Settings::getSetting("hideTrace",0,"showHideItem").toInt()==1);
 }
 
 opponent::~opponent(void)
@@ -376,13 +377,14 @@ void opponent::drawTrace()
             }
         }
     }
-    if(opp_trace==1 && !parentWindow->get_shOpp_st() && Settings::getSetting("showTrace","1").toInt()==1)
+    if(opp_trace==1 && !parentWindow->get_shOpp_st() && Settings::getSetting("hideTrace",0,"showHideItem").toInt()==0)
     {
         trace_drawing->slot_showMe();
+        trace_drawing->setHidden(false);
     }
     else
     {
-        trace_drawing->hide();
+        trace_drawing->setHidden(true);
     }
     if(!isReal)
         this->updateName();
@@ -576,22 +578,29 @@ void opponent::slot_shOpp(bool isHidden) {
     if(isHidden) {
         hide();
         if(trace_drawing)
-            trace_drawing->hide();
+            trace_drawing->setHidden(true);
     }
     else {
         show();
         if(trace_drawing)
         {
-            trace_drawing->show();
             drawTrace();
-            trace_drawing->slot_showMe();
+            if(Settings::getSetting("hideTrace",0,"showHideItem").toInt()==0)
+            {
+                trace_drawing->slot_showMe();
+                trace_drawing->setHidden(false);
+            }
+            else
+                trace_drawing->setHidden(true);
         }
     }
 }
 
-void opponent::slot_shTrace(bool /*state*/) {
-    qWarning() << "[slot_shTrace]";
-    slot_shOpp(Settings::getSetting("hideOpponent",0,"showHideItem").toInt());
+void opponent::slot_shTrace(bool b)
+{
+    trace_drawing->setHidden(b);
+    if(!b)
+        trace_drawing->slot_showMe();
 }
 
 /****************************************

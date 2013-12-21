@@ -144,6 +144,7 @@ boat::boat(QString      pseudo, bool activated,
         this->grabGesture(Qt::TapAndHoldGesture);
     }
 #endif
+    connect(parent,SIGNAL(shTrace(bool)),this,SLOT(slot_shTrace(bool)));
 }
 
 boat::~boat()
@@ -241,7 +242,10 @@ void boat::slot_selectBoat()
         return;
     }
     selected = true;
-    trace_drawing->show();
+    if(Settings::getSetting("hideTrace",0,"showHideItem").toInt()==0)
+        trace_drawing->setHidden(false);
+    else
+        trace_drawing->setHidden(true);
     drawEstime();
     updatePosition(false);
     if(boatType==BOAT_REAL) return;
@@ -390,7 +394,13 @@ void boat::updateTraceColor(void)
         trace_drawing->setPointMode(myColor);
     }
     trace_drawing->setNbVacPerHour(3600/getVacLen());
-    trace_drawing->slot_showMe();
+    if(Settings::getSetting("hideTrace",0,"showHideItem").toInt()==0)
+    {
+        trace_drawing->slot_showMe();
+        trace_drawing->setHidden(false);
+    }
+    else
+        trace_drawing->setHidden(true);
 }
 
 void boat::drawEstime(void)
@@ -796,7 +806,7 @@ void boat::playerDeActivated(void)
         this->unSelectBoat(false);
     this->hide();
     setVisible(false);
-    trace_drawing->hide();
+    trace_drawing->setHidden(true);
     WPLine->hideSegment();
     estimeTimer->stop();
     estimeLine->setHidden(true);;
@@ -1040,4 +1050,10 @@ QList<vlmLine*> boat::getGates()
 {
     QList<vlmLine*> empty;
     return empty;
+}
+void boat::slot_shTrace(const bool &b)
+{
+    this->trace_drawing->setHidden(b);
+    if(!b)
+        trace_drawing->slot_showMe();
 }

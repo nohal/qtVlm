@@ -110,7 +110,7 @@ MenuBar::MenuBar(MainWindow *parent)
         acOptions_SH_Lab->setCheckable(true);
         acOptions_SH_barSet = addAction(boatPoiSH, tr("Montrer les barrieres"), "D", tr(""));
         acOptions_SH_barSet->setCheckable(true);
-        acOptions_SH_trace = addAction(boatPoiSH, tr("Montrer les traces"), "", tr(""));
+        acOptions_SH_trace = addAction(boatPoiSH, tr("Montrer les traces"), "A", tr(""));
         acOptions_SH_trace->setCheckable(true);
     menuView->addMenu(boatPoiSH);
     QMenu * compasSH = new QMenu(tr("Show/Hide compas"));
@@ -523,7 +523,7 @@ void MenuBar::slot_showViewMenu(void) {
     acOptions_SH_Rou->setChecked(Settings::getSetting("hideRoute",0,"showHideItem").toInt()==0);
     acOptions_SH_Lab->setChecked(Settings::getSetting("hideLabel",0,"showHideItem").toInt()==0);
     acOptions_SH_barSet->setChecked(Settings::getSetting("hideBarrierSet",0,"showHideItem").toInt()==0);
-    acOptions_SH_trace->setChecked(Settings::getSetting("showTrace",1,"showHideItem").toInt()==1);
+    acOptions_SH_trace->setChecked(Settings::getSetting("hideTrace",0,"showHideItem").toInt()==0);
 }
 
 void MenuBar::slot_showBarrierMenu(void) {
