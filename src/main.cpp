@@ -162,12 +162,12 @@ int main(int argc, char *argv[])
     def.setPointSizeF(fontSize);
     QApplication::setFont(def);
     Settings::setSetting("applicationFontSize",fontSize);
-#ifdef __MAC_QTVLM
-    QString style=QString().sprintf("QPushButton { font: %.2fpx} QLabel { font: %.2fpx} QLineEdit { font: %.2fpx}  QCheckBox { font: %.2fpx} QGroupBox { font: %.2fpx} QComboBox { font: %.2fpx} QListWidget { font: %.2fpx} QRadioButton { font: %.2fpx} QTreeView { font: %.2fpx}",
-                                    fontSize,fontSize,fontSize,fontSize,fontSize,fontSize,fontSize,fontSize,fontSize);
-    qApp->setStyleSheet(style);
+//#ifdef __MAC_QTVLM
+//    QString style=QString().sprintf("QPushButton { font: %.2fpx} QLabel { font: %.2fpx} QLineEdit { font: %.2fpx}  QCheckBox { font: %.2fpx} QGroupBox { font: %.2fpx} QComboBox { font: %.2fpx} QListWidget { font: %.2fpx} QRadioButton { font: %.2fpx} QTreeView { font: %.2fpx}",
+//                                    fontSize,fontSize,fontSize,fontSize,fontSize,fontSize,fontSize,fontSize,fontSize);
+//    qApp->setStyleSheet(style);
 
-#endif
+//#endif
     QTranslator translator;
     QTranslator translatorQt;
     QString lang = Settings::getSetting("appLanguage", "none").toString();
