@@ -543,13 +543,17 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
         ac_copy->setEnabled(true);
         ac_routeList->setEnabled(true);
         ac_delRoute->setData(QVariant(QMetaType::VoidStar, &route));
-        ac_delRoute->setText(tr("Supprimer la route ")+route->getName());
-        ac_editRoute->setText(tr("Editer la route ")+route->getName());
-        ac_poiRoute->setText(tr("Montrer les POIs intermediaires de la route ")+route->getName());
-        ac_copyRoute->setText(tr("Copier la route ")+route->getName());
-        menuSimplify->setTitle(tr("Simplifier la route ")+route->getName());
-        ac_optimizeRoute->setText(tr("Optimiser la route ")+route->getName());
-        ac_zoomRoute->setText(tr("Zoom sur la route ")+route->getName());
+        if(route)
+            routeName=route->getName();
+        else
+            routeName.clear();
+        ac_delRoute->setText(tr("Supprimer la route ")+routeName);
+        ac_editRoute->setText(tr("Editer la route ")+routeName);
+        ac_poiRoute->setText(tr("Montrer les POIs intermediaires de la route ")+routeName);
+        ac_copyRoute->setText(tr("Copier la route ")+routeName);
+        menuSimplify->setTitle(tr("Simplifier la route ")+routeName);
+        ac_optimizeRoute->setText(tr("Optimiser la route ")+routeName);
+        ac_zoomRoute->setText(tr("Zoom sur la route ")+routeName);
         if(route==NULL)
         {
             ac_delRoute->setEnabled(false);
