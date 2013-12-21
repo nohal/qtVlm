@@ -55,7 +55,7 @@ void dialogLoadImg::showSnapshot()
         {
             snapShot->setPixmap(myCarte->getSnapshot(snapShot->size()));
             kapInfo->setText(tr("Name: ")+myCarte->getBsb()->name);
-            kapInfo-lupdat>append(tr("Projection: ")+myCarte->getBsb()->projection);
+            kapInfo->append(tr("Projection: ")+myCarte->getBsb()->projection);
             if(myCarte->getBsb()->num_wpxs==0 || myCarte->getBsb()->num_wpys==0)
                 kapInfo->append(tr("No polynomials found in kap file, using internal solution"));
             else

@@ -431,11 +431,11 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
         view->viewport()->grabGesture(Qt::PinchGesture);
 #ifdef __ANDROID__
         view->viewport()->grabGesture(Qt::PanGesture);
-#endif
         view->viewport()->grabGesture(Qt::TapGesture);
         view->viewport()->grabGesture(Qt::TapAndHoldGesture);
         view->viewport()->grabGesture(Qt::SwipeGesture);
         view->viewport()->grabGesture(Qt::CustomGesture);
+#endif
     }
     view->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
     view->setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);

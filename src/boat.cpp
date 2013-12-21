@@ -137,11 +137,13 @@ boat::boat(QString      pseudo, bool activated,
 
 
     connect(this,SIGNAL(releasePolar(QString)),main,SLOT(releasePolar(QString)));
+#ifdef __ANDROID__
     if(Settings::getSetting("enableGesture","1").toString()=="1")
     {
         this->setAcceptTouchEvents(true);
         this->grabGesture(Qt::TapAndHoldGesture);
     }
+#endif
 }
 
 boat::~boat()

@@ -543,6 +543,13 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
         ac_copy->setEnabled(true);
         ac_routeList->setEnabled(true);
         ac_delRoute->setData(QVariant(QMetaType::VoidStar, &route));
+        ac_delRoute->setText(tr("Supprimer la route ")+route->getName());
+        ac_editRoute->setText(tr("Editer la route ")+route->getName());
+        ac_poiRoute->setText(tr("Montrer les POIs intermediaires de la route ")+route->getName());
+        ac_copyRoute->setText(tr("Copier la route ")+route->getName());
+        menuSimplify->setTitle(tr("Simplifier la route ")+route->getName());
+        ac_optimizeRoute->setText(tr("Optimiser la route ")+route->getName());
+        ac_zoomRoute->setText(tr("Zoom sur la route ")+route->getName());
         if(route==NULL)
         {
             ac_delRoute->setEnabled(false);
@@ -558,26 +565,19 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
             QPixmap iconI(20,10);
             iconI.fill(route->getColor());
             QIcon icon(iconI);
-            ac_delRoute->setText(tr("Supprimer la route ")+route->getName());
             ac_delRoute->setEnabled(true);
             ac_delRoute->setIcon(icon);
-            ac_editRoute->setText(tr("Editer la route ")+route->getName());
             ac_editRoute->setEnabled(true);
             ac_editRoute->setIcon(icon);
-            ac_poiRoute->setText(tr("Montrer les POIs intermediaires de la route ")+route->getName());
             ac_poiRoute->setChecked(!route->getHidePois());
             ac_poiRoute->setEnabled(true);
             ac_poiRoute->setIcon(icon);
-            ac_copyRoute->setText(tr("Copier la route ")+route->getName());
             ac_copyRoute->setEnabled(true);
             ac_copyRoute->setIcon(icon);
-            menuSimplify->setTitle(tr("Simplifier la route ")+route->getName());
             menuSimplify->setEnabled(true);
             menuSimplify->setIcon(icon);
-            ac_optimizeRoute->setText(tr("Optimiser la route ")+route->getName());
             ac_optimizeRoute->setEnabled(true);
             ac_optimizeRoute->setIcon(icon);
-            ac_zoomRoute->setText(tr("Zoom sur la route ")+route->getName());
             ac_zoomRoute->setEnabled(true);
             ac_zoomRoute->setIcon(icon);
         }
