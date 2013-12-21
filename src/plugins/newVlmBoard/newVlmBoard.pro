@@ -6,6 +6,7 @@ contains ( QT_VERSION, "^5.*"){
     CONFIG += QT_V5
     QT+=core gui widgets multimedia concurrent designer
 }
+DEFINES += QTVLM_PLUGIN
 CONFIG += plugin
 TEMPLATE = lib
 TARGET = newVlmBoard

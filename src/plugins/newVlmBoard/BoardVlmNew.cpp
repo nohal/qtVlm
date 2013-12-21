@@ -36,7 +36,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QTranslator>
 #include <QDebug>
 #include <QStyleFactory>
-
 BoardVlmNew::BoardVlmNew (QWidget* parent): BoardInterface (parent)
 {
     translator=NULL;

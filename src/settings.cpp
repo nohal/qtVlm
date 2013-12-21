@@ -28,10 +28,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "dataDef.h"
 
 QSettings *fileSettings;
-
 void Settings::initSettings(void) {
+#ifndef QTVLM_PLUGIN
     if(!fileSettings)
         fileSettings = new QSettings(appFolder.value("userFiles")+SETTINGS_FILE, QSettings::IniFormat);
+#endif
 }
 
 void Settings::setSetting(const QString &key, const QVariant &value, const QString &group, const int &boatType) {

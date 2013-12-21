@@ -29,9 +29,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 //#define __QTVLM_WITH_TEST
 //#define __QTVLM_SHIFT_INC_MOD
-
+#ifndef QTVLM_PLUGIN
 extern QMap<QString,QString> appFolder;
-
+#endif
 /* usefull template to store pointer in userData field of widgets */
 #include <QVariant>
 template <class T> class VPtr
