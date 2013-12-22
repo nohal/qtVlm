@@ -1276,10 +1276,17 @@ void MainWindow::slotFile_Open()
         Settings::setSetting("askGribFolder",1);
         Settings::setSetting("edtGribFolder",gribFilePath);
     }
+#ifndef __MAC_QTVLM
     QString fileName = QFileDialog::getOpenFileName(this,
                          tr("Choisir un fichier GRIB"),
                          gribFilePath,
                          filter);
+#else
+    QString fileName = QFileDialog::getOpenFileName(this,
+                         tr("Choisir un fichier GRIB"),
+                         gribFilePath,
+                         filter,0,QFileDialog::DontUseNativeDialog);
+#endif
 
     if (fileName != "")
     {
