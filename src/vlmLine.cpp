@@ -164,7 +164,6 @@ void vlmLine::setTip(QString tip)
 }
 void vlmLine::setHidden(const bool &hidden)
 {
-    qWarning()<<"inside vlmline setHidden with"<<hidden;
     this->hidden=hidden;
     this->setVisible(!hidden);
     calculatePoly();
