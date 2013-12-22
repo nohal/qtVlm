@@ -1081,12 +1081,12 @@ void DialogRoute::slotExportCSV()
         routePath=Util::currentPath();
         Settings::setSetting("exportRouteCSVFolder",routePath);
     }
-#ifdef __WIN_QTVLM
-    QString fileName = QFileDialog::getSaveFileName(this,
-                         tr("Exporter un tableau de marche"), routePath, "CSV  (*.csv)",0,QFileDialog::DontUseNativeDialog);
-#else
+#ifndef __MAC_QTVLM
     QString fileName = QFileDialog::getSaveFileName(this,
                          tr("Exporter un tableau de marche"), routePath, "CSV  (*.csv)");
+#else
+    QString fileName = QFileDialog::getSaveFileName(this,
+                         tr("Exporter un tableau de marche"), routePath, "CSV  (*.csv)",0,QFileDialog::DontUseNativeDialog);
 #endif
     if(fileName.isEmpty() || fileName.isNull()) return;
     QFile::remove(fileName);

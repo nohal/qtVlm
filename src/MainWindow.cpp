@@ -1210,19 +1210,31 @@ void MainWindow::slotCombineGrib() {
         Settings::setSetting("askGribFolder",1);
         Settings::setSetting("edtGribFolder",gribFilePath);
     }
-
+#ifndef __MAC_QTVLM
     QStringList files = QFileDialog::getOpenFileNames(
                 this,
                 tr("Select several Grib files to combine"),
                 gribFilePath,
                 tr("GRIB file (*.grb *.grib *.grb2 *.grib2)"));
+#else
+    QStringList files = QFileDialog::getOpenFileNames(
+                this,
+                tr("Select several Grib files to combine"),
+                gribFilePath,
+                tr("GRIB file (*.grb *.grib *.grb2 *.grib2)",0,QFileDialog::DontUseNativeDialog));
+#endif
     if(files.size()>1) {
         files.sort();
         QString str=QString().setNum(files.size()) + " " + tr("gribs to combine");
         QMessageBox::information(this,tr("Grib combination"),str,QMessageBox::Ok);
         /* select output file */
+#ifndef __MAC_QTVLM
         QString filename = QFileDialog::getSaveFileName(this,
                                                         tr("Filename of destination file"), "", tr("GRIB file (*.grb *.grib *.grb2 *.grib2)"));
+#else
+        QString filename = QFileDialog::getSaveFileName(this,
+                                                        tr("Filename of destination file"), "", tr("GRIB file (*.grb *.grib *.grb2 *.grib2)"),0,QFileDialog::DontUseNativeDialog);
+#endif
         if (filename != "") {
             ofstream fdest;
             fdest.open(filename.toUtf8().constData(),ios::out | ios::trunc | ios::binary);
@@ -1318,11 +1330,17 @@ void MainWindow::slotFile_Open_Current()
         Settings::setSetting("askGribFolder",1);
         Settings::setSetting("edtGribFolder",gribFilePath);
     }
+#ifndef __MAC_QTVLM
     QString fileName = QFileDialog::getOpenFileName(this,
                          tr("Choisir un fichier GRIB"),
                          gribFilePath,
                          filter);
-
+#else
+    QString fileName = QFileDialog::getOpenFileName(this,
+                         tr("Choisir un fichier GRIB"),
+                         gribFilePath,
+                         filter,0,QFileDialog::DontUseNativeDialog);
+#endif
     if (fileName != "")
     {
         QFileInfo finfo(fileName);

@@ -152,10 +152,17 @@ void dialogFaxMeteo::browseFile()
         faxPath=Util::currentPath();
         Settings::setSetting("faxPath",faxPath);
     }
+#ifndef __MAC_QTVLM
     QString fileName = QFileDialog::getOpenFileName(this,
                          tr("Choisir un fichier FAX METEO"),
                          faxPath,
                          filter);
+#else
+    QString fileName = QFileDialog::getOpenFileName(this,
+                         tr("Choisir un fichier FAX METEO"),
+                         faxPath,
+                         filter,0,QFileDialog::DontUseNativeDialog);
+#endif
 
     if (fileName != "")
     {

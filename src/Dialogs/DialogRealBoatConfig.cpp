@@ -171,9 +171,13 @@ void DialogRealBoatConfig::done(int result)
 }
 
 void DialogRealBoatConfig::slot_selectFile(void) {
+#ifndef __MAC_QTVLM
     QString fileName = QFileDialog::getOpenFileName(this,
                          tr("Choisir un fichier"));
-
+#else
+    QString fileName = QFileDialog::getOpenFileName(this,
+                         tr("Choisir un fichier"),0,QFileDialog::DontUseNativeDialog);
+#endif
     if (fileName != "")
     {
         gpsFileName=fileName;
