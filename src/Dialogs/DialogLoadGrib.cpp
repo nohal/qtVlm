@@ -40,6 +40,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 DialogLoadGrib::DialogLoadGrib() : QDialog()
 {
     loadgrib = new LoadGribFile();
+    this->setObjectName("zyGribDownload");
     connect (loadgrib,SIGNAL(ungrayButtons()),this,SLOT(slotUngrayButtons()));
     connect (loadgrib,SIGNAL(clearSelection()),this,SIGNAL(clearSelection()));
     assert(loadgrib);
