@@ -605,13 +605,8 @@ void DialogParamVlm::radioBtn_dist_toggle(bool val)
 
 void DialogParamVlm::doBtn_browseGrib(void)
 {
-#ifndef __MAC_QTVLM
      QString dir = QFileDialog::getExistingDirectory(this, tr("Repertoire Grib"),
                                                  edt_gribFolder->text());
-#else
-    QString dir = QFileDialog::getExistingDirectory(this, tr("Repertoire Grib"),
-                                                edt_gribFolder->text(),0,QFileDialog::DontUseNativeDialog);
-#endif
      if(dir!="")
          edt_gribFolder->setText(dir);
 }
