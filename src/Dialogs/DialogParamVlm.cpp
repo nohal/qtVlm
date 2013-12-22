@@ -458,7 +458,7 @@ void DialogParamVlm::slot_chgMapFolder(void) {
 #else
         dir = QFileDialog::getExistingDirectory(centralWidget, tr("Select maps folder"),
                                                     dir,
-                                                    QFileDialog::ShowDirsOnly,0,QFileDialog::DontUseNativeDialog);
+                                                    QFileDialog::ShowDirsOnly|QFileDialog::DontUseNativeDialog);
 #endif
         if(dir.isEmpty()) {
             exitLoop=true;
