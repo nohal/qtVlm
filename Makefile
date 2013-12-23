@@ -29,8 +29,8 @@ else
 		OPTCLEAN = libgps_clean
 	else
 		RMAPPNAME = $(RMFOLDER) qtVlm.app
-		OPTLIB =
-		OPTCLEAN =
+		OPTLIB = libgps
+		OPTCLEAN = libgps_clean
 	endif
 	MKDIR = mkdir
 endif
