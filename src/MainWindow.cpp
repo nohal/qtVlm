@@ -254,7 +254,6 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
 
     updateTitle();
     selectedBoat = NULL;
-    this->setUnifiedTitleAndToolBarOnMac(true);
 
     INTERPOLATION_DEFAULT=Settings::getSetting("defaultInterpolation",INTERPOLATION_HYBRID).toInt();
 

@@ -67,7 +67,6 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     for(int i=0;i<toolBarList.count();++i)
     {
         mainWindow->addToolBar(toolBarList.at(i));
-        mainWindow->addToolBarBreak();
     }
 
     /* font */
