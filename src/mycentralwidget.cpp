@@ -654,7 +654,7 @@ void myCentralWidget::loadGshhs(void) {
 #else
             mapDir = QFileDialog::getExistingDirectory(this, tr("Select maps folder"),
                                                             mapDir,
-                                                            QFileDialog::ShowDirsOnly,0,QFileDialog::DontUseNativeDialog);
+                                                            QFileDialog::ShowDirsOnly|QFileDialog::DontUseNativeDialog);
 #endif
             QDir dir(mapDir);
             QDir appDir=Util::currentPath();
