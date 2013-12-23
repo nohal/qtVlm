@@ -52,12 +52,18 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
     setFont(font);
 
     stBar_label_1 = new QLabel("Welcome in QtVlm", this);
-    stBar_label_1->setStyleSheet("color: rgb(0, 0, 255);");
+    if(Settings::getSetting("fusionStyle",0).toInt()==1)
+        stBar_label_1->setStyleSheet("color: rgb(234, 221, 21);");
+    else
+        stBar_label_1->setStyleSheet("color: rgb(0, 0, 255);");
     stBar_label_1->setFont(font);
     this->addWidget(stBar_label_1);
     font.setBold(true);
     stBar_label_2 = new QLabel("", this);
-    stBar_label_2->setStyleSheet("color: rgb(255, 0, 0);");
+    if(Settings::getSetting("fusionStyle",0).toInt()==1)
+        stBar_label_2->setStyleSheet("color: rgb(234, 154, 84);");
+    else
+        stBar_label_2->setStyleSheet("color: rgb(255, 0, 0);");
     stBar_label_2->setFont(font);
     this->addWidget(stBar_label_2);
 

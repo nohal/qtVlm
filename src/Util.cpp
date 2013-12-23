@@ -78,23 +78,23 @@ QString Util::currentPath()
 QString Util::formatSimpleIntUnit(int val,QString unit) {
     QString s;
     FORMAT_INT(s,val)
-    return s+" "+unit;
+    return s+unit;
 }
 
 QString Util::formatSimpleDoubleUnit(double val,QString unit) {
     QString s;
     FORMAT_DOUBLE(s,val)
-    return s+" "+unit;
+    return s+unit;
 }
 
 QString Util::formatData(int type,double val1,double val2) {
     QString res;
     switch(type) {
         case DATA_PRESSURE:
-            res=Util::formatSimpleIntUnit(val1,"Pa");
+            res=Util::formatSimpleIntUnit(val1," Pa");
             break;
         case DATA_GEOPOT_HGT:
-            res=Util::formatSimpleDoubleUnit(val1,"gpm");
+            res=Util::formatSimpleDoubleUnit(val1," gpm");
             break;
         case DATA_TEMP:
         case DATA_TEMP_POT:
@@ -105,16 +105,16 @@ QString Util::formatData(int type,double val1,double val2) {
             break;
         case DATA_CURRENT_VX:
             val2=Util::A360(radToDeg(val2)+180.0);
-            res = Util::formatSimpleDoubleUnit(val2,"deg");
-            res+= ", " +Util::formatSimpleDoubleUnit(val1,"kts");
+            res = Util::formatSimpleDoubleUnit(val2,QObject::tr("deg"));
+            res+= ", " +Util::formatSimpleDoubleUnit(val1,QObject::tr(" kts"));
             break;
         case DATA_WIND_VX:
             val2=radToDeg(val2);
-            res = Util::formatSimpleDoubleUnit(val2,"deg");
-            res+= ", " +Util::formatSimpleDoubleUnit(val1,"kts");
+            res = Util::formatSimpleDoubleUnit(val2,QObject::tr("deg"));
+            res+= ", " +Util::formatSimpleDoubleUnit(val1,QObject::tr(" kts"));
             break;
         case DATA_HUMID_SPEC:
-            res=Util::formatSimpleDoubleUnit(val1,"kg/kg");
+            res=Util::formatSimpleDoubleUnit(val1," kg/kg");
             break;
         case DATA_HUMID_REL:
         case DATA_CLOUD_TOT:
@@ -122,35 +122,35 @@ QString Util::formatData(int type,double val1,double val2) {
             res=Util::formatPercentValue(val1);
             break;
         case DATA_PRECIP_RATE:
-            res=Util::formatSimpleDoubleUnit(val1,"kg/m2/s");
+            res=Util::formatSimpleDoubleUnit(val1," kg/m2/s");
             break;
         case DATA_PRECIP_TOT:
-            res=Util::formatSimpleDoubleUnit(val1,"kg/m2");
+            res=Util::formatSimpleDoubleUnit(val1," kg/m2");
             break;
         case DATA_SNOW_DEPTH:
         case DATA_WAVES_SIG_HGT_COMB:
-            res=Util::formatSimpleDoubleUnit(val1,"m");
+            res=Util::formatSimpleDoubleUnit(val1," m");
             break;
         case DATA_FRZRAIN_CATEG:
         case DATA_SNOW_CATEG:
-            if(val1) res=QObject::tr("oui");
-            else res=QObject::tr("non");
+            if(val1) res=QObject::tr(" oui");
+            else res=QObject::tr(" non");
             break;
         case DATA_CIN:
         case DATA_CAPE:
-            res=Util::formatSimpleDoubleUnit(val1,"J/kg");
+            res=Util::formatSimpleDoubleUnit(val1," J/kg");
             break;
         case DATA_WAVES_WND_HGT:
         case DATA_WAVES_SWL_HGT:
         case DATA_WAVES_MAX_HGT:            
-            res= Util::formatSimpleDoubleUnit(val1,"m");
+            res= Util::formatSimpleDoubleUnit(val1," m");
             break;
         case DATA_WAVES_WND_DIR:
         case DATA_WAVES_SWL_DIR:
         case DATA_WAVES_MAX_DIR:
         case DATA_WAVES_PRIM_DIR:
         case DATA_WAVES_SEC_DIR:
-            res = Util::formatSimpleDoubleUnit(Util::A360(radToDeg(val1)+180.0),"deg");
+            res = Util::formatSimpleDoubleUnit(Util::A360(radToDeg(val1)+180.0),QObject::tr("deg"));
             break;
     }
     return res;

@@ -4851,7 +4851,7 @@ waves height</source>
     </message>
     <message>
         <source>No barrier associate to current boat</source>
-        <translation type="unfinished"></translation>
+        <translation>Pas de barrière associée au bateau</translation>
     </message>
     <message>
         <source>oui</source>
@@ -4863,11 +4863,11 @@ waves height</source>
     </message>
     <message>
         <source>Erreur</source>
-        <translation type="unfinished">Erreur</translation>
+        <translation>Erreur</translation>
     </message>
     <message>
         <source>Erreur de lecture json.</source>
-        <translation type="unfinished">Erreur de lecture json.</translation>
+        <translation>Erreur de lecture json.</translation>
     </message>
     <message>
         <source>Ecart 1er</source>
@@ -4875,7 +4875,19 @@ waves height</source>
     </message>
     <message>
         <source>Lecture de polaire (</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
+    </message>
+    <message>
+        <source> kts</source>
+        <translation> nds</translation>
+    </message>
+    <message>
+        <source> oui</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source> non</source>
+        <translation></translation>
     </message>
 </context>
 <context>

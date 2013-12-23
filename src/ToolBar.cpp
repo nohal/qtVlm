@@ -195,7 +195,10 @@ ToolBar::ToolBar(MainWindow *mainWindow)
 
     /* Eta toolBar */
     ETA = new QLabel(tr("No WP"),etaToolBar);
-    ETA->setStyleSheet("color: rgb(0, 0, 255);");
+    if(Settings::getSetting("fusionStyle",0).toInt()==1)
+        ETA->setStyleSheet("color: rgb(234, 221, 21);");
+    else
+        ETA->setStyleSheet("color: rgb(0, 0, 255);");
     etaToolBar->addWidget(ETA);
 
     /* BarrierSet toolBar */
