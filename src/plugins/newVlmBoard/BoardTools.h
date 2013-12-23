@@ -27,7 +27,7 @@ class VlmCompass: public QWidget
     public:
         VlmCompass(QWidget * parent=0);
         void draw(QPainter * painter);
-        void setValues(const double &heading, const double &windDir, const double &windSpeed, const double &WPdir, const double &gateDir, const double &newHeading);
+        void setValues(const double &heading, const double &windDir, const double &windSpeed, const double &WPdir, const double &gateDir, const double &newHeading, const double &newGateVmg);
 
         void loadSkin(const QString &SkinName="");
         void setRotation(const double r);
@@ -41,9 +41,10 @@ protected:
         QPixmap img_boat;
         QPixmap img_arrow_wp;
         QPixmap img_arrow_gate;
+        QPixmap img_arrow_gateVmg;
         QPixmap img_arrow_wind;
         int w,h;
-        double heading,windDir,windSpeed,WPdir,newHeading,gateDir;
+        double heading,windDir,windSpeed,WPdir,newHeading,gateDir,gateVmg;
         double rotation;
         QColor windSpeed_toColor(void);
         MainWindowInterface *main;

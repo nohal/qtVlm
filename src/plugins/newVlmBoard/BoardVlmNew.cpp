@@ -312,7 +312,15 @@ void BoardVlmNew::slot_TWAChanged()
     if(heading<0) heading+=360;
     else if(heading>360) heading-=360;
     this->spin_HDG->setValue(heading);
-    this->windAngle->setValues(myBoat->getHeading(),myBoat->getWindDir(),myBoat->getWindSpeed(),myBoat->getWPdir(),myBoat->getClosest().capArrival,heading);
+    double vmg=-1;
+    if(myBoat->getPolarDataInterface())
+    {
+        myBoat->getPolarDataInterface()->bvmgWind((myBoat->getClosest().capArrival-myBoat->getWindDir()),myBoat->getWindSpeed(),&vmg);
+        vmg+=myBoat->getWindDir();
+        while (vmg>=360.0) vmg-=360.0;
+        while (vmg<0.0) vmg+=360.0;
+    }
+    this->windAngle->setValues(myBoat->getHeading(),myBoat->getWindDir(),myBoat->getWindSpeed(),myBoat->getWPdir(),myBoat->getClosest().capArrival,heading,vmg);
     if(!timer->isActive())
         timer->start();
     /* update estime */
@@ -350,7 +358,15 @@ void BoardVlmNew::slot_HDGChanged()
         else
             spin_TWA->setStyleSheet(spin_HDG->styleSheet());
     }
-    this->windAngle->setValues(myBoat->getHeading(),myBoat->getWindDir(),myBoat->getWindSpeed(),myBoat->getWPdir(),myBoat->getClosest().capArrival,heading);
+    double vmg=-1;
+    if(myBoat->getPolarDataInterface())
+    {
+        myBoat->getPolarDataInterface()->bvmgWind((myBoat->getClosest().capArrival-myBoat->getWindDir()),myBoat->getWindSpeed(),&vmg);
+        vmg+=myBoat->getWindDir();
+        while (vmg>=360.0) vmg-=360.0;
+        while (vmg<0.0) vmg+=360.0;
+    }
+    this->windAngle->setValues(myBoat->getHeading(),myBoat->getWindDir(),myBoat->getWindSpeed(),myBoat->getWPdir(),myBoat->getClosest().capArrival,heading,vmg);
     spin_HDG->blockSignals(false);
     spin_TWA->blockSignals(false);
     if(!timer->isActive())
@@ -504,12 +520,21 @@ void BoardVlmNew::slot_updateData()
     this->det_boatBox->setTitle(lab_RANK->text());
     this->det_raceBox->setTitle(myBoat->getRaceName());
     this->det_GATE_ORT->setText(QString().sprintf("%.2f",myBoat->getClosest().capArrival)+tr("deg"));
+    double vmg=0;
+    if(myBoat->getPolarDataInterface())
+    {
+        myBoat->getPolarDataInterface()->bvmgWind((myBoat->getClosest().capArrival-myBoat->getWindDir()),myBoat->getWindSpeed(),&vmg);
+        vmg+=myBoat->getWindDir();
+        while (vmg>=360.0) vmg-=360.0;
+        while (vmg<0.0) vmg+=360.0;
+    }
+    this->det_GATE_VMG->setText(QString().sprintf("%.2f",vmg)+tr("deg"));
     if(qRound(myBoat->getClosest().distArrival)<100)
         this->det_GATE_DIST->setText(QString().sprintf("%.2f",myBoat->getClosest().distArrival)+tr("nm"));
     else
         this->det_GATE_DIST->setText(QString().sprintf("%d",qRound(myBoat->getClosest().distArrival))+tr("nm"));
     if(!myBoat->getGates().isEmpty())
-        this->det_GATE->setText(myBoat->getGates().at(myBoat->getNWP()-1)->getDesc());
+        this->det_GATE->setText("->"+myBoat->getGates().at(myBoat->getNWP()-1)->getDesc());
     this->spin_HDG->setValue(myBoat->getHeading());
     this->spin_TWA->setValue(computeAngle());
     if(myBoat->getPolarDataInterface())
@@ -560,7 +585,15 @@ void BoardVlmNew::slot_updateData()
         this->lab_VBVMG->setStyleSheet(QString::fromUtf8("background-color: rgb(28, 205, 28);"));
         break;
     }
-    this->windAngle->setValues(myBoat->getHeading(),myBoat->getWindDir(),myBoat->getWindSpeed(),myBoat->getWPdir(),myBoat->getClosest().capArrival,-1);
+    vmg=-1;
+    if(myBoat->getPolarDataInterface())
+    {
+        myBoat->getPolarDataInterface()->bvmgWind((myBoat->getClosest().capArrival-myBoat->getWindDir()),myBoat->getWindSpeed(),&vmg);
+        vmg+=myBoat->getWindDir();
+        while (vmg>=360.0) vmg-=360.0;
+        while (vmg<0.0) vmg+=360.0;
+    }
+    this->windAngle->setValues(myBoat->getHeading(),myBoat->getWindDir(),myBoat->getWindSpeed(),myBoat->getWPdir(),myBoat->getClosest().capArrival,-1,vmg);
     update_btnPilototo();
     slot_updateBtnWP();
     this->blockSignals(false);
@@ -1199,6 +1232,11 @@ void VlmCompass::loadSkin(const QString &SkinName)
     pnt.begin(&img_arrow_wp);
     pnt.drawPixmap(0,0,skin,300,300,200,200);
     pnt.end();
+    img_arrow_gateVmg=QPixmap(200,200);
+    img_arrow_gateVmg.fill(Qt::transparent);
+    pnt.begin(&img_arrow_gateVmg);
+    pnt.drawPixmap(0,0,skin,800,300,200,200);
+    pnt.end();
     img_arrow_gate=QPixmap(200,200);
     img_arrow_gate.fill(Qt::transparent);
     pnt.begin(&img_arrow_gate);
@@ -1262,6 +1300,14 @@ void VlmCompass::draw(QPainter * painter)
     painter->rotate(gateDir);
     painter->drawPixmap(-100,-100,img_arrow_gate);
     painter->restore();
+    painter->save();
+    if(gateVmg!=-1)
+    {
+        painter->translate(100,100);
+        painter->rotate(gateVmg);
+        painter->drawPixmap(-100,-100,img_arrow_gateVmg);
+        painter->restore();
+    }
     QPixmap tempWind=img_arrow_wind;
     QPainter pnt(&tempWind);
     pnt.setRenderHint(QPainter::Antialiasing,true);
@@ -1281,7 +1327,7 @@ QColor VlmCompass::windSpeed_toColor()
     return main->getWindColorStatic(windSpeed,main->getSetting("colorMapSmooth", true).toBool());
 }
 
-void VlmCompass::setValues(const double &heading, const double &windDir, const double &windSpeed, const double &WPdir, const double &gateDir, const double &newHeading)
+void VlmCompass::setValues(const double &heading, const double &windDir, const double &windSpeed, const double &WPdir, const double &gateDir, const double &newHeading, const double &newGateVmg)
 {
     //qWarning() << "windAngle set: heading=" << heading << " windDir=" << windDir << " windSpeed=" << windSpeed << " WPdir=" << WPdir << " " << newHeading;
     this->heading=heading;
@@ -1290,5 +1336,6 @@ void VlmCompass::setValues(const double &heading, const double &windDir, const d
     this->WPdir=WPdir;
     this->newHeading=newHeading;
     this->gateDir=gateDir;
+    this->gateVmg=newGateVmg;
     update();
 }
