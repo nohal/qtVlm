@@ -176,7 +176,7 @@ void DialogRealBoatConfig::slot_selectFile(void) {
                          tr("Choisir un fichier"));
 #else
     QString fileName = QFileDialog::getOpenFileName(this,
-                         tr("Choisir un fichier"),0,QFileDialog::DontUseNativeDialog);
+                         tr("Choisir un fichier"),QString(),QString(),0,QFileDialog::DontUseNativeDialog);
 #endif
     if (fileName != "")
     {
