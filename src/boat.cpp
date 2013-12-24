@@ -489,7 +489,7 @@ void boat::drawEstime(double myHeading, double mySpeed)
         }
 
 
-        Util::getCoordFromDistanceAngle(lat,lon,estime,myHeading,&tmp_lat,&tmp_lon);
+        Util::getCoordFromDistanceLoxo(lat,lon,estime,myHeading,&tmp_lat,&tmp_lon);
         time_t estime_time=0;
         DataManager * dataManager=parent->get_dataManager();
         if(mySpeed>0.001 && dataManager && dataManager->isOk())
