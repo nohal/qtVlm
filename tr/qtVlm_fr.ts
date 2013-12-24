@@ -241,19 +241,19 @@
     <name>DataManager</name>
     <message>
         <source>Aucun</source>
-        <translation type="unfinished"></translation>
+        <translation>Aucun</translation>
     </message>
     <message>
         <source>Carte du vent</source>
-        <translation type="unfinished"></translation>
+        <translation>Carte du vent</translation>
     </message>
     <message>
         <source>Carte du courant</source>
-        <translation type="unfinished"></translation>
+        <translation>Carte du courant</translation>
     </message>
     <message>
         <source>Couverture nuageuse</source>
-        <translation type="unfinished"></translation>
+        <translation>Couverture nuageuse</translation>
     </message>
     <message>
         <source>Carte de l&apos;humidite relative</source>
@@ -269,167 +269,167 @@
     </message>
     <message>
         <source>Point de rosee</source>
-        <translation type="unfinished">Point de rosée</translation>
+        <translation>Point de rosée</translation>
     </message>
     <message>
         <source>Neige (chute possible)</source>
-        <translation type="unfinished"></translation>
+        <translation>Neige (chute possible)</translation>
     </message>
     <message>
         <source>Pluie verglacante (chute possible)</source>
-        <translation type="unfinished">Pluie verglaçante (chute possible)</translation>
+        <translation>Pluie verglaçante (chute possible)</translation>
     </message>
     <message>
         <source>CAPE (surface)</source>
-        <translation type="unfinished">CAPE (surface)</translation>
+        <translation>CAPE (surface)</translation>
     </message>
     <message>
         <source>CIN (surface)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Waves combined</source>
-        <translation type="unfinished">Vagues combinées</translation>
+        <translation>Vagues combinées</translation>
     </message>
     <message>
         <source>Wind waves</source>
-        <translation type="unfinished">Vagues du vent</translation>
+        <translation>Vagues du vent</translation>
     </message>
     <message>
         <source>Swell waves</source>
-        <translation type="unfinished">Vagues de la houle</translation>
+        <translation>Vagues de la houle</translation>
     </message>
     <message>
         <source>Max waves</source>
-        <translation type="unfinished">Vagues max</translation>
+        <translation>Vagues max</translation>
     </message>
     <message>
         <source>White cap prob</source>
-        <translation type="unfinished">Probabilité de déferlantes</translation>
+        <translation>Probabilité de déferlantes</translation>
     </message>
     <message>
         <source>Vent</source>
-        <translation type="unfinished"></translation>
+        <translation>Vent</translation>
     </message>
     <message>
         <source>Courant</source>
-        <translation type="unfinished"></translation>
+        <translation>Courants</translation>
     </message>
     <message>
         <source>Surface</source>
-        <translation type="unfinished"></translation>
+        <translation>Surface</translation>
     </message>
     <message>
         <source>Isotherm 0C</source>
-        <translation type="unfinished">Isotherme 0 C</translation>
+        <translation>Isotherme 0 C</translation>
     </message>
     <message>
         <source>Isobaric</source>
-        <translation type="unfinished">Isobarique</translation>
+        <translation>Isobarique</translation>
     </message>
     <message>
         <source>Mean Sea Level</source>
-        <translation type="unfinished">Pression au niveau de la mer</translation>
+        <translation>Niveau de la mer</translation>
     </message>
     <message>
         <source>Above ground</source>
-        <translation type="unfinished">Au dessus du sol</translation>
+        <translation>Au dessus du sol</translation>
     </message>
     <message>
         <source>Sigma</source>
-        <translation type="unfinished"></translation>
+        <translation>Sigma</translation>
     </message>
     <message>
         <source>Entire atmosphere</source>
-        <translation type="unfinished">Atmosphère entière</translation>
+        <translation>Atmosphère entière</translation>
     </message>
     <message>
         <source>Ordered sequence</source>
-        <translation type="unfinished">Sequence ordonnée</translation>
+        <translation>Sequence ordonnée</translation>
     </message>
     <message>
         <source>Couv nuage</source>
-        <translation type="unfinished"></translation>
+        <translation>Couv nuage</translation>
     </message>
     <message>
         <source>Precipitations</source>
-        <translation type="unfinished"></translation>
+        <translation>Precipitations</translation>
     </message>
     <message>
         <source>Precip</source>
-        <translation type="unfinished"></translation>
+        <translation>Precip</translation>
     </message>
     <message>
         <source>Humidite relative</source>
-        <translation type="unfinished"></translation>
+        <translation>Humidité relative</translation>
     </message>
     <message>
         <source>Humid rel</source>
-        <translation type="unfinished"></translation>
+        <translation>Humid rel</translation>
     </message>
     <message>
         <source>Temperature</source>
-        <translation type="unfinished">Température</translation>
+        <translation>Température</translation>
     </message>
     <message>
         <source>Temp</source>
-        <translation type="unfinished"></translation>
+        <translation>Temp</translation>
     </message>
     <message>
         <source>Temperature potentielle</source>
-        <translation type="unfinished"></translation>
+        <translation>Température potentielle</translation>
     </message>
     <message>
         <source>Temp pot</source>
-        <translation type="unfinished"></translation>
+        <translation>Temp pot</translation>
     </message>
     <message>
         <source>Pt rosee</source>
-        <translation type="unfinished"></translation>
+        <translation>Pt rosée</translation>
     </message>
     <message>
         <source>Neige</source>
-        <translation type="unfinished"></translation>
+        <translation>Neige</translation>
     </message>
     <message>
         <source>Pluie verg.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pluie verg.</translation>
     </message>
     <message>
         <source>CAPE</source>
-        <translation type="unfinished"></translation>
+        <translation>CAPE</translation>
     </message>
     <message>
         <source>CIN</source>
-        <translation type="unfinished"></translation>
+        <translation>CIN</translation>
     </message>
     <message>
         <source>Wave comb</source>
-        <translation type="unfinished"></translation>
+        <translation>Vague comb</translation>
     </message>
     <message>
         <source>Wind wave</source>
-        <translation type="unfinished"></translation>
+        <translation>Vague vent</translation>
     </message>
     <message>
         <source>Swell wave</source>
-        <translation type="unfinished"></translation>
+        <translation>Houle</translation>
     </message>
     <message>
         <source>Max wave</source>
-        <translation type="unfinished"></translation>
+        <translation>Vague max</translation>
     </message>
     <message>
         <source>Whte cap</source>
-        <translation type="unfinished"></translation>
+        <translation>Déferlante</translation>
     </message>
     <message>
         <source>Primary waves</source>
-        <translation type="unfinished">Vagues primaires</translation>
+        <translation>Vagues primaires</translation>
     </message>
     <message>
         <source>Secondary waves</source>
-        <translation type="unfinished">Vagues secondaires</translation>
+        <translation>Vagues secondaires</translation>
     </message>
 </context>
 <context>
@@ -660,12 +660,13 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
     </message>
     <message>
         <source>Fetch</source>
-        <translation type="unfinished"></translation>
+        <translation>Téléchargement</translation>
     </message>
     <message>
         <source>Permet de telecharger manuellement une trace pour une course VLM.
 La boÃŪte Ã  cocher trace partielle s&apos;active apres l&apos;entree d&apos;un numero de course valide, et permet de requÃĐrir une trace tronquÃĐe.</source>
-        <translation type="unfinished"></translation>
+        <translation>Permet de telecharger manuellement une trace pour une course VLM.
+La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un numero de course valide, et permet d&apos;obtenir une trace tronquée.</translation>
     </message>
 </context>
 <context>
@@ -868,7 +869,7 @@ La boÃŪte Ã  cocher trace partielle s&apos;active apres l&apos;entree d&apos;
     </message>
     <message>
         <source>Grib drawing</source>
-        <translation type="unfinished"></translation>
+        <translation>Dessin grib</translation>
     </message>
 </context>
 <context>
@@ -987,19 +988,19 @@ La boÃŪte Ã  cocher trace partielle s&apos;active apres l&apos;entree d&apos;
     </message>
     <message>
         <source>Color</source>
-        <translation type="unfinished">Couleur</translation>
+        <translation>Couleur</translation>
     </message>
     <message>
         <source>Label</source>
-        <translation type="unfinished"></translation>
+        <translation>Valeur</translation>
     </message>
     <message>
         <source>Isobar / Isotherme</source>
-        <translation type="unfinished"></translation>
+        <translation>Isobar / Isotherme</translation>
     </message>
     <message>
         <source>Min/Max Pression</source>
-        <translation type="unfinished"></translation>
+        <translation>Pression min/max</translation>
     </message>
 </context>
 <context>
@@ -1420,11 +1421,11 @@ Continuer la sauvegarde?</source>
     </message>
     <message>
         <source>Confirmation a chaque ordre vers VLM</source>
-        <translation type="unfinished">Confirmation à chaque ordre vers VLM</translation>
+        <translation>Confirmation à chaque ordre vers VLM</translation>
     </message>
     <message>
         <source>Confirmez-vous cet ordre?</source>
-        <translation type="unfinished"></translation>
+        <translation>Confirmez-vous cet ordre?</translation>
     </message>
 </context>
 <context>
@@ -1707,7 +1708,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Choisir un fichier</source>
-        <translation type="unfinished"></translation>
+        <translation>Choisir un fichier</translation>
     </message>
 </context>
 <context>
@@ -1934,7 +1935,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Ce bouton a 3 etats:&lt;br&gt;&lt;b&gt;Non coche:&lt;/b&gt; La route ne sera pas simplifiee.&lt;br&gt;&lt;b&gt;Partiellement coche:&lt;/b&gt; La route sera simplifiee en mode minimum, c&apos;est le meilleur mode.&lt;br&gt;&lt;b&gt;Completement coche:&lt;/b&gt; La route sera simplifiee au maximum. Ce mode peut degrader la qualite du routage.</source>
-        <translation type="unfinished">Ce bouton a 3 états:&lt;br&gt;&lt;b&gt;Non coché:&lt;/b&gt; La route ne sera pas simplifiée.&lt;br&gt;&lt;b&gt;Partiellement coché:&lt;/b&gt; La route sera simplifiée en mode minimum, c&apos;est le meilleur mode.&lt;br&gt;&lt;b&gt;Complètement coché:&lt;/b&gt; La route sera simplifiée au maximum. Ce mode peut dégrader la qualité de la route.</translation>
+        <translation>Ce bouton a 3 états:&lt;br&gt;&lt;b&gt;Non coché:&lt;/b&gt; La route ne sera pas simplifiée.&lt;br&gt;&lt;b&gt;Partiellement coché:&lt;/b&gt; La route sera simplifiée en mode minimum, c&apos;est le meilleur mode.&lt;br&gt;&lt;b&gt;Complètement coché:&lt;/b&gt; La route sera simplifiée au maximum. Ce mode peut dégrader la qualité de la route.</translation>
     </message>
 </context>
 <context>
@@ -2160,31 +2161,31 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Max Speed:</source>
-        <translation type="unfinished"></translation>
+        <translation>Vitesse max:</translation>
     </message>
     <message>
         <source>kts</source>
-        <translation type="unfinished">nds</translation>
+        <translation>nds</translation>
     </message>
     <message>
         <source>at</source>
-        <translation type="unfinished"></translation>
+        <translation>à</translation>
     </message>
     <message>
         <source>Absolute max speed:</source>
-        <translation type="unfinished"></translation>
+        <translation>Vitesse max absolue:</translation>
     </message>
     <message>
         <source>TWS:</source>
-        <translation type="unfinished"></translation>
+        <translation>TWS:</translation>
     </message>
     <message>
         <source>TWA:</source>
-        <translation type="unfinished"></translation>
+        <translation>TWA:</translation>
     </message>
     <message>
         <source>BS:</source>
-        <translation type="unfinished"></translation>
+        <translation>BS:</translation>
     </message>
 </context>
 <context>
@@ -2816,39 +2817,39 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Select several Grib files to combine</source>
-        <translation type="unfinished"></translation>
+        <translation>Sélectionner un ensemble de fchier grib à fusionner</translation>
     </message>
     <message>
         <source>GRIB file (*.grb *.grib *.grb2 *.grib2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Fichier Grib (*.grb *.grib *.grb2 *.grib2)</translation>
     </message>
     <message>
         <source>gribs to combine</source>
-        <translation type="unfinished"></translation>
+        <translation>gribs à fusionner</translation>
     </message>
     <message>
         <source>Grib combination</source>
-        <translation type="unfinished"></translation>
+        <translation>Fusion de grib</translation>
     </message>
     <message>
         <source>Filename of destination file</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom du fichier cible</translation>
     </message>
     <message>
         <source>files successfully combined</source>
-        <translation type="unfinished"></translation>
+        <translation>fichiers fusionnés avec succès</translation>
     </message>
     <message>
         <source>Open generated file ?</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouverture du fichier généré?</translation>
     </message>
     <message>
         <source>Not enough file to combine</source>
-        <translation type="unfinished"></translation>
+        <translation>Pas assez de fichier à fusionner</translation>
     </message>
     <message>
         <source>Fichiers GRIB (*.grb *.grib *.grb.bz2 *.grib.bz2 *.grb.gz *.grib.gz *.grb2 *.grib2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Fichiers GRIB (*.grb *.grib *.grb.bz2 *.grib.bz2 *.grb.gz *.grib.gz *.grb2 *.grib2)</translation>
     </message>
 </context>
 <context>
@@ -5681,15 +5682,15 @@ p, li { white-space: pre-wrap; }
     <name>SerialReceiverThread</name>
     <message>
         <source>Activation du GPS</source>
-        <translation type="unfinished"></translation>
+        <translation>Activation du GPS</translation>
     </message>
     <message>
         <source>Impossible d&apos;ouvrir le port </source>
-        <translation type="unfinished"></translation>
+        <translation>Impossible d&apos;ouvrir le port </translation>
     </message>
     <message>
         <source>Erreur: </source>
-        <translation type="unfinished"></translation>
+        <translation>Erreur: </translation>
     </message>
 </context>
 <context>
@@ -6343,10 +6344,6 @@ p, li { white-space: pre-wrap; }
         <translation>Redémarrage de qtVlm nécessaire</translation>
     </message>
     <message>
-        <source>Style Fusion</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Skin par defaut</source>
         <translation>Skin par défaut</translation>
     </message>
@@ -6373,6 +6370,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Ombre</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Style Fusion (necessite de relancer qtvlm)</source>
+        <translation>Style Fusion (nécessite de relancer qtVlm)</translation>
     </message>
 </context>
 <context>
@@ -6808,7 +6809,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>format</source>
-        <translation type="unfinished"></translation>
+        <translation>format</translation>
     </message>
 </context>
 <context>
@@ -7319,7 +7320,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>format</source>
-        <translation type="unfinished"></translation>
+        <translation>format</translation>
     </message>
 </context>
 <context>
@@ -7496,7 +7497,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name: </source>
-        <translation type="unfinished"></translation>
+        <translation>Nom: </translation>
     </message>
 </context>
 <context>
@@ -8866,27 +8867,27 @@ Please select another point or press esc to exit barrier creation mode</source>
     </message>
     <message>
         <source>Acces aux données GPS</source>
-        <translation type="unfinished"></translation>
+        <translation>Accès aux données GPS</translation>
     </message>
     <message>
         <source>Mode série</source>
-        <translation type="unfinished"></translation>
+        <translation>Mode série</translation>
     </message>
     <message>
         <source>Utiliser un fichier</source>
-        <translation type="unfinished"></translation>
+        <translation>Utiliser un fichier</translation>
     </message>
     <message>
         <source>Fichier...</source>
-        <translation type="unfinished"></translation>
+        <translation>Fichier...</translation>
     </message>
     <message>
         <source>TextLabel</source>
-        <translation type="unfinished"></translation>
+        <translation>FileName</translation>
     </message>
     <message>
         <source>Utiliser GPSd</source>
-        <translation type="unfinished"></translation>
+        <translation>Utiliser GPSd</translation>
     </message>
 </context>
 <context>

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>489</width>
-    <height>562</height>
+    <height>566</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -129,7 +129,7 @@
              <string>Redemarrage de qtVlm necessaire</string>
             </property>
             <property name="text">
-             <string>Style Fusion</string>
+             <string>Style Fusion (necessite de relancer qtvlm)</string>
             </property>
            </widget>
           </item>
