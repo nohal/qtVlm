@@ -192,31 +192,21 @@ BoardVlmNew::~BoardVlmNew()
 void BoardVlmNew::setFontDialog(QObject * o)
 {
 
-    QFont myFont(main->getSetting("defaultFontName",QApplication::font().family()).toString());
     if(o->isWidgetType())
     {
         QWidget * widget=qobject_cast<QWidget*> (o);
+        widget->setPalette(QPalette());
+        widget->setLocale(QLocale::system());
+        widget->setPalette(main->getOriginalPalette());
+        QFont myFont=widget->font();
         if(widget==lab_VBVMG || widget==lab_VMG || widget==lab_HDG || widget==lab_TWA || widget==lab_ORTHO)
             myFont.setPointSizeF(8.0);
         else
             myFont.setPointSizeF(9.0);
-        myFont.setStyle(widget->font().style());
-        myFont.setBold(widget->font().bold());
-        myFont.setItalic(widget->font().italic());
         widget->setFont(myFont);
-        widget->setPalette(QPalette());
-        widget->setLocale(QLocale::system());
-        widget->setPalette(main->getOriginalPalette());
-//        QPalette p=widget->palette();
-//        p.setColor(QPalette::Text, QColor(Qt::black));
-//        p.setColor(QPalette::ButtonText, QColor(Qt::black));
-//        p.setColor(QPalette::WindowText, QColor(Qt::black));
-//        widget->setPalette(p);
     }
     foreach(QObject * object,o->children())
-    {
         this->setFontDialog(object); /*recursion*/
-    }
 }
 
 void BoardVlmNew::slot_tabChanged(int tabNb)
