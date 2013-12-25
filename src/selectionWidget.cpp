@@ -178,9 +178,11 @@ bool selectionWidget::tryMoving(int mouse_x,int mouse_y)
 
     if(showOrthodromie)
     {
-        double X,Y;
-        proj->screen2mapDouble(xb,yb,&X,&Y);
-        seg->moveSegment(X,Y);
+        double X1,Y1,X2,Y2;
+        proj->screen2mapDouble(xa,ya,&X1,&Y1);
+        proj->screen2mapDouble(xb,yb,&X2,&Y2);
+        seg->initSegment(X1,Y1,X2,Y2);
+        seg->show();
     }
     return true;
 }
