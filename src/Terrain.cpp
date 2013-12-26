@@ -1202,7 +1202,7 @@ QPainterPath Terrain::shape() const
 // paintEvent
 //---------------------------------------------------------
 void Terrain::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
-{
+{    
     pnt->setRenderHint(QPainter::Antialiasing,true);
     pnt->drawPixmap(0,0, *imgAll);
     if(receivers(SIGNAL(terrainUpdated()))>0)
@@ -1224,6 +1224,7 @@ void Terrain::indicateWaitingMap()
         toBeRestarted=true;
         return;
     }
+#if 0
     if(imgAll!=NULL)
     {
         QPainter pnt_1;
@@ -1249,6 +1250,7 @@ void Terrain::indicateWaitingMap()
         updateRoutine();
         pnt_1.end();
    }
+#endif
    if (mustRedraw  ||  !isEarthMapValid  || !isWindMapValid)
    {
         draw_GSHHSandGRIB();
