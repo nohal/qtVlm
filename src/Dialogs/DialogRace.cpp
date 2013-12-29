@@ -330,7 +330,26 @@ void DialogRace::getNextRace()
         /* finished */
         initDone = true;
         numRace=-1;
-        chgRace(0);
+        int id=0;
+        // compute id according to current boat race
+        boat * curBoat=main->getSelectedBoat();
+        if(curBoat && curBoat->get_boatType()==BOAT_VLM) {
+            boatVLM * curVLMBoat=(boatVLM*)curBoat;
+            QString raceId=curVLMBoat->getRaceId();
+            //qWarning() << "Has cur boat => race is: " << raceId;
+            for(int i=0;i<chooser_raceList->count();++i)
+                if(chooser_raceList->itemData(i).toString()==raceId) {
+                    id=i;
+                    //qWarning() << "race found for selected boat: " << id;
+                    break;
+                }
+
+        }
+        else {
+            qWarning() << "No current boat ==> get first one in list";
+        }
+        chooser_raceList->setCurrentIndex(id);
+        //chgRace(id);
         waitBox->hide();
         this->exec();
         return;
@@ -658,13 +677,15 @@ void DialogRace::chgRace(int id)
 
     QString idRace = chooser_raceList->itemData(id).toString();
 
+    //qWarning() << "[chgRace] trying to find id="<< id << " => raceId="<<idRace;
+
     for(numRace=0;numRace<param_list.size();numRace++)
         if(param_list[numRace]->id == idRace)
             break;
     if(numRace==param_list.size())
     {
-        qWarning() << "chgRace: id not found";
-        return;
+        qWarning() << "chgRace: id not found ==> defaulting to first race";
+        numRace=0;
     }
 
     model->blockSignals(true);

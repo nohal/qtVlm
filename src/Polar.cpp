@@ -88,7 +88,7 @@ void Polar::setPolarName(QString fname)
     else
         coeffPolar=1.0;
 
-    qWarning() << "Opening polar" << fname<<"with coeff"<<coeffPolar << " appfolder: " << appFolder.value("polar");
+    //qWarning() << "Opening polar" << fname<<"with coeff"<<coeffPolar << " appfolder: " << appFolder.value("polar");
 
     name=fname;
     QString nameF;
@@ -113,7 +113,7 @@ void Polar::setPolarName(QString fname)
     }
     else
     {
-        qWarning() << "Base dir " << appFolder.value("polar");
+        //qWarning() << "Base dir " << appFolder.value("polar");
         nameF=appFolder.value("polar")+fname+".csv";
         file.setFileName(nameF);
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text ))
