@@ -29,6 +29,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QClipboard>
 #include <cstdlib>
 #include <QObject>
+#include <QWidget>
 
 #include "Util.h"
 
@@ -260,16 +261,12 @@ void Util::setFontDialog(QWidget * o)
     o->resize(w,h);
     int px=Settings::getSetting(object->objectName()+".positionx",-1).toInt();
     int py=Settings::getSetting(object->objectName()+".positiony",-1).toInt();
-    if(px<=0 || py<=0)
-    {
-        QPoint center=screenRect.center();
-        center.setX(center.x()-w/2);
-        center.setY(center.y()-h/2);
-        o->move(center);
-    }
-    else
+    if(px>-1 && py>-1)
         o->move(px,py);
-
+    else if (o->parentWidget())
+        o->move(o->parentWidget()->window()->frameGeometry().topLeft() +
+            o->parentWidget()->window()->rect().center() -
+            o->rect().center());
     setFontDialog(object);
 }
 

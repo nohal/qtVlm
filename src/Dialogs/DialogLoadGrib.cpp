@@ -33,14 +33,15 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "settings.h"
 #include "Util.h"
 #include "LoadGribFile.h"
+#include "MainWindow.h"
 
 
 
 //-------------------------------------------------------------------------------
-DialogLoadGrib::DialogLoadGrib() : QDialog()
+DialogLoadGrib::DialogLoadGrib(MainWindow *main) : QDialog(main)
 {
     loadgrib = new LoadGribFile();
-    this->setObjectName("zyGribDownload");
+    this->setObjectName("zyGribDownloadNew");
     connect (loadgrib,SIGNAL(ungrayButtons()),this,SLOT(slotUngrayButtons()));
     connect (loadgrib,SIGNAL(clearSelection()),this,SIGNAL(clearSelection()));
     assert(loadgrib);
@@ -48,7 +49,6 @@ DialogLoadGrib::DialogLoadGrib() : QDialog()
     setWindowTitle(tr("Telechargement"));
     loadInProgress = false;
     QFrame * frameButtonsZone = createFrameButtonsZone(this);
-    Util::setFontDialog(frameButtonsZone);
     rain  = true;
     cloud = true;
     pressure = true;
@@ -120,7 +120,7 @@ DialogLoadGrib::DialogLoadGrib() : QDialog()
     connect(chkAltitude700, SIGNAL(stateChanged(int)), 	this,  SLOT(slotParameterUpdated()));
     connect(chkAltitude850, SIGNAL(stateChanged(int)), 	this,  SLOT(slotParameterUpdated()));
     connect(chkAltitudeAll, SIGNAL(stateChanged(int)), 	this,  SLOT(slotAltitudeAll()));
-    Util::setFontDialog(this);
+    this->setParent(main);
 }
 
 //-------------------------------------------------------------------------------
@@ -503,6 +503,8 @@ void DialogLoadGrib::setZone(double x0, double y0, double x1, double y1)
         sbEast->setSuffix(tr(" degE"));
     }
     slotParameterUpdated();
+    this->resize(sbSouth->x()+sbSouth->width()+10,this->btOK->y()+this->btOK->height()+10);
+    Util::setFontDialog(this);
 }
 
 //-------------------------------------------------------------------------------
@@ -802,7 +804,6 @@ QFrame *DialogLoadGrib::createFrameButtonsZone(QWidget *parent)
                 tlay->addWidget( btServerStatus );
                 tlay->addWidget( btCancel );
     lay->addWidget( ftmp);
-
     return frm;
 }
 //----------------------------------------------------------------------------

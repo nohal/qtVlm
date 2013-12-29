@@ -445,6 +445,12 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
         view->viewport()->ungrabGesture(Qt::TapAndHoldGesture);
         view->viewport()->ungrabGesture(Qt::SwipeGesture);
         view->viewport()->ungrabGesture(Qt::CustomGesture);
+        view->ungrabGesture(Qt::PanGesture);
+        view->ungrabGesture(Qt::PinchGesture);
+        view->ungrabGesture(Qt::TapGesture);
+        view->ungrabGesture(Qt::TapAndHoldGesture);
+        view->ungrabGesture(Qt::SwipeGesture);
+        view->ungrabGesture(Qt::CustomGesture);
     }
     view->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
     view->setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
@@ -554,7 +560,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
 
 
 
-    dialogLoadGrib = new DialogLoadGrib();
+    dialogLoadGrib = new DialogLoadGrib(this->mainW);
     connect(dialogLoadGrib,SIGNAL(clearSelection()),this,SLOT(slot_clearSelection()));
     dialogLoadGrib->checkQtvlmVersion();
     connect(dialogLoadGrib, SIGNAL(signalGribFileReceived(QString)),parent,  SLOT(slot_gribFileReceived(QString)));

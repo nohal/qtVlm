@@ -57,7 +57,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 class DialogLoadGrib : public QDialog
 { Q_OBJECT
     public:
-        DialogLoadGrib();
+        DialogLoadGrib(MainWindow * main);
         ~DialogLoadGrib();
 
         void setZone(double x0, double y0, double x1, double y1);
