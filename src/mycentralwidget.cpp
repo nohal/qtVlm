@@ -437,6 +437,15 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
         view->viewport()->grabGesture(Qt::CustomGesture);
 #endif
     }
+    else
+    {
+        view->viewport()->ungrabGesture(Qt::PanGesture);
+        view->viewport()->ungrabGesture(Qt::PinchGesture);
+        view->viewport()->ungrabGesture(Qt::TapGesture);
+        view->viewport()->ungrabGesture(Qt::TapAndHoldGesture);
+        view->viewport()->ungrabGesture(Qt::SwipeGesture);
+        view->viewport()->ungrabGesture(Qt::CustomGesture);
+    }
     view->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
     view->setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
     this->setAccessibleName("centralWidget");
