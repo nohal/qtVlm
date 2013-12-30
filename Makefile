@@ -37,7 +37,7 @@ endif
 
 all: libs $(OPTLIB)
 	$(CD) src $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make
-	$(CD) $(call FixPath,src/plugins) $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make
+	$(CD) $(call FixPath,src/plugins) $(SEP) make TARGET=$(TARGET)
 
 libs:
 	$(RMAPPNAME)
@@ -74,7 +74,7 @@ clean: $(OPTCLEAN)
 	$(CD) $(call FixPath,src/libs/libbsb) $(SEP) $(RM) Makefile
 	$(CD) $(call FixPath,src/libs/g2clib-1.4.0) $(SEP) $(RM) Makefile
 	$(CD) src $(SEP) $(QMAKE) $(SEP) make clean
-	$(CD) $(call FixPath,src/plugins) $(SEP) $(QMAKE) $(SEP) make clean
+	$(CD) $(call FixPath,src/plugins) $(SEP) make clean
 	$(CD) $(call FixPath,src) $(SEP) $(RM) Makefile Makefile.Release Makefile.Debug
 	$(RMFOLDER) $(call FixPath,src/libs/build)
 	$(RMFOLDER) $(call FixPath,src/objs)
