@@ -348,8 +348,10 @@ void DialogRace::getNextRace()
         else {
             qWarning() << "No current boat ==> get first one in list";
         }
+        chooser_raceList->blockSignals(true);
         chooser_raceList->setCurrentIndex(id);
-        //chgRace(id);
+        chooser_raceList->blockSignals(false);
+        chgRace(id);
         waitBox->hide();
         this->exec();
         return;
