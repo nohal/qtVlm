@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="cs_CZ" sourcelanguage="en">
+<TS version="2.0" language="cs_CZ" sourcelanguage="en">
 <context>
     <name>BoardVlmNew</name>
     <message>
@@ -78,12 +78,12 @@
     <message>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="367"/>
         <source>Moy:</source>
-        <translation type="unfinished"></translation>
+        <translation>Prům:</translation>
     </message>
     <message>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="399"/>
         <source>Loch:</source>
-        <translation type="unfinished">Log:</translation>
+        <translation>Log:</translation>
     </message>
     <message>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="442"/>
