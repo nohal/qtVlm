@@ -65,13 +65,8 @@ DialogBoatAccount::~DialogBoatAccount()
 void DialogBoatAccount::slot_browseSkin()
 {
     QString skinPath=QFileInfo(boardSkin->text()).absolutePath();
-#ifndef __MAC_QTVLM
     QString fileName = QFileDialog::getOpenFileName(this,
                          tr("Selectionner un skin tableau de bord VLM"), skinPath, "png (*.png)");
-#else
-    QString fileName = QFileDialog::getOpenFileName(this,
-                         tr("Selectionner un skin tableau de bord VLM",0,QFileDialog::DontUseNativeDialog), skinPath, "png (*.png)");
-#endif
     if(fileName!="")
          boardSkin->setText(QFileInfo(fileName).absoluteFilePath());
 }

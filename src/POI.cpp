@@ -1694,17 +1694,10 @@ void POI::importZyGrib(myCentralWidget * centralWidget) {
     QString filter;
     filter =  tr("Fichiers ini (*.ini)")
             + tr(";;Autres fichiers (*)");
-#ifndef __MAC_QTVLM
     QString fileName = QFileDialog::getOpenFileName(0,
                          tr("Choisir un fichier ini"),
                          "./",
                          filter);
-#else
-    QString fileName = QFileDialog::getOpenFileName(0,
-                         tr("Choisir un fichier ini"),
-                         "./",
-                         filter,0,QFileDialog::DontUseNativeDialog);
-#endif
     QFile file(fileName);
 
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -1789,17 +1782,10 @@ void POI::importGeoData(myCentralWidget * centralWidget) {
     QString filter;
     filter =  tr("Fichiers textes (*.txt)")
             + tr(";;Autres fichiers (*)");
-#ifndef __MAC_QTVLM
     QString fileName = QFileDialog::getOpenFileName(0,
                          tr("Choisir un fichier GeoData"),
                          "./",
                          filter);
-#else
-    QString fileName = QFileDialog::getOpenFileName(0,
-                         tr("Choisir un fichier GeoData"),
-                         "./",
-                         filter,0,QFileDialog::DontUseNativeDialog);
-#endif
     QFile file(fileName);
 
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))

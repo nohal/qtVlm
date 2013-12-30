@@ -144,13 +144,8 @@ bool DialogVlmGrib::gribFileReceived(QByteArray * content)
     filename=gribPath+"/"+filename;
     if(Settings::getSetting("askGribFolder",1)==1)
     {
-#ifndef __MAC_QTVLM
         filename = QFileDialog::getSaveFileName(this,
                          tr("Sauvegarde du fichier GRIB"), filename, "Grib (*.grb)");
-#else
-        filename = QFileDialog::getSaveFileName(this,
-                         tr("Sauvegarde du fichier GRIB"), filename, "Grib (*.grb)",0,QFileDialog::DontUseNativeDialog);
-#endif
     }
 
     if (filename != "")

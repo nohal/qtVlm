@@ -662,15 +662,9 @@ void myCentralWidget::loadGshhs(void) {
             dwnloadMaps=true;
         }
         else if(msgBox.clickedButton() == selectFolderBtn) {
-#ifndef __MAC_QTVLM
             mapDir = QFileDialog::getExistingDirectory(this, tr("Select maps folder"),
                                                             mapDir,
                                                             QFileDialog::ShowDirsOnly);
-#else
-            mapDir = QFileDialog::getExistingDirectory(this, tr("Select maps folder"),
-                                                            mapDir,
-                                                            QFileDialog::ShowDirsOnly|QFileDialog::DontUseNativeDialog);
-#endif
             QDir dir(mapDir);
             QDir appDir=Util::currentPath();
             if(dir.rootPath()==appDir.rootPath())
@@ -2083,13 +2077,8 @@ void myCentralWidget::slot_takeScreenshot()
     scene->render(&p);
     p.end();
     QString screenshotPath=Settings::getSetting("screenShotFolder","").toString();
-#ifndef __MAC_QTVLM
     QString fileName = QFileDialog::getSaveFileName(this,
                          tr("Photo Ecran"), screenshotPath, "Screenshot (*.png)");
-#else
-    QString fileName = QFileDialog::getSaveFileName(this,
-                         tr("Photo Ecran"), screenshotPath, "Screenshot (*.png)",0,QFileDialog::DontUseNativeDialog);
-#endif
     if(fileName.isEmpty() || fileName.isNull()) return;
     QFile::remove(fileName);
     QFile screenshotFile(fileName);
@@ -2315,13 +2304,8 @@ void myCentralWidget::slot_importRouteFromMenu(bool ortho)
         routePath=Util::currentPath();
         Settings::setSetting("importRouteFolder",routePath);
     }
-#ifndef __MAC_QTVLM
     QString fileName = QFileDialog::getOpenFileName(this,
                          tr("Ouvrir un fichier Route"), routePath, "Routes (*.csv *.txt *.xml *.json *.kml *.CSV *.TXT *.XML *.Json *.JSON *.KML)");
-#else
-    QString fileName = QFileDialog::getOpenFileName(this,
-                         tr("Ouvrir un fichier Route"), routePath, "Routes (*.csv *.txt *.xml *.json *.kml *.CSV *.TXT *.XML *.Json *.JSON *.KML)",0,QFileDialog::DontUseNativeDialog);
-#endif
     if(fileName.isEmpty() || fileName.isNull()) return;
 
     QFile routeFile(fileName);
@@ -2795,13 +2779,8 @@ void myCentralWidget::exportRouteFromMenu(ROUTE * route)
         routePath=Util::currentPath();
         Settings::setSetting("importRouteFolder",routePath);
     }
-#ifndef __MAC_QTVLM
     QString fileName = QFileDialog::getSaveFileName(this,
                          tr("Exporter une Route"), routePath, "Routes (*.json *.csv *.txt *.CSV *.gpx *.kml)");
-#else
-    QString fileName = QFileDialog::getSaveFileName(this,
-                         tr("Exporter une Route"), routePath, "Routes (*.json *.csv *.txt *.CSV *.gpx *.kml)",0,QFileDialog::DontUseNativeDialog);
-#endif
     if(fileName.isEmpty() || fileName.isNull()) return;
 
     QFile::remove(fileName);

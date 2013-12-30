@@ -134,17 +134,10 @@ void dialogLoadImg::browseFile()
         cartePath=Util::currentPath();
         Settings::setSetting("cartePath",cartePath);
     }
-#ifndef __MAC_QTVLM
     QString fileName = QFileDialog::getOpenFileName(this,
                          tr("Choisir un fichier kap"),
                          cartePath,
                          filter);
-#else
-    QString fileName = QFileDialog::getOpenFileName(this,
-                         tr("Choisir un fichier kap"),
-                         cartePath,
-                         filter,0,QFileDialog::DontUseNativeDialog);
-#endif
     if (fileName != "")
     {
         QFileInfo finfo(fileName);

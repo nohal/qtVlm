@@ -451,15 +451,9 @@ void DialogParamVlm::slot_chgMapFolder(void) {
 
     while (!exitLoop) {
 
-#ifndef __MAC_QTVLM
         dir = QFileDialog::getExistingDirectory(centralWidget, tr("Select maps folder"),
                                                     dir,
                                                     QFileDialog::ShowDirsOnly);
-#else
-        dir = QFileDialog::getExistingDirectory(centralWidget, tr("Select maps folder"),
-                                                    dir,
-                                                    QFileDialog::ShowDirsOnly|QFileDialog::DontUseNativeDialog);
-#endif
         if(dir.isEmpty()) {
             exitLoop=true;
         }
@@ -613,13 +607,8 @@ void DialogParamVlm::doBtn_browseGrib(void)
 void DialogParamVlm::doBtn_browseSkin(void)
 {
     QString skinPath=QFileInfo(edt_skinFile->text()).absolutePath();
-#ifndef __MAC_QTVLM
     QString fileName = QFileDialog::getOpenFileName(this,
                          tr("Selectionner un skin tableau de bord VLM"), skinPath, "png (*.png)");
-#else
-    QString fileName = QFileDialog::getOpenFileName(this,
-                         tr("Selectionner un skin tableau de bord VLM",0,QFileDialog::DontUseNativeDialog), skinPath, "png (*.png)");
-#endif
     if(fileName!="")
          edt_skinFile->setText(QFileInfo(fileName).absoluteFilePath());
 }
