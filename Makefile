@@ -37,7 +37,7 @@ endif
 
 all: libs $(OPTLIB)
 	$(CD) src $(SEP) $(QMAKE) CONFIG+=$(TARGET) $(SEP) make
-	$(CD) $(call FixPath,src/plugins) $(SEP) make TARGET=$(TARGET)
+	$(CD) $(call FixPath,src/plugins) $(SEP) make
 
 libs:
 	$(RMAPPNAME)

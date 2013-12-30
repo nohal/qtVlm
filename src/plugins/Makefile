@@ -1,8 +1,6 @@
 #plugin makefile
 
-ifndef TARGET
-	TARGET = "release"
-endif
+TARGET = "release"
 
 ifdef SystemRoot
 	RM = del /Q
