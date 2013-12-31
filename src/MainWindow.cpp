@@ -678,7 +678,6 @@ void MainWindow::loadBoard()
            loadBoard();
         }
     }
-    Settings::setSetting("showDashBoard",1);
     this->showDashBoard();
 }
 QColor MainWindow::getWindColorStatic(const double &v, const bool &smooth)
@@ -909,6 +908,7 @@ void MainWindow::closeProgress(void)
     }
     statusBar->show();
     menuBar->show();
+    this->showDashBoard();
 #ifdef __ANDROID__
     menuBar->setNativeMenuBar(true);
     menuBar->hide();
@@ -1871,14 +1871,14 @@ void MainWindow::VLM_Sync_sync(void)
     if(!my_centralWidget->getBoats())
     {
         qWarning() << "CRITICAL: VLM_Sync_sync - empty boatList";
-        closeProgress();;
+        closeProgress();
         return ;
     }
 
     QList<boatVLM*> listBoats = *my_centralWidget->getBoats();
     if(listBoats.isEmpty())
     {
-        closeProgress();;
+        closeProgress();
         return;
     }
     toolBar->boatList->setEnabled(false);
