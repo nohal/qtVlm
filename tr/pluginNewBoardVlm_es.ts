@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="es_ES">
+<TS version="2.0" language="es_ES">
 <context>
     <name>BoardVlmNew</name>
     <message>
@@ -12,24 +12,24 @@
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="45"/>
         <source>Compas</source>
         <translatorcomment>Compás</translatorcomment>
-        <translation></translation>
+        <translation>Compás</translation>
     </message>
     <message>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="80"/>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="1046"/>
         <source>BS</source>
-        <translation></translation>
+        <translation>BS</translation>
     </message>
     <message>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="147"/>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="996"/>
         <source>TWS</source>
-        <translation></translation>
+        <translation>TWS</translation>
     </message>
     <message>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="189"/>
         <source>TWD</source>
-        <translation></translation>
+        <translation>TWD</translation>
     </message>
     <message>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="225"/>
@@ -49,18 +49,18 @@
     <message>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="296"/>
         <source>BS:</source>
-        <translation></translation>
+        <translation>BS:</translation>
     </message>
     <message>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="313"/>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="384"/>
         <source>14.32kts</source>
-        <translation></translation>
+        <translation>14.32kts</translation>
     </message>
     <message>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="328"/>
         <source>HDG:</source>
-        <translation></translation>
+        <translation>HDG:</translation>
     </message>
     <message>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="345"/>
@@ -74,69 +74,69 @@
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="885"/>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="917"/>
         <source>132.23d</source>
-        <translation></translation>
+        <translation>132.23g</translation>
     </message>
     <message>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="367"/>
         <source>Moy:</source>
-        <translation type="unfinished"></translation>
+        <translation>Med:</translation>
     </message>
     <message>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="399"/>
         <source>Loch:</source>
-        <translation type="unfinished">Log:</translation>
+        <translation>Dis:</translation>
     </message>
     <message>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="442"/>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1339"/>
         <source>WP</source>
-        <translation></translation>
+        <translation>WP</translation>
     </message>
     <message>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="470"/>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="868"/>
         <source>Ortho:</source>
-        <translation></translation>
+        <translation>Orto:</translation>
     </message>
     <message>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="502"/>
         <source>DNM:</source>
-        <translation></translation>
+        <translation>DNM:</translation>
     </message>
     <message>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="541"/>
         <source>Angle:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ángulo:</translation>
     </message>
     <message>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="573"/>
         <source>VMG:</source>
-        <translation></translation>
+        <translation>VMG:</translation>
     </message>
     <message>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="590"/>
         <source>25.25kts</source>
-        <translation></translation>
+        <translation>25,25kts</translation>
     </message>
     <message>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="616"/>
         <source>Wind</source>
-        <translation type="unfinished"></translation>
+        <translation>Viento</translation>
     </message>
     <message>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="644"/>
         <source>TWS:</source>
-        <translation></translation>
+        <translation>TWS:</translation>
     </message>
     <message>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="661"/>
         <source>25.35kts</source>
-        <translation></translation>
+        <translation>25,35kts</translation>
     </message>
     <message>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="676"/>
         <source>TWD:</source>
-        <translation></translation>
+        <translation>TWD:</translation>
     </message>
     <message>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="715"/>
@@ -151,7 +151,7 @@
     <message>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="790"/>
         <source>Race</source>
-        <translation type="unfinished"></translation>
+        <translation>Carrera</translation>
     </message>
     <message>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="818"/>
@@ -166,7 +166,7 @@
     <message>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="900"/>
         <source>Dist:</source>
-        <translation type="unfinished"></translation>
+        <translation>Dist:</translation>
     </message>
     <message>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="955"/>
@@ -180,7 +180,7 @@
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1047"/>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1505"/>
         <source>TextLabel</source>
-        <translation></translation>
+        <translation>Etiqueta</translation>
     </message>
     <message>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="983"/>
@@ -224,14 +224,14 @@
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1352"/>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="778"/>
         <source>Pilototo</source>
-        <translation>Piloto</translation>
+        <translation>Piloto automático</translation>
     </message>
     <message>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1383"/>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1417"/>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1451"/>
         <source>background-color: rgb(239, 243, 247);</source>
-        <translation></translation>
+        <translation>color fondo: rgb(239, 243, 247);</translation>
     </message>
     <message>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1467"/>
@@ -246,7 +246,7 @@
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="500"/>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="502"/>
         <source>nm</source>
-        <translation></translation>
+        <translation>mn</translation>
     </message>
     <message>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="476"/>
@@ -279,7 +279,7 @@
     <message>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="518"/>
         <source>Meilleurs angles au pres/portant:</source>
-        <translation type="unfinished">Best angles upwind/downwind:</translation>
+        <translation>Best angles upwind/downwind:</translation>
     </message>
     <message>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="584"/>
@@ -357,7 +357,7 @@
     <message>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="1123"/>
         <source>Confirmez-vous cet ordre?</source>
-        <translation type="unfinished"></translation>
+        <translation>¿Confirmas tu roden?</translation>
     </message>
 </context>
 <context>
