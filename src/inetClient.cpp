@@ -21,7 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef QT_V5
 #include <QtCore/QJsonDocument>
 #else
-#include <parser.h>
+#include "libs/qjson/parser.h"
+#include "libs/qjson/serializer.h"
 #endif
 
 #include <QMessageBox>
@@ -132,7 +133,7 @@ bool inetClient::JSON_to_map(QByteArray buf,QVariantMap *map) {
     bool ok;
     *map = parser.parse (buf, &ok).toMap();
     if (!ok) {
-        qWarning() << "Error parsing json data in " << name;
+        //qWarning() << "Error parsing json data in " << name;
         qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
         qWarning() << "Json buffer:\n" << buf;
         QMessageBox::critical (NULL,
@@ -166,7 +167,7 @@ bool inetClient::JSON_to_list(QByteArray buf,QList<QVariant> *list) {
     bool ok;
     *list = parser.parse (buf, &ok).toList();
     if (!ok) {
-        qWarning() << "Error parsing json data in " << name;
+        //qWarning() << "Error parsing json data in " << name;
         qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
         qWarning() << "Json buffer:\n" << buf;
         QMessageBox::critical (NULL,

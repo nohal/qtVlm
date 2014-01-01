@@ -72,6 +72,7 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 TARGET = $$qextLibraryName($$QESP_LIB_BASENAME)
 DESTDIR                 = ../build
 VERSION = 1.2.0
+MOC_DIR = build
 
 # generate feature file by qmake based on this *.in file.
 QMAKE_SUBSTITUTES += extserialport.prf.in

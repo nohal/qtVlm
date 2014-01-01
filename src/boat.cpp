@@ -37,7 +37,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "BarrierSet.h"
 #include "Projection.h"
 #include <QGestureEvent>
-
+#ifndef QT_V5
+#include <QTapAndHoldGesture>
+#endif
 boat::boat(QString      pseudo, bool activated,
            Projection * proj,MainWindow * main,myCentralWidget * parent):
    boatType (BOAT_NOBOAT),

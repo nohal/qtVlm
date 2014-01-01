@@ -19,7 +19,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 #include "BoardVlmNew.h"
 
+#ifdef QT_V5
 #include <QtCore/qplugin.h>
+#else
+#include <QtPlugin>
+#endif
 #include <QtDesigner/QDesignerContainerExtension>
 #include <QtDesigner/QDesignerCustomWidgetInterface>
 
@@ -27,8 +31,9 @@ class BoardVlmNewPlugin: public  QObject, public QDesignerCustomWidgetInterface
 {
    Q_OBJECT
    Q_INTERFACES(QDesignerCustomWidgetInterface)
+#ifdef QT_V5
    Q_PLUGIN_METADATA(IID "qtVlm.plugins.boardInterface/1.1")
-
+#endif
 private:
    bool             initialized;
 
@@ -57,4 +62,8 @@ public:
       initialized = true;
    }
 };
+#ifndef QT_V5
+Q_EXPORT_PLUGIN2(newVlmBoard,BoardVlmNewPlugin)
+
+#endif
 #include "plugin.moc"

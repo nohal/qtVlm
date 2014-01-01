@@ -31,7 +31,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QColorDialog>
 #endif
 #include <QDebug>
+#ifdef QT_V5
 #include <QUiLoader>
+#else
+#include <QtUiTools/QUiLoader>
+#endif
 #include "DialogParamVlm.h"
 #include "settings.h"
 #include "MainWindow.h"
@@ -62,6 +66,9 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
 
     this->chkPavillon->setCheckState(Settings::getSetting("showFlag",0,"showHideItem").toInt()==1?Qt::Checked:Qt::Unchecked);
     this->chkFusion->setChecked(Settings::getSetting("fusionStyle",0).toInt()==1);
+#ifndef QT_V5
+    chkFusion->hide();
+#endif
     // QDir dir(QApplication::applicationDirPath());
     // QStringList files=dir.entryList(QDir::Files);
     //QPluginLoader pgl;
@@ -82,8 +89,10 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
           delete tst;
        } else {
            qWarning() << "Could not load board definition"
-                      << filename
-                      << loader.errorString();
+                      << filename;
+#ifdef QT_V5
+           qWarning() << loader.errorString();
+#endif
        }
     }
     QString currentBoard=Settings::getSetting("vlmBoard","0").toString();

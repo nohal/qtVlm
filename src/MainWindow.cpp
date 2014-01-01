@@ -39,7 +39,12 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QDesktopServices>
 #include <QDesktopWidget>
 #include <QClipboard>
+
+#ifdef QT_V5
 #include <QUiLoader>
+#else
+#include <QtUiTools/QUiLoader>
+#endif
 
 #include <iostream>
 #include <fstream>
@@ -234,6 +239,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     setWindowIcon (QIcon (appFolder.value("icon")+"qtVlm_48x48.png"));
     noSave=false;
     originalPalette=QApplication::palette();
+#ifdef QT_V5
     if(Settings::getSetting("fusionStyle",0).toInt()==1)
     {
         qWarning()<<"setting up Black fusion style";
@@ -247,6 +253,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
         p.setColor(QPalette::WindowText, QColor(255,255,255));
         QApplication::setPalette(p);
     }
+#endif
     isStartingUp=true;
     finishStart=true;
     nBoat=0;
@@ -672,8 +679,10 @@ void MainWindow::loadBoard()
         } else {
            if (w != NULL) delete w;
            qWarning() << "Error loading board definition"
-                      << Settings::getSetting("vlmBoard","0").toString()
-                      << loader.errorString();
+                      << Settings::getSetting("vlmBoard","0").toString();
+#ifdef QT_V5
+           qWarning() << loader.errorString();
+#endif
            Settings::setSetting("vlmBoard","0");
            loadBoard();
         }

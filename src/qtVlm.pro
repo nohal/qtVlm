@@ -39,6 +39,7 @@ LIBS += -lQt5ExtSerialPort
 LIBS += -lqextserialport \
     -lqjson
 INCLUDEPATH += libs/qjson
+CONFIG += uitools
 }
 
 asan {

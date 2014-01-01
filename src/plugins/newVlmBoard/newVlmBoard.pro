@@ -5,6 +5,8 @@ contains ( QT_VERSION, "^5.*"){
     DEFINES += QT_V5
     CONFIG += QT_V5
     QT+=core gui widgets multimedia concurrent designer
+} else {
+    QT+=network
 }
 DEFINES += QTVLM_PLUGIN
 CONFIG += plugin
