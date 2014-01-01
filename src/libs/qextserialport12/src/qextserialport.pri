@@ -1,4 +1,4 @@
-INCLUDEPATH += build $$PWD
+INCLUDEPATH += $$PWD
 DEPENDPATH += $$PWD
 
 PUBLIC_HEADERS         += $$PWD/qextserialport.h \
