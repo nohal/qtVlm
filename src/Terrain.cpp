@@ -118,6 +118,11 @@ Terrain::Terrain(myCentralWidget *centralWidget, Projection *proj_) : QGraphicsW
     labelLevelType = Settings::getSetting("labelLevelType", DATA_LV_NOTDEF,"DataDrawing").toInt();
     labelLevelValue = Settings::getSetting("labelLevelValue", 0,"DataDrawing").toInt();
 
+    qWarning() << "GrbDrawing param at start: " << colorMapMode << " / " << colorMapLevelType << " / " << colorMapLevelValue
+                << " frstArw: " << frstArwMode << " / " << frstArwLevelType << " / " << frstArwLevelValue
+                << " secArw: " << secArwMode << " / " << secArwLevelType << " / " << secArwLevelValue
+                << " label: " << labelMode << " / " << labelLevelType << " / " << labelLevelValue;
+
     //showGribGrid = Settings::getSetting("showGribGrid", false).toBool();
     //----------------------------------------------------------------------------
 
@@ -637,7 +642,8 @@ void Terrain::drawGrib(QPainter &pnt)
         //QTime t1 = QTime::currentTime();
     qWarning() << "Grb drawing colorMap: " << colorMapMode << " / " << colorMapLevelType << " / " << colorMapLevelValue
                 << " frstArw: " << frstArwMode << " / " << frstArwLevelType << " / " << frstArwLevelValue
-                << " secArw: " << secArwMode << " / " << secArwLevelType << " / " << secArwLevelValue;
+                << " secArw: " << secArwMode << " / " << secArwLevelType << " / " << secArwLevelValue
+                << " label: " << labelMode << " / " << labelLevelType << " / " << labelLevelValue;
 
     if(colorMapMode!=DATA_NOTDEF)
         mapDataDrawer->drawColorMapGeneric_DTC(pnt,proj,colorMapMode,colorMapLevelType,colorMapLevelValue,colorMapSmooth);
@@ -817,7 +823,12 @@ Couple Terrain::compute_level(DataManager * dataManager,int newType,int curLevel
 
 void Terrain::update_mapDataAndLevel(void) {
 
-    //qWarning() << "[update_mapDataAndLevel] starting";
+    /*qWarning() << "[update_mapDataAndLevel] starting";
+    qWarning() << "[update_mapDataAndLevel] before " << colorMapMode << " / " << colorMapLevelType << " / " << colorMapLevelValue
+                << " frstArw: " << frstArwMode << " / " << frstArwLevelType << " / " << frstArwLevelValue
+                << " secArw: " << secArwMode << " / " << secArwLevelType << " / " << secArwLevelValue
+                << " label: " << labelMode << " / " << labelLevelType << " / " << labelLevelValue;
+*/
 
     DataManager * dataManager=centralWidget->get_dataManager();
     if(!dataManager) return;
@@ -858,7 +869,7 @@ void Terrain::update_mapDataAndLevel(void) {
         colorMapMode=newType;
         colorMapLevelType=lv.a;
         colorMapLevelValue=lv.b;
-        qWarning() << "mapData: level=" << lv.a <<" / " << lv.b;
+        //qWarning() << "mapData: level=" << lv.a <<" / " << lv.b;
 
         /**************/
         /* Frst Arrow */
@@ -914,7 +925,8 @@ void Terrain::update_mapDataAndLevel(void) {
         /* Labels */
         if(labelMode != DATA_NOTDEF) {
             //data type
-            newType=compute_dataType(dataManager,labelLevelType,DATA_WIND_VX,DATA_NOTDEF,
+
+            newType=compute_dataType(dataManager,labelMode,DATA_WIND_VX,DATA_NOTDEF,
                                      dataManager->get_dataTypes());
             if(newType==DATA_NOTDEF) {
                 labelMode=DATA_NOTDEF;
@@ -950,7 +962,12 @@ void Terrain::update_mapDataAndLevel(void) {
     Settings::setSetting("labelLevelType", labelLevelType,"DataDrawing");
     Settings::setSetting("labelLevelValue", labelLevelValue,"DataDrawing");
 
-    //qWarning() << "[update_mapDataAndLevel] done";
+    /*qWarning() << "[update_mapDataAndLevel] after " << colorMapMode << " / " << colorMapLevelType << " / " << colorMapLevelValue
+                << " frstArw: " << frstArwMode << " / " << frstArwLevelType << " / " << frstArwLevelValue
+                << " secArw: " << secArwMode << " / " << secArwLevelType << " / " << secArwLevelValue
+                << " label: " << labelMode << " / " << labelLevelType << " / " << labelLevelValue;
+
+    qWarning() << "[update_mapDataAndLevel] done";*/
 }
 
 void Terrain::setColorMapMode(int dataType,int levelType, int levelValue) {

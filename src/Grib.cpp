@@ -459,13 +459,20 @@ bool Grib::getInterpolatedValue_1D(int dataType,int levelType,int levelValue,
 
 bool Grib::interpolateValue_1D(double d_long, double d_lat, time_t now,time_t tPrev,time_t tNxt,
                                     GribRecord * recPrev,GribRecord * recNxt,double * res) {
-    if(!res) return false;
+    if(!res || !recPrev) {
+        qWarning() << "[interpolateValue_1D] NULL pointer for res or prec record";
+        return false;
+    }
     *res=0;
     double v = recPrev->getInterpolatedValue(d_long, d_lat, MUST_INTERPOLATE_VALUE);
     double v_2;
     if(v != GRIB_NOTDEF) {
         if(tPrev!=tNxt)
         {
+            if(!recNxt) {
+                qWarning() << "[interpolateValue_1D] NULL pointer for nxt record";
+                return false;
+            }
             v_2=recNxt->getInterpolatedValue(d_long, d_lat, MUST_INTERPOLATE_VALUE);
             if(v_2 != GRIB_NOTDEF) {
                 *res= v+((v_2-v)/((double)(tNxt-tPrev)))*((double)(now-tPrev));

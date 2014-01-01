@@ -202,6 +202,8 @@ QString Util::formatSimpleData(int type,double val) {
             if(val) res=QObject::tr("oui");
             else res=QObject::tr("non");
             break;
+        default:
+        qWarning() << "[formatSimpleData] non format available for type " << type << " (val=" << val << ")";
     }
     return res;
 }

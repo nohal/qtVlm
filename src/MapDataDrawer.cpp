@@ -771,11 +771,11 @@ void MapDataDrawer::draw_Isobars(QPainter &pnt, const Projection *proj,int level
     std::list<IsoLine *>::iterator it;
     std::list<IsoLine *> * listPtr=grib->get_isobars(levelType,levelValue);
     if(!listPtr) {
-        qWarning() << "non listPtr  for isoBar";
+        //qWarning() << "non listPtr  for isoBar";
         return;
     }
-    else
-        qWarning() << listPtr->size() << " elem in listPtr isoBar";
+    /*else
+        qWarning() << listPtr->size() << " elem in listPtr isoBar";*/
     for(it=listPtr->begin(); it!=listPtr->end(); ++it)
     {
         (*it)->drawIsoLine(pnt, proj);
@@ -941,10 +941,16 @@ void MapDataDrawer::draw_PRESSURE_MinMax(QPainter &pnt, const Projection *proj)
  * Label drawing
  ***************************************************************************/
 void MapDataDrawer::draw_labelGeneric(QPainter &pnt,Projection *proj, int dataType,int levelType, int levelValue,QColor color) {
-    if(!dataManager || !dataManager->isOk()) return;
+    if(!dataManager || !dataManager->isOk()) {
+        qWarning() << "[draw_labelGeneric] dataManager bad state";
+        return;
+    }
 
     /* check if dataType can be drawn */
-    if(dataType<0 || dataType>=DATA_MAX || !drawerInfo[dataType].isOk) return;
+    if(dataType<0 || dataType>=DATA_MAX || !drawerInfo[dataType].isOk) {
+        qWarning() << "[draw_labelGeneric] bad datatype: "<<dataType;
+        return;
+    }
 
     GribRecord *recU1,*recV1,*recU2,*recV2;
     time_t tPrev,tNxt;
@@ -962,19 +968,28 @@ void MapDataDrawer::draw_labelGeneric(QPainter &pnt,Projection *proj, int dataTy
     pnt.setFont(fontLabels);
     pnt.setPen(color);
 
+    //qWarning() << "[draw_labelGeneric] param: " << dataType << " / " << levelType << " / " << levelValue << " - color: " << color;
+
     /* getting the grib records */
-    if(drawerInfo[dataType].is2D)
+    if(drawerInfo[dataType].is2D) {
+        //qWarning() << "[draw_labelGeneric] 2D data";
         res=dataManager->get_data2D(dataType,drawerInfo[dataType].secData_2D,levelType,levelValue,currentDate,&tPrev,&tNxt,
                                     &recU1,&recV1,&recU2,&recV2);
-    else
-        res=dataManager->get_data1D(dataType,levelType,levelValue,currentDate,&tPrev,&tNxt,&recU1,&recV1);
+    }
+    else {
+        //qWarning() << "[draw_labelGeneric] 1D data";
+        res=dataManager->get_data1D(dataType,levelType,levelValue,currentDate,&tPrev,&tNxt,&recU1,&recU2);
+    }
 
     int interpolMode=INTERPOLATION_DEFAULT;
     if(drawerInfo[dataType].forcedInterpol)
         interpolMode=drawerInfo[dataType].forcedInterpolType;
 
     // get out of fct if we can't get the grib records
-    if(!res) return;
+    if(!res) {
+        qWarning() << "[draw_labelGeneric] can't get record";
+        return;
+    }
 
     for (j=0; j<proj->getH(); j+= djmin) {
         for (i=0; i<proj->getW(); i+= dimin) {
@@ -991,8 +1006,10 @@ void MapDataDrawer::draw_labelGeneric(QPainter &pnt,Projection *proj, int dataTy
             if(res) {
                strLabel = Util::formatSimpleData(dataType,val1);
             }
-            /*else
-                strLabel= "U";*/
+            /*else {
+                qWarning() << "[draw_labelGeneric] can't interpolat";
+            }*/
+
 
             pnt.drawText(i-fmet.width("XXX")/2, j+fmet.ascent()/2, strLabel);
 
