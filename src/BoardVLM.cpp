@@ -51,7 +51,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) : QWidget(mainWin), inetClient(inet)
 {
     setupUi(this);
-    board::setFontDialog(this);
+    board::setFontDialog(this, mainWin);
     QMap<QWidget *,QFont> exceptions;
     QFont font=QApplication::font();
     font.setBold(true);

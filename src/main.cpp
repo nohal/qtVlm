@@ -157,6 +157,8 @@ int main(int argc, char *argv[])
 //        app->setPalette(p);
 //    }
     double fontInc=Settings::getSetting("defaultFontSizeInc",0).toDouble();
+    if(Settings::getSetting("defaultFontName","-1").toString()=="-1")
+        Settings::setSetting("defaultFontName",QApplication::font().family());
     QFont def(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
     double fontSize=8.0+fontInc;
     def.setPointSizeF(fontSize);

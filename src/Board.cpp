@@ -244,13 +244,16 @@ bool board::currentBoardIsVisibe()
     else
         return false;
 }
-void board::setFontDialog(QObject * o)
+void board::setFontDialog(QObject * o, MainWindow * main)
 {
 
     QFont myFont(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
     if(o->isWidgetType())
     {
         QWidget * widget=qobject_cast<QWidget*> (o);
+        widget->setPalette(QPalette());
+        widget->setLocale(QLocale::system());
+        widget->setPalette(main->getOriginalPalette());
         myFont.setPointSizeF(Settings::getSetting("applicationFontSize",8.0).toDouble());
         myFont.setStyle(widget->font().style());
         myFont.setBold(widget->font().bold());
@@ -260,12 +263,12 @@ void board::setFontDialog(QObject * o)
     }
     foreach(QObject * object,o->children())
     {
-        board::setFontDialog(object); /*recursion*/
+        board::setFontDialog(object, main); /*recursion*/
     }
 }
-void board::setFontDialog(QWidget * o)
+void board::setFontDialog(QWidget * o, MainWindow * main)
 {
     QObject * object=qobject_cast<QObject*>(o);
-    board::setFontDialog(object);
+    board::setFontDialog(object, main);
 }
 

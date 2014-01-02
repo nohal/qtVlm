@@ -40,7 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 boardReal::boardReal(MainWindow * mainWin, board * parent) : QWidget(mainWin)
 {
     setupUi(this);
-    board::setFontDialog(this);
+    board::setFontDialog(this, mainWin);
     QMap<QWidget *,QFont> exceptions;
     QFont wfont=QApplication::font();
     wfont.setBold(true);
