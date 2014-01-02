@@ -36,6 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 board::board(MainWindow * mainWin, inetConnexion * inet)
 {
     playerType = BOAT_NOBOAT;
+    this->setFontDialog(this);
 
     StatusBar * statusBar=mainWin->get_statusBar();
 
@@ -244,16 +245,13 @@ bool board::currentBoardIsVisibe()
     else
         return false;
 }
-void board::setFontDialog(QObject * o, MainWindow * main)
+void board::setFontDialog(QObject * o)
 {
 
     QFont myFont(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
     if(o->isWidgetType())
     {
         QWidget * widget=qobject_cast<QWidget*> (o);
-        widget->setPalette(QPalette());
-        widget->setLocale(QLocale::system());
-        widget->setPalette(main->getOriginalPalette());
         myFont.setPointSizeF(Settings::getSetting("applicationFontSize",8.0).toDouble());
         myFont.setStyle(widget->font().style());
         myFont.setBold(widget->font().bold());
@@ -263,12 +261,12 @@ void board::setFontDialog(QObject * o, MainWindow * main)
     }
     foreach(QObject * object,o->children())
     {
-        board::setFontDialog(object, main); /*recursion*/
+        board::setFontDialog(object); /*recursion*/
     }
 }
-void board::setFontDialog(QWidget * o, MainWindow * main)
+void board::setFontDialog(QWidget * o)
 {
     QObject * object=qobject_cast<QObject*>(o);
-    board::setFontDialog(object, main);
+    board::setFontDialog(object);
 }
 

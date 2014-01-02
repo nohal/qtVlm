@@ -250,9 +250,9 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
         p.setColor(QPalette::Button, QColor(53,53,53));
         p.setColor(QPalette::Base, QColor(53,53,53));
         p.setColor(QPalette::Highlight, QColor(142,45,197));
-        p.setColor(QPalette::ButtonText, QColor(255,255,255));
+        p.setColor(QPalette::ButtonText, QColor(234,221,21));
         p.setColor(QPalette::WindowText, QColor(255,255,255));
-        p.setColor(QPalette::Text, QColor(234,221,21));
+        p.setColor(QPalette::Text, QColor(255,255,255));
         QApplication::setPalette(p);
     }
 #endif

@@ -102,9 +102,6 @@
          <height>16777215</height>
         </size>
        </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(255, 255, 127);</string>
-       </property>
        <property name="text">
         <string>?</string>
        </property>

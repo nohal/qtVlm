@@ -51,7 +51,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) : QWidget(mainWin), inetClient(inet)
 {
     setupUi(this);
-    board::setFontDialog(this, mainWin);
+    board::setFontDialog(this);
+#ifdef QT_V5
+    if(Settings::getSetting("fusionStyle",0).toInt()==1)
+    {
+        editAngle->setStyleSheet("background-color: rgb(53, 53, 53);");
+        editHeading->setStyleSheet("background-color: rgb(53, 53, 53);");
+    }
+#endif
     QMap<QWidget *,QFont> exceptions;
     QFont font=QApplication::font();
     font.setBold(true);
@@ -129,7 +136,7 @@ boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) :
     deg_unit_5->setText(str);
     deg_unit_6->setText(str);
 
-    default_styleSheet = btn_chgHeading->styleSheet();
+    default_styleSheet = mainWin->styleSheet();
 
     btn_WP->setText(tr("Prochaine balise (0 WP)"));
 
@@ -176,6 +183,8 @@ boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) :
     set_style(this->goPilotOrtho);
     set_style(this->goVBVMG);
     set_style(this->goVMG);
+//    editAngle->setPalette(QApplication::palette());
+//    editHeading->setPalette(QApplication::palette());
 }
 void boardVLM::set_style(QPushButton * button, QColor color, QColor color2)
 {
@@ -216,7 +225,13 @@ void boardVLM::set_style(QPushButton * button, QColor color, QColor color2)
     {
         bgString="background-color: "+color.name()+";";
     }
-    button->setStyleSheet(borderString+bgString+hoverString);
+    QString textColor="QPushButton{color: black;}";
+    button->setStyleSheet(borderString+bgString+hoverString+textColor);
+    QPalette palette=button->palette();
+    palette.setColor(QPalette::ButtonText,QColor(10,10,10));
+    palette.setColor(QPalette::WindowText,QColor(10,10,10));
+    palette.setColor(QPalette::Text,QColor(10,10,10));
+    button->setPalette(palette);
 }
 
 bool boardVLM::eventFilter(QObject *obj, QEvent *event)
