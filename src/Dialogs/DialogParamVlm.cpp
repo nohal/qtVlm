@@ -74,26 +74,29 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     //QPluginLoader pgl;
     comboBoard->addItem(tr("Classical VLM board"),0);
     //qWarning()<<"start loading plugins";
-    QDir        dir (Util::currentPath() + "/boards");
-    QStringList files = dir.entryList (QStringList ("*.ui"));
-    QUiLoader   loader;
-    foreach(const QString &filename,files)
+    if(parent->getPlayer() && parent->getPlayer()->getType()==BOAT_VLM)
     {
-       QFile    uiFile (dir.filePath (filename));
-       uiFile.open (QFile::ReadOnly);
-       QWidget* tst = loader.load (&uiFile);
-       uiFile.close();
-       if ((tst != NULL) && (qobject_cast<BoardInterface*> (tst) != NULL))
-       {
-          comboBoard->addItem(tst->objectName(), dir.filePath (filename));
-          delete tst;
-       } else {
-           qWarning() << "Could not load board definition"
-                      << filename;
-#ifdef QT_V5
-           qWarning() << loader.errorString();
-#endif
-       }
+        QDir        dir (Util::currentPath() + "/boards");
+        QStringList files = dir.entryList (QStringList ("*.ui"));
+        QUiLoader   loader;
+        foreach(const QString &filename,files)
+        {
+           QFile    uiFile (dir.filePath (filename));
+           uiFile.open (QFile::ReadOnly);
+           QWidget* tst = loader.load (&uiFile);
+           uiFile.close();
+           if ((tst != NULL) && (qobject_cast<BoardInterface*> (tst) != NULL))
+           {
+              comboBoard->addItem(tst->objectName(), dir.filePath (filename));
+              delete tst;
+           } else {
+               qWarning() << "Could not load board definition"
+                          << filename;
+    #ifdef QT_V5
+               qWarning() << loader.errorString();
+    #endif
+           }
+        }
     }
     QString currentBoard=Settings::getSetting("vlmBoard","0").toString();
     // foreach(const QString &filename,files)

@@ -5138,7 +5138,9 @@ waves height</source>
     </message>
     <message>
         <source> min</source>
-        <extracomment>min</extracomment>
+        <extracomment>min
+----------
+min</extracomment>
         <translation></translation>
     </message>
     <message>
@@ -5148,7 +5150,13 @@ waves height</source>
     </message>
     <message>
         <source> nds</source>
-        <extracomment>nds</extracomment>
+        <extracomment>nds
+----------
+nds
+----------
+nds
+----------
+nds</extracomment>
         <translation></translation>
     </message>
     <message>
@@ -6364,16 +6372,16 @@ p, li { white-space: pre-wrap; }
         <translation>Autoriser la détection des gestes</translation>
     </message>
     <message>
-        <source>Tableau de board VLM</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Ombre</source>
         <translation></translation>
     </message>
     <message>
         <source>Style Fusion (necessite de relancer qtvlm)</source>
         <translation>Style Fusion (nécessite de relancer qtVlm)</translation>
+    </message>
+    <message>
+        <source>Tableau de board</source>
+        <translation></translation>
     </message>
 </context>
 <context>

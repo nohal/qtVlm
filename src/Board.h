@@ -46,6 +46,8 @@ class board : public QWidget
         bool currentBoardIsVisibe();
 
         int build_showHideMenu(QMenu * menu);
+        static void setFontDialog(QWidget *o);
+        static void setFontDialog(QObject *o);
 
         ~board();
 public slots:
