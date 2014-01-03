@@ -1434,7 +1434,9 @@ void myCentralWidget::slot_fileInfo_GRIB_current(void) {
     fileInfo_GRIB(grib);
 }
 
-void myCentralWidget::fileInfo_GRIB(int grbType) {
+void myCentralWidget::fileInfo_GRIB(int grbType)
+{
+#ifndef __MAC_QTVLM
     if(Settings::getSetting("showGribInfoAfterLoad","1")=="1") {
         if(dataManager) {
             Grib * grib=dataManager->get_grib(grbType);
@@ -1442,6 +1444,7 @@ void myCentralWidget::fileInfo_GRIB(int grbType) {
                 fileInfo_GRIB(grib);
         }
     }
+#endif
 }
 
 void myCentralWidget::fileInfo_GRIB(Grib * grib) {

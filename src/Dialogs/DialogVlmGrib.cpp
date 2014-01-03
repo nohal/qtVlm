@@ -248,7 +248,9 @@ void DialogVlmGrib::requestFinished (QByteArray data)
                 if(!gribFileReceived(&data))
                     showDialog();
                 else
+                {
                     timerDelay->start();
+                }
 
             break;
     }
