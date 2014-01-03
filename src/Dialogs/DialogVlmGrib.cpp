@@ -52,6 +52,10 @@ DialogVlmGrib::DialogVlmGrib(MainWindow * ,myCentralWidget * parent,inetConnexio
                              tr("VLM Grib"),
                              tr("Chargement de la liste de grib"));
 
+    timerDelay=new QTimer(this);
+    timerDelay->setSingleShot(true);
+    timerDelay->setInterval(1000);
+    connect(timerDelay,SIGNAL(timeout()),this,SLOT(slot_timerDelay()));
 }
 
 void DialogVlmGrib::done(int res)
@@ -214,6 +218,10 @@ void DialogVlmGrib::slot_abort()
     this->inetAbort();
     filename.clear();
 }
+void DialogVlmGrib::slot_timerDelay()
+{
+    emit signalGribFileReceived(filename);
+}
 
 void DialogVlmGrib::requestFinished (QByteArray data)
 {
@@ -240,7 +248,7 @@ void DialogVlmGrib::requestFinished (QByteArray data)
                 if(!gribFileReceived(&data))
                     showDialog();
                 else
-                    emit signalGribFileReceived(filename);
+                    timerDelay->start();
 
             break;
     }

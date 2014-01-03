@@ -47,7 +47,8 @@ class DialogVlmGrib : public QDialog, public Ui::DialogVLM_grib_ui, public inetC
     public slots:
         void slot_abort();
 
-    private:
+        void slot_timerDelay();
+private:
         QRadioButton * listRadio[5];
         QMessageBox * waitBox;
 
@@ -56,6 +57,7 @@ class DialogVlmGrib : public QDialog, public Ui::DialogVLM_grib_ui, public inetC
         bool doRequest(int reqType);
         int parseFolderListing(QString data);
         bool gribFileReceived(QByteArray * content);
+        QTimer * timerDelay;
 };
 
 #endif // DIALOGVLM_GRIB_H
