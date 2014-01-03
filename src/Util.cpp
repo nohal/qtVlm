@@ -365,7 +365,12 @@ QString Util::formatDegres(const double &x)
     {
         r.sprintf("%.2fdeg",x);
     }
-    r=r.replace("deg",QObject::tr("deg"));
+    QString deg = QObject::tr ("deg");
+    if (deg == "deg") {
+       // No translations available
+       deg = "°";
+    }
+    r=r.replace("deg",deg);
     return r;
 }
 //---------------------------------------------------------------------
