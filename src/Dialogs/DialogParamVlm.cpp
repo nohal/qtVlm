@@ -87,7 +87,7 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
            uiFile.close();
            if ((tst != NULL) && (qobject_cast<BoardInterface*> (tst) != NULL))
            {
-              comboBoard->addItem(tst->objectName(), dir.filePath (filename));
+              comboBoard->addItem(tst->windowTitle(), dir.filePath (filename));
               delete tst;
            } else {
                qWarning() << "Could not load board definition"
