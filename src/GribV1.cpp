@@ -139,9 +139,10 @@ bool GribV1::loadFile(QString fileName) {
 
     int compressMode=findCompressMode(fname.c_str());
 
+#ifdef PRINT_WARNING
     qWarning() << "GV1 loading: file " << fileName;
     qWarning() << "GV1 loading: compress mode found: " << compressMode;
-
+#endif
     if(compressMode==COMPRESS_NO_GRIB)
         return false;
 
@@ -201,7 +202,7 @@ bool GribV1::readAllGribRecords(const char * fname,int compressMode) {
                 recAdded=true;
                 addRecord(rec);
             }
-#if 1
+#ifdef PRINT_WARNING
             else
             {
                 qWarning()<<"GribReader: unknown record type: key="<<(int)rec->get_dataKey();
@@ -221,13 +222,15 @@ bool GribV1::readAllGribRecords(const char * fname,int compressMode) {
     }
     if(fptr)
         zu_close(fptr);
-
+#ifdef PRINT_WARNING
     qWarning() << "GRIBV1 load finished";
     qWarning() << "NB key: " << mapGribRecords.size();
     qWarning() << "List:";
-    std::map <long int, QMap<time_t,GribRecord *>* >::iterator it;
     int i=0;
     QString str;
+
+    std::map <long int, QMap<time_t,GribRecord *>* >::iterator it;
+
     for(it=mapGribRecords.begin();it!=mapGribRecords.end();++it) {
         str =  "key " + QString().setNum(i) + ": key= " + QString().setNum(it->first) + ", nb elem=" + QString().setNum(it->second->size());
         if(it->second->size()>0) {
@@ -238,6 +241,7 @@ bool GribV1::readAllGribRecords(const char * fname,int compressMode) {
         qWarning() << str;
         ++i;
     }
+#endif
 
     return true;
 }

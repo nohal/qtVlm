@@ -295,9 +295,11 @@ void BarrierSet::readBarriersFromDisk(MainWindow * mainWindow) {
         }
         node = node.nextSibling();
     }
-    qWarning() << "Discarding " << discarded << " barrierSet during load";
-    if(discarded>0)
+
+    if(discarded>0) {
+        qWarning() << "Discarding " << discarded << " barrierSet during load";
         BarrierSet::saveBarriersToDisk();
+    }
 }
 
 bool BarrierSet::barrierSetListContains(QString key) {

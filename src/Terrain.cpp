@@ -640,11 +640,11 @@ void Terrain::drawGrib(QPainter &pnt)
 {
     MapDataDrawer * mapDataDrawer=centralWidget->get_mapDataDrawer();
         //QTime t1 = QTime::currentTime();
-    qWarning() << "Grb drawing colorMap: " << colorMapMode << " / " << colorMapLevelType << " / " << colorMapLevelValue
+    /*qWarning() << "Grb drawing colorMap: " << colorMapMode << " / " << colorMapLevelType << " / " << colorMapLevelValue
                 << " frstArw: " << frstArwMode << " / " << frstArwLevelType << " / " << frstArwLevelValue
                 << " secArw: " << secArwMode << " / " << secArwLevelType << " / " << secArwLevelValue
                 << " label: " << labelMode << " / " << labelLevelType << " / " << labelLevelValue;
-
+*/
     if(colorMapMode!=DATA_NOTDEF)
         mapDataDrawer->drawColorMapGeneric_DTC(pnt,proj,colorMapMode,colorMapLevelType,colorMapLevelValue,colorMapSmooth);
 
