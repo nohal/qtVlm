@@ -121,6 +121,14 @@ DialogLoadGrib::DialogLoadGrib(MainWindow *main) : QDialog(main)
     connect(chkAltitude850, SIGNAL(stateChanged(int)), 	this,  SLOT(slotParameterUpdated()));
     connect(chkAltitudeAll, SIGNAL(stateChanged(int)), 	this,  SLOT(slotAltitudeAll()));
     this->setParent(main);
+    timerDelay=new QTimer(this);
+    timerDelay->setSingleShot(true);
+    timerDelay->setInterval(1000);
+    connect(timerDelay,SIGNAL(timeout()),this,SLOT(slot_timerDelay()));
+}
+void DialogLoadGrib::slot_timerDelay()
+{
+    emit signalGribFileReceived(fileName);
 }
 
 //-------------------------------------------------------------------------------
@@ -130,6 +138,7 @@ DialogLoadGrib::~DialogLoadGrib()
     Settings::setSetting(this->objectName()+".width",this->width());
     Settings::setSetting(this->objectName()+".positionx",this->pos().x());
     Settings::setSetting(this->objectName()+".positiony",this->pos().y());
+    delete timerDelay;
     if (loadgrib != NULL)
         delete loadgrib;
 }
@@ -146,7 +155,7 @@ void DialogLoadGrib::slotGribMessage(QString msg)
 }
 
 //----------------------------------------------------
-void DialogLoadGrib::slotGribDataReceived(QByteArray *content, QString fileName)
+void DialogLoadGrib::slotGribDataReceived(QByteArray *content, QString file)
 {
     QString gribPath=Settings::getSetting("edtGribFolder",appFolder.value("grib")).toString();
     QDir dirGrib(gribPath);
@@ -156,7 +165,7 @@ void DialogLoadGrib::slotGribDataReceived(QByteArray *content, QString fileName)
         Settings::setSetting("askGribFolder",1);
         Settings::setSetting("edtGribFolder",gribPath);
     }
-    fileName=gribPath+"/"+fileName;
+    fileName=gribPath+"/"+file;
     if(Settings::getSetting("askGribFolder",1)==1)
     {
         fileName = QFileDialog::getSaveFileName(this,
@@ -175,7 +184,7 @@ void DialogLoadGrib::slotGribDataReceived(QByteArray *content, QString fileName)
             saveFile->close();
         }
         if (ok && nb>0) {
-            emit signalGribFileReceived(fileName);
+            timerDelay->start();
             loadInProgress = false;
             btCancel->setText(tr("Annuler"));
             btOK->setEnabled(true);

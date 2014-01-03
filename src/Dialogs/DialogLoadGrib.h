@@ -66,7 +66,7 @@ class DialogLoadGrib : public QDialog
         void slotBtOK();
         void slotBtCancel();
         void slotServerStatus();
-        void slotGribDataReceived(QByteArray *content, QString fileName);
+        void slotGribDataReceived(QByteArray *content, QString file);
         void slotGribFileError(QString error);
         void slotGribMessage(QString msg);
         void slotGribStartLoadData();
@@ -75,7 +75,8 @@ class DialogLoadGrib : public QDialog
         void slotUngrayButtons();
         void slotProgress(qint64,qint64);
 
-    signals:
+        void slot_timerDelay();
+signals:
         void signalGribFileReceived(QString fileName);
         void clearSelection();
 
@@ -133,7 +134,8 @@ class DialogLoadGrib : public QDialog
 
         void    updateParameters();
         void    addSeparator (QLayout *layout, char orientation);	// 'H' or 'V'
-
+        QTimer  * timerDelay;
+        QString fileName;
 
 };
 
