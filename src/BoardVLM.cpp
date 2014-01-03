@@ -57,6 +57,8 @@ boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) :
     {
         editAngle->setStyleSheet("background-color: rgb(53, 53, 53);");
         editHeading->setStyleSheet("background-color: rgb(53, 53, 53);");
+        frame->setStyleSheet("background-color: rgb(21, 21, 138);");
+        frame_2->setStyleSheet("background-color: rgb(21, 21, 138);");
     }
 #endif
     QMap<QWidget *,QFont> exceptions;

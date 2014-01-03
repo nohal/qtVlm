@@ -395,7 +395,7 @@
        </property>
        <property name="geometry">
         <rect>
-         <x>4</x>
+         <x>2</x>
          <y>4</y>
          <width>87</width>
          <height>21</height>
@@ -556,7 +556,7 @@
       <widget class="tool_edtSpinBox" name="editHeading">
        <property name="geometry">
         <rect>
-         <x>4</x>
+         <x>2</x>
          <y>33</y>
          <width>86</width>
          <height>24</height>
