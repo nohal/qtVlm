@@ -243,9 +243,12 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     if(Settings::getSetting("fusionStyle",0).toInt()==1)
     {
         qWarning()<<"setting up Black fusion style";
-        QApplication::setStyle(QStyleFactory::create("Fusion"));
+        QStyle * fusion=QStyleFactory::create("Fusion");
+        qApp->setStyle(fusion);
+        qApp->styleHints();
+
         QPalette p;
-        p = QApplication::palette();
+        //p = QApplication::palette();
         p.setColor(QPalette::Window, QColor(53,53,53));
         p.setColor(QPalette::Button, QColor(53,53,53));
         p.setColor(QPalette::Base, QColor(53,53,53));
@@ -253,7 +256,69 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
         p.setColor(QPalette::ButtonText, QColor(234,221,21));
         p.setColor(QPalette::WindowText, QColor(255,255,255));
         p.setColor(QPalette::Text, QColor(255,255,255));
-        QApplication::setPalette(p);
+        QBrush brush = p.background();
+        brush.setColor(brush.color().light(300));
+        QColor dis=brush.color();
+        //QColor red=Qt::red;
+        p.setColor(QPalette::Disabled, QPalette::Text, dis); // color menu item base
+        p.setColor(QPalette::Disabled, QPalette::Light, QColor(53,53,53));
+        p.setColor(QPalette::Disabled, QPalette::WindowText, dis);
+//        p.setColor(QPalette::Disabled, QPalette::Window, dis);
+//        p.setColor(QPalette::Disabled, QPalette::ButtonText, dis);
+//        p.setColor(QPalette::Disabled, QPalette::Base, dis);
+//        p.setColor(QPalette::Disabled, QPalette::Button, dis);
+//        p.setColor(QPalette::Disabled, QPalette::BrightText, dis);
+//        p.setColor(QPalette::Disabled, QPalette::Midlight, dis);
+//        p.setColor(QPalette::Disabled, QPalette::Dark, dis);
+//        p.setColor(QPalette::Disabled, QPalette::Mid, dis);
+//        p.setColor(QPalette::Disabled, QPalette::Shadow, dis);
+
+//        p.setColor(QPalette::Inactive, QPalette::Window, dis);
+//        p.setColor(QPalette::Inactive, QPalette::WindowText, dis);
+//        p.setColor(QPalette::Inactive, QPalette::Text, dis);
+//        p.setColor(QPalette::Inactive, QPalette::ButtonText, dis);
+//        p.setColor(QPalette::Inactive, QPalette::Base, dis);
+//        p.setColor(QPalette::Inactive, QPalette::Button, dis);
+//        p.setColor(QPalette::Inactive, QPalette::HighlightedText, dis);
+//        p.setColor(QPalette::Inactive, QPalette::BrightText, dis);
+//        p.setColor(QPalette::Inactive, QPalette::Light, dis);
+//        p.setColor(QPalette::Inactive, QPalette::Midlight, dis);
+//        p.setColor(QPalette::Inactive, QPalette::Dark, dis);
+//        p.setColor(QPalette::Inactive, QPalette::Mid, dis);
+//        p.setColor(QPalette::Inactive, QPalette::Shadow, dis);
+
+
+//        p.setBrush(QPalette::Disabled, QPalette::WindowText, brush);
+//        p.setBrush(QPalette::Disabled, QPalette::Text, brush);
+//        p.setBrush(QPalette::Disabled, QPalette::ButtonText, brush);
+//        p.setBrush(QPalette::Disabled, QPalette::Base, brush);
+//        p.setBrush(QPalette::Disabled, QPalette::Button, brush);
+//        p.setBrush(QPalette::Disabled, QPalette::HighlightedText, brush);
+//        p.setBrush(QPalette::Disabled, QPalette::BrightText, brush);
+//        p.setBrush(QPalette::Disabled, QPalette::Light, brush);
+//        p.setBrush(QPalette::Disabled, QPalette::Midlight, brush);
+//        p.setBrush(QPalette::Disabled, QPalette::Dark, brush);
+//        p.setBrush(QPalette::Disabled, QPalette::Mid, brush);
+//        p.setBrush(QPalette::Disabled, QPalette::Shadow, brush);
+//        p.setBrush(QPalette::Inactive, QPalette::WindowText, brush);
+//        p.setBrush(QPalette::Inactive, QPalette::Text, brush);
+//        p.setBrush(QPalette::Inactive, QPalette::ButtonText, brush);
+//        p.setBrush(QPalette::Inactive, QPalette::Base, brush);
+//        p.setBrush(QPalette::Inactive, QPalette::Button, brush);
+//        p.setBrush(QPalette::Inactive, QPalette::HighlightedText, brush);
+//        p.setBrush(QPalette::Inactive, QPalette::BrightText, brush);
+//        p.setBrush(QPalette::Inactive, QPalette::Light, brush);
+//        p.setBrush(QPalette::Inactive, QPalette::Midlight, brush);
+//        p.setBrush(QPalette::Inactive, QPalette::Dark, brush);
+//        p.setBrush(QPalette::Inactive, QPalette::Mid, brush);
+//        p.setBrush(QPalette::Inactive, QPalette::Shadow, brush);
+//        p.setColor(QPalette::Disabled,QPalette::ButtonText,QColor(121,121,147));
+//        p.setColor(QPalette::Disabled,QPalette::Text,QColor(121,121,147));
+//        p.setColor(QPalette::Disabled,QPalette::WindowText,QColor(121,121,147));
+//        p.setColor(QPalette::Disabled,QPalette::HighlightedText,QColor(121,121,147));
+        qApp->setPalette(p);
+//        QString styleMenu="QMenu::item:disabled{color:#101010;}";
+//        qApp->setStyleSheet(styleMenu);
     }
 #endif
     isStartingUp=true;
