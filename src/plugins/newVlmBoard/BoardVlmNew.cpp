@@ -1290,9 +1290,9 @@ void VlmCompass::draw(QPainter * painter)
     painter->rotate(gateDir);
     painter->drawPixmap(-100,-100,img_arrow_gate);
     painter->restore();
-    painter->save();
     if(gateVmg!=-1)
     {
+        painter->save();
         painter->translate(100,100);
         painter->rotate(gateVmg);
         painter->drawPixmap(-100,-100,img_arrow_gateVmg);
