@@ -4328,14 +4328,17 @@ void myCentralWidget::slot_editRoutage(ROUTAGE * routage,bool createMode,POI *en
     else
     {
         delete routage_editor;
-        update_menuRoutage();
-        QApplication::processEvents();
-        if(routage && (createMode || routage->getIsNewPivot()))
-            routage->calculate();
-        else if(routage && routage->getI_iso() && !routage->getI_done() && !routage->isConverted())
-            routage->calculateInverse();
-        else if(routage && routage->getI_iso() && routage->getI_done() && !routage->isConverted())
-            routage->showIsoRoute();
+        if(routage && !routage->isConverted())
+        {
+            update_menuRoutage();
+            QApplication::processEvents();
+            if(routage && (createMode || routage->getIsNewPivot()))
+                routage->calculate();
+            else if(routage && routage->getI_iso() && !routage->getI_done() && !routage->isConverted())
+                routage->calculateInverse();
+            else if(routage && routage->getI_iso() && routage->getI_done() && !routage->isConverted())
+                routage->showIsoRoute();
+        }
     }
 }
 void myCentralWidget::deleteRoute(ROUTE * route)

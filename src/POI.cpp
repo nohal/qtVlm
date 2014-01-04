@@ -1547,6 +1547,7 @@ void POI::slot_finePosit(bool silent)
 void POI::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
 {
     QFont myFont=(QFont(QApplication::font()));
+
     if(this->piloteSelected || !labelTransp)
         myFont.setBold(true);
     this->setFont(myFont);
@@ -1581,12 +1582,12 @@ void POI::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
             }
         }
         pnt->setFont(font());
+        QPen pe=pnt->pen();
         if(this->notSimplificable)
-        {
-            QPen pe=pnt->pen();
             pe.setColor(Qt::red);
-            pnt->setPen(pe);
-        }
+        else
+            pe.setColor(Qt::black);
+        pnt->setPen(pe);
         pnt->drawText(10,fm.height()-2,my_str);
     }
     QColor myColor;

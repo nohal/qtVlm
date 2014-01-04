@@ -2395,7 +2395,7 @@ void ROUTAGE::slot_calculate()
             i_isochrones.append(iso);
         else
             isochrones.append(iso);
-        qWarning()<<"routage iso nb"<<isochrones.size();
+        //qWarning()<<"routage iso nb"<<isochrones.size();
 #ifdef traceTime
         time.start();
 #endif
