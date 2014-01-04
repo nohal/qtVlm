@@ -203,6 +203,9 @@ void opponent::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget 
             bgcolor=QColor(239,48,36,150);
         else
             bgcolor = QColor(255,255,255,150);
+        QPen p=pnt->pen();
+        p.setColor(Qt::black);
+        pnt->setPen(p);
         if(!drawFlag)
         {
             pnt->fillRect(9,0, width-10,height-1, QBrush(bgcolor));
