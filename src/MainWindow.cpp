@@ -206,8 +206,6 @@ void MainWindow::connectSignals()
     //-------------------------------------
     // Autres signaux
     //-------------------------------------
-    connect(loadVLM_grib, SIGNAL(signalGribFileReceived(QString)),
-            this,  SLOT(slot_gribFileReceived(QString)));
 
     connect(this,SIGNAL(setChangeStatus(bool,bool,bool)),mb,SLOT(slot_setChangeStatus(bool,bool,bool)));
 }
@@ -457,7 +455,6 @@ void MainWindow::continueSetup()
 
     pilototo = new DialogPilototo(this,my_centralWidget,my_centralWidget->getInet());
 
-    loadVLM_grib = new DialogVlmGrib(this,my_centralWidget,my_centralWidget->getInet());
 
     connectSignals();
 
@@ -2677,6 +2674,9 @@ void MainWindow::releasePolar(QString fname)
 
 void MainWindow::slotLoadVLMGrib(void)
 {
+    loadVLM_grib = new DialogVlmGrib(this,my_centralWidget,my_centralWidget->getInet());
+    connect(loadVLM_grib, SIGNAL(signalGribFileReceived(QString)),
+            this,  SLOT(slot_gribFileReceived(QString)));
     loadVLM_grib->showDialog();
 }
 

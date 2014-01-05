@@ -68,9 +68,12 @@ void DialogVlmGrib::done(int res)
     {        
         if(!doRequest(VLM_REQUEST_GET_FILE))
             res=QDialog::Rejected;
+        else
+            return;
     }
 
-    QDialog::done(res);
+    //QDialog::done(res);
+    this->deleteLater();
 }
 
 void DialogVlmGrib::showDialog(void)
@@ -217,10 +220,12 @@ void DialogVlmGrib::slot_abort()
     qWarning()<<"aborting VLM grib donwload";
     this->inetAbort();
     filename.clear();
+    this->deleteLater();
 }
 void DialogVlmGrib::slot_timerDelay()
 {
     emit signalGribFileReceived(filename);
+    this->deleteLater();
 }
 
 void DialogVlmGrib::requestFinished (QByteArray data)
@@ -235,23 +240,24 @@ void DialogVlmGrib::requestFinished (QByteArray data)
             waitBox->hide();
             nb=parseFolderListing(QString(data));
             if(nb==0)
+            {
+                this->deleteLater();
                 return;
+            }
             listRadio[nb-1]->setChecked(true);
             exec();
             break;
         case VLM_REQUEST_GET_FILE:
-            if(filename.isEmpty())
-            {
-                qWarning() << "Empty file name in VLM grib save";
-            }
+            if(!gribFileReceived(&data))
+                showDialog();
             else
-                if(!gribFileReceived(&data))
-                    showDialog();
-                else
-                {
-                    timerDelay->start();
-                }
-
+                timerDelay->start();
             break;
     }
+}
+DialogVlmGrib::~DialogVlmGrib()
+{
+    delete waitBox;
+    delete timerDelay;
+    //delete[] listRadio;
 }

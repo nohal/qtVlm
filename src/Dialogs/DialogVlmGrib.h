@@ -41,6 +41,7 @@ class DialogVlmGrib : public QDialog, public Ui::DialogVLM_grib_ui, public inetC
         void done(int res);
         void showDialog(void);
         void requestFinished (QByteArray);
+        ~DialogVlmGrib();
 
     signals:
         void signalGribFileReceived(QString);
