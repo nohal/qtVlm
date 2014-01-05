@@ -206,8 +206,8 @@ bool DialogVlmGrib::doRequest(int reqType)
             else
                 filename=filename.mid(0,23);
             page="/"+filename;
-            connect (this->getInet()->getProgressDialog(),SIGNAL(rejected()),this,SLOT(slot_abort()));
             inetGetProgress(VLM_REQUEST_GET_FILE,page,"http://grib.v-l-m.org",false);
+            connect (this->getInet()->getProgressDialog(),SIGNAL(rejected()),this,SLOT(slot_abort()));
             break;
     }
     return true;
