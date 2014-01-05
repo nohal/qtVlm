@@ -42,7 +42,7 @@ inetConnexion::inetConnexion(QWidget * main)
             this,SLOT(slot_authRequired(QNetworkReply*,QAuthenticator*)));
 
     slot_updateInet();
-    progressDialog=new DialogInetProgess(main);
+    progressDialog=NULL;
     hasProgress=false;
 }
 
@@ -51,6 +51,8 @@ inetConnexion::~inetConnexion(void)
     resetInet();
     if(inetManager)
         delete inetManager;
+    if(progressDialog)
+        delete progressDialog;
 }
 
 void inetConnexion::slot_updateInet(void)
@@ -92,6 +94,9 @@ void inetConnexion::doRequestGetProgress(inetClient* client,QString requestUrl,Q
     else
     {
         hasProgress=true;
+        if(progressDialog)
+            delete progressDialog;
+        progressDialog=new DialogInetProgess();
         progressDialog->showDialog(host+requestUrl);
         doRequest(REQUEST_GET,client,requestUrl,QString(),host,needAuth);
     }
@@ -184,8 +189,12 @@ void inetConnexion::slot_requestFinished(QNetworkReply * currentReply)
         {
             qWarning() << "Removing dwnld progress";
             currentClient->setHasProgress(false);
-            progressDialog->hide();
             disconnect(currentReply,SIGNAL(downloadProgress(qint64,qint64)),this,SLOT(slot_progess(qint64,qint64)));
+            if(progressDialog)
+            {
+                delete progressDialog;
+                progressDialog=NULL;
+            }
         }
 
         if (currentReply->error() != QNetworkReply::NoError) {
