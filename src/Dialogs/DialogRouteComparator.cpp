@@ -121,24 +121,24 @@ void DialogRouteComparator::insertRoute(const int &n)
     items[x]->setData(iconI,Qt::DecorationRole);
     items[x]->setData(route->getColor().toRgb(),Qt::UserRole);
     items[x]->setData(n,Qt::UserRole+1);
-    if(x%2!=0) items[x]->setData(QColor(240,240,240),Qt::BackgroundRole);
+    if(x%2!=0) items[x]->setData(this->palette().alternateBase().color(),Qt::BackgroundRole);
     items[x++]->setTextAlignment(Qt::AlignCenter| Qt::AlignVCenter);
     items.append(new QStandardItem(route->getName()));
     items[x]->setData(route->getName().toLower(),Qt::UserRole);
     items[x]->setData(n,Qt::UserRole+1);
-    if(x%2!=0) items[x]->setData(QColor(240,240,240),Qt::BackgroundRole);
+    if(x%2!=0) items[x]->setData(this->palette().alternateBase().color(),Qt::BackgroundRole);
     items[x++]->setTextAlignment(Qt::AlignCenter| Qt::AlignVCenter);
     items.append(new QStandardItem(route->getStartTime().toString("dd MMM-hh:mm")));
     items[x]->setData(route->getStartTime().toTime_t(),Qt::UserRole);
     items[x]->setData(n,Qt::UserRole+1);
-    if(x%2!=0) items[x]->setData(QColor(240,240,240),Qt::BackgroundRole);
+    if(x%2!=0) items[x]->setData(this->palette().alternateBase().color(),Qt::BackgroundRole);
     items[x++]->setTextAlignment(Qt::AlignCenter| Qt::AlignVCenter);
     if(route->getHas_eta())
     {
         items.append(new QStandardItem(QDateTime().fromTime_t(route->getEta()).toUTC().toString("dd MMM-hh:mm")));
         items[x]->setData((int)(route->getEta()),Qt::UserRole);
         items[x]->setData(n,Qt::UserRole+1);
-        if(x%2!=0) items[x]->setData(QColor(240,240,240),Qt::BackgroundRole);
+        if(x%2!=0) items[x]->setData(this->palette().alternateBase().color(),Qt::BackgroundRole);
         items[x++]->setTextAlignment(Qt::AlignCenter| Qt::AlignVCenter);
         double days=(route->getEta()-route->getStartDate())/86400.0000;
         if(qRound(days)>days)
@@ -155,7 +155,7 @@ void DialogRouteComparator::insertRoute(const int &n)
                                        QString::number((int)mins)+" "+tr("minutes")));
         items[x]->setData((int)(route->getEta()-route->getStartDate()),Qt::UserRole);
         items[x]->setData(n,Qt::UserRole+1);
-        if(x%2!=0) items[x]->setData(QColor(240,240,240),Qt::BackgroundRole);
+        if(x%2!=0) items[x]->setData(this->palette().alternateBase().color(),Qt::BackgroundRole);
         items[x++]->setTextAlignment(Qt::AlignCenter| Qt::AlignVCenter);
     }
     else
@@ -163,59 +163,59 @@ void DialogRouteComparator::insertRoute(const int &n)
         items.append(new QStandardItem("N/A"));
         items[x]->setData("N/A",Qt::UserRole);
         items[x]->setData(n,Qt::UserRole+1);
-        if(x%2!=0) items[x]->setData(QColor(240,240,240),Qt::BackgroundRole);
+        if(x%2!=0) items[x]->setData(this->palette().alternateBase().color(),Qt::BackgroundRole);
         items[x++]->setTextAlignment(Qt::AlignCenter| Qt::AlignVCenter);
         items.append(new QStandardItem("N/A"));
         items[x]->setData("N/A",Qt::UserRole);
         items[x]->setData(n,Qt::UserRole+1);
-        if(x%2!=0) items[x]->setData(QColor(240,240,240),Qt::BackgroundRole);
+        if(x%2!=0) items[x]->setData(this->palette().alternateBase().color(),Qt::BackgroundRole);
         items[x++]->setTextAlignment(Qt::AlignCenter| Qt::AlignVCenter);
     }
     Orthodromie oo(route->getStartLon(),route->getStartLat(),route->getLastPoi()->getLongitude(),route->getLastPoi()->getLatitude());
     items.append(new QStandardItem(QString( "%L1" ).arg(oo.getDistance(),0,'f',2)+tr(" NM")));
     items[x]->setData(oo.getDistance(),Qt::UserRole);
     items[x]->setData(n,Qt::UserRole+1);
-    if(x%2!=0) items[x]->setData(QColor(240,240,240),Qt::BackgroundRole);
+    if(x%2!=0) items[x]->setData(this->palette().alternateBase().color(),Qt::BackgroundRole);
     items[x++]->setTextAlignment(Qt::AlignRight| Qt::AlignVCenter);
     items.append(new QStandardItem(QString( "%L1" ).arg(stats.totalDistance,0,'f',2)+tr(" NM")));
     items[x]->setData(stats.totalDistance,Qt::UserRole);
     items[x]->setData(n,Qt::UserRole+1);
-    if(x%2!=0) items[x]->setData(QColor(240,240,240),Qt::BackgroundRole);
+    if(x%2!=0) items[x]->setData(this->palette().alternateBase().color(),Qt::BackgroundRole);
     items[x++]->setTextAlignment(Qt::AlignRight| Qt::AlignVCenter);
     items.append(new QStandardItem(QString( "%L1" ).arg(qMax(0.0,stats.averageBS),0,'f',2)+tr(" kts")));
     items[x]->setData(qMax(0.0,stats.averageBS),Qt::UserRole);
     items[x]->setData(n,Qt::UserRole+1);
-    if(x%2!=0) items[x]->setData(QColor(240,240,240),Qt::BackgroundRole);
+    if(x%2!=0) items[x]->setData(this->palette().alternateBase().color(),Qt::BackgroundRole);
     items[x++]->setTextAlignment(Qt::AlignRight| Qt::AlignVCenter);
     items.append(new QStandardItem(QString( "%L1" ).arg(qMax(0.0,stats.maxBS),0,'f',2)+tr(" kts")));
     items[x]->setData(qMax(0.0,stats.maxBS),Qt::UserRole);
     items[x]->setData(n,Qt::UserRole+1);
-    if(x%2!=0) items[x]->setData(QColor(240,240,240),Qt::BackgroundRole);
+    if(x%2!=0) items[x]->setData(this->palette().alternateBase().color(),Qt::BackgroundRole);
     items[x++]->setTextAlignment(Qt::AlignRight| Qt::AlignVCenter);
     items.append(new QStandardItem(QString( "%L1" ).arg(stats.minBS>1000.0?0.0:stats.minBS,0,'f',2)+tr(" kts")));
     items[x]->setData(stats.minBS>1000.0?0.0:stats.minBS,Qt::UserRole);
     items[x]->setData(n,Qt::UserRole+1);
-    if(x%2!=0) items[x]->setData(QColor(240,240,240),Qt::BackgroundRole);
+    if(x%2!=0) items[x]->setData(this->palette().alternateBase().color(),Qt::BackgroundRole);
     items[x++]->setTextAlignment(Qt::AlignRight| Qt::AlignVCenter);
     items.append(new QStandardItem(QString( "%L1" ).arg(qMax(0.0,stats.averageTWS),0,'f',2)+tr(" kts")));
     items[x]->setData(qMax(0.0,stats.averageTWS),Qt::UserRole);
     items[x]->setData(n,Qt::UserRole+1);
-    if(x%2!=0) items[x]->setData(QColor(240,240,240),Qt::BackgroundRole);
+    if(x%2!=0) items[x]->setData(this->palette().alternateBase().color(),Qt::BackgroundRole);
     items[x++]->setTextAlignment(Qt::AlignRight| Qt::AlignVCenter);
     items.append(new QStandardItem(QString( "%L1" ).arg(qMax(0.0,stats.maxTWS),0,'f',2)+tr(" kts")));
     items[x]->setData(qMax(0.0,stats.maxTWS),Qt::UserRole);
     items[x]->setData(n,Qt::UserRole+1);
-    if(x%2!=0) items[x]->setData(QColor(240,240,240),Qt::BackgroundRole);
+    if(x%2!=0) items[x]->setData(this->palette().alternateBase().color(),Qt::BackgroundRole);
     items[x++]->setTextAlignment(Qt::AlignRight| Qt::AlignVCenter);
     items.append(new QStandardItem(QString( "%L1" ).arg(stats.minTWS>1000?0.0:stats.minTWS,0,'f',2)+tr(" kts")));
     items[x]->setData(stats.minTWS>1000?0.0:stats.minTWS,Qt::UserRole);
     items[x]->setData(n,Qt::UserRole+1);
-    if(x%2!=0) items[x]->setData(QColor(240,240,240),Qt::BackgroundRole);
+    if(x%2!=0) items[x]->setData(this->palette().alternateBase().color(),Qt::BackgroundRole);
     items[x++]->setTextAlignment(Qt::AlignRight| Qt::AlignVCenter);
     items.append(new QStandardItem(QString( "%L1" ).arg((double)stats.nbTacksGybes,0,'f',0)));
     items[x]->setData(stats.nbTacksGybes,Qt::UserRole);
     items[x]->setData(n,Qt::UserRole+1);
-    if(x%2!=0) items[x]->setData(QColor(240,240,240),Qt::BackgroundRole);
+    if(x%2!=0) items[x]->setData(this->palette().alternateBase().color(),Qt::BackgroundRole);
     items[x++]->setTextAlignment(Qt::AlignRight| Qt::AlignVCenter);
     double days=stats.beatingTime/86400.0000;
     if(qRound(days)>days)
@@ -232,7 +232,7 @@ void DialogRouteComparator::insertRoute(const int &n)
                                    QString::number((int)mins)+" "+tr("minutes")));
     items[x]->setData(stats.beatingTime,Qt::UserRole);
     items[x]->setData(n,Qt::UserRole+1);
-    if(x%2!=0) items[x]->setData(QColor(240,240,240),Qt::BackgroundRole);
+    if(x%2!=0) items[x]->setData(this->palette().alternateBase().color(),Qt::BackgroundRole);
     items[x++]->setTextAlignment(Qt::AlignRight| Qt::AlignVCenter);
     days=stats.reachingTime/86400.0000;
     if(qRound(days)>days)
@@ -249,7 +249,7 @@ void DialogRouteComparator::insertRoute(const int &n)
                                    QString::number((int)mins)+" "+tr("minutes")));
     items[x]->setData(stats.reachingTime,Qt::UserRole);
     items[x]->setData(n,Qt::UserRole+1);
-    if(x%2!=0) items[x]->setData(QColor(240,240,240),Qt::BackgroundRole);
+    if(x%2!=0) items[x]->setData(this->palette().alternateBase().color(),Qt::BackgroundRole);
     items[x++]->setTextAlignment(Qt::AlignRight| Qt::AlignVCenter);
     days=stats.largueTime/86400.0000;
     if(qRound(days)>days)
@@ -266,7 +266,7 @@ void DialogRouteComparator::insertRoute(const int &n)
                                    QString::number((int)mins)+" "+tr("minutes")));
     items[x]->setData(stats.largueTime,Qt::UserRole);
     items[x]->setData(n,Qt::UserRole+1);
-    if(x%2!=0) items[x]->setData(QColor(240,240,240),Qt::BackgroundRole);
+    if(x%2!=0) items[x]->setData(this->palette().alternateBase().color(),Qt::BackgroundRole);
     items[x++]->setTextAlignment(Qt::AlignRight| Qt::AlignVCenter);
     days=stats.engineTime/86400.0000;
     if(qRound(days)>days)
@@ -283,7 +283,7 @@ void DialogRouteComparator::insertRoute(const int &n)
                                    QString::number((int)mins)+" "+tr("minutes")));
     items[x]->setData(stats.engineTime,Qt::UserRole);
     items[x]->setData(n,Qt::UserRole+1);
-    if(x%2!=0) items[x]->setData(QColor(240,240,240),Qt::BackgroundRole);
+    if(x%2!=0) items[x]->setData(this->palette().alternateBase().color(),Qt::BackgroundRole);
     items[x++]->setTextAlignment(Qt::AlignRight| Qt::AlignVCenter);
     days=stats.nightTime/86400.0000;
     if(qRound(days)>days)
@@ -300,7 +300,7 @@ void DialogRouteComparator::insertRoute(const int &n)
                                    QString::number((int)mins)+" "+tr("minutes")));
     items[x]->setData(stats.nightTime,Qt::UserRole);
     items[x]->setData(n,Qt::UserRole+1);
-    if(x%2!=0) items[x]->setData(QColor(240,240,240),Qt::BackgroundRole);
+    if(x%2!=0) items[x]->setData(this->palette().alternateBase().color(),Qt::BackgroundRole);
     items[x++]->setTextAlignment(Qt::AlignRight| Qt::AlignVCenter);
     days=stats.rainTime/86400.0000;
     if(qRound(days)>days)
@@ -317,7 +317,7 @@ void DialogRouteComparator::insertRoute(const int &n)
                                    QString::number((int)mins)+" "+tr("minutes")));
     items[x]->setData(stats.rainTime,Qt::UserRole);
     items[x]->setData(n,Qt::UserRole+1);
-    if(x%2!=0) items[x]->setData(QColor(240,240,240),Qt::BackgroundRole);
+    if(x%2!=0) items[x]->setData(this->palette().alternateBase().color(),Qt::BackgroundRole);
     items[x++]->setTextAlignment(Qt::AlignRight| Qt::AlignVCenter);
     items.append(new QStandardItem(QString( "%L1" ).arg(qMax(0.0,stats.maxWaveHeight),0,'f',2)+tr(" m")));
     items[x]->setData(qMax(0.0,stats.maxWaveHeight),Qt::UserRole);
@@ -326,6 +326,7 @@ void DialogRouteComparator::insertRoute(const int &n)
     items.append(new QStandardItem(QString( "%L1" ).arg(qMax(0.0,stats.combWaveHeight),0,'f',2)+tr(" m")));
     items[x]->setData(qMax(0.0,stats.combWaveHeight),Qt::UserRole);
     items[x]->setData(n,Qt::UserRole+1);
+    if(x%2!=0) items[x]->setData(this->palette().alternateBase().color(),Qt::BackgroundRole);
     items[x++]->setTextAlignment(Qt::AlignRight| Qt::AlignVCenter);
     model->appendRow(items);
     for(x=0;x<model->columnCount();++x)

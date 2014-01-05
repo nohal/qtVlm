@@ -256,7 +256,8 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
         p.setColor(QPalette::ButtonText, QColor(234,221,21));
         p.setColor(QPalette::WindowText, QColor(255,255,255));
         p.setColor(QPalette::Text, QColor(255,255,255));
-        QBrush brush = p.background();
+        p.setColor(QPalette::AlternateBase,QColor(100,100,100));
+        QBrush brush = p.window();
         brush.setColor(brush.color().light(300));
         QColor dis=brush.color();
         //QColor red=Qt::red;

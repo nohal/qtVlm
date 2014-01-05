@@ -425,6 +425,7 @@ void DialogRoute::slotInterval()
                 roadPoint.append(new QStandardItem(QString().sprintf("%.2f",roadItems.at(7))+tr(" nds")));
                 roadPoint[2]->setData(roadItems.at(7),Qt::UserRole);
                 roadPoint[2]->setData(rgb,Qt::BackgroundRole);
+                roadPoint[2]->setData(QColor(Qt::black),Qt::ForegroundRole);
                 roadPoint.append(new QStandardItem(QString().sprintf("%.2f",roadItems.at(6))+tr("deg")));
                 roadPoint[3]->setData(roadItems.at(6),Qt::UserRole);
                 roadPoint.append(new QStandardItem(QString().sprintf("%.2f",qAbs(roadItems.at(8)))+tr("deg")));
@@ -560,9 +561,12 @@ void DialogRoute::slotInterval()
             for(int n=0;n<rmModel->columnCount();++n)
             {
                 if(n%2==0 && n!=2)
-                    roadPoint[n]->setData(QColor(240,240,240),Qt::BackgroundRole);
+                    roadPoint[n]->setData(this->palette().alternateBase().color(),Qt::BackgroundRole);
                 if(n==4)
+                {
                     roadPoint[n]->setData(c,Qt::BackgroundRole);
+                    roadPoint[n]->setData(QColor(Qt::black),Qt::ForegroundRole);
+                }
                 roadPoint[n]->setEditable(false);
                 if(n==0 || n==16 || n==19 || n==20 || roadItems.at(4)==-1 || roadPoint[n]->text()=="N/A")
                     roadPoint[n]->setTextAlignment(Qt::AlignCenter| Qt::AlignVCenter);
