@@ -1293,8 +1293,13 @@ void MainWindow::slotCombineGrib() {
         QString str=QString().setNum(files.size()) + " " + tr("gribs to combine");
         QMessageBox::information(this,tr("Grib combination"),str,QMessageBox::Ok);
         /* select output file */
+#ifndef __MAC_QTVLM
         QString filename = QFileDialog::getSaveFileName(this,
-                                                        tr("Filename of destination file"), "", tr("GRIB file (*.grb *.grib *.grb2 *.grib2)"));
+                           tr("Filename of destination file"), "", tr("GRIB file (*.grb *.grib *.grb2 *.grib2)"));
+#else
+        QString filename = QFileDialog::getSaveFileName(this,
+                           tr("Filename of destination file"), "", tr("GRIB file (*.grb *.grib *.grb2 *.grib2)"),0,QFileDialog::DontUseNativeDialog);
+#endif
         if (filename != "") {
             ofstream fdest;
             fdest.open(filename.toUtf8().constData(),ios::out | ios::trunc | ios::binary);

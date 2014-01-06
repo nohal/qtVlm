@@ -1225,7 +1225,7 @@ void POI::slot_finePosit(bool silent)
     if (route->getLastPoi()==this) return;
     if (route->isBusy()) return;
     if (route->getOptimizing()) return;
-    if (route->getUseVbvmgVlm() && !route->getNewVbvmgVlm())
+    if (/*false &&*/ route->getUseVbvmgVlm() && !route->getNewVbvmgVlm())
     {
         if(!silent)
             QMessageBox::critical(0,tr("Optimisation du placement d'un POI"),

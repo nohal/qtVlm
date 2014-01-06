@@ -146,8 +146,13 @@ bool DialogVlmGrib::gribFileReceived(QByteArray * content)
     filename=gribPath+"/"+filename;
     if(Settings::getSetting("askGribFolder",1)==1)
     {
+#ifndef __MAC_QTVLM
         filename = QFileDialog::getSaveFileName(this,
                          tr("Sauvegarde du fichier GRIB"), filename, "Grib (*.grb)");
+#else
+        filename = QFileDialog::getSaveFileName(this,
+                         tr("Sauvegarde du fichier GRIB"), filename, "Grib (*.grb)",0,QFileDialog::DontUseNativeDialog);
+#endif
     }
 
     if (filename != "")
@@ -204,6 +209,7 @@ bool DialogVlmGrib::doRequest(int reqType)
             else
                 filename=filename.mid(0,23);
             page="/"+filename;
+            this->hide();
             inetGetProgress(VLM_REQUEST_GET_FILE,page,"http://grib.v-l-m.org",false);
             connect (this->getInet()->getProgressDialog(),SIGNAL(rejected()),this,SLOT(slot_abort()));
             break;
