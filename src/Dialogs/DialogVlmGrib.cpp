@@ -51,11 +51,6 @@ DialogVlmGrib::DialogVlmGrib(MainWindow * ,myCentralWidget * parent,inetConnexio
     waitBox = new QMessageBox(QMessageBox::Information,
                              tr("VLM Grib"),
                              tr("Chargement de la liste de grib"));
-
-    timerDelay=new QTimer(this);
-    timerDelay->setSingleShot(true);
-    timerDelay->setInterval(1000);
-    connect(timerDelay,SIGNAL(timeout()),this,SLOT(slot_timerDelay()));
 }
 
 void DialogVlmGrib::done(int res)
@@ -222,11 +217,6 @@ void DialogVlmGrib::slot_abort()
     filename.clear();
     this->deleteLater();
 }
-void DialogVlmGrib::slot_timerDelay()
-{
-    emit signalGribFileReceived(filename);
-    this->deleteLater();
-}
 
 void DialogVlmGrib::requestFinished (QByteArray data)
 {
@@ -251,13 +241,14 @@ void DialogVlmGrib::requestFinished (QByteArray data)
             if(!gribFileReceived(&data))
                 showDialog();
             else
-                timerDelay->start();
+            {
+                emit signalGribFileReceived(filename);
+                this->deleteLater();
+            }
             break;
     }
 }
 DialogVlmGrib::~DialogVlmGrib()
 {
     delete waitBox;
-    delete timerDelay;
-    //delete[] listRadio;
 }

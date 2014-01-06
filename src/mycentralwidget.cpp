@@ -3855,7 +3855,7 @@ void myCentralWidget::treatRoute(ROUTE* route)
         route->setOptimize(false);
         if(route->getFrozen() || (simplify && !route->getHas_eta()))
             QMessageBox::critical(0,QString(QObject::tr("Simplification/Optimisation de route")),QString(QObject::tr("Cette operation est impossible pour une route figee ou une route sans ETA")));
-        else if(route->getUseVbvmgVlm() && !route->getNewVbvmgVlm())
+        else if(/*false &&*/ route->getUseVbvmgVlm() && !route->getNewVbvmgVlm())
             QMessageBox::critical(0,QString(QObject::tr("Simplification/Optimisation de route")),QString(QObject::tr("Cette operation est impossible si le mode de calcul VBVMG est celui de VLM")));
         else
         {
@@ -4328,7 +4328,7 @@ void myCentralWidget::slot_editRoutage(ROUTAGE * routage,bool createMode,POI *en
     else
     {
         delete routage_editor;
-        if(routage && !routage->isConverted())
+        if(routage && (createMode || !routage->isConverted()))
         {
             update_menuRoutage();
             QApplication::processEvents();

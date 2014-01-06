@@ -285,7 +285,7 @@ void inetConnexion::slot_progess(qint64 bytesReceived, qint64 bytesTotal )
         return;
     }
 
-    if(currentClient->getHasProgress()) {
+    if(currentClient->getHasProgress() && progressDialog) {
         progressDialog->updateProgress(bytesReceived,bytesTotal);
         //qWarning() << "Progress " << bytesReceived << "/" << bytesTotal;
     }

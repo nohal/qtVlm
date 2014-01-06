@@ -74,8 +74,6 @@ class DialogLoadGrib : public QDialog
         void slotAltitudeAll();
         void slotUngrayButtons();
         void slotProgress(qint64,qint64);
-
-        void slot_timerDelay();
 signals:
         void signalGribFileReceived(QString fileName);
         void clearSelection();
@@ -134,7 +132,6 @@ signals:
 
         void    updateParameters();
         void    addSeparator (QLayout *layout, char orientation);	// 'H' or 'V'
-        QTimer  * timerDelay;
         QString fileName;
 
 };
