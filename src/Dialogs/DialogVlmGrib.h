@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "class_list.h"
 #include "inetClient.h"
+#include <QFileDialog>
 
 class DialogVlmGrib : public QDialog, public Ui::DialogVLM_grib_ui, public inetClient
 { Q_OBJECT
@@ -56,6 +57,7 @@ private:
         bool doRequest(int reqType);
         int parseFolderListing(QString data);
         bool gribFileReceived(QByteArray * content);
+        QFileDialog * saveDialog;
 };
 
 #endif // DIALOGVLM_GRIB_H
