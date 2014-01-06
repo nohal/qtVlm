@@ -51,7 +51,8 @@ DialogVlmGrib::DialogVlmGrib(MainWindow * ,myCentralWidget * parent,inetConnexio
     waitBox = new QMessageBox(QMessageBox::Information,
                              tr("VLM Grib"),
                              tr("Chargement de la liste de grib"));
-    saveDialog=new QFileDialog(this);
+    saveDialog=new QFileDialog();
+    saveDialog->setModal(false);
 }
 
 void DialogVlmGrib::done(int res)
@@ -154,7 +155,7 @@ bool DialogVlmGrib::gribFileReceived(QByteArray * content)
 //        filename = QFileDialog::getSaveFileName(this,
 //                         tr("Sauvegarde du fichier GRIB"), filename, "Grib (*.grb)",0,QFileDialog::DontUseNativeDialog);
 //#endif
-        filename = saveDialog->getSaveFileName(this,tr("Sauvegarde du fichier GRIB"), filename, "Grib (*.grb)");
+        filename = saveDialog->getSaveFileName(0,tr("Sauvegarde du fichier GRIB"), filename, "Grib (*.grb)",0,QFileDialog::DontUseNativeDialog);
     }
 
     if (filename != "")
