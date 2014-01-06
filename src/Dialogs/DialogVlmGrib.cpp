@@ -155,7 +155,8 @@ bool DialogVlmGrib::gribFileReceived(QByteArray * content)
 //        filename = QFileDialog::getSaveFileName(this,
 //                         tr("Sauvegarde du fichier GRIB"), filename, "Grib (*.grb)",0,QFileDialog::DontUseNativeDialog);
 //#endif
-        filename = saveDialog->getSaveFileName(0,tr("Sauvegarde du fichier GRIB"), filename, "Grib (*.grb)",0,QFileDialog::DontUseNativeDialog);
+        filename = saveDialog->getSaveFileName(0,tr("Sauvegarde du fichier GRIB"), filename, "Grib (*.grb)",0,QFileDialog::DontUseSheet);
+
     }
 
     if (filename != "")
