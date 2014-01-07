@@ -209,7 +209,10 @@ void vlmLine::calculatePoly(void)
                 proj->map2screenDouble(worldPoint.lon,worldPoint.lat,&X,&Y);
             else
                 proj->map2screenByReference(previousWorldPoint.lon,previousX,worldPoint.lon,worldPoint.lat,&X,&Y);
-            bool reverseWorld=!proj->isInBounderies(X,Y) && proj->isPointVisible(worldPoint.lon,worldPoint.lat) && n!=0;
+            bool reverseWorld=false;
+            if(n!=0)
+                reverseWorld=(!proj->isInBounderies(X,Y) && proj->isPointVisible(worldPoint.lon,worldPoint.lat)) ||
+                             (!proj->isInBounderies(previousX,previousY) && proj->isPointVisible(previousWorldPoint.lon,previousWorldPoint.lat));
             poly->putPoints(n,1,X-x(),Y-y());
             if(this->coastDetection && n!=0 && !coasted && map && map->crossing(QLineF(previousX,previousY,X,Y),
                QLineF(previousWorldPoint.lon,previousWorldPoint.lat,worldPoint.lon,worldPoint.lat)))
@@ -225,16 +228,22 @@ void vlmLine::calculatePoly(void)
                 poly=new QPolygon();
                 polyList.append(poly);
                 proj->map2screenDouble(worldPoint.lon,worldPoint.lat,&X,&Y);
+                double myX=X;
+                double myY=Y;
                 previousX=X;
                 poly->putPoints(0,1,X-x(),Y-y());
                 proj->map2screenByReference(worldPoint.lon,previousX,previousWorldPoint.lon,previousWorldPoint.lat,&X,&Y);
                 poly->putPoints(1,1,X-x(),Y-y());
-                n=0;
                 collision.append(coasted);
                 tempBound=tempBound.united(poly->boundingRect());
                 poly=new QPolygon();
                 polyList.append(poly);
+                poly->putPoints(0,1,myX-x(),myY-y());
                 coasted=false;
+                n=1;
+                previousWorldPoint=worldPoint;
+                previousX=myX;
+                previousY=myY;
                 continue;
             }
             previousWorldPoint=worldPoint;
@@ -374,6 +383,7 @@ void vlmLine::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
         else
             pnt->setPen(linePen);
         if(poly->size()==0) continue;
+        //pnt->drawText(poly->at(0),QString().setNum(nn));
         switch(mode)
         {
         case VLMLINE_LINE_MODE:
