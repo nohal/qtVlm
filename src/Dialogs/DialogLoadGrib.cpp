@@ -121,6 +121,8 @@ DialogLoadGrib::DialogLoadGrib(MainWindow *main) : QDialog(main)
     connect(chkAltitude850, SIGNAL(stateChanged(int)), 	this,  SLOT(slotParameterUpdated()));
     connect(chkAltitudeAll, SIGNAL(stateChanged(int)), 	this,  SLOT(slotAltitudeAll()));
     this->setParent(main);
+    this->resize(sbSouth->x()+sbSouth->width()+10,this->btOK->y()+this->btOK->height()+10);
+    Util::setFontDialog(this);
 }
 
 //-------------------------------------------------------------------------------
@@ -159,13 +161,8 @@ void DialogLoadGrib::slotGribDataReceived(QByteArray *content, QString file)
     fileName=gribPath+"/"+file;
     if(Settings::getSetting("askGribFolder",1)==1)
     {
-#ifndef __MAC_QTVLM
         fileName = QFileDialog::getSaveFileName(this,
                          tr("Sauvegarde du fichier GRIB"), fileName, "Grib (*.grb)");
-#else
-        fileName = QFileDialog::getSaveFileName(this,
-                         tr("Sauvegarde du fichier GRIB"), fileName, "Grib (*.grb)",0,QFileDialog::DontUseNativeDialog);
-#endif
     }
 
     if (fileName != "")
@@ -304,6 +301,10 @@ void DialogLoadGrib::updateParameters()
     Settings::setSetting("downloadAltitudeData500",  chkAltitude500->isChecked());
     Settings::setSetting("downloadAltitudeData700",  chkAltitude700->isChecked());
     Settings::setSetting("downloadAltitudeData850",  chkAltitude850->isChecked());
+    Settings::setSetting(this->objectName()+".height",this->height());
+    Settings::setSetting(this->objectName()+".width",this->width());
+    Settings::setSetting(this->objectName()+".positionx",this->pos().x());
+    Settings::setSetting(this->objectName()+".positiony",this->pos().y());
 }
 
 //-------------------------------------------------------------------------------
@@ -394,6 +395,10 @@ void DialogLoadGrib::slotAltitudeAll ()
 void DialogLoadGrib::slotBtOK()
 {
     btCancel->setText(tr("Stop"));
+    Settings::setSetting(this->objectName()+".height",this->height());
+    Settings::setSetting(this->objectName()+".width",this->width());
+    Settings::setSetting(this->objectName()+".positionx",this->pos().x());
+    Settings::setSetting(this->objectName()+".positiony",this->pos().y());
 
     loadInProgress = true;
     btOK->setEnabled(false);
@@ -502,9 +507,9 @@ void DialogLoadGrib::setZone(double x0, double y0, double x1, double y1)
         sbEast->setValue(x1);
         sbEast->setSuffix(tr(" degE"));
     }
-    slotParameterUpdated();
     this->resize(sbSouth->x()+sbSouth->width()+10,this->btOK->y()+this->btOK->height()+10);
     Util::setFontDialog(this);
+    slotParameterUpdated();
 }
 
 //-------------------------------------------------------------------------------

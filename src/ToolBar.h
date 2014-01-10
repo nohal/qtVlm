@@ -45,7 +45,6 @@ class MyToolBar: public QToolBar {
         void chgVisibilty(bool visibility);
 
         void initCanHide(void);
-
     public slots:
         void slot_visibilityChanged(bool visibility);
 
@@ -136,6 +135,9 @@ class ToolBar : public QObject
 
         void chg_barrierAddState(bool state);
 
+        void mySetIcon(QToolButton * button, QString iconFile);
+        void mySetIcon(QAction * action, QString iconFile);
+        QSize getIconSize() const {return iconSize;}
 public slots:
         void slot_estimeValueChanged(int);
         void slot_estimeTypeChanged(int);
@@ -150,7 +152,7 @@ public slots:
 
         void slot_loadEstimeParam(void);
 
-        void slot_updateLockIcon(QIcon ic);
+        void slot_updateLockIcon(QString ic);
 
     signals:
         void estimeParamChanged(void);
@@ -173,6 +175,7 @@ public slots:
         QList<MyToolBar*> toolBarList;
 
         QAction* init_Action(QString title, QString shortcut, QString statustip,QString iconFileName, QToolBar *toolBar);
+        QSize iconSize;
 };
 
 #endif // TOOLBAR_H

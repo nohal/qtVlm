@@ -142,6 +142,7 @@ void boatReal::myCreatePopUpMenu(void)
 }
 
 void boatReal::startRead() {
+#ifndef __ANDROID__
     int curDeviceType=Settings::getSetting("DeviceType",GPS_SERIAL,"GPS").toInt();
     /* start loop */
     cnt=0;
@@ -183,6 +184,7 @@ void boatReal::startRead() {
 
     if(!gpsReader->isRunning())
         gpsReader->start();
+#endif
 }
 
 void boatReal::stopRead()

@@ -264,7 +264,10 @@ void Util::setFontDialog(QWidget * o)
     int px=Settings::getSetting(object->objectName()+".positionx",-1).toInt();
     int py=Settings::getSetting(object->objectName()+".positiony",-1).toInt();
     if(px>-1 && py>-1)
+    {
         o->move(px,py);
+//        qWarning()<<"moving"<<o->objectName()<<"at"<<px<<py;
+    }
     else if (o->parentWidget())
         o->move(o->parentWidget()->window()->frameGeometry().topLeft() +
             o->parentWidget()->window()->rect().center() -

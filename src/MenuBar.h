@@ -227,7 +227,7 @@ public:
 
     void setPlayerType(const int &type);
 public slots:
-    void slot_updateLockIcon(QIcon ic);
+    void slot_updateLockIcon(QString ic);
     void slot_setChangeStatus(bool status,bool pilototo,bool syncBtn);
     void slot_showViewMenu(void);
     void slot_showBarrierMenu(void);   

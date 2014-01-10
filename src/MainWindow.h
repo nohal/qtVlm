@@ -222,7 +222,7 @@ signals:
         void boatSelected(boat*);
         void accountListUpdated(Player*);
         void selectPOI(bool);
-        void updateLockIcon(QIcon ic);
+        void updateLockIcon(QString ic);
 
 
     protected:

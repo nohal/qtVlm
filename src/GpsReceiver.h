@@ -30,8 +30,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <nmea.h>
 
 #ifdef __UNIX_QTVLM
+#ifndef __ANDROID__
 #include "libgps.h"
 #include "gps.h"
+#endif
 #endif
 
 #include "class_list.h"
@@ -144,6 +146,7 @@ class SerialReceiverThread : public ReceiverThread
 };
 
 #ifdef __UNIX_QTVLM
+#ifndef __ANDROID__
 class GPSdReceiverThread : public ReceiverThread
 { Q_OBJECT
     public:
@@ -160,6 +163,7 @@ class GPSdReceiverThread : public ReceiverThread
         bool ok;
 
 };
+#endif
 #endif
 
 inline void nmea2gps(nmeaINFO * info,GpsData * data) {

@@ -186,10 +186,10 @@ inline bool Projection::intersect (const double &w, const double &e, const doubl
 //-------------------------------------------------------------------------------
 inline bool Projection::isPointVisible (const double &x, const double &y) const
 {
-    if(y>yN || y<yS) return false;
-    if(x<=xE && x>=xW) return true;
-    if(xW<=x && xE>=180 && x>=0) return true;
-    if(xW<=-180 && xE>=0 && x<=0) return true;
+//    if(y>yN || y<yS) return false;
+//    if(x<=xE && x>=xW) return true;
+//    if(xW<=x && xE>=180 && x>=0) return true;
+//    if(xW<=-180 && xE>=0 && x<=0) return true;
     double A,B;
     this->map2screenDouble(x,y,&A,&B);
     return this->isInBounderies(A,B);

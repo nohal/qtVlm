@@ -915,7 +915,7 @@ void POI::manageBoatCircle()
     }
     else
         boatCircle->setHidden(false);
-    qWarning()<<"drawing ortho circle for"<<parent->getSelectedBoat()->getBoatName();
+    //qWarning()<<"drawing ortho circle for"<<parent->getSelectedBoat()->getBoatName();
     double dist=Util::getOrthoDistance(this->lat,this->lon,parent->getSelectedBoat()->getLat(),parent->getSelectedBoat()->getLon());
     QPen pen(Qt::darkBlue);
     pen.setWidthF(1.8);
@@ -1225,7 +1225,7 @@ void POI::slot_finePosit(bool silent)
     if (route->getLastPoi()==this) return;
     if (route->isBusy()) return;
     if (route->getOptimizing()) return;
-    if (/*false &&*/ route->getUseVbvmgVlm() && !route->getNewVbvmgVlm())
+    if (/*false && */route->getUseVbvmgVlm() && !route->getNewVbvmgVlm())
     {
         if(!silent)
             QMessageBox::critical(0,tr("Optimisation du placement d'un POI"),

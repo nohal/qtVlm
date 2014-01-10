@@ -2080,13 +2080,8 @@ void myCentralWidget::slot_takeScreenshot()
     scene->render(&p);
     p.end();
     QString screenshotPath=Settings::getSetting("screenShotFolder","").toString();
-#ifndef __MAC_QTVLM
     QString fileName = QFileDialog::getSaveFileName(this,
                          tr("Photo Ecran"), screenshotPath, "Screenshot (*.png)");
-#else
-    QString fileName = QFileDialog::getSaveFileName(this,
-                         tr("Photo Ecran"), screenshotPath, "Screenshot (*.png)",0,QFileDialog::DontUseNativeDialog);
-#endif
     if(fileName.isEmpty() || fileName.isNull()) return;
     QFile::remove(fileName);
     QFile screenshotFile(fileName);
@@ -2787,13 +2782,8 @@ void myCentralWidget::exportRouteFromMenu(ROUTE * route)
         routePath=Util::currentPath();
         Settings::setSetting("importRouteFolder",routePath);
     }
-#ifndef __MAC_QTVLM
     QString fileName = QFileDialog::getSaveFileName(this,
                          tr("Exporter une Route"), routePath, "Routes (*.json *.csv *.txt *.CSV *.gpx *.kml)");
-#else
-    QString fileName = QFileDialog::getSaveFileName(this,
-                         tr("Exporter une Route"), routePath, "Routes (*.json *.csv *.txt *.CSV *.gpx *.kml)",0,QFileDialog::DontUseNativeDialog);
-#endif
     if(fileName.isEmpty() || fileName.isNull()) return;
 
     QFile::remove(fileName);
@@ -3766,11 +3756,13 @@ void myCentralWidget::withdrawRouteFromBank(QString routeName,QList<QVariant> de
 
 void myCentralWidget::slot_addRouteFromMenu()
 {
+    if(mainW->getSelectedBoat()==NULL) return;
     ROUTE * route=addRoute();
     slot_editRoute(route,true);
 }
 void myCentralWidget::slot_addRoutageFromMenu()
 {
+    if(mainW->getSelectedBoat()==NULL) return;
     ROUTAGE * routage=addRoutage();
     slot_editRoutage(routage,true);
 }
@@ -3865,7 +3857,7 @@ void myCentralWidget::treatRoute(ROUTE* route)
         route->setOptimize(false);
         if(route->getFrozen() || (simplify && !route->getHas_eta()))
             QMessageBox::critical(0,QString(QObject::tr("Simplification/Optimisation de route")),QString(QObject::tr("Cette operation est impossible pour une route figee ou une route sans ETA")));
-        else if(/*false &&*/ route->getUseVbvmgVlm() && !route->getNewVbvmgVlm())
+        else if(/*false && */route->getUseVbvmgVlm() && !route->getNewVbvmgVlm())
             QMessageBox::critical(0,QString(QObject::tr("Simplification/Optimisation de route")),QString(QObject::tr("Cette operation est impossible si le mode de calcul VBVMG est celui de VLM")));
         else
         {

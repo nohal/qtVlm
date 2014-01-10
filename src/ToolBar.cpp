@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Terrain.h"
 #include "boatVLM.h"
 #include "Util.h"
+#include <QDesktopWidget>
 //#include "Board.h"
 
 /**********************************************************************/
@@ -41,6 +42,14 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     /*********************/
     this->mainWindow=mainWindow;
     centralWidget = mainWindow->getMy_centralWidget();
+//    double ppi=QApplication::desktop()->physicalDpiX();
+//    int s=24*ppi/72;
+//    iconSize=QSize(s,s);
+    iconSize=QToolBar().iconSize();
+    qWarning()<<"iconSize="<<iconSize;
+    QPixmap add("img/add.png");
+    add=add.scaled(iconSize,Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
+    add.save("img/addResized.png");
 
 //    miscToolBar=new MyToolBar("Misc",tr("Misc"),this,mainWindow);
 //    toolBarList.append(miscToolBar);
@@ -56,10 +65,10 @@ ToolBar::ToolBar(MainWindow *mainWindow)
 
     boatToolBar=new MyToolBar("Boat",tr("Boat"),this,mainWindow);
     toolBarList.append(boatToolBar);
-
+#ifndef __ANDROID__
     etaToolBar=new MyToolBar("ETA",tr("ETA"),this,mainWindow);
     toolBarList.append(etaToolBar);
-
+#endif
     barrierToolBar=new MyToolBar("BarrierSet",tr("Barrier Set"),this,mainWindow);
     toolBarList.append(barrierToolBar);
 
@@ -85,7 +94,7 @@ ToolBar::ToolBar(MainWindow *mainWindow)
 
     /* Grib toolBar */
     gribDwnld = new QToolButton(gribToolBar);
-    gribDwnld->setIcon(QIcon(appFolder.value("img")+"wind.png"));
+    mySetIcon(gribDwnld,QString(appFolder.value("img")+"wind.png"));
     gribDwnld->setToolTip(tr("Hold to select download method"));
     gribSubMenu = new QMenu(gribDwnld);
     acWindZygrib = init_Action(tr("Telechargement zyGrib"),tr(""),tr(""),appFolder.value("img")+ "network.png",gribToolBar);
@@ -193,13 +202,14 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     boatToolBar->addWidget((boatList));
 
     /* Eta toolBar */
+#ifndef __ANDROID__
     ETA = new QLabel(tr("No WP"),etaToolBar);
     if(Settings::getSetting("fusionStyle",0).toInt()==1)
         ETA->setStyleSheet("color: rgb(234, 221, 21);");
     else
         ETA->setStyleSheet("color: rgb(0, 0, 255);");
     etaToolBar->addWidget(ETA);
-
+#endif
     /* BarrierSet toolBar */
     barrierAdd = init_Action(tr("Add Barrier"),tr(""),tr(""),appFolder.value("img")+"add_barrier.png",barrierToolBar);
     barrierAdd->setCheckable(true);
@@ -247,7 +257,7 @@ ToolBar::ToolBar(MainWindow *mainWindow)
 
     /* Boat ToolBar */
     connect(acLock, SIGNAL(triggered()), mainWindow, SLOT(slotFile_Lock()));
-    connect(mainWindow,SIGNAL(updateLockIcon(QIcon)),this,SLOT(slot_updateLockIcon(QIcon)));
+    connect(mainWindow,SIGNAL(updateLockIcon(QString)),this,SLOT(slot_updateLockIcon(QString)));
     connect(boatList, SIGNAL(activated(int)),mainWindow, SLOT(slotChgBoat(int)));
 
     /* BarrierSet ToolBar */
@@ -255,6 +265,19 @@ ToolBar::ToolBar(MainWindow *mainWindow)
 
     //load_settings();
     Util::setFontDialog(this);
+}
+void ToolBar::mySetIcon(QToolButton * button,QString iconFile)
+{
+    QPixmap pix=QPixmap(iconFile);
+    pix=pix.scaled(iconSize,Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
+    button->setIconSize(iconSize);
+    button->setIcon(QIcon(pix));
+}
+void ToolBar::mySetIcon(QAction * action,QString iconFile)
+{
+    QPixmap pix=QPixmap(iconFile);
+    pix=pix.scaled(iconSize,Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
+    action->setIcon(QIcon(pix));
 }
 
 int ToolBar::build_showHideMenu(QMenu *menu) {
@@ -284,8 +307,8 @@ void ToolBar::chgBoatType(int boatType) {
     }
 }
 
-void ToolBar::slot_updateLockIcon(QIcon ic) {
-    acLock->setIcon(ic);
+void ToolBar::slot_updateLockIcon(QString ic) {
+    mySetIcon(acLock,ic);
 }
 
 QAction* ToolBar::init_Action(QString title, QString shortcut, QString statustip,QString iconFileName,QToolBar * toolBar)
@@ -296,7 +319,7 @@ QAction* ToolBar::init_Action(QString title, QString shortcut, QString statustip
     action->setShortcutContext (Qt::ApplicationShortcut);
     action->setStatusTip (statustip);
     if (iconFileName != "")
-        action->setIcon(QIcon(iconFileName));
+        mySetIcon(action,QString(iconFileName));
     return action;
 }
 
@@ -327,7 +350,11 @@ void ToolBar::clear_eta(void) {
     ETA->setText(tr("No WP"));
 }
 
-void ToolBar::update_eta(QDateTime eta_dtm) {
+void ToolBar::update_eta(QDateTime eta_dtm)
+{
+#ifdef __ANDROID__
+    return;
+#endif
     int nbS,j,h,m;
     QString txt;
     eta_dtm.setTimeSpec(Qt::UTC);
@@ -478,7 +505,7 @@ void ToolBar::slot_gribPlay(void) {
             int step=get_gribStep();
             if((tps+step)<=max)
             {
-                acGrib_play->setIcon(QIcon(appFolder.value("img")+"player_end.png"));
+                mySetIcon(acGrib_play,QString(appFolder.value("img")+"player_end.png"));
                 acGrib_play->setData(1);
                 connect(centralWidget->get_terrain(),SIGNAL(terrainUpdated()),mainWindow,SLOT(slotDateGribChanged_next()));
                 mainWindow->slotDateGribChanged_next();
@@ -490,7 +517,7 @@ void ToolBar::slot_gribPlay(void) {
 }
 
 void ToolBar::stopPlaying(void) {
-    acGrib_play->setIcon(QIcon(appFolder.value("img")+"player_play.png"));
+    mySetIcon(acGrib_play,QString(appFolder.value("img")+"player_play.png"));
     acGrib_play->setData(0);
     disconnect(centralWidget->get_terrain(),SIGNAL(terrainUpdated()),mainWindow,SLOT(slotDateGribChanged_next()));
 }
@@ -539,7 +566,7 @@ void ToolBar::update_gribDownloadBtn(void) {
     }
 
     if(!iconString.isEmpty())
-        gribDwnld->setIcon(QIcon(iconString));
+        mySetIcon(gribDwnld,QString(iconString));
 }
 
 /**********************************************************************/
@@ -579,10 +606,12 @@ void ToolBar::chg_barrierAddState(bool state) {
 /* MyToolBar                                        */
 /****************************************************/
 
-MyToolBar::MyToolBar(QString name,QString title,ToolBar *toolBar, QWidget *parent,bool canHide): QToolBar(title,parent) {
+MyToolBar::MyToolBar(QString name,QString title,ToolBar *toolBar, QWidget *parent,bool canHide): QToolBar(title,parent)
+{
     this->name=name;
     setObjectName(name);
     this->toolBar=toolBar;
+    this->setIconSize(toolBar->getIconSize());
     displayed=true;
     forceMenuHide=false;
     this->canHide=canHide;
@@ -590,7 +619,15 @@ MyToolBar::MyToolBar(QString name,QString title,ToolBar *toolBar, QWidget *paren
         setFloatable(false);
         setMovable(false);
     }
+#ifdef __ANDROID__
+    setFloatable(false);
+    setMovable(false);
+#endif
     hide();
+    QString style=QString().sprintf("QToolButton#qt_toolbar_ext_button{min-width: %dpx; min-height: %dpx;}",toolBar->getIconSize().width()/2,toolBar->getIconSize().width()/2);
+    style+=QString().sprintf("QToolButton#qt_toolbar_ext_button{width: %dpx; height: %dpx;}",toolBar->getIconSize().width()/2,toolBar->getIconSize().width()/2);
+    style+="QToolButton#qt_toolbar_ext_button {qproperty-icon: url(img/addResized.png);}";
+    this->setStyleSheet(style);
     connect(this,SIGNAL(visibilityChanged(bool)),this,SLOT(slot_visibilityChanged(bool)));
 }
 

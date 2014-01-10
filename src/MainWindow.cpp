@@ -129,7 +129,7 @@ void MainWindow::connectSignals()
     connect(mb->acGrib_dialog, SIGNAL(triggered()), my_centralWidget, SLOT(slot_gribDialog()));
     connect(mb->acFile_Quit, SIGNAL(triggered()), this, SLOT(slotFile_Quit()));
     connect(mb->acFile_Lock, SIGNAL(triggered()), this, SLOT(slotFile_Lock()));    
-    connect(this,SIGNAL(updateLockIcon(QIcon)),mb,SLOT(slot_updateLockIcon(QIcon)));
+    connect(this,SIGNAL(updateLockIcon(QString)),mb,SLOT(slot_updateLockIcon(QString)));
     connect(mb->acFile_QuitNoSave, SIGNAL(triggered()), this, SLOT(slotFile_QuitNoSave()));
     connect(mb->acCombineGrib, SIGNAL(triggered()), this, SLOT(slotCombineGrib()));
 
@@ -1248,11 +1248,11 @@ void MainWindow::slotFile_Lock(bool readOnly)
     if(!readOnly)
         selectedBoat->setLockStatus(!selectedBoat->getLockStatus());
 
-    QIcon ic;
+    QString ic;
     if(selectedBoat->getLockStatus())
-        ic=QIcon(appFolder.value("img")+"lock.png");
+        ic=QString(appFolder.value("img")+"lock.png");
     else
-        ic=QIcon(appFolder.value("img")+"unlock.png");
+        ic=QString(appFolder.value("img")+"unlock.png");
 
     emit updateLockIcon(ic);
 }
@@ -1293,13 +1293,8 @@ void MainWindow::slotCombineGrib() {
         QString str=QString().setNum(files.size()) + " " + tr("gribs to combine");
         QMessageBox::information(this,tr("Grib combination"),str,QMessageBox::Ok);
         /* select output file */
-#ifndef __MAC_QTVLM
         QString filename = QFileDialog::getSaveFileName(this,
                            tr("Filename of destination file"), "", tr("GRIB file (*.grb *.grib *.grb2 *.grib2)"));
-#else
-        QString filename = QFileDialog::getSaveFileName(this,
-                           tr("Filename of destination file"), "", tr("GRIB file (*.grb *.grib *.grb2 *.grib2)"),0,QFileDialog::DontUseNativeDialog);
-#endif
         if (filename != "") {
             ofstream fdest;
             fdest.open(filename.toUtf8().constData(),ios::out | ios::trunc | ios::binary);
@@ -2265,6 +2260,7 @@ void MainWindow::slotChgBoat(int num)
                 acc->slot_selectBoat();
                 /* sync lunched, update grib date */
                 //slotDateGribChanged_now();
+                emit WPChanged(0,0);
                 emit selectedBoatChanged();
                 for(int i=0;i<my_centralWidget->getRaces().size();++i)
                 {

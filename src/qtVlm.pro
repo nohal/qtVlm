@@ -176,8 +176,8 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     BoardInterface.h \
     MainWindowInterface.h \
     BoatInterface.h \
-    PolarInterface.h \
-    GpsReceiver.h
+    PolarInterface.h
+
 
 
 FORMS += Ui/boatAccount_dialog.ui \
@@ -325,12 +325,17 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     GribV1Record.cpp \
     GribV1.cpp \
     DataManager.cpp \
-    Dialogs/DialogGribDrawing.cpp \
-    GpsReceiver.cpp
+    Dialogs/DialogGribDrawing.cpp
+
+
 
 unix:!macx: DEFINES += _TTY_POSIX_ __TERRAIN_QIMAGE __UNIX_QTVLM
-unix: LIBS += -lgps
-unix: INCLUDEPATH += libs/libgps
+unix:!android: LIBS += -lgps
+!android {
+    HEADERS+=GpsReceiver.h
+    SOURCES+=GpsReceiver.cpp
+}
+unix:!android: INCLUDEPATH += libs/libgps
 
 win32:DEFINES += _TTY_WIN_ \
     QWT_DLL \

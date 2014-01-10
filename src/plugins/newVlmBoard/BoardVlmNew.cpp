@@ -98,7 +98,7 @@ void BoardVlmNew::initBoard(MainWindowInterface *main)
     connect(main,SIGNAL(selectPOI(bool)),this,SLOT(slot_selectPOI(bool)));
     connect(main,SIGNAL(wpChanged()),this,SLOT(slot_updateBtnWP()));
     connect(main,SIGNAL(paramVLMChanged()),this,SLOT(slot_reloadSkin()));
-    connect(main,SIGNAL(updateLockIcon(QIcon)),this,SLOT(slot_lock()));
+    connect(main,SIGNAL(updateLockIcon(QString)),this,SLOT(slot_lock()));
     wpDialog = new DialogWp();
     connect(wpDialog,SIGNAL(selectPOI()),this,SLOT(slot_selectWP_POI()));
     connect(main,SIGNAL(editWP_POI(POI*)),this,SLOT(slot_selectPOI(POI*)));

@@ -493,8 +493,8 @@ void MenuBar::setCitiesNamesLevel(int level) {
 }
 
 
-void MenuBar::slot_updateLockIcon(QIcon ic) {
-    acFile_Lock->setIcon(ic);
+void MenuBar::slot_updateLockIcon(QString ic) {
+    acFile_Lock->setIcon(QIcon(ic));
 }
 
 void MenuBar::slot_setChangeStatus(bool ,bool pilototo,bool syncBtn) {
