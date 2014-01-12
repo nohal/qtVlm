@@ -216,9 +216,11 @@ void boatVLM::sendPilotMode(QString phpScript,QVariantMap instruction) {
 
     if(hasInet()) {
         if(hasRequest()) {
-            qWarning() << "request already running for " << getBoatPseudo();
+            qWarning() << "[Boat-sendPilotMode]  request already running for " << getBoatPseudo()<< " (" << getCurrentRequest() << ")";
             return;
         }
+
+        clearCurrentRequest();
 
         QString url;
         QString data;
@@ -265,7 +267,7 @@ void boatVLM::doRequest(int requestCmd)
     {
         if(hasRequest() )
         {
-            qWarning() << "request already running for " << pseudo;
+            qWarning() << "[Boat-doRequest]   request already running for " << pseudo << " (cur=" << getCurrentRequest() << ", new=" << requestCmd << ")";
             return;
         }
         else

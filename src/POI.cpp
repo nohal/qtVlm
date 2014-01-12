@@ -1057,6 +1057,7 @@ void POI::slot_setWP_ask()
 
 void POI::slot_setWP()
 {
+    qWarning() << "[slot_setWP]";
     this->partOfTwa=false;
     if(parent->getSelectedBoat()->getLockStatus()){
         chkIsWP();

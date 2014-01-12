@@ -2480,7 +2480,7 @@ void MainWindow::slotPilototo(void)
     else
     {
         emit editInstructions();
-        ((boatVLM*)selectedBoat)->slot_getData(true);
+        //((boatVLM*)selectedBoat)->slot_getData(true);
     }
 }
 void MainWindow::setPilototoFromRoute(ROUTE *route)

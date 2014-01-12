@@ -424,6 +424,58 @@ void DialogPilototo::sendPilototo(void)
         /* ask for an update of boat data*/
         delete currentList;
         currentList=NULL;
+
+        if(this->myBoat && this->updateBoat && (this->currentList==NULL || this->currentList->isEmpty()))
+        {
+    #if 1
+            if(poiToWp!=NULL && navModeToDo)
+            {
+                clearCurrentRequest();
+                if(poiToWp->getNavMode()==0 && this->myBoat->getPilotType()!=5) //VBVMG
+                {
+                    QString url="/ws/boatsetup/pilot_set.php";
+                    QString data="parms={ \"idu\" : "+QString().setNum(myBoat->getId())+
+                            ", \"pim\" : 5}&select_idu="+
+                            QString().setNum(myBoat->getId());
+                    qWarning()<<"route sends"<<url<<data;
+                    navModeToDo=false;
+                    inetPost(999,"/ws/boatsetup/pilot_set.php",
+                             "parms={ \"idu\" : "+QString().setNum(myBoat->getId())+
+                             ", \"pim\" : 5}&select_idu="+
+                             QString().setNum(myBoat->getId()),true);
+                    return;
+                }
+                else if(poiToWp->getNavMode()==1 && this->myBoat->getPilotType()!=4) //VMG
+                {
+                    navModeToDo=false;
+                    inetPost(999,"/ws/boatsetup/pilot_set.php",
+                             "parms={ \"idu\" : "+QString().setNum(myBoat->getId())+
+                             ", \"pim\" : 4}&select_idu="+
+                             QString().setNum(myBoat->getId()),true);
+                    return;
+                }
+                else if(poiToWp->getNavMode()==2 && this->myBoat->getPilotType()!=3) //ORTHO
+                {
+                    navModeToDo=false;
+                    inetPost(999,"/ws/boatsetup/pilot_set.php",
+                             "parms={ \"idu\" : "+QString().setNum(myBoat->getId())+
+                             ", \"pim\" : 3}&select_idu="+
+                             QString().setNum(myBoat->getId()),true);
+                    return;
+                }
+            }
+    #endif
+            navModeToDo=false;
+            this->updateBoat=false;
+            if(poiToWp!=NULL)
+            {
+                poiToWp->slot_setWP();
+                poiToWp=NULL;
+            }
+            return;
+        }
+
+
         myBoat->slot_getData(true);
     }
     else
@@ -443,10 +495,10 @@ void DialogPilototo::requestFinished (QByteArray res)
 {
     switch(getCurrentRequest())
     {
-	case VLM_REQUEST_LOGIN:
+        case VLM_REQUEST_LOGIN:
             qWarning() << "Error pilototo: getting res for LOGIN!!!";
             break;
-	case VLM_DO_REQUEST:
+        case VLM_DO_REQUEST:
             {
                 if(checkWSResult(res,"Pilototo",parent,lastOrder))
                     sendPilototo();
@@ -457,59 +509,17 @@ void DialogPilototo::requestFinished (QByteArray res)
                     currentList=NULL;
                 }
             }
-	    break;
-    case 999:
-    {
-
-    }
-    }
-    if(this->myBoat && this->updateBoat && (this->currentList==NULL || this->currentList->isEmpty()))
-    {
-#if 1
-        if(poiToWp!=NULL && navModeToDo)
-        {
-            if(poiToWp->getNavMode()==0 && this->myBoat->getPilotType()!=5) //VBVMG
+            break;
+        case 999:
+            navModeToDo=false;
+            this->updateBoat=false;
+            if(poiToWp!=NULL)
             {
-                QString url="/ws/boatsetup/pilot_set.php";
-                QString data="parms={ \"idu\" : "+QString().setNum(myBoat->getId())+
-                        ", \"pim\" : 5}&select_idu="+
-                        QString().setNum(myBoat->getId());
-                qWarning()<<"route sends"<<url<<data;
-                navModeToDo=false;
-                inetPost(999,"/ws/boatsetup/pilot_set.php",
-                         "parms={ \"idu\" : "+QString().setNum(myBoat->getId())+
-                         ", \"pim\" : 5}&select_idu="+
-                         QString().setNum(myBoat->getId()),true);
-                return;
+                poiToWp->slot_setWP();
+                poiToWp=NULL;
             }
-            else if(poiToWp->getNavMode()==1 && this->myBoat->getPilotType()!=4) //VMG
-            {
-                navModeToDo=false;
-                inetPost(999,"/ws/boatsetup/pilot_set.php",
-                         "parms={ \"idu\" : "+QString().setNum(myBoat->getId())+
-                         ", \"pim\" : 4}&select_idu="+
-                         QString().setNum(myBoat->getId()),true);
-                return;
-            }
-            else if(poiToWp->getNavMode()==2 && this->myBoat->getPilotType()!=3) //ORTHO
-            {
-                navModeToDo=false;
-                inetPost(999,"/ws/boatsetup/pilot_set.php",
-                         "parms={ \"idu\" : "+QString().setNum(myBoat->getId())+
-                         ", \"pim\" : 3}&select_idu="+
-                         QString().setNum(myBoat->getId()),true);
-                return;
-            }
-        }
-#endif
-        navModeToDo=false;
-        this->updateBoat=false;
-        if(poiToWp!=NULL)
-        {
-            poiToWp->slot_setWP();
-            poiToWp=NULL;
-        }
-    }
+            break;
+    }    
 }
 
 QString DialogPilototo::getAuthLogin(bool * ok=NULL)

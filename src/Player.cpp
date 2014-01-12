@@ -106,7 +106,7 @@ void Player::doRequest(int requestCmd)
     {
         if(hasRequest() )
         {
-            qWarning() << "Request already running for player" << login;
+            qWarning() << "[Player] Request already running for player" << login << " (cur=" << getCurrentRequest() << "new=" << requestCmd << ")";
             return;
         }
         else
