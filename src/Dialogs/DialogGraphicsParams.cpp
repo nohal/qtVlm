@@ -258,6 +258,8 @@ void DialogGraphicsParams::slotBtOK()
         Settings::setSetting("routeLineColor",  inputRouteLine->getLineColor());
         Settings::setSetting("traceLineWidth",  inputTraceLine->getLineWidth());
         Settings::setSetting("traceLineColor",  inputTraceLine->getLineColor());
+        Settings::setSetting("orthoLineWidth",  inputOrthoLine->getLineWidth());
+        Settings::setSetting("orthoLineColor",  inputOrthoLine->getLineColor());
     accept();
 }
 //-------------------------------------------------------------------------------
@@ -432,6 +434,17 @@ QFrame *DialogGraphicsParams::createFrameGui(QWidget *parent)
                                 this);
     lay->addWidget( inputTraceLine, lig,1, Qt::AlignLeft);
 
+    //-------------------------------------------------
+    lig ++;
+    label = new QLabel(tr("Ortho selection :"), frm);
+    lay->addWidget( label,    lig,0, Qt::AlignRight);
+        inputOrthoLine =
+                new InputLineParams(
+                                Settings::getSetting("orthoLineWidth", 1.0).toDouble(),
+                                Settings::getSetting("orthoLineColor", QColor(Qt::red)).value<QColor>(),
+                                1.0,  Qt::red,
+                                this);
+    lay->addWidget( inputOrthoLine, lig,1, Qt::AlignLeft);
     return frm;
 }
 

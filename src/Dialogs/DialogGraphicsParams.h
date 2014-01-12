@@ -175,6 +175,7 @@ class DialogGraphicsParams : public QDialog
         InputLineParams *inputGateLine;
         InputLineParams *inputRouteLine;
         InputLineParams *inputTraceLine;
+        InputLineParams *inputOrthoLine;
 
         QFrame * createFrameGui(QWidget *parent);
         QScrollArea *scroll;

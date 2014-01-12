@@ -115,6 +115,10 @@ void selectionWidget::slot_protect()
     show();
     if(showOrthodromie)
     {
+        QPen pen;
+        pen.setWidthF(Settings::getSetting("orthoLineWidth",1.0).toDouble());
+        pen.setColor(Settings::getSetting("orthoLineColor", QColor(Qt::red)).value<QColor>());
+        seg->setLinePen(pen);
         double X1,Y1,X2,Y2;
         proj->screen2mapDouble(xa,ya,&X1,&Y1);
         proj->screen2mapDouble(xb,yb,&X2,&Y2);
@@ -140,6 +144,10 @@ void selectionWidget::startSelection(int start_x,int start_y)
 
     if(showOrthodromie)
     {
+        QPen pen;
+        pen.setWidthF(Settings::getSetting("orthoLineWidth",1.0).toDouble());
+        pen.setColor(Settings::getSetting("orthoLineColor", QColor(Qt::red)).value<QColor>());
+        seg->setLinePen(pen);
         double X1,Y1,X2,Y2;
         proj->screen2mapDouble(xa,ya,&X1,&Y1);
         proj->screen2mapDouble(xb,yb,&X2,&Y2);
@@ -178,6 +186,10 @@ bool selectionWidget::tryMoving(int mouse_x,int mouse_y)
 
     if(showOrthodromie)
     {
+        QPen pen;
+        pen.setWidthF(Settings::getSetting("orthoLineWidth",1.0).toDouble());
+        pen.setColor(Settings::getSetting("orthoLineColor", QColor(Qt::red)).value<QColor>());
+        seg->setLinePen(pen);
         double X1,Y1,X2,Y2;
         proj->screen2mapDouble(xa,ya,&X1,&Y1);
         proj->screen2mapDouble(xb,yb,&X2,&Y2);
@@ -201,7 +213,7 @@ void selectionWidget::updateSize(void)
 
 void selectionWidget::slot_setDrawOrthodromie(bool b)
 {
-    qWarning() << "Set ortho: " << b;
+    //qWarning() << "Set ortho: " << b;
     if (showOrthodromie != b)
     {
         showOrthodromie = b;
@@ -209,6 +221,10 @@ void selectionWidget::slot_setDrawOrthodromie(bool b)
         update();
         if(showOrthodromie)
         {
+            QPen pen;
+            pen.setWidthF(Settings::getSetting("orthoLineWidth",1.0).toDouble());
+            pen.setColor(Settings::getSetting("orthoLineColor", QColor(Qt::red)).value<QColor>());
+            seg->setLinePen(pen);
             double X1,Y1,X2,Y2;
             proj->screen2mapDouble(xa,ya,&X1,&Y1);
             proj->screen2mapDouble(xb,yb,&X2,&Y2);
