@@ -67,6 +67,9 @@ DialogPoi::DialogPoi(MainWindow * main,myCentralWidget * parent)
     QString tunit = Settings::getSetting("unitsPosition", "").toString();
     QString unit = (tunit=="") ? "dddegmm'ss" : tunit;
     formatWithSeconds=unit=="dddegmm'ss";
+    navMode->addItem("VB-VMG");
+    navMode->addItem("B-VMG");
+    navMode->addItem("Ortho");
 }
 void DialogPoi::formatLatLon()
 {
@@ -147,6 +150,7 @@ void DialogPoi::initPOI(POI * poi,const bool &creationMode)
         QDateTime tm = QDateTime::currentDateTime().toUTC();
         editTStamp->setDateTime(tm);
     }
+    navMode->setCurrentIndex(poi->getNavMode());
 
     chk_tstamp->setCheckState(poi->getUseTimeStamp()?Qt::Checked:Qt::Unchecked);
     editTStamp->setEnabled(poi->getUseTimeStamp());
@@ -194,6 +198,7 @@ void DialogPoi::done(int result)
         else
             poi->setWph(editWph->text().toDouble());
         poi->slot_updateProjection();
+        poi->setNavMode(navMode->currentIndex());
 
         if (modeCreation) {
             //poi->show();

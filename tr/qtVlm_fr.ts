@@ -780,6 +780,10 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
         <source>Opacite des zones de nuit :</source>
         <translation>Opacité des zones de nuit :</translation>
     </message>
+    <message>
+        <source>Ortho selection :</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>DialogGribDrawing</name>
@@ -4150,6 +4154,10 @@ Etes-vous sur de vouloir supprimer</translation>
         <source>&apos;&apos;</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Mode de navigation</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>POI_input_ui</name>
@@ -5138,9 +5146,7 @@ waves height</source>
     </message>
     <message>
         <source> min</source>
-        <extracomment>min
-----------
-min</extracomment>
+        <extracomment>min</extracomment>
         <translation></translation>
     </message>
     <message>
@@ -5150,13 +5156,7 @@ min</extracomment>
     </message>
     <message>
         <source> nds</source>
-        <extracomment>nds
-----------
-nds
-----------
-nds
-----------
-nds</extracomment>
+        <extracomment>nds</extracomment>
         <translation></translation>
     </message>
     <message>
@@ -6864,10 +6864,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Score</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>?</source>
         <translation></translation>
     </message>
     <message>

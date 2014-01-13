@@ -360,6 +360,16 @@
               </property>
              </spacer>
             </item>
+            <item>
+             <widget class="QLabel" name="label_7">
+              <property name="text">
+               <string>Mode de navigation</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="navMode"/>
+            </item>
            </layout>
           </item>
           <item>
@@ -489,6 +499,7 @@
   <tabstop>editWph</tabstop>
   <tabstop>cb_routeList</tabstop>
   <tabstop>sequence</tabstop>
+  <tabstop>navMode</tabstop>
   <tabstop>notSimplicable</tabstop>
   <tabstop>chk_tstamp</tabstop>
   <tabstop>editTStamp</tabstop>

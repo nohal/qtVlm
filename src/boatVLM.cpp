@@ -611,12 +611,13 @@ void boatVLM::requestFinished (QByteArray res_byte)
                     QString str;
                     QVariantMap wp= wps[str.setNum(i)].toMap();
                     if(wp.isEmpty()) break;
-                    //qWarning()<<"wp: "<<wp["libelle"].toString();
                     double lonPorte1=wp["longitude1"].toDouble()/1000.000;
                     double latPorte1=wp["latitude1"].toDouble()/1000.000;
                     double lonPorte2=wp["longitude2"].toDouble()/1000.000;
                     double latPorte2=wp["latitude2"].toDouble()/1000.000;
                     int wpformat=wp["wpformat"].toInt();
+//                    qWarning()<<"wp: "<<wp["libelle"].toString()<<wpformat;
+//                    qWarning()<<wp;
                     bool oneBuoy=false;
                     bool iceGateN=false;
                     bool iceGateS=false;
