@@ -57,11 +57,9 @@ DialogBoatAccount::DialogBoatAccount(Projection * proj, MainWindow * main, myCen
 
 DialogBoatAccount::~DialogBoatAccount()
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
-    Settings::setSetting(this->objectName()+".positionx",this->pos().x());
-    Settings::setSetting(this->objectName()+".positiony",this->pos().y());
+    Settings::saveGeometry(this);
 }
+
 void DialogBoatAccount::slot_browseSkin()
 {
     QString skinPath=QFileInfo(boardSkin->text()).absolutePath();
@@ -153,6 +151,7 @@ bool DialogBoatAccount::initList( QList<boatVLM*> * boat_list, Player * player)
 
 void DialogBoatAccount::done(int result)
 {
+    Settings::saveGeometry(this);
     if(result == QDialog::Accepted)
     {
         /* validate last change for currentItem */
@@ -486,7 +485,7 @@ boatSetup::boatSetup(boatVLM * boat)
     boardSkin=boat->get_boardSkin();
     if(boardSkin.isEmpty() || !(QFile(boardSkin).exists()))
     {
-        boardSkin=Settings::getSetting("defaultSkin",QFileInfo("img/skin_compas.png").absoluteFilePath()).toString();
+        boardSkin=Settings::getSetting(defaultSkin).toString();
         if(!QFile(boardSkin).exists())
             boardSkin=QFileInfo("img/skin_compas.png").absoluteFilePath();
     }

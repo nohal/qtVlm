@@ -57,8 +57,8 @@ ROUTE::ROUTE(QString name, Projection *proj, DataManager *dataManager, QGraphics
     this->myscene=myScene;
     this->dataManager=dataManager;
     this->parent=parentWindow;
-    this->color=Settings::getSetting("routeLineColor", QColor(Qt::yellow)).value<QColor>();
-    this->width=Settings::getSetting("routeLineWidth", 2.0).toDouble();
+    this->color=Settings::getSetting(routeLineColor).value<QColor>();
+    this->width=Settings::getSetting(routeLineWidth).toDouble();
     this->startFromBoat=true;
     this->startTimeOption=1;
     this->line=new vlmLine(proj,myScene,Z_VALUE_ROUTE);
@@ -104,9 +104,9 @@ ROUTE::ROUTE(QString name, Projection *proj, DataManager *dataManager, QGraphics
     this->temp=false;
     slot_shRou(parentWindow->get_shRoute_st());
     this->speedLossOnTack=1;
-    this->autoRemove=Settings::getSetting("autoRemovePoiFromRoute",0).toInt()==1;
-    this->autoAt=Settings::getSetting("autoFillPoiHeading",0).toInt()==1;
-    this->sortPoisbyName=Settings::getSetting("routeSortByName",1).toInt()==1;
+    this->autoRemove=Settings::getSetting(autoRemovePoiFromRoute).toInt()==1;
+    this->autoAt=Settings::getSetting(autoFillPoiHeading).toInt()==1;
+    this->sortPoisbyName=Settings::getSetting(routeSort_ByName).toInt()==1;
     this->pilototo=false;
     this->initialDist=0;
     this->roadMapInterval=1;
@@ -291,7 +291,7 @@ void ROUTE::slot_recalculate(boat * boat)
     }
     if(boat!=NULL && this->myBoat!=boat) return;
     if(myBoat==NULL  || !myBoat->getStatus()) return;
-    if(this->hidden || Settings::getSetting("hideRoute",0,"showHideItem").toInt()==1) return;
+    if(this->hidden || Settings::getSetting(hideRoute).toInt()==1) return;
     if (frozen && initialized)
     {
         interpolatePos();
@@ -546,7 +546,7 @@ void ROUTE::slot_recalculate(boat * boat)
                                         QApplication::processEvents();
                                         double h1,h2,w1,w2,t1,t2,d1,d2;
                                         this->do_vbvmg_context(remaining_distance,cap,wind_speed,wind_angle,&h1,&h2,&w1,&w2,&t1,&t2,&d1,&d2);
-                                        angle=A180(w1);
+                                        angle=AngleUtil::A180(w1);
                                         cap=h1;
                                     }
 #endif
@@ -575,19 +575,19 @@ void ROUTE::slot_recalculate(boat * boat)
                                             this->do_vbvmg_buffer(remaining_distance,cap,wind_speed,wind_angle,&h1,&h2,&w1,&w2,&t1,&t2,&d1,&d2);
                                         }
 #endif
-                                        angle=A180(w1);
+                                        angle=AngleUtil::A180(w1);
                                         cap=h1;
                                     }
                                     else
                                     {
-                                        angle=A180(cap-wind_angle);
+                                        angle=AngleUtil::A180(cap-wind_angle);
                                         if(qAbs(angle)<myBoat->getPolarData()->getBvmgUp(wind_speed))
                                         {
                                             angle=myBoat->getPolarData()->getBvmgUp(wind_speed);
-                                            cap1=Util::A360(wind_angle+angle);
-                                            cap2=Util::A360(wind_angle-angle);
-                                            diff1=Util::myDiffAngle(cap,cap1);
-                                            diff2=Util::myDiffAngle(cap,cap2);
+                                            cap1=AngleUtil::A360(wind_angle+angle);
+                                            cap2=AngleUtil::A360(wind_angle-angle);
+                                            diff1=AngleUtil::myDiffAngle(cap,cap1);
+                                            diff2=AngleUtil::myDiffAngle(cap,cap2);
                                             if(diff1<diff2)
                                                 cap=cap1;
                                             else
@@ -596,10 +596,10 @@ void ROUTE::slot_recalculate(boat * boat)
                                         else if(qAbs(angle)>myBoat->getPolarData()->getBvmgDown(wind_speed))
                                         {
                                             angle=myBoat->getPolarData()->getBvmgDown(wind_speed);
-                                            cap1=Util::A360(wind_angle+angle);
-                                            cap2=Util::A360(wind_angle-angle);
-                                            diff1=Util::myDiffAngle(cap,cap1);
-                                            diff2=Util::myDiffAngle(cap,cap2);
+                                            cap1=AngleUtil::A360(wind_angle+angle);
+                                            cap2=AngleUtil::A360(wind_angle-angle);
+                                            diff1=AngleUtil::myDiffAngle(cap,cap1);
+                                            diff2=AngleUtil::myDiffAngle(cap,cap2);
                                             if(diff1<diff2)
                                                 cap=cap1;
                                             else
@@ -618,10 +618,10 @@ void ROUTE::slot_recalculate(boat * boat)
                                     if(qRound(angle*100.00)!=qRound(angleDebug*100.00))
                                         qWarning()<<"angle="<<angle<<" angleDebug="<<angleDebug;
     #endif
-                                    cap=Util::A360(angle+wind_angle);
+                                    cap=AngleUtil::A360(angle+wind_angle);
                                     break;
                                 case 2: //ORTHO
-                                    angle=A180(cap-wind_angle);
+                                    angle=AngleUtil::A180(cap-wind_angle);
                                     break;
                             }
 
@@ -629,13 +629,13 @@ void ROUTE::slot_recalculate(boat * boat)
                             if(engineUsed && poi->getNavMode()==1)
                             {
                                 cap=capSaved;
-                                angle=A180(cap-wind_angle);
+                                angle=AngleUtil::A180(cap-wind_angle);
                             }
                             hdg=cap;
                             bs=newSpeed;
                             if(current_speed>0)
                             {
-                                QPointF p=Util::calculateSumVect(cap,newSpeed,Util::A360(current_angle+180.0),current_speed);
+                                QPointF p=Util::calculateSumVect(cap,newSpeed,AngleUtil::A360(current_angle+180.0),current_speed);
                                 newSpeed=p.x(); //in this case newSpeed is SOG
                                 cap=p.y(); //in this case cap is COG
                             }
@@ -715,24 +715,24 @@ void ROUTE::slot_recalculate(boat * boat)
                                 roadPoint.append((double)(Eta-myBoat->getVacLen())); // 0
                                 roadPoint.append(poi->getLongitude()); // 1
                                 roadPoint.append(poi->getLatitude()); // 2
-                                roadPoint.append(Util::A360(hdg-myBoat->getDeclinaison())); //3
+                                roadPoint.append(AngleUtil::A360(hdg-myBoat->getDeclinaison())); //3
                                 roadPoint.append(bs); //4
                                 roadPoint.append(distanceParcourue); //5
                                 roadPoint.append(wind_angle); //6
                                 roadPoint.append(wind_speed); //7
-                                roadPoint.append(A180(hdg-wind_angle)); //8
+                                roadPoint.append(AngleUtil::A180(hdg-wind_angle)); //8
                                 roadPoint.append(poiNb); //9
                                 roadPoint.append(remaining_distance); //10
-                                roadPoint.append(Util::A360(capSaved-myBoat->getDeclinaison())); //11
+                                roadPoint.append(AngleUtil::A360(capSaved-myBoat->getDeclinaison())); //11
                                 roadPoint.append(engineUsed?1:-1); //12
                                 roadPoint.append(p.lon); //13
                                 roadPoint.append(p.lat); //14
-                                roadPoint.append(Util::A360(hdg)); //15
-                                roadPoint.append(Util::A360(capSaved)); //16
-                                roadPoint.append(Util::A360(cog)); //17
+                                roadPoint.append(AngleUtil::A360(hdg)); //15
+                                roadPoint.append(AngleUtil::A360(capSaved)); //16
+                                roadPoint.append(AngleUtil::A360(cog)); //17
                                 roadPoint.append(sog); //18
                                 roadPoint.append(current_speed); //19
-                                roadPoint.append(Util::A360(current_angle+180.0)); //20
+                                roadPoint.append(AngleUtil::A360(current_angle+180.0)); //20
                                 if(dataManager->hasData(DATA_WAVES_MAX_HGT,DATA_LV_GND_SURF,0))
                                     roadPoint.append(dataManager->getInterpolatedValue_1D(DATA_WAVES_MAX_HGT,DATA_LV_GND_SURF,0,p.lon,p.lat,roadPoint.at(0))); //21
                                 else
@@ -1041,17 +1041,6 @@ void ROUTE::interpolatePos()
         lastEta=list->at(n).eta;
     }
 }
-double ROUTE::A180(double angle)
-{
-    if(qAbs(angle)>180)
-    {
-        if(angle<0)
-            angle=360+angle;
-        else
-            angle=angle-360;
-    }
-    return angle;
-}
 
 bool ROUTE::isPartOfBvmg(POI * poi)
 {
@@ -1066,7 +1055,7 @@ void ROUTE::slot_edit()
 }
 
 void ROUTE::slot_shRou(bool isHidden) {
-    bool toBeHidden=this->hidden || (Settings::getSetting("autoHideRoute",1).toInt()==1
+    bool toBeHidden=this->hidden || (Settings::getSetting(autoHideRoute).toInt()==1
                                      && (this->myBoat==NULL || !this->myBoat->getIsSelected()));
     if(isHidden || toBeHidden) {
         if(line)
@@ -1103,7 +1092,7 @@ void ROUTE::setHidePois(bool b)
 {
     this->hidePois=b;
     QListIterator<POI*> i (my_poiList);
-    bool toBeHidden=this->hidden || (Settings::getSetting("autoHideRoute",1).toInt()==1 && (this->myBoat==NULL || !this->myBoat->getIsSelected()));
+    bool toBeHidden=this->hidden || (Settings::getSetting(autoHideRoute).toInt()==1 && (this->myBoat==NULL || !this->myBoat->getIsSelected()));
     while(i.hasNext())
     {
         POI * poi=i.next();
@@ -1143,7 +1132,7 @@ void ROUTE::do_vbvmg_context(double dist,double wanted_heading,
 
 
    /* first compute the time for the "ortho" heading */
-   speed=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(w_angle-wanted_heading)));
+   speed=myBoat->getPolarData()->getSpeed(w_speed,AngleUtil::A180(radToDeg(w_angle-wanted_heading)));
    //speed = find_speed(aboat, w_speed, w_angle - wanted_heading);
    if (speed > 0.0) {
      t_min = dist / speed;
@@ -1181,7 +1170,7 @@ void ROUTE::do_vbvmg_context(double dist,double wanted_heading,
      alpha = degToRad((double)i);
      tanalpha = tan(alpha);
      d1hypotratio = hypot(1, tan(alpha));
-     speed_t1=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-alpha)));
+     speed_t1=myBoat->getPolarData()->getSpeed(w_speed,AngleUtil::A180(radToDeg(angle-alpha)));
      //speed_t1 = find_speed(aboat, w_speed, angle-alpha);
      if (speed_t1 <= 0.0) {
        continue;
@@ -1195,7 +1184,7 @@ void ROUTE::do_vbvmg_context(double dist,double wanted_heading,
          continue;
        }
        d2 = dist - d1;
-       speed_t2=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-beta)));
+       speed_t2=myBoat->getPolarData()->getSpeed(w_speed,AngleUtil::A180(radToDeg(angle-beta)));
        //speed_t2 = find_speed(aboat, w_speed, angle-beta);
        if (speed_t2 <= 0.0) {
          continue;
@@ -1228,7 +1217,7 @@ void ROUTE::do_vbvmg_context(double dist,double wanted_heading,
        alpha = b1_alpha + degToRad(((double)i)/10.0);
        tanalpha = tan(alpha);
        d1hypotratio = hypot(1, tan(alpha));
-       speed_t1=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-alpha)));
+       speed_t1=myBoat->getPolarData()->getSpeed(w_speed,AngleUtil::A180(radToDeg(angle-alpha)));
        //speed_t1 = find_speed(aboat, w_speed, angle-alpha);
        if (speed_t1 <= 0.0) {
          continue;
@@ -1242,7 +1231,7 @@ void ROUTE::do_vbvmg_context(double dist,double wanted_heading,
            continue;
          }
          d2 = dist - d1;
-         speed_t2=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-beta)));
+         speed_t2=myBoat->getPolarData()->getSpeed(w_speed,AngleUtil::A180(radToDeg(angle-beta)));
          //speed_t2 = find_speed(aboat, w_speed, angle-beta);
          if (speed_t2 <= 0) {
            continue;
@@ -1269,10 +1258,10 @@ void ROUTE::do_vbvmg_context(double dist,double wanted_heading,
             radToDeg(b_beta));
  #endif /* DEBUG */
 #endif
-   speed_alpha=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-b_alpha)));
+   speed_alpha=myBoat->getPolarData()->getSpeed(w_speed,AngleUtil::A180(radToDeg(angle-b_alpha)));
    //speed_alpha = find_speed(aboat, w_speed, angle-b_alpha);
    vmg_alpha = speed_alpha * cos(b_alpha);
-   speed_beta=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-b_beta)));
+   speed_beta=myBoat->getPolarData()->getSpeed(w_speed,AngleUtil::A180(radToDeg(angle-b_beta)));
    //speed_beta = find_speed(aboat, w_speed, angle-b_beta);
    vmg_beta = speed_beta * cos(b_beta);
 
@@ -1365,7 +1354,7 @@ void ROUTE::do_vbvmg_buffer(double dist,double wanted_heading,
         this->precalculateTan();
 
     /* first compute the time for the "ortho" heading */
-    speed=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(w_angle-wanted_heading)));
+    speed=myBoat->getPolarData()->getSpeed(w_speed,AngleUtil::A180(radToDeg(w_angle-wanted_heading)));
     //speed = find_speed(aboat, w_speed, w_angle - wanted_heading);
     if (speed > 0.0)
     {
@@ -1386,7 +1375,7 @@ void ROUTE::do_vbvmg_buffer(double dist,double wanted_heading,
     {
         angle -= TWO_PI;
     }
-    double guessAngle=A180(radToDeg(angle));
+    double guessAngle=AngleUtil::A180(radToDeg(angle));
     if (angle < 0.0)
     {
         min_i = 1;
@@ -1404,7 +1393,7 @@ void ROUTE::do_vbvmg_buffer(double dist,double wanted_heading,
     for (i=min_i; i<max_i; ++i)
     {
         alpha = degToRad((double)i);
-        double guessTwa=A180(radToDeg(angle-alpha));
+        double guessTwa=AngleUtil::A180(radToDeg(angle-alpha));
         //if(newVbvmgVlm && (qAbs(guessTwa)<20 || qAbs(guessTwa>175))) continue;
         if(i>0)
         {
@@ -1416,7 +1405,7 @@ void ROUTE::do_vbvmg_buffer(double dist,double wanted_heading,
             tanalpha = tanNeg->at(-i);
             d1hypotratio = hypotNeg->at(-i);
         }
-        speed_t1=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-alpha)));
+        speed_t1=myBoat->getPolarData()->getSpeed(w_speed,AngleUtil::A180(radToDeg(angle-alpha)));
         //speed_t1 = find_speed(aboat, w_speed, angle-alpha);
         if (speed_t1 <= 0.0)
         {
@@ -1456,11 +1445,11 @@ void ROUTE::do_vbvmg_buffer(double dist,double wanted_heading,
                 speed_t2=*fastSpeed->object(j);
             else
             {
-                speed_t2=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-beta)));
+                speed_t2=myBoat->getPolarData()->getSpeed(w_speed,AngleUtil::A180(radToDeg(angle-beta)));
                 fastSpeed->insert(j,new double(speed_t2));
             }
 #else
-            speed_t2=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-beta)));
+            speed_t2=myBoat->getPolarData()->getSpeed(w_speed,AngleUtil::A180(radToDeg(angle-beta)));
 #endif
             //speed_t2 = find_speed(aboat, w_speed, angle-beta);
             if (speed_t2 <= 0.0)
@@ -1517,11 +1506,11 @@ void ROUTE::do_vbvmg_buffer(double dist,double wanted_heading,
                 speed_t2=*fastSpeed->object(j);
             else
             {
-                speed_t2=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-beta)));
+                speed_t2=myBoat->getPolarData()->getSpeed(w_speed,AngleUtil::A180(radToDeg(angle-beta)));
                 fastSpeed->insert(j,new double(speed_t2));
             }
 #else
-            speed_t2=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-beta)));
+            speed_t2=myBoat->getPolarData()->getSpeed(w_speed,AngleUtil::A180(radToDeg(angle-beta)));
 #endif
                 //speed_t2 = find_speed(aboat, w_speed, angle-beta);
                 if (speed_t2 <= 0.0)
@@ -1554,10 +1543,10 @@ void ROUTE::do_vbvmg_buffer(double dist,double wanted_heading,
             }
         }
     }
-    speed_alpha=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-b_alpha)));
+    speed_alpha=myBoat->getPolarData()->getSpeed(w_speed,AngleUtil::A180(radToDeg(angle-b_alpha)));
     //speed_alpha = find_speed(aboat, w_speed, angle-b_alpha);
     vmg_alpha = speed_alpha * cos(b_alpha);
-    speed_beta=myBoat->getPolarData()->getSpeed(w_speed,A180(radToDeg(angle-b_beta)));
+    speed_beta=myBoat->getPolarData()->getSpeed(w_speed,AngleUtil::A180(radToDeg(angle-b_beta)));
     //speed_beta = find_speed(aboat, w_speed, angle-b_beta);
     vmg_beta = speed_beta * cos(b_beta);
 
@@ -1699,7 +1688,7 @@ routeStats ROUTE::getStats()
         stats.maxTWS=qMax(stats.maxTWS,tws);
         stats.minTWS=qMin(stats.minTWS,tws);
         hdg=oo.getLoxoCap();
-        twa=Util::A360(hdg-twd);
+        twa=AngleUtil::A360(hdg-twd);
         if(twa>180) twa-=360;
         if(qAbs(twa)<70.0)
             stats.beatingTime+=date-prevDate;

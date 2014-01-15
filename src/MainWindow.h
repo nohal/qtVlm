@@ -49,7 +49,7 @@ class MainWindow: public MainWindowInterface
     Q_OBJECT
 
     public:
-        MainWindow(int w, int h, QWidget *parent = 0);
+        MainWindow(QWidget *parent = 0);
         ~MainWindow();
 
         void openGribFile(QString fileName, bool zoom=true, bool current=false);
@@ -98,10 +98,17 @@ class MainWindow: public MainWindowInterface
         void showDashBoard();
         BoatInterface * get_selectedBoatInterface(){return (BoatInterface*)this->getSelectedBoat();}
         QColor getWindColorStatic(const double &v, const bool &smooth=true);
-        QVariant getSetting(const QString &key, const QVariant & defaultValue) const;
+        QVariant getSettingApp(const int &key) const;
         QString get_folder(QString str) const;
         void showContextualMenu(const int &xPos, const int &yPos);
         QPalette getOriginalPalette() const;
+        void setting_saveGeometry(QWidget * obj);
+        bool getWPClipboard(QString *,double * lat,double * lon, double * wph, int * tStamp);
+        void setWPClipboard(double lat,double lon, double wph);
+        QString pos2String(const int &type,const double &value);
+        QString formatLongitude(const double &x);
+        QString formatLatitude(const double &y);
+
 public slots:
         void slot_POI_input();
         void slot_showPOI_input(POI *poi=NULL, const bool &fromMenu=false);        

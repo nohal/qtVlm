@@ -96,7 +96,7 @@ class DialogGribDrawing: public QDialog,  Ui::DialogGribDrawing_ui {
         void copy_cb(QComboBox * from, QComboBox * to);
 
         void updateBtnColor(QPushButton * btn,QColor color);
-        void chg_color(QPushButton * btn,QString setting,QColor defaultColor);
+        void chg_color(QPushButton * btn, int setting);
 };
 
 #endif // DIALOGGRIBDRAWING_H

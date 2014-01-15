@@ -41,9 +41,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 MapDataDrawer::MapDataDrawer(myCentralWidget *centralWidget) {
     this->centralWidget=centralWidget;
     this->dataManager=centralWidget->get_dataManager();
-    gribMonoCpu=Settings::getSetting("gribMonoCpu",0).toInt()==1;
+    grib_monoCpu=Settings::getSetting(gribMonoCpu).toInt()==1;
 
-    isCloudsColorModeWhite = Settings::getSetting("cloudsColorMode", "white").toString() == "white";
+    isCloudsColorModeWhite = Settings::getSetting(cloudsColorMode).toString() == "white";
 
     mapColorTransp = 255;
 
@@ -311,7 +311,7 @@ void MapDataDrawer::drawColorMapGeneric_2D(QPainter &pnt, Projection *proj, cons
                                                GribRecord * recU1, GribRecord * recV1, GribRecord * recU2, GribRecord * recV2,
                                                const QString &color_name, const bool &UV, int interpolation_mode)
 {
-    if(gribMonoCpu || QThread::idealThreadCount()<=1) {
+    if(grib_monoCpu || QThread::idealThreadCount()<=1) {
         drawColorMapGeneric_2D_OLD(pnt,proj,smooth,now,t1,t2,recU1,recV1,recU2,recV2,
                                    color_name,UV,interpolation_mode);
         return;

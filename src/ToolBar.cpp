@@ -135,7 +135,7 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     cbGribStep->addItem(tr("6 h"),21600);
     cbGribStep->addItem(tr("12 h"),43200);
     //FontManagement::setFontDialog(cbGribStep);
-    cbGribStep->setCurrentIndex(Settings::getSetting("gribDateStep", 2).toInt());
+    cbGribStep->setCurrentIndex(Settings::getSetting(gribDateStep).toInt());
 
     gribToolBar->addWidget(gribDwnld);
     gribToolBar->addAction(acOpenGrib);
@@ -187,7 +187,7 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     slot_loadEstimeParam();
     chkEstime = new QCheckBox(estimeToolBar);
     chkEstime->setToolTip(tr("Si cette option est cochee<br>l'estime calcule la vitesse du bateau<br>a la prochaine vac.<br>Sinon elle utilise la vitesse du bateau<br>telle que donnee par VLM"));
-    chkEstime->setChecked(Settings::getSetting("startSpeedEstime", 1).toInt()==1);
+    chkEstime->setChecked(Settings::getSetting(startSpeedEstime).toInt()==1);
 
     estimeToolBar->addWidget(lbEstime);
     estimeToolBar->addWidget(spnEstime);
@@ -204,7 +204,7 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     /* Eta toolBar */
 #ifndef __ANDROID__
     ETA = new QLabel(tr("No WP"),etaToolBar);
-    if(Settings::getSetting("fusionStyle",0).toInt()==1)
+    if(Settings::getSetting(fusionStyle).toInt()==1)
         ETA->setStyleSheet("color: rgb(234, 221, 21);");
     else
         ETA->setStyleSheet("color: rgb(0, 0, 255);");
@@ -327,7 +327,7 @@ void ToolBar::load_settings(void) {
     for(int i=0;i<toolBarList.count();++i) {
         MyToolBar * toolBar = toolBarList.at(i);
         QString key = "TB_" + toolBar->get_name();
-        toolBar->setVisible(Settings::getSetting(key,"true","ToolBar").toString()=="true");
+        toolBar->setVisible(Settings::getSettingOld(key,true,"ToolBar").toBool());
         toolBar->setEnabled(toolBar->isVisible());
         toolBar->set_displayed(toolBar->isVisible());
         toolBar->initCanHide();
@@ -338,7 +338,7 @@ void ToolBar::save_settings(void) {
     for(int i=0;i<toolBarList.count();++i) {
         MyToolBar * toolBar = toolBarList.at(i);
         QString key = "TB_" + toolBar->get_name();
-        Settings::setSetting(key,toolBar->get_displayed()?"true":"false","ToolBar");
+        Settings::setSettingOld(key,toolBar->get_displayed(),"ToolBar");
     }
 }
 
@@ -379,16 +379,16 @@ void ToolBar::update_eta(QDateTime eta_dtm)
 /**********************************************************************/
 
 void ToolBar::slot_estimeValueChanged(int value) {
-    switch(Settings::getSetting("estimeType","0").toInt())
+    switch(Settings::getSetting(estimeType).toInt())
     {
         case 0:
-            Settings::setSetting("estimeTime",value);
+            Settings::setSetting(estimeTime,value);
             break;
         case 1:
-            Settings::setSetting("estimeVac",value);
+            Settings::setSetting(estimeVac,value);
             break;
         case 2:
-            Settings::setSetting("estimeLen",value);
+            Settings::setSetting(estimeLen,value);
             break;
         default:
             break;
@@ -397,18 +397,18 @@ void ToolBar::slot_estimeValueChanged(int value) {
 }
 
 void ToolBar::slot_estimeTypeChanged(int num) {
-    Settings::setSetting("estimeType",num);
+    Settings::setSetting(estimeType,num);
 
     switch(num)
     {
         case 0:
-            spnEstime->setValue(Settings::getSetting("estimeTime","60").toInt());
+            spnEstime->setValue(Settings::getSetting(estimeTime).toInt());
             break;
         case 1:
-            spnEstime->setValue(Settings::getSetting("estimeVac","12").toInt());
+            spnEstime->setValue(Settings::getSetting(estimeVac).toInt());
             break;
         case 2:
-            spnEstime->setValue(Settings::getSetting("estimeLen","50").toInt());
+            spnEstime->setValue(Settings::getSetting(estimeLen).toInt());
             break;
         default:
             spnEstime->setValue(0);
@@ -422,30 +422,30 @@ void ToolBar::slot_loadEstimeParam(void) {
 
     cbEstime->setEnabled(true);
 
-    if(Settings::getSetting("scalePolar",0).toInt()!=1) {
-        switch(Settings::getSetting("estimeType","0").toInt())
+    if(Settings::getSetting(scalePolar).toInt()!=1) {
+        switch(Settings::getSetting(estimeType).toInt())
         {
             case 0:
                 cbEstime->setCurrentIndex(0);
-                spnEstime->setValue(Settings::getSetting("estimeTime","60").toInt());
+                spnEstime->setValue(Settings::getSetting(estimeTime).toInt());
                 break;
             case 1:
                 cbEstime->setCurrentIndex(1);
-                spnEstime->setValue(Settings::getSetting("estimeVac","12").toInt());
+                spnEstime->setValue(Settings::getSetting(estimeVac).toInt());
                 break;
             case 2:
                 cbEstime->setCurrentIndex(2);
-                spnEstime->setValue(Settings::getSetting("estimeLen","50").toInt());
+                spnEstime->setValue(Settings::getSetting(estimeLen).toInt());
                 break;
             default:
-                Settings::setSetting("estimeType",0);
+                Settings::setSetting(estimeType,0);
                 cbEstime->setCurrentIndex(0);
                 spnEstime->setValue(0);
         }
     }
     else {
         cbEstime->setCurrentIndex(1);
-        spnEstime->setValue(Settings::getSetting("estimeVac","12").toInt());
+        spnEstime->setValue(Settings::getSetting(estimeVac).toInt());
         cbEstime->setEnabled(false);
     }
 
@@ -456,7 +456,7 @@ void ToolBar::slot_loadEstimeParam(void) {
 
 void ToolBar::slot_estimeStartChanged(int state) {
     if(state>1) state=1;
-    Settings::setSetting("startSpeedEstime", state);
+    Settings::setSetting(startSpeedEstime, state);
     emit estimeParamChanged();
 }
 
@@ -523,7 +523,7 @@ void ToolBar::stopPlaying(void) {
 }
 
 void ToolBar::slot_gribDwnld(void) {
-    switch(Settings::getSetting("defaultGribDwnld",GRIB_DWNLD_ZYGRIB,"ToolBar").toInt()) {
+    switch(Settings::getSetting(defaultGribDwnld).toInt()) {
         case GRIB_DWNLD_ZYGRIB: slot_gribZygrib(); break;
         case GRIB_DWNLD_VLM: slot_gribVlm(); break;
         case GRIB_DWNLD_SAILSDOC: slot_gribSailsDoc(); break;
@@ -531,26 +531,26 @@ void ToolBar::slot_gribDwnld(void) {
 }
 
 void ToolBar::slot_gribZygrib(void) {
-    Settings::setSetting("defaultGribDwnld",GRIB_DWNLD_ZYGRIB,"ToolBar");
+    Settings::setSetting(defaultGribDwnld,GRIB_DWNLD_ZYGRIB);
     update_gribDownloadBtn();
     emit gribZygrib();
 }
 
 void ToolBar::slot_gribVlm(void) {
-    Settings::setSetting("defaultGribDwnld",GRIB_DWNLD_VLM,"ToolBar");
+    Settings::setSetting(defaultGribDwnld,GRIB_DWNLD_VLM);
     update_gribDownloadBtn();
     emit gribVlm();
 }
 
 void ToolBar::slot_gribSailsDoc(void) {
-    Settings::setSetting("defaultGribDwnld",GRIB_DWNLD_SAILSDOC,"ToolBar");
+    Settings::setSetting(defaultGribDwnld,GRIB_DWNLD_SAILSDOC);
     update_gribDownloadBtn();
     emit gribSailsDoc();
 }
 
 void ToolBar::update_gribDownloadBtn(void) {
     QString iconString;
-    switch(Settings::getSetting("defaultGribDwnld",GRIB_DWNLD_ZYGRIB,"ToolBar").toInt()) {
+    switch(Settings::getSetting(defaultGribDwnld).toInt()) {
         case GRIB_DWNLD_ZYGRIB:
             iconString=appFolder.value("img")+ "network.png";
             break;

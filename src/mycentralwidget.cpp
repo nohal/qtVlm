@@ -112,8 +112,8 @@ myScene::myScene(myCentralWidget * parent) : QGraphicsScene(parent)
     wheelTimer->setInterval(500);
     connect(wheelTimer,SIGNAL(timeout()),this, SLOT(wheelTimerElapsed()));
     wheelStrokes=0;
-    QColor seaColor  = Settings::getSetting("seaColor", QColor(50,50,150)).value<QColor>();
-    this->setBackgroundBrush(seaColor);
+    QColor seaColorVal  = Settings::getSetting(seaColor).value<QColor>();
+    this->setBackgroundBrush(seaColorVal);
     this->pinching=false;
     wheelPosX=0;
     wheelPosY=0;
@@ -156,11 +156,11 @@ void  myScene::keyPressEvent (QKeyEvent *e)
             {
                 position.sprintf("%.4f ; %.4f ; %.4f",parent->getProj()->getScale(),parent->getProj()->getCX(),
                          parent->getProj()->getCY());
-                Settings::setSetting("f9map",position);
+                Settings::setSetting(f9map,position);
            }
             else
             {
-                position=Settings::getSetting("f9map","-1;-1;-1").toString();
+                position=Settings::getSetting(f9map).toString();
                 positions=position.split(";");
                 if(positions[0]!="-1")
                     parent->getProj()->setScaleAndCenterInMap(positions[0].toDouble(), positions[1].toDouble(), positions[2].toDouble());
@@ -171,11 +171,11 @@ void  myScene::keyPressEvent (QKeyEvent *e)
             {
                 position.sprintf("%.4f ; %.4f ; %.4f",parent->getProj()->getScale(),parent->getProj()->getCX(),
                          parent->getProj()->getCY());
-                Settings::setSetting("f10map",position);
+                Settings::setSetting(f10map,position);
            }
             else
             {
-                position=Settings::getSetting("f10map","-1;-1;-1").toString();
+                position=Settings::getSetting(f10map).toString();
                 positions=position.split(";");
                 if(positions[0]!="-1")
                     parent->getProj()->setScaleAndCenterInMap(positions[0].toDouble(), positions[1].toDouble(), positions[2].toDouble());
@@ -186,11 +186,11 @@ void  myScene::keyPressEvent (QKeyEvent *e)
             {
                 position.sprintf("%.4f ; %.4f ; %.4f",parent->getProj()->getScale(),parent->getProj()->getCX(),
                          parent->getProj()->getCY());
-                Settings::setSetting("f11map",position);
+                Settings::setSetting(f11map,position);
            }
             else
             {
-                position=Settings::getSetting("f11map","-1;-1;-1").toString();
+                position=Settings::getSetting(f11map).toString();
                 positions=position.split(";");
                 if(positions[0]!="-1")
                     parent->getProj()->setScaleAndCenterInMap(positions[0].toDouble(), positions[1].toDouble(), positions[2].toDouble());
@@ -201,11 +201,11 @@ void  myScene::keyPressEvent (QKeyEvent *e)
             {
                 position.sprintf("%.4f ; %.4f ; %.4f",parent->getProj()->getScale(),parent->getProj()->getCX(),
                          parent->getProj()->getCY());
-                Settings::setSetting("f12map",position);
+                Settings::setSetting(f12map,position);
            }
             else
             {
-                position=Settings::getSetting("f12map","-1;-1;-1").toString();
+                position=Settings::getSetting(f12map).toString();
                 positions=position.split(";");
                 if(positions[0]!="-1")
                     parent->getProj()->setScaleAndCenterInMap(positions[0].toDouble(), positions[1].toDouble(), positions[2].toDouble());
@@ -390,7 +390,7 @@ bool myScene::event(QEvent * event)
 myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar * menuBar) : QWidget(parent)
 {
     this-> proj=proj;
-    this->keepPos=Settings::getSetting("keepBoatPosOnScreen",1).toInt()==1;
+    this->keepPos=Settings::getSetting(keepBoatPosOnScreen).toInt()==1;
     this->mainW=parent;
     this->menuBar=menuBar;
     this->aboutToQuit=false;
@@ -407,11 +407,11 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     resizing=false;
     this->twaTrace=NULL;
     /* item state */
-    shLab_st = Settings::getSetting("hideLabel",0,"showHideItem").toInt()==1;
-    shPoi_st = Settings::getSetting("hidePoi",0,"showHideItem").toInt()==1;
-    shRoute_st = Settings::getSetting("hideRoute",0,"showHideItem").toInt()==1;
-    shOpp_st = Settings::getSetting("hideOpponent",0,"showHideItem").toInt()==1;
-    shPor_st = Settings::getSetting("hidePorte",0,"showHideItem").toInt()==1;
+    shLab_st = Settings::getSetting(hideLabel).toInt()==1;
+    shPoi_st = Settings::getSetting(hidePoi).toInt()==1;
+    shRoute_st = Settings::getSetting(hideRoute).toInt()==1;
+    shOpp_st = Settings::getSetting(hideOpponent).toInt()==1;
+    shPor_st = Settings::getSetting(hidePorte).toInt()==1;
 
     selectionTool=false;
     magnifier=NULL;
@@ -425,7 +425,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
 
     view = new MyView(proj,scene,this);
     view->setGeometry(0,0,width(),height());
-    if(Settings::getSetting("enableGesture","1").toString()=="1")
+    if(Settings::getSetting(enable_Gesture).toString()=="1")
     {
         view->viewport()->ungrabGesture(Qt::PanGesture);
         view->viewport()->grabGesture(Qt::PinchGesture);
@@ -468,14 +468,14 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
 
     replayTimer=new QTimer(this);
     replayTimer->setSingleShot(true);
-    replayTimer->setInterval(Settings::getSetting("speed_replay",20).toInt());
+    replayTimer->setInterval(Settings::getSetting(speed_replay).toInt());
     connect(replayTimer,SIGNAL(timeout()),this,SLOT(slot_replay()));
 
     /* item child */
     // terrain
     terrain = new Terrain(this,proj);
     terrain->setGSHHS_map(gshhsReader);
-    terrain->setCitiesNamesLevel(Settings::getSetting("showCitiesNamesLevel", 0).toInt());
+    terrain->setCitiesNamesLevel(Settings::getSetting(show_citiesNamesLevel).toInt());
 //voir s'il faut mettre le slot ds centralWidget ou utiliser myScene
     connect(terrain,SIGNAL(showContextualMenu(QGraphicsSceneContextMenuEvent *)),
             parent, SLOT(slotShowContextualMenu(QGraphicsSceneContextMenuEvent *)));
@@ -538,10 +538,6 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     connect(this, SIGNAL(shPol(bool)),compass,SLOT(slot_shPol()));
     connect(proj,SIGNAL(projectionUpdated()),compass,SLOT(slot_compassCenterBoat()));
     this->compassRoute=NULL;
-//    if(Settings::getSetting("showCompass",1).toInt()==1)
-//        compass->show();
-//    else
-//        compass->hide();
 
     // Selection zone
     selection=new selectionWidget(this,proj,scene);
@@ -612,7 +608,7 @@ void myCentralWidget::loadGshhs(void) {
         gshhsReader=NULL;
     }
 
-    QString mapDir = Settings::getSetting("mapsFolder",appFolder.value("maps")).toString();
+    QString mapDir = Settings::getSetting(mapsFolderName).toString();
 
     //qWarning() << "Searching for maps in " << mapDir;
 
@@ -653,7 +649,7 @@ void myCentralWidget::loadGshhs(void) {
     else
         mapDir=appDir.absoluteFilePath(mapDir);
     qWarning() << "Setting map folder to " << mapDir;
-    Settings::setSetting("mapsFolder",mapDir);
+    Settings::setSetting(mapsFolderName,mapDir);
     if(!gshhsOk)
     {
         msgBox.exec();
@@ -672,7 +668,7 @@ void myCentralWidget::loadGshhs(void) {
             else
                 mapDir=appDir.absoluteFilePath(mapDir);
             qWarning() << "Setting map folder to " << mapDir;
-            Settings::setSetting("mapsFolder",mapDir);
+            Settings::setSetting(mapsFolderName,mapDir);
             delete gshhsReader;
             gshhsReader=NULL;
 
@@ -708,7 +704,7 @@ void myCentralWidget::setCompassFollow(ROUTE * route)
     if(route!=NULL)
     {
         menuBar->ac_compassCenterBoat->setChecked(false);
-        Settings::setSetting("compassCenterBoat", "0");
+        Settings::setSetting(compassCenterBoat, 0);
     }
     emitUpdateRoute(mainW->getSelectedBoat());
 }
@@ -1061,7 +1057,7 @@ void myCentralWidget::slot_Zoom_Sel()
 void myCentralWidget::slot_keepPos(const bool &b)
 {
     this->keepPos=b;
-    Settings::setSetting("keepBoatPosOnScreen",keepPos?1:0);
+    Settings::setSetting(keepBoatPosOnScreen,keepPos?1:0);
 }
 
 /**************************/
@@ -1269,7 +1265,7 @@ void myCentralWidget::loadGribFile(QString fileName, bool zoom) {
         zoomOnGrib();
         proj->blockSignals(false);
     }
-    if(Settings::getSetting("gribDelete",0)==1) {
+    if(Settings::getSetting(gribDelete)==1) {
         QFileInfo inf(fileName);
         QStringList f;
         f.append("*.grb");
@@ -1305,7 +1301,7 @@ void myCentralWidget::closeGribFile(void)
     dataManager->close_data(DataManager::GRIB_GRIB);
 
     emit redrawAll();
-    Settings::setSetting("gribFileName","");
+    Settings::setSetting(grib_FileName,"");
 }
 
 void myCentralWidget::loadGribFileCurrent(QString fileName, bool zoom)
@@ -1338,7 +1334,7 @@ void myCentralWidget::closeGribFileCurrent(void)
     dataManager->close_data(DataManager::GRIB_CURRENT);
 
     emit redrawAll();
-    Settings::setSetting("gribFileNameCurrent","");
+    Settings::setSetting(gribCurrent_FileName,"");
 }
 
 void myCentralWidget::setCurrentDate(time_t t, bool uRoute)
@@ -1437,7 +1433,7 @@ void myCentralWidget::slot_fileInfo_GRIB_current(void) {
 void myCentralWidget::fileInfo_GRIB(int grbType)
 {
 #ifndef __MAC_QTVLM
-    if(Settings::getSetting("showGribInfoAfterLoad","1")=="1") {
+    if(Settings::getSetting(showGribInfoAfterLoad).toInt()==1) {
         if(dataManager) {
             Grib * grib=dataManager->get_grib(grbType);
             if(grib && grib->isOk())
@@ -1458,14 +1454,14 @@ void myCentralWidget::fileInfo_GRIB(Grib * grib) {
         verticalLayout->addWidget(lbl);
         QCheckBox * chk=new QCheckBox(dia);
         chk->setText(tr("Show grib info after grib loading"));
-        chk->setChecked(Settings::getSetting("showGribInfoAfterLoad","1")=="1");
+        chk->setChecked(Settings::getSetting(showGribInfoAfterLoad)==1);
         verticalLayout->addWidget(chk);
         QDialogButtonBox *buttonBox = new QDialogButtonBox(dia);
         verticalLayout->addWidget(buttonBox);
         buttonBox->setStandardButtons(QDialogButtonBox::Ok);
         connect(buttonBox,SIGNAL(accepted()),dia,SLOT(accept()));
         if(dia->exec()==QDialog::Accepted) {
-            Settings::setSetting("showGribInfoAfterLoad",chk->checkState()?"1":"0");
+            Settings::setSetting(showGribInfoAfterLoad,chk->checkState()?1:0);
         }
         disconnect(buttonBox,SIGNAL(accepted()),dia,SLOT(accept()));
         delete dia;
@@ -1510,18 +1506,18 @@ void myCentralWidget::slotLoadSailsDocGrib(void) {
                                << "&body=GFS:"
                                << param
                                << "|0.5,0.5|0,3,6..384|WIND";
-        if(Settings::getSetting("sailsDocPress",0).toInt()==1)
+        if(Settings::getSetting(sailsDoc_press).toInt()==1)
             queryStr+=",PRESS";
 
         // Format: mailto:query@saildocs.com?subject=Give me a Grib&body=send GFS:56N,59S,33E,87W|0.5,0.5|0,3,6..384|WIND
 
 
-        if(Settings::getSetting("sDocExternalMail",1).toInt()==1)
+        if(Settings::getSetting(sDocExternalMail).toInt()==1)
             QDesktopServices::openUrl(QUrl(queryStr));
         else
         {
             QString opt="|0.5,0.5|0,3,6..384|WIND";
-            if(Settings::getSetting("sailsDocPress",0).toInt()==1)
+            if(Settings::getSetting(sailsDoc_press).toInt()==1)
                 opt+=",PRESS";
             DialogSailDocs * sailDocs_diag = new DialogSailDocs("GFS:" + param + opt,this);
             sailDocs_diag->exec();
@@ -1970,7 +1966,7 @@ void myCentralWidget::slot_shLab(bool){
 
 void myCentralWidget::do_shLab(bool val) {
     shLab_st=val;
-    Settings::setSetting("hideLabel",val?1:0,"showHideItem");
+    Settings::setSetting(hideLabel,val?1:0);
     emit shLab(val);
 }
 
@@ -1980,7 +1976,7 @@ void myCentralWidget::slot_shPoi(bool){
 
 void myCentralWidget::do_shPoi(bool val) {
     shPoi_st=val;
-    Settings::setSetting("hidePoi",val?1:0,"showHideItem");
+    Settings::setSetting(hidePoi,val?1:0);
     emit shPoi(shPoi_st);
 }
 
@@ -1990,7 +1986,7 @@ void myCentralWidget::slot_shRoute(bool){
 
 void myCentralWidget::do_shRoute(bool val) {
     shRoute_st=val;
-    Settings::setSetting("hideRoute",val?1:0,"showHideItem");
+    Settings::setSetting(hideRoute,val?1:0);
     emit shRou(shRoute_st);
 }
 
@@ -2000,7 +1996,7 @@ void myCentralWidget::slot_shOpp(bool){
 
 void myCentralWidget::do_shOpp(bool val) {
     shOpp_st=val;
-    Settings::setSetting("hideOpponent",val?1:0,"showHideItem");
+    Settings::setSetting(hideOpponent,val?1:0);
     emit shOpp(shOpp_st);
 }
 
@@ -2010,7 +2006,7 @@ void myCentralWidget::slot_shPor(bool) {
 
 void myCentralWidget::do_shPor(bool val) {
     shPor_st=val;
-    Settings::setSetting("hidePorte",val?1:0,"showHideItem");
+    Settings::setSetting(hidePorte,val?1:0);
     emit shPor(shPor_st);
 }
 
@@ -2020,7 +2016,7 @@ void myCentralWidget::slot_shBarSet(bool){
 
 void myCentralWidget::do_shBarSet(bool val) {
     shBarSet_st=val;
-    Settings::setSetting("hideBarrierSet",val?1:0,"showHideItem");
+    Settings::setSetting(hideBarrierSet,val?1:0);
     emit shBarSet(shBarSet_st);
 }
 
@@ -2030,7 +2026,7 @@ void myCentralWidget::slot_shTrace(bool) {
 
 void myCentralWidget::do_shTrace(bool val) {
     shTrace_st=val;
-    Settings::setSetting("hideTrace",val?1:0,"showHideItem");
+    Settings::setSetting(hideTrace,val?1:0);
     emit shTrace(shTrace_st);
 }
 
@@ -2045,7 +2041,7 @@ void myCentralWidget::slot_startReplay()
 {
     if(mainW->getSelectedBoat()==NULL) return;
     emit startReplay(true);
-    int rt=Settings::getSetting("speed_replay",20).toInt();
+    int rt=Settings::getSetting(speed_replay).toInt();
     rt=101-rt;
     replayTimer->setInterval(rt);
     this->replayStep=-1;
@@ -2054,7 +2050,7 @@ void myCentralWidget::slot_startReplay()
 void myCentralWidget::slot_replay()
 {
     ++replayStep;
-    if(replayStep>Settings::getSetting("trace_length",12).toInt()*60*60/mainW->getSelectedBoat()->getVacLen())
+    if(replayStep>Settings::getSetting(traceLength).toInt()*60*60/mainW->getSelectedBoat()->getVacLen())
     {
         replayTimer->stop();
         emit startReplay(false);
@@ -2079,7 +2075,7 @@ void myCentralWidget::slot_takeScreenshot()
     p.setRenderHint(QPainter::Antialiasing);
     scene->render(&p);
     p.end();
-    QString screenshotPath=Settings::getSetting("screenShotFolder","").toString();
+    QString screenshotPath=Settings::getSetting(screenShotFolder).toString();
     QString fileName = QFileDialog::getSaveFileName(this,
                          tr("Photo Ecran"), screenshotPath, "Screenshot (*.png)");
     if(fileName.isEmpty() || fileName.isNull()) return;
@@ -2097,11 +2093,9 @@ void myCentralWidget::slot_takeScreenshot()
              QString(QObject::tr("Impossible de creer le fichier %1")).arg(fileName));
         return;
     }
-    Settings::setSetting("screenShotFolder",info.absoluteDir().path());
+    Settings::setSetting(screenShotFolder,info.absoluteDir().path());
     // Save it..
     image.save(fileName, "PNG", -1);
-//    if (mainW->getSelectedBoat()->get_boatType()==BOAT_VLM)
-//        ((boatVLM*)mainW->getSelectedBoat())->exportBoatInfoLog(fileName);
 }
 
 void myCentralWidget::slot_showVlmLog()
@@ -2300,12 +2294,12 @@ void myCentralWidget::slot_importRouteFromMenu(bool ortho)
              QString(QObject::tr("L'import de route necessite un bateau actif.")));
         return;
     }
-    QString routePath=Settings::getSetting("importRouteFolder","").toString();
+    QString routePath=Settings::getSetting(importRouteFolder).toString();
     QDir dirRoute(routePath);
     if(!dirRoute.exists())
     {
         routePath=Util::currentPath();
-        Settings::setSetting("importRouteFolder",routePath);
+        Settings::setSetting(importRouteFolder,routePath);
     }
     QString fileName = QFileDialog::getOpenFileName(this,
                          tr("Ouvrir un fichier Route"), routePath, "Routes (*.csv *.txt *.xml *.json *.kml *.CSV *.TXT *.XML *.Json *.JSON *.KML)");
@@ -2319,7 +2313,7 @@ void myCentralWidget::slot_importRouteFromMenu(bool ortho)
         return;
     }
     QFileInfo info(routeFile);
-    Settings::setSetting("importRouteFolder",info.absoluteDir().path());
+    Settings::setSetting(importRouteFolder,info.absoluteDir().path());
     bool ok;
     QString routeName;
     if(info.suffix().toLower()=="kml")
@@ -2775,12 +2769,12 @@ void myCentralWidget::twaDraw(double lon, double lat)
 
 void myCentralWidget::exportRouteFromMenu(ROUTE * route)
 {
-    QString routePath=Settings::getSetting("importRouteFolder","").toString();
+    QString routePath=Settings::getSetting(importRouteFolder).toString();
     QDir dirRoute(routePath);
     if(!dirRoute.exists())
     {
         routePath=Util::currentPath();
-        Settings::setSetting("importRouteFolder",routePath);
+        Settings::setSetting(importRouteFolder,routePath);
     }
     QString fileName = QFileDialog::getSaveFileName(this,
                          tr("Exporter une Route"), routePath, "Routes (*.json *.csv *.txt *.CSV *.gpx *.kml)");
@@ -2795,7 +2789,7 @@ void myCentralWidget::exportRouteFromMenu(ROUTE * route)
              QString(QObject::tr("Impossible de creer le fichier %1")).arg(fileName));
         return;
     }
-    Settings::setSetting("importRouteFolder",info.absoluteDir().path());
+    Settings::setSetting(importRouteFolder,info.absoluteDir().path());
     if (QString::compare(info.suffix().toLower(),"kml")==0)
     {
         routeFile.close();
@@ -3621,7 +3615,7 @@ void myCentralWidget::exportRouteFromMenuGPX(ROUTE * route,QString fileName,bool
         return;
     }
     QFileInfo info(routeFile);
-    Settings::setSetting("importRouteFolder",info.absoluteDir().path());
+    Settings::setSetting(importRouteFolder,info.absoluteDir().path());
     QTextStream stream(&routeFile);
     QStringList list;
     list.append("<?xml version=\"1.0\"?>");
@@ -3786,9 +3780,9 @@ ROUTE * myCentralWidget::addRoute()
 
     route_list.append(route);
     if(this->getPlayer()->getType()!=BOAT_REAL)
-        route->setSpeedLossOnTack((double)Settings::getSetting("speedLossOnTackVlm","100").toInt()/100.00);
+        route->setSpeedLossOnTack((double)Settings::getSetting(speedLoss_On_TackVlm).toInt()/100.00);
     else
-        route->setSpeedLossOnTack((double)Settings::getSetting("speedLossOnTackReal","100").toInt()/100.00);
+        route->setSpeedLossOnTack((double)Settings::getSetting(speedLoss_On_TackReal).toInt()/100.00);
 
     return route;
 }
@@ -4497,7 +4491,7 @@ void myCentralWidget::update_menuRoute()
     while(i.hasNext())
     {
         ROUTE * route=i.next();
-        if(Settings::getSetting("autoHideRoute",1).toInt()==0 || route->getBoat()==NULL || route->getBoat()->getIsSelected() || !route->getBoat()->isActive())
+        if(Settings::getSetting(autoHideRoute).toInt()==0 || route->getBoat()==NULL || route->getBoat()->getIsSelected() || !route->getBoat()->isActive())
             menuBar->addMenuRoute(route);
     }
 
@@ -4517,7 +4511,7 @@ void myCentralWidget::update_menuRoutage()
     while(i.hasNext())
     {
         ROUTAGE * routage=i.next();
-        if(Settings::getSetting("autoHideRoute",1).toInt()==0 || routage->getBoat()==NULL || routage->getBoat()->getIsSelected() || !routage->getBoat()->isActive())
+        if(Settings::getSetting(autoHideRoute).toInt()==0 || routage->getBoat()==NULL || routage->getBoat()->getIsSelected() || !routage->getBoat()->isActive())
             menuBar->addMenuRoutage(routage);
     }
 }
@@ -4861,32 +4855,32 @@ void myCentralWidget::removeOpponent(QString oppId, QString raceId)
 void myCentralWidget::slot_shFla(bool)
 {
     //qWarning()<<"key F pressed";
-    int f=Settings::getSetting("showFlag",0,"showHideItem").toInt();
+    int f=Settings::getSetting(showFlag).toInt();
 
     f=f==0?1:0;
 
-    Settings::setSetting("showFlag",f,"showHideItem");
+    Settings::setSetting(showFlag,f);
 
     emit shFla();
 }
 void myCentralWidget::slot_shNig(bool)
 {
     qWarning() << "[slot_shNig]";
-    bool shNight=Settings::getSetting("showNight",1).toInt()==1;
-    Settings::setSetting("showNight",!shNight?1:0);
+    bool shNight=Settings::getSetting(showNight).toInt()==1;
+    Settings::setSetting(showNight,!shNight?1:0);
     emit this->redrawGrib();
 }
 void myCentralWidget::slot_shScale(bool)
 {
     qWarning() << "[slot_shScale]";
-    bool shScale=Settings::getSetting("showScale",1).toInt()==1;
-    Settings::setSetting("showScale",!shScale?1:0);
+    bool shScale=Settings::getSetting(showScale).toInt()==1;
+    Settings::setSetting(showScale,!shScale?1:0);
     emit this->redrawGrib();
 }
 void myCentralWidget::slot_shTdb(bool)
 {
-    bool shTdb=!Settings::getSetting("showDashBoard",1).toInt()==1;
-    Settings::setSetting("showDashBoard",shTdb?1:0);
+    bool shTdb=!Settings::getSetting(show_DashBoard).toInt()==1;
+    Settings::setSetting(show_DashBoard,shTdb?1:0);
     mainW->showDashBoard();
 }
 
@@ -4962,7 +4956,7 @@ void myCentralWidget::slotImg_close()
     if (kap)
         delete kap;
     kap=NULL;
-    Settings::setSetting("LastKap",QString());
+    Settings::setSetting(LastKap,QString());
 }
 void myCentralWidget::slot_resetGestures()
 {

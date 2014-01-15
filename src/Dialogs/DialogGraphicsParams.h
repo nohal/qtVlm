@@ -168,6 +168,7 @@ class DialogGraphicsParams : public QDialog
         InputLineParams *inputBoundariesLine;
         InputLineParams *inputRiversLine;
         InputLineParams *inputIsobarsLine;
+        InputLineParams *inputIsotherms0Line;
         InputLineParams *inputOpacity;
         InputLineParams *inputOpacityNuit;
         InputLineParams *inputEstimeLine;

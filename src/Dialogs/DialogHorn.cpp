@@ -22,15 +22,13 @@ DialogHorn::DialogHorn(myCentralWidget *parent) : QDialog(parent)
 
 DialogHorn::~DialogHorn()
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
-    Settings::setSetting(this->objectName()+".positionx",this->pos().x());
-    Settings::setSetting(this->objectName()+".positiony",this->pos().y());
+    Settings::saveGeometry(this);
 }
 
 
 void DialogHorn::on_buttonBox_accepted()
 {
+    Settings::saveGeometry(this);
     parent->setHornDate(this->date->dateTime().toUTC());
     parent->setHornIsActivated(this->activated->isChecked());
     QDialog::done(QDialog::Accepted);
@@ -38,6 +36,6 @@ void DialogHorn::on_buttonBox_accepted()
 
 void DialogHorn::on_buttonBox_rejected()
 {
+    Settings::saveGeometry(this);
     QDialog::done(QDialog::Rejected);
-
 }

@@ -58,7 +58,6 @@ signals:
     private:
         MainWindow * mainWin;
         board * parent;
-        double A180(double angle);
 
         /* contextual menu */
         QMenu *popup;

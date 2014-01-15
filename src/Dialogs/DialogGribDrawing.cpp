@@ -113,7 +113,7 @@ bool DialogGribDrawing::init_state(void) {
     }
 
     // Smooth
-    chkSmooth->setChecked(Settings::getSetting("colorMapSmooth", true, "DataDrawing").toBool());
+    chkSmooth->setChecked(Settings::getSetting(colorMapSmoothSet).toBool());
 
     //First arrow
     int curData=terrain->get_frstArwMode();
@@ -137,10 +137,10 @@ bool DialogGribDrawing::init_state(void) {
     }
 
     // Barbule
-    chkShowBarbule->setChecked(Settings::getSetting("showBarbules", true, "DataDrawing").toBool());
+    chkShowBarbule->setChecked(Settings::getSetting(showBarbulesSet).toBool());
 
     // Color
-    QColor color=Settings::getSetting("frstArrowColor",QColor(Qt::white), "DataDrawing").value<QColor>();
+    QColor color=Settings::getSetting(frstArrowColor).value<QColor>();
     updateBtnColor(btn_frstArrowColor,color);
 
     //Second arrow
@@ -163,7 +163,7 @@ bool DialogGribDrawing::init_state(void) {
     }
 
     // Color
-    color=Settings::getSetting("secArrowColor",QColor(Qt::black), "DataDrawing").value<QColor>();
+    color=Settings::getSetting(secArrowColor).value<QColor>();
     updateBtnColor(btn_secArrowColor,color);
 
     // Labels
@@ -185,23 +185,23 @@ bool DialogGribDrawing::init_state(void) {
             terrain->setLabelMode(curData,res.a,res.b);
     }
     // Color
-    color=Settings::getSetting("labelColor",QColor(Qt::black), "DataDrawing").value<QColor>();
+    color=Settings::getSetting(labelColor).value<QColor>();
     updateBtnColor(btn_labelColor,color);
 
     // Pressure Min/Max
-    chkShowIsoBarMinMax->setChecked(Settings::getSetting("showPressureMinMax", false, "DataDrawing").toBool());
+    chkShowIsoBarMinMax->setChecked(Settings::getSetting(showPressureMinMaxSet).toBool());
 
     // IsoBar
 
     // check if we have pressure data
     if(dataManager->hasDataType(DATA_PRESSURE)) {
-        bool showIso=Settings::getSetting("showIsobars", false, "DataDrawing").toBool();
+        bool showIso=Settings::getSetting(showIsobarsSet).toBool();
         chkShowIsoBar->setChecked(showIso);
-        int idx = isoBarSpacing->findText(Settings::getSetting("isobarsStep", "2", "DataDrawing").toString());
+        int idx = isoBarSpacing->findText(Settings::getSetting(isobarsStepSet).toString());
         if(idx!=-1)
             isoBarSpacing->setCurrentIndex(idx);
         isoBarSpacing->setEnabled(showIso);
-        chkShowIsoBarLabel->setChecked(Settings::getSetting("showIsobarsLabels", false, "DataDrawing").toBool());
+        chkShowIsoBarLabel->setChecked(Settings::getSetting(showIsobarsLabelsSet).toBool());
         chkShowIsoBarLabel->setEnabled(showIso);
         if(showIso) {
             curLevelType=terrain->get_isoBarLevelType();
@@ -230,13 +230,13 @@ bool DialogGribDrawing::init_state(void) {
 
     // check if we have data
     if(dataManager->hasData(DATA_GEOPOT_HGT,DATA_LV_ISOTHERM0,0)) {
-        bool showIso=Settings::getSetting("showIsotherms0", false, "DataDrawing").toBool();
+        bool showIso=Settings::getSetting(showIsotherms0Set).toBool();
         chkShowIsoTherm->setChecked(showIso);
-        int idx = isoThermSpacing->findText(Settings::getSetting("isotherms0Step", "50", "DataDrawing").toString());
+        int idx = isoThermSpacing->findText(Settings::getSetting(isotherms0StepSet).toString());
         if(idx!=-1)
             isoThermSpacing->setCurrentIndex(idx);
         isoThermSpacing->setEnabled(showIso);
-        chkShowIsoThermLabel->setChecked(Settings::getSetting("showIsotherms0Labels", false, "DataDrawing").toBool());
+        chkShowIsoThermLabel->setChecked(Settings::getSetting(showIsotherms0LabelsSet).toBool());
         chkShowIsoThermLabel->setEnabled(showIso);
     }
     else {
@@ -432,10 +432,7 @@ void DialogGribDrawing::closeEvent(QCloseEvent * event) {
 }
 
 void DialogGribDrawing::slot_finished() {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
-    Settings::setSetting(this->objectName()+".positionx",this->pos().x());
-    Settings::setSetting(this->objectName()+".positiony",this->pos().y());
+    Settings::saveGeometry(this);
     hide();
     emit hideDialog(false);
 }
@@ -576,23 +573,23 @@ void DialogGribDrawing::slot_showBarbule(bool st) {
 }
 
 void DialogGribDrawing::slot_frstArrowColor(void) {
-    chg_color(btn_frstArrowColor,"frstArrowColor",QColor(Qt::white));
+    chg_color(btn_frstArrowColor,frstArrowColor);
 }
 
 void DialogGribDrawing::slot_secArrowColor(void) {
-    chg_color(btn_secArrowColor,"secArrowColor",QColor(Qt::black));
+    chg_color(btn_secArrowColor,secArrowColor);
 }
 
 void DialogGribDrawing::slot_labelColor(void) {
-    chg_color(btn_labelColor,"labelColor",QColor(Qt::black));
+    chg_color(btn_labelColor,labelColor);
 }
 
-void DialogGribDrawing::chg_color(QPushButton * btn,QString setting,QColor defaultColor) {
-    QColor color =Settings::getSetting(setting,defaultColor, "DataDrawing").value<QColor>();
+void DialogGribDrawing::chg_color(QPushButton * btn,int setting) {
+    QColor color =Settings::getSetting(setting).value<QColor>();
     color = QColorDialog::getColor(color, this);
 
     if(color.isValid()) {
-        Settings::setSetting(setting,color, "DataDrawing");
+        Settings::setSetting(setting,color);
         updateBtnColor(btn,color);
     }
     terrain->redrawGrib();

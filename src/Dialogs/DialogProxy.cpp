@@ -34,12 +34,12 @@ DialogProxy::DialogProxy() : QDialog()
     setupUi(this);
     Util::setFontDialog(this);
 
-    lineProxyHostname->setText(Settings::getSetting("httpProxyHostname", "").toString());
-    lineProxyPort->setText(Settings::getSetting("httpProxyPort", "").toString());
-    lineProxyUsername->setText(Settings::getSetting("httpProxyUsername", "").toString());
-    lineProxyUserPassword->setText(Settings::getSetting("httpProxyUserPassword", "").toString());
+    lineProxyHostname->setText(Settings::getSetting(httpProxyHostname).toString());
+    lineProxyPort->setText(Settings::getSetting(httpProxyPort).toString());
+    lineProxyUsername->setText(Settings::getSetting(httpProxyUsername).toString());
+    lineProxyUserPassword->setText(Settings::getSetting(httpProxyUserPassword).toString());
 
-    int usep = Settings::getSetting("httpUseProxy", 0).toInt();
+    int usep = Settings::getSetting(httpUseProxy).toInt();
 
     useProxy_btn->setChecked(usep!=0);
     noProxy_btn->setChecked(usep==0);
@@ -70,10 +70,7 @@ void DialogProxy::slot_proxyType_changed(int /*type*/)
 
 void DialogProxy::done(int result)
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
-    Settings::setSetting(this->objectName()+".positionx",this->pos().x());
-    Settings::setSetting(this->objectName()+".positiony",this->pos().y());
+    Settings::saveGeometry(this);
     if(result == QDialog::Accepted)
     {
         int type;
@@ -81,11 +78,11 @@ void DialogProxy::done(int result)
             type=proxyType->currentIndex()+1;
         else
             type=0;
-        Settings::setSetting("httpUseProxy",type);
-        Settings::setSetting("httpProxyHostname", lineProxyHostname->text());
-        Settings::setSetting("httpProxyPort", lineProxyPort->text());
-        Settings::setSetting("httpProxyUsername", lineProxyUsername->text());
-        Settings::setSetting("httpProxyUserPassword", lineProxyUserPassword->text());
+        Settings::setSetting(httpUseProxy,type);
+        Settings::setSetting(httpProxyHostname, lineProxyHostname->text());
+        Settings::setSetting(httpProxyPort, lineProxyPort->text());
+        Settings::setSetting(httpProxyUsername, lineProxyUsername->text());
+        Settings::setSetting(httpProxyUserPassword, lineProxyUserPassword->text());
         emit proxyUpdated();
     }
     QDialog::done(result);

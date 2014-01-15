@@ -36,6 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "dataDef.h"
 #include "Util.h"
+#include "AngleUtil.h"
 
 boardReal::boardReal(MainWindow * mainWin, board * parent) : QWidget(mainWin)
 {
@@ -75,11 +76,6 @@ boardReal::boardReal(MainWindow * mainWin, board * parent) : QWidget(mainWin)
     this->gpsInfo->hide();
     this->statusBtn->setEnabled(false);
     connect(this->declinaison,SIGNAL(clicked()),this,SLOT(paramChanged()));
-//    /* Etat du compass */
-//    if(Settings::getSetting("boardCompassShown", "1").toInt()==1)
-//        windAngle->show();
-//    else
-//        windAngle->hide();
 }
 
 boatReal * boardReal::currentBoat(void)
@@ -111,9 +107,9 @@ void boardReal::setWp(double lat,double lon,double wph)
         }
         else
         {
-            double cap=Util::A360(myBoat->getOrtho()-myBoat->getDeclinaison());
+            double cap=AngleUtil::A360(myBoat->getOrtho()-myBoat->getDeclinaison());
             ortho->setText(QString().setNum(cap));
-            cap=Util::A360(myBoat->getLoxo()-myBoat->getDeclinaison());
+            cap=AngleUtil::A360(myBoat->getLoxo()-myBoat->getDeclinaison());
             angle->setText(QString().setNum(cap));
         }
     }
@@ -147,7 +143,7 @@ void boardReal::boatUpdated(void)
     //windAngle->setValues(myBoat->getHeading(),0,myBoat->getWindSpeed(), -1, -1);
     if(this->declinaison->isChecked())
     {
-        double cap=Util::A360(myBoat->getHeading()-myBoat->getDeclinaison());
+        double cap=AngleUtil::A360(myBoat->getHeading()-myBoat->getDeclinaison());
         this->dir->display(cap);
     }
     else
@@ -167,9 +163,9 @@ void boardReal::boatUpdated(void)
         vmg_2->setText(QString().setNum(myBoat->getVmg()));
         if(this->declinaison->isChecked())
         {
-            double cap=Util::A360(myBoat->getOrtho()-myBoat->getDeclinaison());
+            double cap=AngleUtil::A360(myBoat->getOrtho()-myBoat->getDeclinaison());
             ortho->setText(QString().setNum(cap));
-            cap=Util::A360(myBoat->getLoxo()-myBoat->getDeclinaison());
+            cap=AngleUtil::A360(myBoat->getLoxo()-myBoat->getDeclinaison());
             angle->setText(QString().setNum(cap));
         }
         else
@@ -199,14 +195,14 @@ void boardReal::boatUpdated(void)
             twd=radToDeg(twd);
             if(twd>360)
                 twd-=360;
-            double twa=A180(myBoat->getWindDir()-twd);
+            double twa=AngleUtil::A180(myBoat->getWindDir()-twd);
             double Y=90-twa;
             double a=tws*cos(degToRad(Y));
             double b=tws*sin(degToRad(Y));
             double bb=b+myBoat->getSpeed();
             double aws=sqrt(a*a+bb*bb);
             double awa=90-radToDeg(atan(bb/a));
-            s=s.sprintf("<BODY LEFTMARGIN=\"0\">TWS <FONT COLOR=\"RED\"><b>%.1fnds</b></FONT> TWD %.0fdeg TWA %.0fdeg<br>AWS %.1fnds AWA %.0fdeg",tws,twd,A180(twa),aws,awa);
+            s=s.sprintf("<BODY LEFTMARGIN=\"0\">TWS <FONT COLOR=\"RED\"><b>%.1fnds</b></FONT> TWD %.0fdeg TWA %.0fdeg<br>AWS %.1fnds AWA %.0fdeg",tws,twd,AngleUtil::A180(twa),aws,awa);
             if(myBoat->getPolarData())
             {
                 QString s1;
@@ -276,17 +272,6 @@ void boardReal::boatUpdated(void)
 #endif
     }
 }
-double boardReal::A180(double angle)
-    {
-        if(qAbs(angle)>180)
-        {
-            if(angle<0)
-                angle=360+angle;
-            else
-                angle=angle-360;
-        }
-        return angle;
-    }
 
 void boardReal::setChangeStatus(bool /*status*/)
 {
@@ -387,28 +372,15 @@ void boardReal::startGPS(void)
 
 void boardReal::slot_hideShowCompass()
 {
-    //setCompassVisible(~windAngle->isVisible());
+
 }
 
 void boardReal::setCompassVisible(bool /*status*/)
 {
-//    if(status)
-//    {
-//        Settings::setSetting("boardCompassShown",1);
-//        windAngle->show();
-//    }
-//    else
-//    {
-//        Settings::setSetting("boardCompassShown",0);
-//        windAngle->hide();
-//    }
+
 }
 
 void boardReal::contextMenuEvent(QContextMenuEvent  *)
 {
-//    if(windAngle->isVisible())
-//        ac_showHideCompass->setText(tr("Cacher le compas"));
-//    else
-//        ac_showHideCompass->setText(tr("Afficher le compas"));
-//    popup->exec(QCursor::pos());
+
 }

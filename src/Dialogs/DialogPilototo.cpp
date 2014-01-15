@@ -300,10 +300,7 @@ void DialogPilototo::slot_boatUpdated(boat * pvBoat)
 
 void DialogPilototo::done(int result)
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
-    Settings::setSetting(this->objectName()+".positionx",this->pos().x());
-    Settings::setSetting(this->objectName()+".positiony",this->pos().y());
+    Settings::saveGeometry(this);
     if(result==QDialog::Accepted)
     {
         /* checking if there is un validated instructions */
@@ -658,7 +655,7 @@ void DialogPilototo::setInstructions(boat * pvBoat, QList<POI *> pois)
 }
 bool DialogPilototo::confirmChange()
 {
-    if(Settings::getSetting("askConfirmation","0").toInt()==0)
+    if(Settings::getSetting(askConfirmation).toInt()==0)
         return true;
 
     return QMessageBox::question(0,tr("Confirmation a chaque ordre vers VLM"),

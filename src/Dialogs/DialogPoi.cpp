@@ -64,7 +64,7 @@ DialogPoi::DialogPoi(MainWindow * main,myCentralWidget * parent)
     connect(this,SIGNAL(delPOI_list(POI*)),parent,SLOT(slot_delPOI_list(POI*)));
 
     connect(this,SIGNAL(doChgWP(double,double,double)),main,SLOT(slotChgWP(double,double,double)));
-    QString tunit = Settings::getSetting("unitsPosition", "").toString();
+    QString tunit = Settings::getSetting(unitsPosition).toString();
     QString unit = (tunit=="") ? "dddegmm'ss" : tunit;
     formatWithSeconds=unit=="dddegmm'ss";
     navMode->addItem("VB-VMG");
@@ -105,7 +105,7 @@ void DialogPoi::initPOI(POI * poi,const bool &creationMode)
         setWindowTitle(tr("Marque : ")+poi->getName());
     }
     //this->setEnabled(true);
-    QString tunit = Settings::getSetting("unitsPosition", "").toString();
+    QString tunit = Settings::getSetting(unitsPosition).toString();
     QString unit = (tunit=="") ? "dddegmm'ss" : tunit;
     formatWithSeconds=unit=="dddegmm'ss";
     this->formatLatLon();
@@ -119,7 +119,7 @@ void DialogPoi::initPOI(POI * poi,const bool &creationMode)
     while(i.hasNext())
     {
         ROUTE * route=i.next();
-        if(Settings::getSetting("autoHideRoute",1).toInt()==1 && (route->getBoat()==NULL || !route->getBoat()->getIsSelected())) continue;
+        if(Settings::getSetting(autoHideRoute).toInt()==1 && (route->getBoat()==NULL || !route->getBoat()->getIsSelected())) continue;
         QPixmap iconI(20,10);
         iconI.fill(route->getColor());
         QIcon icon(iconI);
@@ -173,10 +173,7 @@ void DialogPoi::initPOI(POI * poi,const bool &creationMode)
 void DialogPoi::done(int result)
 {
     this->setEnabled(false);
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
-    Settings::setSetting(this->objectName()+".positionx",this->pos().x());
-    Settings::setSetting(this->objectName()+".positiony",this->pos().y());
+    Settings::saveGeometry(this);
     if(result == QDialog::Accepted)
     {
         poi->setPartOfTwa(false);

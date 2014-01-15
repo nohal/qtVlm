@@ -136,7 +136,7 @@ class MapDataDrawer
         static QColor getWindColorStatic(const double &v, const bool &smooth=true);
         static QColor getCurrentColorStatic(const double &v, const bool &smooth=true);
 
-        FCT_SETGET_CST(bool,gribMonoCpu)
+        FCT_SETGET_CST(bool,grib_monoCpu)
 
         void paintImage(QImage *image, QPainter *pnt, const QPoint &point);
         static bool drawColorMapGeneric_2D_Partial(const GribThreadData &g);
@@ -202,7 +202,7 @@ private:
         QRgb   getBinaryColor            (double v, bool smooth);
 
 
-        bool gribMonoCpu;
+        bool grib_monoCpu;
 
 
 };

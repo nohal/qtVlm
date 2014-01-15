@@ -28,16 +28,14 @@ DialogVlmLog::DialogVlmLog(myCentralWidget *parent) :
 }
 void DialogVlmLog::done(int result)
 {
+    Settings::saveGeometry(this);
     QDialog::done(result);
     this->deleteLater();
 }
 
 DialogVlmLog::~DialogVlmLog()
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
-    Settings::setSetting(this->objectName()+".positionx",this->pos().x());
-    Settings::setSetting(this->objectName()+".positiony",this->pos().y());
+    Settings::saveGeometry(this);
     if(ui)
         delete ui;
     //qWarning()<<"delete DialogVlmLog finished";
@@ -152,7 +150,7 @@ void DialogVlmLog::slot_updateData(void)
 
 void DialogVlmLog::on_saveLogButton_clicked()
 {
-    QString logsPath=Settings::getSetting("logsFolder","").toString();
+    QString logsPath=Settings::getSetting(logsFolder).toString();
     QString fileName = QFileDialog::getSaveFileName(this,
                          tr("Sauvegarde Logs"), logsPath, "LogsDump (*.txt)");
     if(fileName.isEmpty() || fileName.isNull()) return;
@@ -170,6 +168,6 @@ void DialogVlmLog::on_saveLogButton_clicked()
              QString(QObject::tr("Impossible de creer le fichier %1")).arg(fileName));
         return;
     }
-    Settings::setSetting("logsFolder",info.absoluteDir().path());
+    Settings::setSetting(logsFolder,info.absoluteDir().path());
     vlmBoat->exportBoatInfoLog(fileName);
 }

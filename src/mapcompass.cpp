@@ -93,7 +93,7 @@ mapCompass::~mapCompass()
 }
 void mapCompass::slot_paramChanged(void)
 {
-    if(!(Settings::getSetting("showCompass",0).toInt()==1) && !(Settings::getSetting("showPolar",0).toInt()==1))
+    if(!(Settings::getSetting(showCompass).toInt()==1) && !(Settings::getSetting(showPolar).toInt()==1))
        hide();
     else
        show();
@@ -113,7 +113,7 @@ QRectF mapCompass::boundingRect() const
 QPainterPath mapCompass::shape() const
 {
     QPainterPath path;
-    if((Settings::getSetting("compassCenterBoat","0")=="1") || centralWidget->getCompassFollow()!=NULL)
+    if((Settings::getSetting(compassCenterBoat).toInt()==1) || centralWidget->getCompassFollow()!=NULL)
         path.addEllipse(QRectF(size/10,size/10,size/10,size/10));
     else
         path.addEllipse(QRectF(size/4,size/4,size/2,size/2));
@@ -154,7 +154,7 @@ void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
 
     pnt->drawLine(-(CROSS_SIZE/2),0,(CROSS_SIZE/2),0);
     pnt->drawLine(0,-(CROSS_SIZE/2),0,(CROSS_SIZE/2));
-    if(Settings::getSetting("showCompass",0).toInt()==1)
+    if(Settings::getSetting(showCompass).toInt()==1)
     {
         /* external compass : direction */
 
@@ -284,9 +284,9 @@ void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
     /* draw Polar */
     polarModeVac=false;
     bool polarModeTime=false;
-    if(bvmg_up!=-1 && Settings::getSetting("showPolar",0).toInt()==1)
+    if(bvmg_up!=-1 && Settings::getSetting(showPolar).toInt()==1)
     {
-        if(Settings::getSetting("showCompass",0).toInt()==0)
+        if(Settings::getSetting(showCompass).toInt()==0)
         {
             DataManager * dataManager=centralWidget->get_dataManager();
             if(dataManager) {
@@ -302,17 +302,17 @@ void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
         }
         poly.resize(361);
         double polVac=0;
-        if(Settings::getSetting("scalePolar",0).toInt()==2)
+        if(Settings::getSetting(scalePolar).toInt()==2)
         {
             polarModeVac=true;
-            if(Settings::getSetting("estimeType",0).toInt()==0)
+            if(Settings::getSetting(estimeType).toInt()==0)
             {
-                polVac=Settings::getSetting("estimeTime",60).toInt();
+                polVac=Settings::getSetting(estimeTime).toInt();
                 polarModeTime=true;
             }
-            else if(Settings::getSetting("estimeType",0).toInt()==1)
+            else if(Settings::getSetting(estimeType).toInt()==1)
             {
-                polVac=Settings::getSetting("estimeVac",12).toInt();
+                polVac=Settings::getSetting(estimeVac).toInt();
             }
             else
                 polarModeVac=false;
@@ -444,7 +444,7 @@ void  mapCompass::mousePressEvent(QGraphicsSceneMouseEvent * e)
 {
     if (e->button() == Qt::LeftButton)
     {
-        if(!drawCompassLine && !(Settings::getSetting("compassCenterBoat","0")=="1") && centralWidget->getCompassFollow()==NULL)
+        if(!drawCompassLine && !(Settings::getSetting(compassCenterBoat).toInt()==1) && centralWidget->getCompassFollow()==NULL)
         {
             isMoving=true;
             mouseEvt=false;
@@ -474,9 +474,9 @@ void mapCompass::slot_shCom()
         shCom=true;
     }
     else
-        shCom=!(Settings::getSetting("showCompass",0).toInt()==1);
-    Settings::setSetting("showCompass",shCom?1:0);
-    if(!shCom && !Settings::getSetting("showPolar",0).toInt()==1)
+        shCom=!(Settings::getSetting(showCompass).toInt()==1);
+    Settings::setSetting(showCompass,shCom?1:0);
+    if(!shCom && !Settings::getSetting(showPolar).toInt()==1)
         hide();
     else
     {
@@ -503,10 +503,10 @@ void mapCompass::slot_shPol()
         shPol=true;
     }
     else
-        shPol=!(Settings::getSetting("showPolar",0).toInt()==1);
+        shPol=!(Settings::getSetting(showPolar).toInt()==1);
 
-    Settings::setSetting("showPolar",shPol?1:0);
-    if(!shPol && !Settings::getSetting("showCompass",0).toInt()==1)
+    Settings::setSetting(showPolar,shPol?1:0);
+    if(!shPol && !Settings::getSetting(showCompass).toInt()==1)
         hide();
     else
     {
@@ -539,7 +539,7 @@ void mapCompass::slot_projectionUpdated()
 }
 void mapCompass::slot_compassCenterBoat()
 {
-    if(Settings::getSetting("compassCenterBoat","0")=="0") return;
+    if(Settings::getSetting(compassCenterBoat).toInt()==0) return;
     centralWidget->slot_releaseCompassFollow();
     double lat,lon;
     main->get_selectedBoatPos(&lat,&lon);
@@ -687,8 +687,8 @@ void mapCompass::updateCompassLineLabels(int x, int y)
         {
             if(main->getSelectedBoat() && main->getSelectedBoat()->get_boatType()!=BOAT_VLM)
             {
-                double cap1=Util::A360(pos_angle-main->getSelectedBoat()->getDeclinaison());
-                double cap2=Util::A360(loxo_angle-main->getSelectedBoat()->getDeclinaison());
+                double cap1=AngleUtil::A360(pos_angle-main->getSelectedBoat()->getDeclinaison());
+                double cap2=AngleUtil::A360(loxo_angle-main->getSelectedBoat()->getDeclinaison());
                 hdg_label->setHtml(QString().sprintf("<b><big>Ortho->Hdg: %.2f%c (Mag: %.2f%c) Dist: %.2f NM",pos_angle,176,cap1,176,pos_distance)+"<br>"+
                        QString().sprintf("<b><big>Loxo-->Hdg: %.2f%c (Mag: %.2f%c) Dist: %.2f NM",loxo_angle,176,cap2,176,loxo_dist)+meters+"<br>"+
                        "<font color=\"#FF0000\">"+tr("Collision avec les terres detectee")+"</font>");
@@ -704,8 +704,8 @@ void mapCompass::updateCompassLineLabels(int x, int y)
         {
             if(main->getSelectedBoat() && main->getSelectedBoat()->get_boatType()!=BOAT_VLM)
             {
-                double cap1=Util::A360(pos_angle-main->getSelectedBoat()->getDeclinaison());
-                double cap2=Util::A360(loxo_angle-main->getSelectedBoat()->getDeclinaison());
+                double cap1=AngleUtil::A360(pos_angle-main->getSelectedBoat()->getDeclinaison());
+                double cap2=AngleUtil::A360(loxo_angle-main->getSelectedBoat()->getDeclinaison());
                 hdg_label->setHtml(QString().sprintf("<b><big>Ortho->Hdg: %.2f%c (Mag: %.2f%c) Dist: %.2f NM",pos_angle,176,cap1,176,pos_distance)+"<br>"+
                        QString().sprintf("<b><big>Loxo-->Hdg: %.2f%c (Mag: %.2f%c) Dist: %.2f NM",loxo_angle,176,cap2,176,loxo_dist)+meters);
             }

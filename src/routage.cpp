@@ -43,6 +43,7 @@ Original code: virtual-winds.com
 #include "Polygon.h"
 #include "vlmpointgraphic.h"
 #include "GshhsReader.h"
+#include "AngleUtil.h"
 
 
 #include <QDebug>
@@ -72,7 +73,7 @@ QList<vlmPoint> ROUTAGE::findPointThreaded(const QList<vlmPoint> &list)
         double windSpeed=pt.wind_speed;
         double lat=pt.origin->lat;
         double lon=pt.origin->lon;
-        cap=Util::A360(cap);
+        cap=AngleUtil::A360(cap);
         double angle,newSpeed;
         double res_lon,res_lat;
         double distanceParcourue=0;
@@ -108,7 +109,7 @@ QList<vlmPoint> ROUTAGE::findPointThreaded(const QList<vlmPoint> &list)
             }
             if(current_speed>0)
             {
-                QPointF p=Util::calculateSumVect(cap,newSpeed,Util::A360(current_angle+180.0),current_speed);
+                QPointF p=Util::calculateSumVect(cap,newSpeed,AngleUtil::A360(current_angle+180.0),current_speed);
                 newSpeed=p.x(); //in this case newSpeed is SOG
                 cap=p.y(); //in this case cap is COG
             }
@@ -152,17 +153,17 @@ QList<vlmPoint> ROUTAGE::findPointThreaded(const QList<vlmPoint> &list)
                 }
                 if(pt.routage->getI_iso())
                 {
-                    newWindAngle=Util::A360(newWindAngle+180.0);
-                    current_angle=Util::A360(current_angle+180.0);
+                    newWindAngle=AngleUtil::A360(newWindAngle+180.0);
+                    current_angle=AngleUtil::A360(current_angle+180.0);
                 }
                 if(pt.routage->getWhatIfUsed() && pt.routage->getWhatIfJour()<=pt.eta)
                     windSpeed=windSpeed*pt.routage->getWhatIfWind()/100.00;
-                windAngle=Util::A360((windAngle+newWindAngle)/2.0);
+                windAngle=AngleUtil::A360((windAngle+newWindAngle)/2.0);
                 windSpeed=(windSpeed+newWindSpeed)/2.0;
                 if(current_speed!=-1 && pt.current_speed!=-1)
                 {
                     current_speed=(pt.current_speed+current_speed)/2.0;
-                    current_angle=Util::A360((current_angle+pt.current_angle)/2.0);
+                    current_angle=AngleUtil::A360((current_angle+pt.current_angle)/2.0);
                 }
             }
         }
@@ -279,10 +280,10 @@ QList<vlmPoint> ROUTAGE::findPointThreaded(const QList<vlmPoint> &list)
         {
             QLineF tempLine(pt.x,pt.y,pt.routage->getXs(),pt.routage->getYs());
             pt.distStart=tempLine.length();
-            pt.capStart=Util::A360(-tempLine.angle()+90.0+180.0);
+            pt.capStart=AngleUtil::A360(-tempLine.angle()+90.0+180.0);
             tempLine.setP2(QPointF(pt.routage->getXa(),pt.routage->getYa()));
             pt.distArrival=tempLine.length();
-            pt.capArrival=Util::A360(-tempLine.angle()+90);
+            pt.capArrival=AngleUtil::A360(-tempLine.angle()+90);
         }
         if(pt.origin->isStart)
             pt.distIso=QLineF(pt.x,pt.y,pt.origin->x,pt.origin->y).length();
@@ -421,7 +422,7 @@ QList<vlmPoint> ROUTAGE::finalEpuration(const QList<vlmPoint> &listPoints)
         else if(listPoints.at(n).originNb!=listPoints.at(n+1).originNb &&
                 (listPoints.at(n).origin->isBroken2 || listPoints.at(n+1).origin->isBroken2))
             critere=179;
-        else if(qAbs(Util::A180(qAbs(line1.angleTo(line2)))) > 60 ||
+        else if(qAbs(AngleUtil::A180(qAbs(line1.angleTo(line2)))) > 60 ||
                 qAbs(line1.length()-line2.length())>maxDist)
             critere=150;
         else
@@ -499,7 +500,7 @@ QList<vlmPoint> ROUTAGE::finalEpuration(const QList<vlmPoint> &listPoints)
             if(listPoints.at(previous).originNb!=listPoints.at(next).originNb &&
                     (listPoints.at(previous).origin->isBroken2 || listPoints.at(next).origin->isBroken2))
                 critere=179;
-            else if(qAbs(Util::A180(qAbs(line1.angleTo(line2)))) > 60 ||
+            else if(qAbs(AngleUtil::A180(qAbs(line1.angleTo(line2)))) > 60 ||
                     qAbs(line1.length()-line2.length())>maxDist)
                 critere=150;
             else
@@ -747,7 +748,7 @@ inline int ROUTAGE::calculateTimeRoute(const vlmPoint &routeFrom,const vlmPoint 
                 current_angle=0;
             }
             if(dataThread->i_iso)
-                windAngle=Util::A360(windAngle+180.0);
+                windAngle=AngleUtil::A360(windAngle+180.0);
             if(dataThread->whatIfUsed && dataThread->whatIfJour<=dataThread->Eta)
                 windSpeed=windSpeed*dataThread->whatIfWind/100.00;
             cap=orth.getAzimutDeg();
@@ -762,10 +763,10 @@ inline int ROUTAGE::calculateTimeRoute(const vlmPoint &routeFrom,const vlmPoint 
             if(qAbs(angle)<dataThread->Boat->getPolarData()->getBvmgUp(windSpeed))
             {
                 angle=dataThread->Boat->getPolarData()->getBvmgUp(windSpeed);
-                cap1=Util::A360(windAngle+angle);
-                cap2=Util::A360(windAngle-angle);
-                diff1=Util::myDiffAngle(cap,cap1);
-                diff2=Util::myDiffAngle(cap,cap2);
+                cap1=AngleUtil::A360(windAngle+angle);
+                cap2=AngleUtil::A360(windAngle-angle);
+                diff1=AngleUtil::myDiffAngle(cap,cap1);
+                diff2=AngleUtil::myDiffAngle(cap,cap2);
                 if(diff1<diff2)
                     cap=cap1;
                 else
@@ -774,10 +775,10 @@ inline int ROUTAGE::calculateTimeRoute(const vlmPoint &routeFrom,const vlmPoint 
             else if(qAbs(angle)>dataThread->Boat->getPolarData()->getBvmgDown(windSpeed))
             {
                 angle=dataThread->Boat->getPolarData()->getBvmgDown(windSpeed);
-                cap1=Util::A360(windAngle+angle);
-                cap2=Util::A360(windAngle-angle);
-                diff1=Util::myDiffAngle(cap,cap1);
-                diff2=Util::myDiffAngle(cap,cap2);
+                cap1=AngleUtil::A360(windAngle+angle);
+                cap2=AngleUtil::A360(windAngle-angle);
+                diff1=AngleUtil::myDiffAngle(cap,cap1);
+                diff2=AngleUtil::myDiffAngle(cap,cap2);
                 if(diff1<diff2)
                     cap=cap1;
                 else
@@ -786,7 +787,7 @@ inline int ROUTAGE::calculateTimeRoute(const vlmPoint &routeFrom,const vlmPoint 
             newSpeed=dataThread->Boat->getPolarData()->getSpeed(windSpeed,angle);
             if(current_speed>0)
             {
-                QPointF p=Util::calculateSumVect(cap,newSpeed,Util::A360(current_angle+180.0),current_speed);
+                QPointF p=Util::calculateSumVect(cap,newSpeed,AngleUtil::A360(current_angle+180.0),current_speed);
                 newSpeed=p.x(); //in this case newSpeed is SOG
                 cap=p.y(); //in this case cap is COG
             }
@@ -894,30 +895,30 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, DataManager *dataManager, QGrap
     pen.setColor(color);
     pen.setBrush(color);
     pen.setWidthF(2);
-    this->angleRange=Settings::getSetting("angleRange",180).toDouble();
-    this->angleStep=Settings::getSetting("angleStep",3).toDouble();
-    this->timeStepLess24=Settings::getSetting("timeStepLess24",30).toDouble();
-    this->timeStepMore24=Settings::getSetting("timeStepMore24",60).toDouble();
-    this->explo=Settings::getSetting("exploNew",40).toDouble();
-    this->useRouteModule=Settings::getSetting("useRouteModule",1).toInt()==1;
-    this->useConverge=Settings::getSetting("useConverge",1).toInt()==1;
-    this->checkCoast=Settings::getSetting("checkCoast",1).toInt()==1;
-    this->checkLine=Settings::getSetting("checkLine",1).toInt()==1;
-    this->thresholdAlternative=Settings::getSetting("thresholdAlternative",50).toInt();
-    this->nbAlternative=Settings::getSetting("nbAlternative",0).toInt();
-    this->visibleOnly=Settings::getSetting("visibleOnly",1).toInt()==1;
-    this->autoZoom=Settings::getSetting("autoZoom",1).toInt()==1;
-    this->zoomLevel=Settings::getSetting("autoZoomLevel",2).toInt();
-    this->maxPres=Settings::getSetting("routageMaxPres",70).toDouble();
-    this->maxPortant=Settings::getSetting("routageMaxPortant",70).toDouble();
-    this->maxWaveHeight=Settings::getSetting("routageMaxWaveHeight",100).toDouble();
-    this->minPres=Settings::getSetting("routageMinPres",0).toDouble();
-    this->minPortant=Settings::getSetting("routageMinPortant",0).toDouble();
-    this->pruneWakeAngle=Settings::getSetting("routagePruneWake",30).toInt();
-    this->routageOrtho=Settings::getSetting("routageOrtho",1).toInt()==1;
-    this->showBestLive=Settings::getSetting("routageShowBestLive",1).toInt()==1;
-    this->colorGrib=Settings::getSetting("routageColorGrib",0).toInt()==1;
-    this->showIso=Settings::getSetting("routageShowIso",1).toInt()==1;
+    this->angleRange=Settings::getSetting(angle_Range).toDouble();
+    this->angleStep=Settings::getSetting(angle_Step).toDouble();
+    this->timeStepLess24=Settings::getSetting(timeStep_Less24).toDouble();
+    this->timeStepMore24=Settings::getSetting(timeStep_More24).toDouble();
+    this->explo=Settings::getSetting(explo_New).toDouble();
+    this->useRouteModule=Settings::getSetting(use_RouteModule).toInt()==1;
+    this->useConverge=Settings::getSetting(use_Converge).toInt()==1;
+    this->checkCoast=Settings::getSetting(check_Coast).toInt()==1;
+    this->checkLine=Settings::getSetting(check_Line).toInt()==1;
+    this->thresholdAlternative=Settings::getSetting(threshold_Alternative).toInt();
+    this->nbAlternative=Settings::getSetting(nb_Alternative).toInt();
+    this->visibleOnly=Settings::getSetting(visible_Only).toInt()==1;
+    this->autoZoom=Settings::getSetting(auto_Zoom).toInt()==1;
+    this->zoomLevel=Settings::getSetting(autoZoom_Level).toInt();
+    this->maxPres=Settings::getSetting(routage_MaxPres).toDouble();
+    this->maxPortant=Settings::getSetting(routage_MaxPortant).toDouble();
+    this->maxWaveHeight=Settings::getSetting(routage_MaxWaveHeight).toDouble();
+    this->minPres=Settings::getSetting(routage_MinPres).toDouble();
+    this->minPortant=Settings::getSetting(routage_MinPortant).toDouble();
+    this->pruneWakeAngle=Settings::getSetting(routage_PruneWake).toInt();
+    this->routageOrtho=Settings::getSetting(routage_Ortho).toInt()==1;
+    this->showBestLive=Settings::getSetting(routage_ShowBestLive).toInt()==1;
+    this->colorGrib=Settings::getSetting(routage_ColorGrib).toInt()==1;
+    this->showIso=Settings::getSetting(routage_ShowIso).toInt()==1;
     this->done=false;
     this->i_done=false;
     this->i_iso=false;
@@ -1002,30 +1003,30 @@ void ROUTAGE::calculate()
 {
     if(!i_iso && !isNewPivot)
     {
-        Settings::setSetting("angleRange",this->angleRange);
-        Settings::setSetting("angleStep",this->angleStep);
-        Settings::setSetting("timeStepLess24",this->timeStepLess24);
-        Settings::setSetting("timeStepMore24",this->timeStepMore24);
-        Settings::setSetting("exploNew",this->explo);
-        Settings::setSetting("useRouteModule",useRouteModule?1:0);
-        Settings::setSetting("useConverge",useConverge?1:0);
-        Settings::setSetting("checkCoast",checkCoast?1:0);
-        Settings::setSetting("checkLine",checkLine?1:0);
-        Settings::setSetting("thresholdAlternative",thresholdAlternative);
-        Settings::setSetting("nbAlternative",nbAlternative);
-        Settings::setSetting("visibleOnly",visibleOnly?1:0);
-        Settings::setSetting("autoZoom",autoZoom?1:0);
-        Settings::setSetting("autoZoomLevel",zoomLevel);
-        Settings::setSetting("routageMaxPres",maxPres);
-        Settings::setSetting("routageMaxPortant",maxPortant);
-        Settings::setSetting("routageMinPres",minPres);
-        Settings::setSetting("routageMinPortant",minPortant);
-        Settings::setSetting("routageMaxWaveHeight",maxWaveHeight);
-        Settings::setSetting("routagePruneWake",pruneWakeAngle);
-        Settings::setSetting("routageOrtho",routageOrtho?1:0);
-        Settings::setSetting("routageShowBestLive",showBestLive?1:0);
-        Settings::setSetting("routageColorGrib",colorGrib?1:0);
-        Settings::setSetting("routageShowIso",showIso?1:0);
+        Settings::setSetting(angle_Range,this->angleRange);
+        Settings::setSetting(angle_Step,this->angleStep);
+        Settings::setSetting(timeStep_Less24,this->timeStepLess24);
+        Settings::setSetting(timeStep_More24,this->timeStepMore24);
+        Settings::setSetting(explo_New,this->explo);
+        Settings::setSetting(use_RouteModule,useRouteModule?1:0);
+        Settings::setSetting(use_Converge,useConverge?1:0);
+        Settings::setSetting(check_Coast,checkCoast?1:0);
+        Settings::setSetting(check_Line,checkLine?1:0);
+        Settings::setSetting(threshold_Alternative,thresholdAlternative);
+        Settings::setSetting(nb_Alternative,nbAlternative);
+        Settings::setSetting(visible_Only,visibleOnly?1:0);
+        Settings::setSetting(auto_Zoom,autoZoom?1:0);
+        Settings::setSetting(autoZoom_Level,zoomLevel);
+        Settings::setSetting(routage_MaxPres,maxPres);
+        Settings::setSetting(routage_MaxPortant,maxPortant);
+        Settings::setSetting(routage_MinPres,minPres);
+        Settings::setSetting(routage_MinPortant,minPortant);
+        Settings::setSetting(routage_MaxWaveHeight,maxWaveHeight);
+        Settings::setSetting(routage_PruneWake,pruneWakeAngle);
+        Settings::setSetting(routage_Ortho,routageOrtho?1:0);
+        Settings::setSetting(routage_ShowBestLive,showBestLive?1:0);
+        Settings::setSetting(routage_ColorGrib,colorGrib?1:0);
+        Settings::setSetting(routage_ShowIso,showIso?1:0);
     }
     this->isNewPivot=false;
     this->aborted=false;
@@ -1118,24 +1119,24 @@ void ROUTAGE::calculate()
         yN = yS = yTmp;
         //qWarning()<<"1"<<xW<<xE<<xTmp;
         Util::getCoordFromDistanceAngle (start.y(), start.x(), ratio*distance/2, angle-90, &yTmp, &xTmp);
-        if(mySignedDiffAngle(Util::A360(xW),Util::A360(xTmp))<0) xW=xTmp;
-        if(mySignedDiffAngle(Util::A360(xTmp),Util::A360(xE))<0) xE=xTmp;
+        if(mySignedDiffAngle(AngleUtil::A360(xW),AngleUtil::A360(xTmp))<0) xW=xTmp;
+        if(mySignedDiffAngle(AngleUtil::A360(xTmp),AngleUtil::A360(xE))<0) xE=xTmp;
 //        if (xTmp < xW) xW = xTmp;
 //        if (xTmp > xE) xE = xTmp;
         if (yTmp < yS) yS = yTmp;
         if (yTmp > yN) yN = yTmp;
         //qWarning()<<"2"<<xW<<xE<<xTmp;
         Util::getCoordFromDistanceAngle (arrival.y(), arrival.x(), ratio*distance/2, angle+90, &yTmp, &xTmp);
-        if(mySignedDiffAngle(Util::A360(xW),Util::A360(xTmp))<0) xW=xTmp;
-        if(mySignedDiffAngle(Util::A360(xTmp),Util::A360(xE))<0) xE=xTmp;
+        if(mySignedDiffAngle(AngleUtil::A360(xW),AngleUtil::A360(xTmp))<0) xW=xTmp;
+        if(mySignedDiffAngle(AngleUtil::A360(xTmp),AngleUtil::A360(xE))<0) xE=xTmp;
 //        if (xTmp < xW) xW = xTmp;
 //        if (xTmp > xE) xE = xTmp;
         if (yTmp < yS) yS = yTmp;
         if (yTmp > yN) yN = yTmp;
         //qWarning()<<"3"<<xW<<xE<<xTmp;
         Util::getCoordFromDistanceAngle (arrival.y(), arrival.x(), ratio*distance/2, angle-90, &yTmp, &xTmp);
-        if(mySignedDiffAngle(Util::A360(xW),Util::A360(xTmp))<0) xW=xTmp;
-        if(mySignedDiffAngle(Util::A360(xTmp),Util::A360(xE))<0) xE=xTmp;
+        if(mySignedDiffAngle(AngleUtil::A360(xW),AngleUtil::A360(xTmp))<0) xW=xTmp;
+        if(mySignedDiffAngle(AngleUtil::A360(xTmp),AngleUtil::A360(xE))<0) xE=xTmp;
 //        if (xTmp < xW) xW = xTmp;
 //        if (xTmp > xE) xE = xTmp;
         if (yTmp < yS) yS = yTmp;
@@ -1324,7 +1325,7 @@ void ROUTAGE::slot_calculate()
         QLineF tempLine(point.x,point.y,xa,ya);
         point.distStart=0;
         point.distArrival=tempLine.length();
-        point.capArrival=Util::A360(-tempLine.angle()+90.0);
+        point.capArrival=AngleUtil::A360(-tempLine.angle()+90.0);
         point.capStart=point.capArrival;
         point.distOrigin=0;
         initialDist=tempLine.length();
@@ -1332,7 +1333,7 @@ void ROUTAGE::slot_calculate()
     approaching=false;
     point.origin=NULL;
     point.routage=this;
-    point.capOrigin=Util::A360(loxoCap);
+    point.capOrigin=AngleUtil::A360(loxoCap);
     if(i_iso)
         point.eta=i_eta;
     else
@@ -1429,15 +1430,15 @@ void ROUTAGE::slot_calculate()
                 windSpeed=windSpeed*whatIfWind/100.00;
             if(i_iso)
             {
-                windAngle=Util::A360(windAngle+180.0);
-                current_angle=Util::A360(current_angle+180.0);
+                windAngle=AngleUtil::A360(windAngle+180.0);
+                current_angle=AngleUtil::A360(current_angle+180.0);
             }
             ++nbNotDead;
             iso->setPointWind(n,windAngle,windSpeed);
             iso->setPointCurrent(n,current_angle,current_speed);
             double vmg;
-            myBoat->getPolarData()->getBvmg(Util::A360(list->at(n).capArrival-windAngle),windSpeed,&vmg);
-            //iso->setPointCapVmg(n,Util::A360(vmg+windAngle));
+            myBoat->getPolarData()->getBvmg(AngleUtil::A360(list->at(n).capArrival-windAngle),windSpeed,&vmg);
+            //iso->setPointCapVmg(n,AngleUtil::A360(vmg+windAngle));
         }
 #ifdef traceTime
         msecs_5+=tfp.elapsed();
@@ -1506,15 +1507,15 @@ void ROUTAGE::slot_calculate()
             if(n>1)
             {
                 limitRight.setPoints(QPointF(list->at(n-2).x,list->at(n-2).y),QPointF(xa,ya));
-//                limitRight.setAngle(A360(90-list->at(n).capVmg));
-                limitRight.setAngle(Util::A360(90-list->at(n-2).capOrigin));
+//                limitRight.setAngle(AngleUtil::A360(90-list->at(n).capVmg));
+                limitRight.setAngle(AngleUtil::A360(90-list->at(n-2).capOrigin));
                 limitRight.setLength(list->at(n-2).distIso);
             }
             if(n<list->size()-2)
             {
                 limitLeft.setPoints(QPointF(list->at(n+2).x,list->at(n+2).y),QPointF(xa,ya));
-//                limitLeft.setAngle(A360(90-list->at(n).capVmg));
-                limitLeft.setAngle(Util::A360(90-list->at(n+2).capOrigin));
+//                limitLeft.setAngle(AngleUtil::A360(90-list->at(n).capVmg));
+                limitLeft.setAngle(AngleUtil::A360(90-list->at(n+2).capOrigin));
                 limitLeft.setLength(list->at(n+2).distIso);
             }
 #endif
@@ -1531,7 +1532,7 @@ void ROUTAGE::slot_calculate()
                     if(!tryingToFindHole && !list->at(0).isStart && !list->at(n).notSimplificable)
                     {
                         QLineF temp(list->at(n).x,list->at(n).y,xa,ya);
-                        temp.setAngle(Util::A360(90-caps.at(ccc)));
+                        temp.setAngle(AngleUtil::A360(90-caps.at(ccc)));
                         temp.setLength(list->at(n).distIso);
                         if(n>1)
                         {
@@ -1576,7 +1577,7 @@ void ROUTAGE::slot_calculate()
                     {
                         QLineF line1(xa,ya,newPoint.origin->x,newPoint.origin->y);
                         QLineF line2(xa,ya,list->at(n+1).x,list->at(n+1).y);
-                        if(qAbs(Util::A180(qAbs(line1.angleTo(line2))))<60)
+                        if(qAbs(AngleUtil::A180(qAbs(line1.angleTo(line2))))<60)
                         {
                             newPoint.xP1=list->at(n+1).x;
                             newPoint.yP1=list->at(n+1).y;
@@ -1586,7 +1587,7 @@ void ROUTAGE::slot_calculate()
                     {
                         QLineF line1(xa,ya,newPoint.origin->x,newPoint.origin->y);
                         QLineF line2(xa,ya,list->at(n-1).x,list->at(n-1).y);
-                        if(qAbs(Util::A180(qAbs(line1.angleTo(line2))))<60)
+                        if(qAbs(AngleUtil::A180(qAbs(line1.angleTo(line2))))<60)
                         {
                             newPoint.xM1=list->at(n-1).x;
                             newPoint.yM1=list->at(n-1).y;
@@ -2211,9 +2212,9 @@ void ROUTAGE::slot_calculate()
                     y2=tempPoints.at(n+1).y;
                     QLineF qf(x1,y1,x2,y2);
                     if(qf.length()>averageGap
-                            || Util::myDiffAngle(tempPoints.at(n).capArrival,tempPoints.at(n+1).capArrival)>30.0
-                            || Util::myDiffAngle(tempPoints.at(n).capStart,tempPoints.at(n+1).capStart)>30.0
-                            || Util::myDiffAngle(tempPoints.at(n).capOrigin,tempPoints.at(n+1).capOrigin)>150.0)
+                            || AngleUtil::myDiffAngle(tempPoints.at(n).capArrival,tempPoints.at(n+1).capArrival)>30.0
+                            || AngleUtil::myDiffAngle(tempPoints.at(n).capStart,tempPoints.at(n+1).capStart)>30.0
+                            || AngleUtil::myDiffAngle(tempPoints.at(n).capOrigin,tempPoints.at(n+1).capOrigin)>150.0)
                         tempPoints[n].isBroken=true;
                 }
                 if(n==0 || n==tempPoints.size()-1)
@@ -2234,7 +2235,7 @@ void ROUTAGE::slot_calculate()
 #if 0
                 if(n>0)
                 {
-                    if(Util::myDiffAngle(tempPoints.at(n).capArrival,tempPoints.at(n-1).capArrival) < 60)
+                    if(AngleUtil::myDiffAngle(tempPoints.at(n).capArrival,tempPoints.at(n-1).capArrival) < 60)
                     {
                         previousIso.append(QPointF(tempPoints.at(n).x,tempPoints.at(n).y));
                     }
@@ -3008,7 +3009,7 @@ double ROUTAGE::findTime(const vlmPoint * pt, QPointF P, double * cap)
 }
 double ROUTAGE::mySignedDiffAngle(const double a1,const double a2)
 {
-    return (Util::A360(qAbs(a1)+ 180 -qAbs(a2)) -180);
+    return (AngleUtil::A360(qAbs(a1)+ 180 -qAbs(a2)) -180);
 }
 void ROUTAGE::slot_edit()
 {
@@ -3195,7 +3196,7 @@ void ROUTAGE::convertToRoute()
     simplify.setToolTip(tip.replace(" ","&nbsp;"));
     simplify.setTristate(true);
     simplify.blockSignals(true);
-    int i=Settings::getSetting("convertAndSimplify",Qt::Checked).toInt();
+    int i=Settings::getSetting(convertAndSimplify).toInt();
     simplify.setCheckState(i==0?Qt::Unchecked:i==1?Qt::PartiallyChecked:Qt::Checked);
     QCheckBox deleteOther(tr("Supprimer les autres routages"),0);
     deleteOther.blockSignals(true);
@@ -3230,7 +3231,7 @@ void ROUTAGE::convertToRoute()
             }
         }
         simp=simplify.checkState()!=Qt::Unchecked;
-        Settings::setSetting("convertAndSimplify",simplify.checkState());
+        Settings::setSetting(convertAndSimplify,simplify.checkState());
         routeStartBoat=answ==QMessageBox::Yes;
     }
     else
@@ -3654,7 +3655,7 @@ void ROUTAGE::removeCrossedSegments()
         bool differentDirection=false;
         QLineF line1(xa,ya,tempPoints.at(n).x,tempPoints.at(n).y);
         QLineF line2(xa,ya,tempPoints.at(n+1).x,tempPoints.at(n+1).y);
-        if(qAbs(Util::A180(qAbs(line1.angleTo(line2))))>60.0 ||
+        if(qAbs(AngleUtil::A180(qAbs(line1.angleTo(line2))))>60.0 ||
                 qAbs(line1.length()-line2.length())>maxDist)
         {
             if(tempPoints.at(n).originNb!=tempPoints.at(n+1).originNb)
@@ -3743,7 +3744,7 @@ void ROUTAGE::removeCrossedSegments()
             bool differentDirection=false;
             QLineF line1(xa,ya,tempPoints.at(previous).x,tempPoints.at(previous).y);
             QLineF line2(xa,ya,tempPoints.at(next).x,tempPoints.at(next).y);
-            if(qAbs(Util::A180(qAbs(line1.angleTo(line2))))>60.0 ||
+            if(qAbs(AngleUtil::A180(qAbs(line1.angleTo(line2))))>60.0 ||
                     qAbs(line1.length()-line2.length())>maxDist)
             {
                 if(tempPoints.at(previous).originNb!=tempPoints.at(next).originNb)
@@ -3848,8 +3849,8 @@ void ROUTAGE::removeCrossedSegments()
                 }
             }
         }
-        if(!differentDirection && (Util::myDiffAngle(tempPoints.at(n).capArrival,tempPoints.at(n+1).capArrival)>60.0 ||
-                Util::myDiffAngle(tempPoints.at(n).capStart,tempPoints.at(n+1).capStart)>60.0))
+        if(!differentDirection && (AngleUtil::myDiffAngle(tempPoints.at(n).capArrival,tempPoints.at(n+1).capArrival)>60.0 ||
+                AngleUtil::myDiffAngle(tempPoints.at(n).capStart,tempPoints.at(n+1).capStart)>60.0))
         {
             if(tempPoints.at(n).originNb!=tempPoints.at(n+1).originNb)
             {
@@ -3938,8 +3939,8 @@ void ROUTAGE::removeCrossedSegments()
                     }
                 }
             }
-            if(!differentDirection && (Util::myDiffAngle(tempPoints.at(previous).capArrival,tempPoints.at(next).capArrival)>60.0 ||
-                    Util::myDiffAngle(tempPoints.at(previous).capStart,tempPoints.at(next).capStart)>60.0))
+            if(!differentDirection && (AngleUtil::myDiffAngle(tempPoints.at(previous).capArrival,tempPoints.at(next).capArrival)>60.0 ||
+                    AngleUtil::myDiffAngle(tempPoints.at(previous).capStart,tempPoints.at(next).capStart)>60.0))
             {
                 if(tempPoints.at(previous).originNb!=tempPoints.at(next).originNb)
                 {
@@ -4011,9 +4012,9 @@ void ROUTAGE::calculateCaps(QList<double> *caps, const vlmPoint &point, const do
     {
         if(cc>workAngleRange/2.0)
             cc=workAngleRange/2;
-        caps->append(Util::A360(point.capArrival-cc));
+        caps->append(AngleUtil::A360(point.capArrival-cc));
         if(cc!=0)
-            caps->prepend(Util::A360(point.capArrival+cc));
+            caps->prepend(AngleUtil::A360(point.capArrival+cc));
         if(cc>=workAngleRange/2.0) break;
     }
 #if 0
@@ -4849,8 +4850,8 @@ void ROUTAGE::calculateAlternative()
 {
     while(!this->alternateRoutes.isEmpty())
         delete alternateRoutes.takeFirst();
-    Settings::setSetting("thresholdAlternative",thresholdAlternative);
-    Settings::setSetting("nbAlternative",nbAlternative);
+    Settings::setSetting(threshold_Alternative,thresholdAlternative);
+    Settings::setSetting(nb_Alternative,nbAlternative);
     if(nbAlternative==0) return;
     if(i_iso || !arrived) return;
     QMessageBox * waitBox = new QMessageBox(QMessageBox::Information,tr("Calcul des routes alternatives"),

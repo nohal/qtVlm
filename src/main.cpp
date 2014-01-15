@@ -38,6 +38,8 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 QMap<QString,QString> appFolder;
 
+extern QSettings *fileSettings;
+
 #if 0 /*put 1 to force crash on assert, useful for debugging*/
 void crashingMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg){
     QByteArray localMsg = msg.toLocal8Bit();
@@ -142,8 +144,9 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForTr(QTextCodec::codecForName("utf8"));
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("utf8"));
 #endif
+    fileSettings=NULL;
     Settings::initSettings();
-//    if(Settings::getSetting("fusionStyle",0).toInt()==1)
+//    if(Settings::getSetting(fusionStyle).toInt()==1)
 //    {
 //        qWarning()<<"setting up Black fusion style";
 //        app->setStyle(QStyleFactory::create("Fusion"));
@@ -156,28 +159,24 @@ int main(int argc, char *argv[])
 //        p.setColor(QPalette::WindowText, QColor(255,255,255));
 //        app->setPalette(p);
 //    }
-    double fontInc=Settings::getSetting("defaultFontSizeInc",0).toDouble();
-    if(Settings::getSetting("defaultFontName","-1").toString()=="-1")
-        Settings::setSetting("defaultFontName",QApplication::font().family());
-    QFont def(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
+    double fontInc=Settings::getSetting(defaultFontSizeInc).toDouble();
+    if(Settings::getSetting(defaultFontName).toString()=="-1")
+        Settings::setSetting(defaultFontName,Settings::getSettingDefault(defaultFontName));
+    QFont def(Settings::getSetting(defaultFontName).toString());
     double fontSize=8.0+fontInc;
     def.setPointSizeF(fontSize);
     QApplication::setFont(def);
-    Settings::setSetting("applicationFontSize",fontSize);
+    Settings::setSetting(applicationFontSize,fontSize);
 //#ifdef __MAC_QTVLM
 //    QString style=QString().sprintf("QPushButton { font: %.2fpx} QLabel { font: %.2fpx} QLineEdit { font: %.2fpx}  QCheckBox { font: %.2fpx} QGroupBox { font: %.2fpx} QComboBox { font: %.2fpx} QListWidget { font: %.2fpx} QRadioButton { font: %.2fpx} QTreeView { font: %.2fpx}",
 //                                    fontSize,fontSize,fontSize,fontSize,fontSize,fontSize,fontSize,fontSize,fontSize);
 //    qApp->setStyleSheet(style);
 
 //#endif
+
     QTranslator translator;
     QTranslator translatorQt;
-    QString lang = Settings::getSetting("appLanguage", "none").toString();
-    if (lang == "none") {  // first call
-        qWarning() << "Setting default lang=fr";
-        lang = "fr";
-        Settings::setSetting("appLanguage", lang);
-    }
+    QString lang = Settings::getSetting(appLanguage).toString();
 
     if (lang == "fr") {
         qWarning() << "Loading fr";
@@ -187,7 +186,7 @@ int main(int argc, char *argv[])
         app->installTranslator(&translatorQt);
         app->installTranslator(&translator);
     }
-    else if (lang == "en") {
+    else if (lang == "en" || lang == "NO") {
         qWarning() << "Loading en";
         QLocale::setDefault(QLocale("en_US"));
         translator.load( appFolder.value("tr")+"qtVlm_" + lang);
@@ -211,7 +210,7 @@ int main(int argc, char *argv[])
     }
     app->setQuitOnLastWindowClosed(true);
 
-    MainWindow win(800, 600);
+    MainWindow win;
     win.continueSetup();
     if(win.getRestartNeeded())
     {

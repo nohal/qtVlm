@@ -99,7 +99,7 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent, POI *endP
     this->minPres->setValue(routage->getMinPres());
     this->maxWaveHeight->setValue(routage->get_maxWaveHeight());
     if(!routage->isDone())
-        this->convRoute->setChecked(Settings::getSetting("autoConvertToRoute","0").toInt()==1);
+        this->convRoute->setChecked(Settings::getSetting(autoConvertToRoute).toInt()==1);
     if(routage->getFinalEta().isNull())
         this->groupBox_eta->setHidden(true);
     else
@@ -110,7 +110,7 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent, POI *endP
     int n=0;
     if(parent->getPlayer()->getType()!=BOAT_REAL)
     {
-        this->speedLossOnTack->setValue(Settings::getSetting("speedLossOnTackVlm","100").toInt());
+        this->speedLossOnTack->setValue(Settings::getSetting(speedLoss_On_TackVlm).toInt());
         if(parent->getBoats())
         {
             QListIterator<boatVLM*> i (*parent->getBoats());
@@ -131,7 +131,7 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent, POI *endP
     }
     else
     {
-        this->speedLossOnTack->setValue(Settings::getSetting("speedLossOnTackReal","100").toInt());
+        this->speedLossOnTack->setValue(Settings::getSetting(speedLoss_On_TackReal).toInt());
         editBoat->addItem(parent->getPlayer()->getName());
         editBoat->setEnabled(false);
     }
@@ -267,10 +267,7 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent, POI *endP
 }
 DialogRoutage::~DialogRoutage()
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
-    Settings::setSetting(this->objectName()+".positionx",this->pos().x());
-    Settings::setSetting(this->objectName()+".positiony",this->pos().y());
+    Settings::saveGeometry(this);
 }
 
 void DialogRoutage::slot_default()
@@ -307,6 +304,7 @@ void DialogRoutage::slot_default()
 //---------------------------------------
 void DialogRoutage::done(int result)
 {
+    Settings::saveGeometry(this);
     if(result == QDialog::Accepted)
     {
         if (!parent->freeRoutageName((editName->text()).trimmed(),routage))
@@ -459,7 +457,7 @@ void DialogRoutage::done(int result)
         routage->setShowIso(this->showIso->isChecked());
         routage->setUseRouteModule(this->useVac->isChecked());
         if(!routage->isDone())
-            Settings::setSetting("autoConvertToRoute",convRoute->isChecked()?1:0);
+            Settings::setSetting(autoConvertToRoute,convRoute->isChecked()?1:0);
         if(this->convRoute->isChecked() || this->multi_routage->isChecked())
         {
             if(!routage->isConverted())

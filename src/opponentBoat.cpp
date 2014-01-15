@@ -75,7 +75,7 @@ void opponent::init(QColor color,bool isQtBoat,QString idu,QString race, double 
     this->lastUpdate=0;
     this->updateRequired=true;
 
-    this->opp_trace=1;
+    this->oppTrace=1;
     this->labelHidden=parentWindow->get_shLab_st();
     connect(parentWindow, SIGNAL(shOpp(bool)),this,SLOT(slot_shOpp(bool)));
     connect(parentWindow, SIGNAL(shLab(bool)),this,SLOT(slot_shLab(bool)));
@@ -122,7 +122,7 @@ void opponent::init(QColor color,bool isQtBoat,QString idu,QString race, double 
     this->loch24h="";
     this->rank=0;
     updatePosition();
-    trace_drawing->setHidden(Settings::getSetting("hideTrace",0,"showHideItem").toInt()==1);
+    trace_drawing->setHidden(Settings::getSetting(hideTrace).toInt()==1);
 }
 
 opponent::~opponent(void)
@@ -160,7 +160,7 @@ void opponent::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget 
     if(name.isEmpty())
         return;
 
-    if(Settings::getSetting("showFlag",0,"showHideItem").toInt()==1)
+    if(Settings::getSetting(showFlag).toInt()==1)
     {
         if(flag.isNull())
         {
@@ -262,7 +262,7 @@ void opponent::drawOnMagnifier(Projection * myProj,QPainter * pnt)
     if(name.isEmpty())
         return;
 
-    if(Settings::getSetting("showFlag",0,"showHideItem").toInt()==1)
+    if(Settings::getSetting(showFlag).toInt()==1)
     {
         if(flag.isNull())
         {
@@ -380,7 +380,7 @@ void opponent::drawTrace()
             }
         }
     }
-    if(opp_trace==1 && !parentWindow->get_shOpp_st() && Settings::getSetting("hideTrace",0,"showHideItem").toInt()==0)
+    if(oppTrace==1 && !parentWindow->get_shOpp_st() && Settings::getSetting(hideTrace).toInt()==0)
     {
         trace_drawing->slot_showMe();
         trace_drawing->setHidden(false);
@@ -567,9 +567,8 @@ void opponent::setIsQtBoat(bool status)
 
 void opponent::paramChanged()
 {
-    //myColor = QColor(Settings::getSetting("opp_color",QColor(Qt::green).name()).toString());
-    label_type = Settings::getSetting("opp_labelType",0).toInt();
-    opp_trace = Settings::getSetting("opp_trace","1").toInt();
+    label_type = Settings::getSetting(opp_labelType).toInt();
+    oppTrace = Settings::getSetting(opp_trace).toInt();
 
     updatePosition();
     updateName();
@@ -588,7 +587,7 @@ void opponent::slot_shOpp(bool isHidden) {
         if(trace_drawing)
         {
             drawTrace();
-            if(Settings::getSetting("hideTrace",0,"showHideItem").toInt()==0)
+            if(Settings::getSetting(hideTrace).toInt()==0)
             {
                 trace_drawing->slot_showMe();
                 trace_drawing->setHidden(false);
@@ -835,7 +834,7 @@ void opponentList::getNxtOppData()
     clearCurrentRequest();
 
     time_t endtime=QDateTime::currentDateTime().toUTC().toTime_t();
-    time_t starttime=endtime-(Settings::getSetting("trace_length",12).toInt()*60*60);
+    time_t starttime=endtime-(Settings::getSetting(traceLength).toInt()*60*60);
     QString page;
     QString pref="V";
     if(opponent_list[currentOpponent-1]->getIsReal())

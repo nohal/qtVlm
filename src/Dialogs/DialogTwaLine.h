@@ -23,7 +23,6 @@ private:
     QList<POI*> list;
     boat * myBoat;
     void traceIt();
-    double A360(double hdg);
     MainWindow * main;
     QPen pen;
     QPoint position;

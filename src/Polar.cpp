@@ -34,6 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Orthodromie.h"
 #include "settings.h"
 #include "boat.h"
+#include "AngleUtil.h"
 
 Polar::Polar(MainWindow * mainWindow)
 {
@@ -84,7 +85,7 @@ void Polar::setPolarName(QString fname)
     loaded=false;
     clearPolar();
     if(this->mainWindow->getSelectedBoat() && this->mainWindow->getSelectedBoat()->get_boatType()==BOAT_REAL)
-        coeffPolar=Settings::getSetting("polarEfficiency",100).toInt()/100.0;
+        coeffPolar=Settings::getSetting(polar_efficiency).toInt()/100.0;
     else
         coeffPolar=1.0;
 
@@ -304,7 +305,7 @@ void Polar::setPolarName(QString fname)
         for (int twa=0;twa<1801;twa++)
         {
             bvmgWind((double) twa/10.0,(double) tws/10.0,&vmg);
-            ssVmg.sprintf("%.4d",qRound(A360(vmg)*10.0));
+            ssVmg.sprintf("%.4d",qRound(AngleUtil::A360(vmg)*10.0));
             sVmg<<ssVmg;
         }
     }
@@ -844,7 +845,7 @@ void Polar::myBvmgWind(double w_angle, double w_speed, double *wangle)
     for (i=0; i<imax; i++)
     {
         t_heading = w_angle + degToRad(((double)i));
-        speed = this->getSpeed(w_speed, A180(radToDeg(t_heading)));
+        speed = this->getSpeed(w_speed, AngleUtil::A180(radToDeg(t_heading)));
 
         if (speed < 0.0)
         {
@@ -864,7 +865,7 @@ void Polar::myBvmgWind(double w_angle, double w_speed, double *wangle)
     for (i=0; i<imax; i++)
     {
         t_heading = w_angle - degToRad(((double)i));
-        speed = this->getSpeed(w_speed,  A180(radToDeg(t_heading)));
+        speed = this->getSpeed(w_speed,  AngleUtil::A180(radToDeg(t_heading)));
         if (speed < 0.0)
         {
           continue;
@@ -883,24 +884,6 @@ void Polar::myBvmgWind(double w_angle, double w_speed, double *wangle)
           break;
         }
     }
-}
-
-double Polar::A180(double angle)
-{
-    if(qAbs(angle)>180)
-    {
-        if(angle<0)
-            angle=360+angle;
-        else
-            angle=angle-360;
-    }
-    return angle;
-}
-double Polar::A360(double hdg)
-{
-    if(hdg>=360) hdg=hdg-360;
-    if(hdg<0) hdg=hdg+360;
-    return hdg;
 }
 
 /********************/

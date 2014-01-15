@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "dataDef.h"
 #include "zuFile.h"
 #include "Util.h"
+#include "AngleUtil.h"
 
 
 GshhsPolyCell::GshhsPolyCell(FILE *fpoly_, int x0_, int y0_,Projection *proj_,PolygonFileHeader *header_)
@@ -146,15 +147,15 @@ void  GshhsPolyCell::DrawPolygonFilled(QPainter &pnt, contour_list * p, const do
 #define DRAW_POLY_FILLED(POLY,COL) if(POLY) DrawPolygonFilled(pnt,POLY,dx,proj,COL);
 
 void  GshhsPolyCell::drawMapPlain(QPainter &pnt, const double &dx, Projection *proj,
-            const QColor &seaColor, const QColor &landColor )
+            const QColor &seaColorVal, const QColor &landColorVal )
 {
     pnt.setRenderHint(QPainter::Antialiasing, true);
 
-    DRAW_POLY_FILLED(&poly1,landColor)
-    DRAW_POLY_FILLED(&poly2,seaColor)
-    DRAW_POLY_FILLED(&poly3,landColor)
-    DRAW_POLY_FILLED(&poly4,seaColor)
-    DRAW_POLY_FILLED(&poly5,landColor)
+    DRAW_POLY_FILLED(&poly1,landColorVal)
+    DRAW_POLY_FILLED(&poly2,seaColorVal)
+    DRAW_POLY_FILLED(&poly3,landColorVal)
+    DRAW_POLY_FILLED(&poly4,seaColorVal)
+    DRAW_POLY_FILLED(&poly5,landColorVal)
 }
 
 void GshhsPolyCell::DrawPolygonContour(QPainter &pnt, contour_list * p, const double &dx, Projection *proj)
@@ -164,7 +165,7 @@ void GshhsPolyCell::DrawPolygonContour(QPainter &pnt, contour_list * p, const do
     double X,Y;
     proj->map2screenDouble((double)x0cell,(double)y0cell,&X,&Y);
     QPointF left(X,Y);
-    proj->map2screenDouble(Util::A360((double)x0cell+1.0),Util::A360((double)y0cell+1.0),&X,&Y);
+    proj->map2screenDouble(AngleUtil::A360((double)x0cell+1.0),AngleUtil::A360((double)y0cell+1.0),&X,&Y);
     QPointF right(X,Y);
     boundingRect=QRectF(left,right);
 
@@ -366,7 +367,7 @@ void GshhsPolyReader::readPolygonFileHeader(FILE *polyfile, PolygonFileHeader *h
 
 //-------------------------------------------------------------------------
 void GshhsPolyReader::drawGshhsPolyMapPlain(QPainter &pnt, Projection *proj,
-                    const QColor &seaColor, const QColor &landColor )
+                    const QColor &seaColorVal, const QColor &landColorVal )
 {
     if (!fpoly)
         return;
@@ -398,7 +399,7 @@ void GshhsPolyReader::drawGshhsPolyMapPlain(QPainter &pnt, Projection *proj,
                     cel = allCells[cxx][cy+90];
                 }
                 dx = cx-cxx;
-                cel -> drawMapPlain(pnt, dx, proj, seaColor, landColor);
+                cel -> drawMapPlain(pnt, dx, proj, seaColorVal, landColorVal);
             }
         }
     }

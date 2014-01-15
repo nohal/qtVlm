@@ -34,10 +34,7 @@ DialogChooseBarrierSet::DialogChooseBarrierSet(MainWindow * parent): QDialog(par
 }
 
 DialogChooseBarrierSet::~DialogChooseBarrierSet() {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
-    Settings::setSetting(this->objectName()+".positionx",this->pos().x());
-    Settings::setSetting(this->objectName()+".positiony",this->pos().y());
+    Settings::saveGeometry(this);
 }
 
 BarrierSet * DialogChooseBarrierSet::chooseBarrierSet(MainWindow *parent) {
@@ -94,6 +91,7 @@ int DialogChooseBarrierSet::init_dialog(void) {
 }
 
 void DialogChooseBarrierSet::done(int result) {
+    Settings::saveGeometry(this);
     if(result == QDialog::Accepted) {
         choice=VPtr<BarrierSet>::asPtr(cb_barrierSets->itemData(cb_barrierSets->currentIndex()));
     }

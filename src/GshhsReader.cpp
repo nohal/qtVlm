@@ -453,17 +453,17 @@ void GshhsReader::GsshDrawLines(QPainter &pnt, std::list<GshhsPolygon*> &lst,
 
 //-----------------------------------------------------------------------
 void GshhsReader::drawBackground( QPainter &pnt, Projection *proj,
-            QColor seaColor, QColor backgroundColor
+            QColor seaColorVal, QColor backgroundColorVal
         )
 {
     // fond de carte
-    pnt.setBrush(backgroundColor);
-    pnt.setPen(backgroundColor);
+    pnt.setBrush(backgroundColorVal);
+    pnt.setPen(backgroundColorVal);
     pnt.drawRect(0,0,proj->getW(), proj->getH());
 
     // oceans bleus (peint toute la zone entre les 2 poles)
-    pnt.setBrush(seaColor);
-    pnt.setPen(seaColor);
+    pnt.setBrush(seaColorVal);
+    pnt.setPen(seaColorVal);
     int x0,y0,x1,y1;
     proj->map2screen(0,90, &x0,&y0);
     proj->map2screen(0,-90, &x1,&y1);
@@ -475,14 +475,15 @@ void GshhsReader::drawBackground( QPainter &pnt, Projection *proj,
 }
 //-----------------------------------------------------------------------
 void GshhsReader::drawContinents( QPainter &pnt, Projection *proj,
-            QColor seaColor, QColor landColor
+            QColor seaColorVal, QColor landColorVal
         )
 {
+    //qWarning() << "[drawContinents] land=" << landColorVal << ", seaColor=" << seaColorVal;
     selectBestQuality(proj);
 
     //pnt.setPen(Qt::transparent);
 
-    gshhsPoly_reader->drawGshhsPolyMapPlain(pnt, proj, seaColor, landColor);
+    gshhsPoly_reader->drawGshhsPolyMapPlain(pnt, proj, seaColorVal, landColorVal);
 }
 
 //-----------------------------------------------------------------------

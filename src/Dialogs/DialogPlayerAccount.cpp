@@ -68,8 +68,20 @@ DialogPlayerAccount::DialogPlayerAccount(Projection * proj, MainWindow * main,
     connect(this,SIGNAL(delPlayer(Player*)),parent,SLOT(slot_delPlayer_list(Player*)));
 
     connect(this,SIGNAL(playerSelected(Player*)),parent,SLOT(slot_playerSelected(Player*)));
-    this->en->setChecked(Settings::getSetting("appLanguage","fr").toString()=="en");
-    qWarning()<<"langage is"<<Settings::getSetting("appLanguage","fr").toString();
+
+    QString settingLang= Settings::getSetting(appLanguage).toString();
+    qWarning()<<"langage is"<<settingLang;
+
+    if(settingLang == "en" || settingLang=="NO")
+        this->en->setChecked(true);
+    else if(settingLang == "fr")
+        this->fr->setChecked(true);
+    else if(settingLang == "cz")
+        this->cz->setChecked(true);
+    else if(settingLang == "es")
+        this->es->setChecked(true);
+
+
     if(!parent->getIsStartingUp())
         lang->hide();
     else
@@ -120,7 +132,7 @@ void DialogPlayerAccount::initList(QList<Player*> * player_list)
         list_player->setCurrentRow(0);
         slot_selectItem_player(list_player->currentItem());
     }
-    if(list_player->count()>0)
+    if(list_player->count()>0 && Settings::getSetting(appLanguage).toString()!="NO")
         this->lang->hide();
     updBtnAndString();
 }
@@ -129,22 +141,22 @@ void DialogPlayerAccount::slot_langChanged(bool)
     QString la;
     if(fr->isChecked())
     {
-        Settings::setSetting("appLanguage", "fr");
+        Settings::setSetting(appLanguage, "fr");
         la="fr";
     }
     else if (en->isChecked())
     {
-        Settings::setSetting("appLanguage", "en");
+        Settings::setSetting(appLanguage, "en");
         la="en";
     }
     else if (cz->isChecked())
     {
-        Settings::setSetting("appLanguage", "cz");
+        Settings::setSetting(appLanguage, "cz");
         la="cz";
     }
     else if (es->isChecked())
     {
-        Settings::setSetting("appLanguage", "es");
+        Settings::setSetting(appLanguage, "es");
         la="cz";
     }
 
@@ -217,10 +229,7 @@ void DialogPlayerAccount::slot_langChanged(bool)
 
 void DialogPlayerAccount::done(int result)
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
-    Settings::setSetting(this->objectName()+".positionx",this->pos().x());
-    Settings::setSetting(this->objectName()+".positiony",this->pos().y());
+    Settings::saveGeometry(this);
     if(result == QDialog::Accepted)
     {
         if(list_player->count()==0)
@@ -709,17 +718,17 @@ bool DialogParamAccount::initDialog(player_data * data)
     edit_pass->setHidden(realBoat->isChecked());
     QString s1="Identifiant";
     QString s2="Nom du bateau";
-    if(Settings::getSetting("appLanguage", "en").toString()=="en")
+    if(Settings::getSetting(appLanguage).toString()=="en")
     {
         s1="Login";
         s2="Boat name";
     }
-    else if(Settings::getSetting("appLanguage", "en").toString()=="cz")
+    else if(Settings::getSetting(appLanguage).toString()=="cz")
     {
         s1="Jmeno";
         s2="Lod jmeno";
     }
-    else if(Settings::getSetting("appLanguage", "en").toString()=="es")
+    else if(Settings::getSetting(appLanguage).toString()=="es")
     {
         s1="Login";
         s2="Nombre del barco";
@@ -748,17 +757,17 @@ void DialogParamAccount::slot_typeChanged(bool)
     edit_pass->setEnabled(vlmBoat->isChecked());
     QString s1="Identifiant";
     QString s2="Nom du bateau";
-    if(Settings::getSetting("appLanguage", "en").toString()=="en")
+    if(Settings::getSetting(appLanguage).toString()=="en")
     {
         s1="Login";
         s2="Boat name";
     }
-    else if(Settings::getSetting("appLanguage", "en").toString()=="cz")
+    else if(Settings::getSetting(appLanguage).toString()=="cz")
     {
         s1="Jmeno";
         s2="Lod jmeno";
     }
-    else if(Settings::getSetting("appLanguage", "en").toString()=="es")
+    else if(Settings::getSetting(appLanguage).toString()=="es")
     {
         s1="Login";
         s2="Nombre del barco";

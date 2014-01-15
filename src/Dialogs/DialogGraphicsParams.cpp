@@ -234,32 +234,32 @@ void DialogGraphicsParams::resizeEvent ( QResizeEvent * /*event*/ )
 }
 void DialogGraphicsParams::slotBtOK()
 {
-        Settings::setSetting("seaColor", inputSeaColor->getColor());
-        Settings::setSetting("landColor", inputLandColor->getColor());
-        Settings::setSetting("backgroundColor", inputBackgroundColor->getColor());
+        Settings::setSetting(seaColor, inputSeaColor->getColor());
+        Settings::setSetting(landColor, inputLandColor->getColor());
+        Settings::setSetting(backgroundColor, inputBackgroundColor->getColor());
 	
-        Settings::setSetting("seaBordersLineWidth", inputSeaBordersLine->getLineWidth());
-        Settings::setSetting("seaBordersLineColor", inputSeaBordersLine->getLineColor());
-        Settings::setSetting("boundariesLineWidth", inputBoundariesLine->getLineWidth());
-        Settings::setSetting("boundariesLineColor", inputBoundariesLine->getLineColor());
-        Settings::setSetting("riversLineWidth",   inputRiversLine->getLineWidth());
-        Settings::setSetting("riversLineColor",   inputRiversLine->getLineColor());
-        Settings::setSetting("isobarsLineWidth",  inputIsobarsLine->getLineWidth());
-        Settings::setSetting("isobarsLineColor",  inputIsobarsLine->getLineColor());
-        Settings::setSetting("nextGateLineWidth",  inputNextGateLine->getLineWidth());
-        Settings::setSetting("nextGateLineColor",  inputNextGateLine->getLineColor());
-        Settings::setSetting("gateLineWidth",  inputGateLine->getLineWidth());
-        Settings::setSetting("gateLineColor",  inputGateLine->getLineColor());
-        Settings::setSetting("landOpacity",  inputOpacity->getLineWidth());
-        Settings::setSetting("nightOpacity",  inputOpacityNuit->getLineWidth());
-        Settings::setSetting("estimeLineWidth",  inputEstimeLine->getLineWidth());
-        Settings::setSetting("estimeLineColor",  inputEstimeLine->getLineColor());
-        Settings::setSetting("routeLineWidth",  inputRouteLine->getLineWidth());
-        Settings::setSetting("routeLineColor",  inputRouteLine->getLineColor());
-        Settings::setSetting("traceLineWidth",  inputTraceLine->getLineWidth());
-        Settings::setSetting("traceLineColor",  inputTraceLine->getLineColor());
-        Settings::setSetting("orthoLineWidth",  inputOrthoLine->getLineWidth());
-        Settings::setSetting("orthoLineColor",  inputOrthoLine->getLineColor());
+        Settings::setSetting(seaBordersLineWidth, inputSeaBordersLine->getLineWidth());
+        Settings::setSetting(seaBordersLineColor, inputSeaBordersLine->getLineColor());
+        Settings::setSetting(boundariesLineWidth, inputBoundariesLine->getLineWidth());
+        Settings::setSetting(boundariesLineColor, inputBoundariesLine->getLineColor());
+        Settings::setSetting(riversLineWidth,   inputRiversLine->getLineWidth());
+        Settings::setSetting(riversLineColor,  inputRiversLine->getLineColor());
+        Settings::setSetting(isobarsLineWidth,  inputIsobarsLine->getLineWidth());
+        Settings::setSetting(isobarsLineColor,  inputIsobarsLine->getLineColor());
+        Settings::setSetting(nextGateLineWidth,  inputNextGateLine->getLineWidth());
+        Settings::setSetting(nextGateLineColor,  inputNextGateLine->getLineColor());
+        Settings::setSetting(gateLineWidth,  inputGateLine->getLineWidth());
+        Settings::setSetting(gateLineColor,  inputGateLine->getLineColor());
+        Settings::setSetting(landOpacity,  inputOpacity->getLineWidth());
+        Settings::setSetting(nightOpacity,  inputOpacityNuit->getLineWidth());
+        Settings::setSetting(estimeLineWidth,  inputEstimeLine->getLineWidth());
+        Settings::setSetting(estimeLineColor,  inputEstimeLine->getLineColor());
+        Settings::setSetting(routeLineWidth,  inputRouteLine->getLineWidth());
+        Settings::setSetting(routeLineColor,  inputRouteLine->getLineColor());
+        Settings::setSetting(traceLineWidth,  inputTraceLine->getLineWidth());
+        Settings::setSetting(traceLineColor,  inputTraceLine->getLineColor());
+        Settings::setSetting(orthoLineWidth,  inputOrthoLine->getLineWidth());
+        Settings::setSetting(orthoLineColor,  inputOrthoLine->getLineColor());
     accept();
 }
 //-------------------------------------------------------------------------------
@@ -284,8 +284,8 @@ QFrame *DialogGraphicsParams::createFrameGui(QWidget *parent)
     lay->addWidget( label,    lig,0, Qt::AlignRight);
 	inputBackgroundColor =
 		new InputColor(
-                                Settings::getSetting("backgroundColor", QColor(0,0,45)).value<QColor>(),
-				QColor(0,0,45),
+                                Settings::getSetting(backgroundColor).value<QColor>(),
+                Settings::getSettingDefault(backgroundColor).value<QColor>(),
 				this);
     lay->addWidget( inputBackgroundColor, lig,1, Qt::AlignLeft);
     //-------------------------------------------------
@@ -294,8 +294,8 @@ QFrame *DialogGraphicsParams::createFrameGui(QWidget *parent)
     lay->addWidget( label,    lig,0, Qt::AlignRight);
 	inputSeaColor =
 		new InputColor(
-                                Settings::getSetting("seaColor", QColor(50,50,150)).value<QColor>(),
-				QColor(50,50,150),
+                                Settings::getSetting(seaColor).value<QColor>(),
+                Settings::getSettingDefault(seaColor).value<QColor>(),
 				this);
     lay->addWidget( inputSeaColor, lig,1, Qt::AlignLeft);
     //-------------------------------------------------
@@ -304,8 +304,8 @@ QFrame *DialogGraphicsParams::createFrameGui(QWidget *parent)
     lay->addWidget( label,    lig,0, Qt::AlignRight);
 	inputLandColor =
 		new InputColor(
-                                Settings::getSetting("landColor", QColor(200,200,120)).value<QColor>(),
-				QColor(200,200,120),
+                                Settings::getSetting(landColor).value<QColor>(),
+                Settings::getSettingDefault(landColor).value<QColor>(),
 				this);
     lay->addWidget( inputLandColor, lig,1, Qt::AlignLeft);
     //-------------------------------------------------
@@ -314,9 +314,9 @@ QFrame *DialogGraphicsParams::createFrameGui(QWidget *parent)
     lay->addWidget( label,    lig,0, Qt::AlignRight);
         inputOpacity =
                 new InputLineParams(
-                                Settings::getSetting("landOpacity", 180).toDouble(),
+                                Settings::getSetting(landOpacity).toDouble(),
                                 QColor(Qt::black).value(),
-                                180,  QColor(Qt::black),
+                                Settings::getSettingDefault(landOpacity).toDouble(),  QColor(Qt::black),
                                 this,0,255,0,false);
 
     lay->addWidget( inputOpacity, lig,1, Qt::AlignLeft);
@@ -326,9 +326,9 @@ QFrame *DialogGraphicsParams::createFrameGui(QWidget *parent)
     lay->addWidget( label,    lig,0, Qt::AlignRight);
         inputOpacityNuit =
                 new InputLineParams(
-                                Settings::getSetting("nightOpacity", 120).toDouble(),
+                                Settings::getSetting(nightOpacity).toDouble(),
                                 QColor(Qt::black).value(),
-                                120,  QColor(Qt::black),
+                                Settings::getSettingDefault(nightOpacity).toDouble(),  QColor(Qt::black),
                                 this,0,255,0,false);
 
     lay->addWidget( inputOpacityNuit, lig,1, Qt::AlignLeft);
@@ -338,9 +338,10 @@ QFrame *DialogGraphicsParams::createFrameGui(QWidget *parent)
     lay->addWidget( label,    lig,0, Qt::AlignRight);
         inputEstimeLine =
                 new InputLineParams(
-                                Settings::getSetting("estimeLineWidth", 1.6).toDouble(),
-                                Settings::getSetting("estimeLineColor", QColor(Qt::darkMagenta)).value<QColor>(),
-                                1.6,  QColor(Qt::darkMagenta),
+                                Settings::getSetting(estimeLineWidth).toDouble(),
+                                Settings::getSetting(estimeLineColor).value<QColor>(),
+                    Settings::getSettingDefault(estimeLineWidth).toDouble(),
+                    Settings::getSettingDefault(estimeLineColor).value<QColor>(),
                                 this);
     lay->addWidget( inputEstimeLine, lig,1, Qt::AlignLeft);
     //-------------------------------------------------
@@ -349,9 +350,10 @@ QFrame *DialogGraphicsParams::createFrameGui(QWidget *parent)
     lay->addWidget( label,    lig,0, Qt::AlignRight);
 	inputSeaBordersLine =
 		new InputLineParams(
-                                Settings::getSetting("seaBordersLineWidth", 1.8).toDouble(),
-                                Settings::getSetting("seaBordersLineColor", QColor(40,45,30)).value<QColor>(),
-				1.8,  QColor(40,45,30),
+                                Settings::getSetting(seaBordersLineWidth).toDouble(),
+                                Settings::getSetting(seaBordersLineColor).value<QColor>(),
+                Settings::getSettingDefault(seaBordersLineWidth).toDouble(),
+                Settings::getSettingDefault(seaBordersLineColor).value<QColor>(),
                                 this);
     lay->addWidget( inputSeaBordersLine, lig,1, Qt::AlignLeft);
     //-------------------------------------------------
@@ -360,9 +362,10 @@ QFrame *DialogGraphicsParams::createFrameGui(QWidget *parent)
     lay->addWidget( label,    lig,0, Qt::AlignRight);
 	inputBoundariesLine =
 		new InputLineParams(
-                                Settings::getSetting("boundariesLineWidth", 1.4).toDouble(),
-                                Settings::getSetting("boundariesLineColor", QColor(40,40,40)).value<QColor>(),
-				1.4,  QColor(40,40,40),
+                                Settings::getSetting(boundariesLineWidth).toDouble(),
+                                Settings::getSetting(boundariesLineColor).value<QColor>(),
+                Settings::getSettingDefault(boundariesLineWidth).toDouble(),
+                Settings::getSettingDefault(boundariesLineColor).value<QColor>(),
 				this);
     lay->addWidget( inputBoundariesLine, lig,1, Qt::AlignLeft);
     //-------------------------------------------------
@@ -371,9 +374,10 @@ QFrame *DialogGraphicsParams::createFrameGui(QWidget *parent)
     lay->addWidget( label,    lig,0, Qt::AlignRight);
 	inputRiversLine =
 		new InputLineParams(
-                                Settings::getSetting("riversLineWidth", 1.0).toDouble(),
-                                Settings::getSetting("riversLineColor", QColor(50,50,150)).value<QColor>(),
-				1.0,  QColor(50,50,150),
+                                Settings::getSetting(riversLineWidth).toDouble(),
+                                Settings::getSetting(riversLineColor).value<QColor>(),
+                Settings::getSettingDefault(riversLineWidth).toDouble(),
+                Settings::getSettingDefault(riversLineColor).value<QColor>(),
 				this);
     lay->addWidget( inputRiversLine, lig,1, Qt::AlignLeft);
     //-------------------------------------------------
@@ -382,20 +386,33 @@ QFrame *DialogGraphicsParams::createFrameGui(QWidget *parent)
     lay->addWidget( label,    lig,0, Qt::AlignRight);
 	inputIsobarsLine =
 		new InputLineParams(
-                                Settings::getSetting("isobarsLineWidth", 2.0).toDouble(),
-                                Settings::getSetting("isobarsLineColor", QColor(80,80,80)).value<QColor>(),
-				2.0,  QColor(80,80,80),
+                                Settings::getSetting(isobarsLineWidth).toDouble(),
+                                Settings::getSetting(isobarsLineColor).value<QColor>(),
+                Settings::getSettingDefault(isobarsLineWidth).toDouble(),
+                Settings::getSettingDefault(isobarsLineColor).value<QColor>(),
 				this);
     lay->addWidget( inputIsobarsLine, lig,1, Qt::AlignLeft);
+    lig ++;
+    label = new QLabel(tr("Isobares :"), frm);
+    lay->addWidget( label,    lig,0, Qt::AlignRight);
+    inputIsotherms0Line =
+        new InputLineParams(
+                                Settings::getSetting(isotherms0LineWidth).toDouble(),
+                                Settings::getSetting(isotherms0LineColor).value<QColor>(),
+                Settings::getSettingDefault(isotherms0LineWidth).toDouble(),
+                Settings::getSettingDefault(isotherms0LineColor).value<QColor>(),
+                this);
+    lay->addWidget( inputIsotherms0Line, lig,1, Qt::AlignLeft);
     //-------------------------------------------------
     lig ++;
     label = new QLabel(tr("Prochaine porte :"), frm);
     lay->addWidget( label,    lig,0, Qt::AlignRight);
         inputNextGateLine =
                 new InputLineParams(
-                                Settings::getSetting("nextGateLineWidth", 3.0).toDouble(),
-                                Settings::getSetting("nextGateLineColor", QColor(Qt::blue)).value<QColor>(),
-                                2.0,  Qt::blue,
+                                Settings::getSetting(nextGateLineWidth).toDouble(),
+                                Settings::getSetting(nextGateLineColor).value<QColor>(),
+                    Settings::getSettingDefault(nextGateLineWidth).toDouble(),
+                    Settings::getSettingDefault(nextGateLineColor).value<QColor>(),
                                 this);
     lay->addWidget( inputNextGateLine, lig,1, Qt::AlignLeft);
     //-------------------------------------------------
@@ -405,9 +422,10 @@ QFrame *DialogGraphicsParams::createFrameGui(QWidget *parent)
     QVariant v;
         inputGateLine =
                 new InputLineParams(
-                                Settings::getSetting("gateLineWidth", 3.0).toDouble(),
-                    Settings::getSetting("gateLineColor", QColor(Qt::magenta)).value<QColor>(),
-                                2.0,  Qt::magenta,
+                                Settings::getSetting(gateLineWidth).toDouble(),
+                                Settings::getSetting(gateLineColor).value<QColor>(),
+                    Settings::getSettingDefault(gateLineWidth).toDouble(),
+                    Settings::getSettingDefault(gateLineColor).value<QColor>(),
                                 this);
     lay->addWidget( inputGateLine, lig,1, Qt::AlignLeft);
     //-------------------------------------------------
@@ -416,9 +434,10 @@ QFrame *DialogGraphicsParams::createFrameGui(QWidget *parent)
     lay->addWidget( label,    lig,0, Qt::AlignRight);
         inputRouteLine =
                 new InputLineParams(
-                                Settings::getSetting("routeLineWidth", 2.0).toDouble(),
-                                Settings::getSetting("routeLineColor", QColor(Qt::yellow)).value<QColor>(),
-                                2.0,  Qt::yellow,
+                                Settings::getSetting(routeLineWidth).toDouble(),
+                                Settings::getSetting(routeLineColor).value<QColor>(),
+                    Settings::getSettingDefault(routeLineWidth).toDouble(),
+                    Settings::getSettingDefault(routeLineColor).value<QColor>(),
                                 this);
     lay->addWidget( inputRouteLine, lig,1, Qt::AlignLeft);
 
@@ -428,9 +447,10 @@ QFrame *DialogGraphicsParams::createFrameGui(QWidget *parent)
     lay->addWidget( label,    lig,0, Qt::AlignRight);
         inputTraceLine =
                 new InputLineParams(
-                                Settings::getSetting("traceLineWidth", 2.0).toDouble(),
-                                Settings::getSetting("traceLineColor", QColor(Qt::yellow)).value<QColor>(),
-                                2.0,  Qt::yellow,
+                                Settings::getSetting(traceLineWidth).toDouble(),
+                                Settings::getSetting(traceLineColor).value<QColor>(),
+                    Settings::getSettingDefault(traceLineWidth).toDouble(),
+                    Settings::getSettingDefault(traceLineColor).value<QColor>(),
                                 this);
     lay->addWidget( inputTraceLine, lig,1, Qt::AlignLeft);
 
@@ -440,8 +460,8 @@ QFrame *DialogGraphicsParams::createFrameGui(QWidget *parent)
     lay->addWidget( label,    lig,0, Qt::AlignRight);
         inputOrthoLine =
                 new InputLineParams(
-                                Settings::getSetting("orthoLineWidth", 1.0).toDouble(),
-                                Settings::getSetting("orthoLineColor", QColor(Qt::red)).value<QColor>(),
+                                Settings::getSetting(orthoLineWidth).toDouble(),
+                                Settings::getSetting(orthoLineColor).value<QColor>(),
                                 1.0,  Qt::red,
                                 this);
     lay->addWidget( inputOrthoLine, lig,1, Qt::AlignLeft);

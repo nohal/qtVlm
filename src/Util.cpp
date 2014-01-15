@@ -40,18 +40,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Orthodromie.h"
 #include "dataDef.h"
 #include <QDesktopWidget>
-
-double Util::A180(double angle)
-{
-    if(qAbs(angle)>180)
-    {
-        if(angle<0)
-            angle=360+angle;
-        else
-            angle=angle-360;
-    }
-    return angle;
-}
+#include "AngleUtil.h"
 
 QString Util::generateKey(int size) {
     QString s;
@@ -105,7 +94,7 @@ QString Util::formatData(int type,double val1,double val2) {
             res=Util::formatTemperature(val1);
             break;
         case DATA_CURRENT_VX:
-            val2=Util::A360(radToDeg(val2)+180.0);
+            val2=AngleUtil::A360(radToDeg(val2)+180.0);
             res = Util::formatSimpleDoubleUnit(val2,QObject::tr("deg"));
             res+= ", " +Util::formatSimpleDoubleUnit(val1,QObject::tr(" kts"));
             break;
@@ -151,7 +140,7 @@ QString Util::formatData(int type,double val1,double val2) {
         case DATA_WAVES_MAX_DIR:
         case DATA_WAVES_PRIM_DIR:
         case DATA_WAVES_SEC_DIR:
-            res = Util::formatSimpleDoubleUnit(Util::A360(radToDeg(val1)+180.0),QObject::tr("deg"));
+            res = Util::formatSimpleDoubleUnit(AngleUtil::A360(radToDeg(val1)+180.0),QObject::tr("deg"));
             break;
     }
     return res;
@@ -183,7 +172,7 @@ QString Util::formatSimpleData(int type,double val) {
         case DATA_WAVES_MAX_DIR:
         case DATA_WAVES_PRIM_DIR:
         case DATA_WAVES_SEC_DIR:
-            FORMAT_DOUBLE(res,Util::A360(radToDeg(val)+180.0))
+            FORMAT_DOUBLE(res,AngleUtil::A360(radToDeg(val)+180.0))
             break;
         case DATA_TEMP:
         case DATA_TEMP_POT:
@@ -212,8 +201,8 @@ QString Util::formatSimpleData(int type,double val) {
 //======================================================================
 void Util::setSpecificFont(QMap<QWidget *,QFont> widgets)
 {
-    QFont myFont(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
-    double fontSize=Settings::getSetting("applicationFontSize",8.0).toDouble();
+    QFont myFont(Settings::getSetting(defaultFontName).toString());
+    double fontSize=Settings::getSetting(applicationFontSize).toDouble();
     QMapIterator<QWidget *,QFont> it(widgets);
     while(it.hasNext())
     {
@@ -228,11 +217,11 @@ void Util::setSpecificFont(QMap<QWidget *,QFont> widgets)
 void Util::setFontDialog(QObject * o)
 {
 
-    QFont myFont(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
+    QFont myFont(Settings::getSetting(defaultFontName).toString());
     if(o->isWidgetType())
     {
         QWidget * widget=qobject_cast<QWidget*> (o);
-        myFont.setPointSizeF(Settings::getSetting("applicationFontSize",8.0).toDouble());
+        myFont.setPointSizeF(Settings::getSetting(applicationFontSize).toDouble());
         myFont.setStyle(widget->font().style());
         myFont.setBold(widget->font().bold());
         myFont.setItalic(widget->font().italic());
@@ -247,10 +236,10 @@ void Util::setFontDialog(QObject * o)
 void Util::setFontDialog(QWidget * o)
 {
     QObject * object=qobject_cast<QObject*>(o);
-    int h=Settings::getSetting(object->objectName()+".height",-1).toInt();
+    int h,w,px,py;
+    Settings::restoreGeometry(o,&h,&w,&px,&py);
     if(h<=0)
         h=o->height();
-    int w=Settings::getSetting(object->objectName()+".width",-1).toInt();
     if(w<=0)
         w=o->width();
     QDesktopWidget * desktopWidget = QApplication::desktop();
@@ -261,8 +250,6 @@ void Util::setFontDialog(QWidget * o)
         o->setMaximumWidth(screenRect.width()-20);
     }
     o->resize(w,h);
-    int px=Settings::getSetting(object->objectName()+".positionx",-1).toInt();
-    int py=Settings::getSetting(object->objectName()+".positiony",-1).toInt();
     if(px>-1 && py>-1)
     {
         o->move(px,py);
@@ -277,7 +264,7 @@ void Util::setFontDialog(QWidget * o)
 
 QString Util::formatTemperature(const double &tempKelvin)
 {
-    QString tunit = Settings::getSetting("unitsTemp", "").toString();
+    QString tunit = Settings::getSetting(unitsTemp).toString();
     QString unit = (tunit=="") ? "degC" : tunit;
     QString r;
     if (unit == "degC") {
@@ -295,7 +282,7 @@ QString Util::formatTemperature(const double &tempKelvin)
 //-------------------------------------------------------
 QString Util::formatTemperature_short(const double &tempKelvin)
 {
-    QString tunit = Settings::getSetting("unitsTemp", "").toString();
+    QString tunit = Settings::getSetting(unitsTemp).toString();
     QString unit = (tunit=="") ? "degC" : tunit;
     QString r;
     if (unit == "degC") {
@@ -320,7 +307,7 @@ QString Util::formatSpeed(const double &meterspersecond)
 //----------------------------------------------------------------
 QString Util::formatDistance(const double &mille)
 {
-    QString tunit = Settings::getSetting("unitsDistance", "NM").toString();
+    QString tunit = Settings::getSetting(unitsDistance).toString();
     QString unit = (tunit=="") ? "km" : tunit;
     QString r, unite;
     double d;
@@ -343,7 +330,7 @@ QString Util::formatDistance(const double &mille)
 //----------------------------------------------------------------
 QString Util::formatDegres(const double &x)
 {
-    QString tunit = Settings::getSetting("unitsPosition", "").toString();
+    QString tunit = Settings::getSetting(unitsPosition).toString();
     QString unit = (tunit=="") ? "dddegmm'ss" : tunit;
 
     QString r;
@@ -382,42 +369,43 @@ QString Util::formatPosition(const double &x, const double &y)  // 123°24.00'W 
     return formatLongitude(x)+" "+formatLatitude(y);
 }
 //---------------------------------------------------------------------
-QString Util::formatLongitude(double x)
+QString Util::formatLongitude(const double &x)
 {
-    QString dir = Settings::getSetting("longitudeDirection", "").toString();
-    if(fabs(x)>100000)
+    QString dir = Settings::getSetting(unitsLongitude).toString();
+    double val=x;
+    if(fabs(val)>100000)
     {
-        QWARN << "x too big: " << x;
-        x=0;
+        QWARN << "x too big: " << val;
+        val=0;
     }
     if (dir == "Ouest positive")
         return formatDegres(-x)+"W";
     else if (dir == "Est positive")
-        return formatDegres(x)+"E";
+        return formatDegres(val)+"E";
     else {
         // Mode automatique
-        if (x > 0) {
-            while (x > 360)
-                x -= 360;
-            if (x <= 180)
-                return formatDegres(x)+"E";
+        if (val > 0) {
+            while (val > 360)
+                val -= 360;
+            if (val <= 180)
+                return formatDegres(val)+"E";
             else
-                return formatDegres(360-x)+"W";
+                return formatDegres(360-val)+"W";
         }
         else {
-            while (x < -360)
-                x += 360;
-            if (x >= -180)
-                return formatDegres(-x)+"W";
+            while (val < -360)
+                val += 360;
+            if (val >= -180)
+                return formatDegres(-val)+"W";
             else
-                return formatDegres(x+360)+"E";
+                return formatDegres(val+360)+"E";
         }
     }
 }
 //---------------------------------------------------------------------
 QString Util::formatLatitude(const double &y)
 {
-    QString dir = Settings::getSetting("latitudeDirection", "").toString();
+    QString dir = Settings::getSetting(unitsLatitude).toString();
     if (dir == "Sud positive")
         return formatDegres(-y)+"S";
     else if (dir == "Nord positive")
@@ -501,7 +489,7 @@ QString Util::formatDateTime_hour(const time_t &t)
 
 void Util::paramProxy(QNetworkAccessManager *inetManager,QString host)
 {
-    int proxyType = Settings::getSetting("httpUseProxy", 0).toInt();
+    int proxyType = Settings::getSetting(httpUseProxy).toInt();
     QNetworkProxy::ProxyType proxyParam[4]={QNetworkProxy::NoProxy, QNetworkProxy::DefaultProxy, QNetworkProxy::HttpProxy, QNetworkProxy::Socks5Proxy };
     QNetworkProxy inetProxy;
 
@@ -515,10 +503,10 @@ void Util::paramProxy(QNetworkAccessManager *inetManager,QString host)
     else
     {
         inetProxy.setType (proxyParam[proxyType]);
-        inetProxy.setHostName (Settings::getSetting("httpProxyHostname", "").toString());
-        inetProxy.setPort     (Settings::getSetting("httpProxyPort", 0).toInt());
-        inetProxy.setUser     (Settings::getSetting("httpProxyUsername", "").toString());
-        inetProxy.setPassword (Settings::getSetting("httpProxyUserPassword", "").toString());
+        inetProxy.setHostName (Settings::getSetting(httpProxyHostname).toString());
+        inetProxy.setPort     (Settings::getSetting(httpProxyPort).toInt());
+        inetProxy.setUser     (Settings::getSetting(httpProxyUsername).toString());
+        inetProxy.setPassword (Settings::getSetting(httpProxyUserPassword).toString());
 
         if (proxyType==1)
         {
@@ -526,8 +514,8 @@ void Util::paramProxy(QNetworkAccessManager *inetManager,QString host)
             if(proxyList.size() > 0)
             {
                 inetProxy = proxyList.first();
-                inetProxy.setUser(Settings::getSetting("httpProxyUsername", "").toString());
-                inetProxy.setPassword(Settings::getSetting("httpProxyUserPassword", "").toString());
+                inetProxy.setUser(Settings::getSetting(httpProxyUsername).toString());
+                inetProxy.setPassword(Settings::getSetting(httpProxyUserPassword).toString());
                 inetManager->setProxy(inetProxy);
             }
         }
@@ -636,10 +624,10 @@ void Util::setWPClipboard(double lat,double lon, double wph)
 double Util::getOrthoDistance(const double &latitude1, const double &longitude1,const double &latitude2, const double &longitude2)
 {
     double R = 6371.0/1.852; // nm
-    double lat1 = degToRad(A360(latitude1));
-    double lon1 = degToRad(A360(longitude1));
-    double lat2 = degToRad(A360(latitude2));
-    double lon2 = degToRad(A360(longitude2));
+    double lat1 = degToRad(AngleUtil::A360(latitude1));
+    double lon1 = degToRad(AngleUtil::A360(longitude1));
+    double lat2 = degToRad(AngleUtil::A360(latitude2));
+    double lon2 = degToRad(AngleUtil::A360(longitude2));
     double dLat = lat2 - lat1;
     double dLon = lon2 - lon1;
 
@@ -830,10 +818,10 @@ void Util::computePosDouble(Projection * proj, const double &lat, const double &
 
 void Util::addAgent(QNetworkRequest & request,bool overrideForce)
 {
-    if(Settings::getSetting("forceUserAgent",0).toInt()==1
-        && !Settings::getSetting("userAgent", "").toString().isEmpty()&& !overrideForce)
+    if(Settings::getSetting(forceUserAgent).toInt()==1
+        && !Settings::getSetting(userAgent).toString().isEmpty()&& !overrideForce)
     {
-        request.setRawHeader("User-Agent",Settings::getSetting("userAgent", "").toString().toLatin1());
+        request.setRawHeader("User-Agent",Settings::getSetting(userAgent).toString().toLatin1());
         request.setRawHeader("VLM_PROXY_AGENT",QString("qtVlm/"+Version::getVersion()+" ("+QTVLM_OS+")").toLatin1());
     }
     else

@@ -21,7 +21,7 @@ DialogViewPolar::DialogViewPolar(QWidget *parent) :
     image=QPixmap(this->imageContainer->size());
     image.fill(Qt::red);
     pnt.begin(&image);
-    QFont myFont(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
+    QFont myFont(Settings::getSetting(defaultFontName).toString());
     myFont.setPointSizeF(8.0);
     pnt.setFont(myFont);
     pnt.setRenderHint(QPainter::Antialiasing);
@@ -126,10 +126,7 @@ void DialogViewPolar::setBoat(boat *myboat)
 
 DialogViewPolar::~DialogViewPolar()
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
-    Settings::setSetting(this->objectName()+".positionx",this->pos().x());
-    Settings::setSetting(this->objectName()+".positiony",this->pos().y());
+    Settings::saveGeometry(this);
 }
 void DialogViewPolar::reloadPolar()
 {

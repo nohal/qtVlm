@@ -41,8 +41,8 @@ DataManager::DataManager(myCentralWidget *centralWidget) {
     grib=NULL;
     gribCurrent=NULL;
     currentDate=0;
-    isoBarsStep = Settings::getSetting("isobarsStep", 2,"DataDrawing").toDouble();
-    isoTherms0Step = Settings::getSetting("isoTherms0Step", 50,"DataDrawing").toInt();
+    isoBarsStep = Settings::getSetting(isobarsStepSet).toDouble();
+    isoTherms0Step = Settings::getSetting(isoTherms0StepSet).toInt();
 
     init_defaultLevel();
     init_stringList();
@@ -485,12 +485,12 @@ bool DataManager::getZoneExtension (int gribType,double *x0,double *y0, double *
 }
 
 void DataManager::load_forcedParam(void) {
-    forceWind=Settings::getSetting("forceWind",0).toInt()==1;
-    forcedTWS=Settings::getSetting("forcedTWS",0.0).toDouble();
-    forcedTWD=Settings::getSetting("forcedTWD",0.0).toDouble();
-    forceCurrents=Settings::getSetting("forceCurrents",0).toInt()==1;
-    forcedCS=Settings::getSetting("forcedCS",0.0).toDouble();
-    forcedCD=Settings::getSetting("forcedCD",0.0).toDouble();
+    forceWind=Settings::getSetting(force_Wind).toInt()==1;
+    forcedTWS=Settings::getSetting(forced_TWS).toDouble();
+    forcedTWD=Settings::getSetting(forced_TWD).toDouble();
+    forceCurrents=Settings::getSetting(force_Currents).toInt()==1;
+    forcedCS=Settings::getSetting(forced_CS).toDouble();
+    forcedCD=Settings::getSetting(forced_CD).toDouble();
 }
 
 void DataManager::print_firstRecord_bmap(void) {

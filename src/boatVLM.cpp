@@ -192,13 +192,13 @@ void boatVLM::setWP(QPointF WP,double WPHd) {
 }
 
 double boatVLM::getWPangle(void) {
-    return Util::A360(getOrtho()-getWindDir());
+    return AngleUtil::A360(getOrtho()-getWindDir());
 }
 
 
 bool boatVLM::confirmChange(QString question, QString info)
 {
-    if(Settings::getSetting("askConfirmation","0").toInt()==0)
+    if(Settings::getSetting(askConfirmation).toInt()==0)
         return true;
 
     if(QMessageBox::question(mainWindow,tr("Instruction pour ")+getBoatPseudo(),
@@ -294,7 +294,7 @@ void boatVLM::doRequest(int requestCmd)
                     return;
                 }
                 time_t et=QDateTime::currentDateTime().toUTC().toTime_t();
-                time_t st=et-(Settings::getSetting("trace_length",12).toInt()*60*60);
+                time_t st=et-(Settings::getSetting(traceLength).toInt()*60*60);
                 clearCurrentRequest();
                 //qWarning()<<this->name<<"normal st"<<QDateTime::fromTime_t(st).toUTC();
                 if(!trace_drawing->getPoints()->isEmpty())
@@ -857,8 +857,8 @@ void boatVLM::showNextGates()
         else if (j==nWP)
         {
             porte->setZValue(Z_VALUE_NEXT_GATE);
-            QPen penLine(Settings::getSetting("nextGateLineColor", QColor(Qt::blue)).value<QColor>(),1);
-            penLine.setWidthF(Settings::getSetting("nextGateLineWidth", 3.0).toDouble());
+            QPen penLine(Settings::getSetting(nextGateLineColor).value<QColor>(),1);
+            penLine.setWidthF(Settings::getSetting(nextGateLineWidth).toDouble());
             porte->setLinePen(penLine);
             porte->setHidden(false);
             porte->slot_showMe();
@@ -866,8 +866,8 @@ void boatVLM::showNextGates()
         else
         {
             porte->setZValue(Z_VALUE_GATE);
-            QPen penLine(Settings::getSetting("gateLineColor", QColor(Qt::magenta)).value<QColor>(),1);
-            penLine.setWidthF(Settings::getSetting("gateLineWidth", 3.0).toDouble());
+            QPen penLine(Settings::getSetting(gateLineColor).value<QColor>(),1);
+            penLine.setWidthF(Settings::getSetting(gateLineWidth).toDouble());
             porte->setLinePen(penLine);
             porte->setHidden(false);
             porte->slot_showMe();
@@ -886,7 +886,7 @@ void boatVLM::updateBoatString()
         my_str=alias;
     else
     {
-        switch(Settings::getSetting("opp_labelType",0).toInt())
+        switch(Settings::getSetting(opp_labelType).toInt())
         {
             case SHOW_PSEUDO:
                 my_str=pseudo;
@@ -1024,7 +1024,7 @@ void boatVLM::updateHint(void)
     {
         QString str2=tr("Prochaine porte: ")+QString().sprintf("%.2f",closest.capArrival)+tr("deg")+"/"+
                 QString().sprintf("%.2f NM<br>",closest.distArrival);
-        double vvmg=this->speed*(cos(degToRad(Util::myDiffAngle(heading,closest.capArrival))));
+        double vvmg=this->speed*(cos(degToRad(AngleUtil::myDiffAngle(heading,closest.capArrival))));
         str2+=QString().sprintf("VMG: %.2f ",vvmg)+tr("kts")+"<br>";
         str=str2+str;
     }
@@ -1089,7 +1089,7 @@ QString boatVLM::getDispName(void)
         return alias + " (" + pseudo + " - " + getBoatId() + ")";
     else
     {
-        switch(Settings::getSetting("opp_labelType",0).toInt())
+        switch(Settings::getSetting(opp_labelType).toInt())
         {
             case SHOW_PSEUDO:
                 return pseudo + " (" + name + " - " + getBoatId() +")";

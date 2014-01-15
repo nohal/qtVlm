@@ -91,7 +91,7 @@ FileReceiverThread::~FileReceiverThread(void) {
 }
 
 void FileReceiverThread::run(void) {
-    QString fileName=Settings::getSetting("FileName","fakeGPS.data","GPS_FILE").toString();
+    QString fileName=Settings::getSetting(gpsFake_fileName).toString();
     QFile fakeGPS(fileName);
     if(!fakeGPS.open(QIODevice::ReadOnly | QIODevice::Text))
     {
@@ -253,11 +253,11 @@ bool SerialReceiverThread::initDevice(void) {
         port->close();
     /* init serial port */
 #ifdef __WIN_QTVLM
-    port->setPortName("\\\\.\\"+Settings::getSetting("gpsPortName","COM1","GPS_SERIAL").toString());
+    port->setPortName("\\\\.\\"+Settings::getSetting(gpsSerial_portName).toString());
 #else
-    port->setPortName(Settings::getSetting("gpsPortName","COM1","GPS_SERIAL").toString());
+    port->setPortName(Settings::getSetting(gpsSerial_portName).toString());
 #endif
-    port->setBaudRate((BaudRateType)Settings::getSetting("gpsBaudRate",BAUD4800,"GPS_SERIAL").toInt());
+    port->setBaudRate((BaudRateType)Settings::getSetting(gpsDerial_baudRate).toInt());
     port->setFlowControl(FLOW_OFF);
     port->setParity(PAR_NONE);
     port->setDataBits(DATA_8);
@@ -266,7 +266,7 @@ bool SerialReceiverThread::initDevice(void) {
     {
         QMessageBox::critical (0,
             tr("Activation du GPS"),
-            tr("Impossible d'ouvrir le port ")+Settings::getSetting("gpsPortName","COM1","GPS_SERIAL").toString()+"\n"+tr("Erreur: ")+port->lastError());
+            tr("Impossible d'ouvrir le port ")+Settings::getSetting(gpsSerial_portName).toString()+"\n"+tr("Erreur: ")+port->lastError());
         return false;
     }
 

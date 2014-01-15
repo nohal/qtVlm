@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>489</width>
-    <height>566</height>
+    <height>576</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -30,7 +30,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>8</number>
      </property>
      <widget class="QWidget" name="tab">
       <property name="sizePolicy">
@@ -63,7 +63,7 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QComboBox" name="opp_labelType"/>
+           <widget class="QComboBox" name="cb_oppLabelType"/>
           </item>
           <item row="1" column="0">
            <widget class="QCheckBox" name="chkPavillon">
@@ -1409,7 +1409,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="userAgent"/>
+           <widget class="QLineEdit" name="txt_userAgent"/>
           </item>
          </layout>
         </widget>
@@ -1542,7 +1542,7 @@
  </widget>
  <tabstops>
   <tabstop>buttonBox</tabstop>
-  <tabstop>opp_labelType</tabstop>
+  <tabstop>cb_oppLabelType</tabstop>
   <tabstop>chkPavillon</tabstop>
   <tabstop>defFontName</tabstop>
   <tabstop>defFontSize</tabstop>
@@ -1600,7 +1600,7 @@
   <tabstop>resetDialogPosition</tabstop>
   <tabstop>enableGesture</tabstop>
   <tabstop>chk_forceUserAgent</tabstop>
-  <tabstop>userAgent</tabstop>
+  <tabstop>txt_userAgent</tabstop>
   <tabstop>url_list</tabstop>
   <tabstop>interpolHyb</tabstop>
   <tabstop>interpolTWSA</tabstop>

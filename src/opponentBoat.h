@@ -121,7 +121,7 @@ public slots:
         QColor    myColor;
         int       pi, pj;
         int       label_type;
-        int       opp_trace;
+        int       oppTrace;
         QString   my_str;
         int       width,height;
 

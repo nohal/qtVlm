@@ -31,7 +31,7 @@ GisReader::GisReader()
 }
 void GisReader::loadCountries()
 {
-    QString lang = Settings::getSetting("appLanguage", "none").toString();
+    QString lang = Settings::getSetting(appLanguage).toString();
 
     QString fname;
     bool ok1, ok2;
@@ -46,7 +46,7 @@ void GisReader::loadCountries()
     //------------------------------------
     QTime t;
     t.start();
-    QString dir = Settings::getSetting("mapsFolder",appFolder.value("maps")).toString();
+    QString dir = Settings::getSetting(mapsFolderName).toString();
     fname = (lang == "fr") ?
             dir+"/gis/countries_fr.txt.gz" : dir+"/gis/countries_en.txt.gz";
     f = zu_open(qPrintable(fname), "rb");
@@ -93,7 +93,7 @@ void GisReader::loadCities(const int &level)
     // Read cities file
     //------------------------------------
     t.start();
-    QString dir = Settings::getSetting("mapsFolder",appFolder.value("maps")).toString();
+    QString dir = Settings::getSetting(mapsFolderName).toString();
     fname = dir+"/gis/cities.txt.gz";
     f = zu_open(qPrintable(fname), "rb");
     if (f != NULL) {

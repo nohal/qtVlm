@@ -63,8 +63,8 @@ class GshhsPolyCell
          GshhsPolyCell(FILE *fpoly, int x0, int y0, Projection *proj, PolygonFileHeader *header);
         ~GshhsPolyCell();
 
-        void  drawMapPlain(QPainter &pnt, const double &dx,Projection *proj,
-                    const QColor &seaColor, const QColor &landColor );
+        void  drawMapPlain(QPainter &pnt, const double &dx, Projection *proj,
+                    const QColor &seaColorVal, const QColor &landColorVal );
 
         void  drawSeaBorderLines(QPainter &pnt, const double &dx, Projection *proj);
         QList<QLineF> * getCoasts() {return & coasts;}
@@ -98,8 +98,8 @@ class GshhsPolyReader
         GshhsPolyReader(std::string path_);
         ~GshhsPolyReader();
 
-        void drawGshhsPolyMapPlain( QPainter &pnt, Projection *proj,
-                    const QColor &seaColor, const QColor &landColor );
+        void drawGshhsPolyMapPlain(QPainter &pnt, Projection *proj,
+                    const QColor &seaColorVal, const QColor &landColorVal );
 
         void drawGshhsPolyMapSeaBorders( QPainter &pnt, Projection *proj);
 

@@ -140,7 +140,7 @@ boat::boat(QString      pseudo, bool activated,
 
     connect(this,SIGNAL(releasePolar(QString)),main,SLOT(releasePolar(QString)));
 #ifdef __ANDROID__
-    if(Settings::getSetting("enableGesture","1").toString()=="1")
+    if(Settings::getSetting(enable_Gesture).toString()=="1")
     {
         this->setAcceptTouchEvents(true);
         this->grabGesture(Qt::TapAndHoldGesture);
@@ -209,19 +209,19 @@ void boat::createPopUpMenu(void)
 
 void boat::slot_paramChanged()
 {
-    myColor = QColor(Settings::getSetting("qtBoat_color",QColor(Qt::blue).name()).toString());
-    selColor = QColor(Settings::getSetting("qtBoat_sel_color",QColor(Qt::red).name()).toString());
-    estime_type=Settings::getSetting("estimeType",0).toInt();
+    myColor = QColor(Settings::getSetting(qtBoatColor).toString());
+    selColor = QColor(Settings::getSetting(qtBoatSelColor).toString());
+    estime_type=Settings::getSetting(estimeType).toInt();
     switch(estime_type)
     {
         case 0: /* time */
-            estime_param = Settings::getSetting("estimeTime",60).toInt();
+            estime_param = Settings::getSetting(estimeTime).toInt();
             break;
         case 1: /* nb vac */
-            estime_param = Settings::getSetting("estimeVac",10).toInt();
+            estime_param = Settings::getSetting(estimeVac).toInt();
             break;
         default: /* dist */
-            estime_param = Settings::getSetting("estimeLen",100).toInt();
+            estime_param = Settings::getSetting(estimeLen).toInt();
             break;
     }
     this->updateBoatString();
@@ -244,7 +244,7 @@ void boat::slot_selectBoat()
         return;
     }
     selected = true;
-    if(Settings::getSetting("hideTrace",0,"showHideItem").toInt()==0)
+    if(Settings::getSetting(hideTrace).toInt()==0)
         trace_drawing->setHidden(false);
     else
         trace_drawing->setHidden(true);
@@ -309,7 +309,7 @@ void boat::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
     pnt->setFont(QApplication::font());
     if(!labelHidden)
     {
-        if(Settings::getSetting("showFlag",0,"showHideItem").toInt()==1 && this->get_boatType()==BOAT_VLM && !flagBad)
+        if(Settings::getSetting(showFlag).toInt()==1 && this->get_boatType()==BOAT_VLM && !flagBad)
         {
             if(flag.isNull())
             {
@@ -396,7 +396,7 @@ void boat::updateTraceColor(void)
         trace_drawing->setPointMode(myColor);
     }
     trace_drawing->setNbVacPerHour(3600/getVacLen());
-    if(Settings::getSetting("hideTrace",0,"showHideItem").toInt()==0)
+    if(Settings::getSetting(hideTrace).toInt()==0)
     {
         trace_drawing->slot_showMe();
         trace_drawing->setHidden(false);
@@ -407,7 +407,7 @@ void boat::updateTraceColor(void)
 
 void boat::drawEstime(void)
 {
-    bool getStartEstimeSpeedFromGrib = Settings::getSetting("startSpeedEstime", 1).toInt()==1;
+    bool getStartEstimeSpeedFromGrib = Settings::getSetting(startSpeedEstime).toInt()==1;
     DataManager * dataManager = parent->get_dataManager();
     if( getStartEstimeSpeedFromGrib && dataManager && dataManager->isOk() && this->getPolarData())
     {
@@ -440,7 +440,7 @@ void boat::drawEstime(void)
             double cap=getHeading();
             if(current_speed>0)
             {
-                QPointF p=Util::calculateSumVect(cap,newSpeed,Util::A360(current_angle+180.0),current_speed);
+                QPointF p=Util::calculateSumVect(cap,newSpeed,AngleUtil::A360(current_angle+180.0),current_speed);
                 newSpeed=p.x(); //in this case newSpeed is SOG
                 cap=p.y(); //in this case cap is COG
             }
@@ -459,8 +459,8 @@ void boat::drawEstime(double myHeading, double mySpeed)
     if(isUpdating() || !getStatus())
         return;
     estimeLine->setHidden(false);
-    QPen penLine1(QColor(Settings::getSetting("estimeLineColor", QColor(Qt::darkMagenta)).value<QColor>()),1,Qt::SolidLine);
-    penLine1.setWidthF(Settings::getSetting("estimeLineWidth", 1.6).toDouble());
+    QPen penLine1(QColor(Settings::getSetting(estimeLineColor).value<QColor>()),1,Qt::SolidLine);
+    penLine1.setWidthF(Settings::getSetting(estimeLineWidth).toDouble());
 
     /* draw estime */
     if(getIsSelected() || getForceEstime())
@@ -653,7 +653,7 @@ void boat::drawOnMagnifier(Projection * mProj, QPainter * pnt)
     pnt->setFont(QApplication::font());
     if(!labelHidden)
     {
-        if(Settings::getSetting("showFlag",0,"showHideItem").toInt()==1 && this->get_boatType()==BOAT_VLM)
+        if(Settings::getSetting(showFlag).toInt()==1 && this->get_boatType()==BOAT_VLM)
         {
             if(flag.isNull())
             {

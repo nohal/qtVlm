@@ -113,9 +113,9 @@ class GshhsReader
         
         
         void drawBackground( QPainter &pnt, Projection *proj,
-                QColor seaColor, QColor backgroundColor);
+                QColor seaColorVal, QColor backgroundColorVal);
         void drawContinents( QPainter &pnt, Projection *proj,
-                QColor seaColor, QColor landColor);
+                QColor seaColorVal, QColor landColorVal);
                 
         void drawSeaBorders( QPainter &pnt, Projection *proj);
         void drawBoundaries( QPainter &pnt, Projection *proj);

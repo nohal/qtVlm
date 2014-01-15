@@ -33,7 +33,7 @@ DialogRealBoatPosition::DialogRealBoatPosition(QWidget * parent) : QDialog(paren
     Util::setFontDialog(this);
     connect (buttonBox,SIGNAL(accepted()),this,SLOT(accept()));
     connect (buttonBox,SIGNAL(rejected()),this,SLOT(reject()));
-    QString tunit = Settings::getSetting("unitsPosition", "").toString();
+    QString tunit = Settings::getSetting(unitsPosition).toString();
     QString unit = (tunit=="") ? "dddegmm'ss" : tunit;
     formatWithSeconds=unit=="dddegmm'ss";
     formatLatLon();
@@ -82,10 +82,7 @@ void DialogRealBoatPosition::done(int result)
 {
     if(result==QDialog::Accepted)
     {
-        Settings::setSetting(this->objectName()+".height",this->height());
-        Settings::setSetting(this->objectName()+".width",this->width());
-        Settings::setSetting(this->objectName()+".positionx",this->pos().x());
-        Settings::setSetting(this->objectName()+".positiony",this->pos().y());
+        Settings::saveGeometry(this);
         currentBoat->setPosition(getValue(POI_EDT_LAT),
                                  getValue(POI_EDT_LON));
         currentBoat->emitMoveBoat();

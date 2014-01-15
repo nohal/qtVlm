@@ -80,13 +80,11 @@ void dialogLoadImg::showSnapshot()
 }
 dialogLoadImg::~dialogLoadImg()
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
-    Settings::setSetting(this->objectName()+".positionx",this->pos().x());
-    Settings::setSetting(this->objectName()+".positiony",this->pos().y());
+    Settings::saveGeometry(this);
 }
 void dialogLoadImg::done(int result)
 {
+    Settings::saveGeometry(this);
     if(result == QDialog::Accepted || result==3)
     {
         carte->setParams(this->alpha->value()/100.0,
@@ -100,10 +98,10 @@ void dialogLoadImg::done(int result)
             msgBox.setText(tr("Fichier Kap invalide"));
             msgBox.setIcon(QMessageBox::Critical);
             msgBox.exec();
-            Settings::setSetting("LastKap",QString());
+            Settings::setSetting(LastKap,QString());
             return;
         }
-        Settings::setSetting("LastKap",this->FileName->text());
+        Settings::setSetting(LastKap,this->FileName->text());
         if(result==3)
         {
             carte->nominalZoom();
@@ -126,13 +124,13 @@ void dialogLoadImg::browseFile()
 {
     QString filter;
     filter =  tr("Fichiers kap (*.kap *.KAP)");
-    QString cartePath=Settings::getSetting("cartePath",".").toString();
+    QString cartePath=Settings::getSetting(kapMapPath).toString();
     if(cartePath==".") cartePath=Util::currentPath();
     QDir dircarte(cartePath);
     if(!dircarte.exists())
     {
         cartePath=Util::currentPath();
-        Settings::setSetting("cartePath",cartePath);
+        Settings::setSetting(kapMapPath,cartePath);
     }
     QString fileName = QFileDialog::getOpenFileName(this,
                          tr("Choisir un fichier kap"),
@@ -143,7 +141,7 @@ void dialogLoadImg::browseFile()
         QFileInfo finfo(fileName);
         cartePath = finfo.absolutePath();
         this->FileName->setText(fileName);
-        Settings::setSetting("cartePath",cartePath);
+        Settings::setSetting(kapMapPath,cartePath);
     }
     showSnapshot();
 }

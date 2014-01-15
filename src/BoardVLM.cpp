@@ -53,7 +53,7 @@ boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) :
     setupUi(this);
     board::setFontDialog(this);
 #ifdef QT_V5
-    if(Settings::getSetting("fusionStyle",0).toInt()==1)
+    if(Settings::getSetting(fusionStyle).toInt()==1)
     {
         editAngle->setStyleSheet("background-color: rgb(53, 53, 53);");
         editHeading->setStyleSheet("background-color: rgb(53, 53, 53);");
@@ -122,8 +122,6 @@ boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) :
 
     /* wpDialog */
     wpDialog = new DialogWp();
-//    connect(wpDialog,SIGNAL(confirmAndSendCmd(QString,QString,int,double,double,double)),
-//            this,SLOT(confirmAndSendCmd(QString,QString,int,double,double,double)));
     connect(wpDialog,SIGNAL(selectPOI()),mainWin,SLOT(slotSelectWP_POI()));
     connect(mainWin,SIGNAL(editWP_POI(POI*)),this,SLOT(show_WPdialog(POI *)));
 
@@ -146,10 +144,9 @@ boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) :
 
     isWaiting=false;
 
-    //btn_Pilototo->setStyleSheet(QString::fromUtf8("background-color: rgb(255, 255, 127);"));
     connect(btn_Pilototo,SIGNAL(clicked()),mainWin, SLOT(slotPilototo()));
 
-    chk_GPS->setEnabled(Settings::getSetting("gpsEmulEnable", "0").toString()=="1");
+    chk_GPS->setEnabled(Settings::getSetting(gpsEmulEnable).toString()=="1");
     if(!chk_GPS->isEnabled())
     {
         chk_GPS->setCheckState(Qt::Unchecked);
@@ -158,7 +155,7 @@ boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) :
     else
         chk_GPS->show();
 
-    COM=Settings::getSetting("serialName", "COM2").toString();
+    COM=Settings::getSetting(gpsEmulSerialName).toString();
 
     /* Contextual Menu */
     popup = new QMenu(this);
@@ -169,13 +166,12 @@ boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) :
     editAngle->setSingleStep(1.0);
 
     /* Etat du compass */
-    if(Settings::getSetting("boardCompassShown", "1").toInt()==1)
+    if(Settings::getSetting(boardVLMCompassShown).toInt()==1)
         windAngle->show();
     else
         windAngle->hide();
     this->editHeading->installEventFilter(this);
     this->editAngle->installEventFilter(this);
-    classicalButtons=Settings::getSetting("classicalButtons",0)==1;
     set_style(this->btn_boatInfo);
     set_style(this->btn_chgAngle);
     set_style(this->btn_chgHeading);
@@ -193,42 +189,37 @@ boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) :
 void boardVLM::set_style(QPushButton * button, QColor color, QColor color2)
 {
     QString borderString, bgString, hoverString;
-    if(!classicalButtons)
+
+    if(button==this->btn_Synch)
+        borderString="border: 1px solid #555;border-radius: 11px;padding: 4px;";
+    else if(button==this->ClearPilot)
+        borderString="border: 1px solid #555;border-radius: 7px;padding: 1px;";
+    else if(button==this->btn_boatInfo)
+        borderString="border: 1px solid #555;border-radius: 5px;padding: 1px;";
+    else if(button==this->btn_chgHeading)
+        borderString="border: 1px solid #555;border-radius: 7px;padding: 1px;";
+    else if(button==this->btn_chgAngle)
+        borderString="border: 1px solid #555;border-radius: 11px;padding: 3px;";
+    else if(button==this->goPilotOrtho)
+        borderString="border: 1px solid #555;border-radius: 7px;padding: 1px;";
+    else if(button==this->goVMG)
+        borderString="border: 1px solid #555;border-radius: 7px;padding: 1px;";
+    else if(button==this->goVBVMG)
+        borderString="border: 1px solid #555;border-radius: 7px;padding: 1px;";
+    else if(button==this->btn_virer)
+        borderString="border: 1px solid #555;border-radius: 11px;padding: 3px;";
+    else if(button==this->btn_WP)
+        borderString="border: 1px solid #555;border-radius: 7px;padding: 1px;";
+    else if(button==this->btn_Pilototo)
+        borderString="border: 1px solid #555;border-radius: 7px;padding: 1px;";
+    borderString="QPushButton {"+borderString+"border-style: outset;";
+    if(color2==Qt::white)
     {
-        if(button==this->btn_Synch)
-            borderString="border: 1px solid #555;border-radius: 11px;padding: 4px;";
-        else if(button==this->ClearPilot)
-            borderString="border: 1px solid #555;border-radius: 7px;padding: 1px;";
-        else if(button==this->btn_boatInfo)
-            borderString="border: 1px solid #555;border-radius: 5px;padding: 1px;";
-        else if(button==this->btn_chgHeading)
-            borderString="border: 1px solid #555;border-radius: 7px;padding: 1px;";
-        else if(button==this->btn_chgAngle)
-            borderString="border: 1px solid #555;border-radius: 11px;padding: 3px;";
-        else if(button==this->goPilotOrtho)
-            borderString="border: 1px solid #555;border-radius: 7px;padding: 1px;";
-        else if(button==this->goVMG)
-            borderString="border: 1px solid #555;border-radius: 7px;padding: 1px;";
-        else if(button==this->goVBVMG)
-            borderString="border: 1px solid #555;border-radius: 7px;padding: 1px;";
-        else if(button==this->btn_virer)
-            borderString="border: 1px solid #555;border-radius: 11px;padding: 3px;";
-        else if(button==this->btn_WP)
-            borderString="border: 1px solid #555;border-radius: 7px;padding: 1px;";
-        else if(button==this->btn_Pilototo)
-            borderString="border: 1px solid #555;border-radius: 7px;padding: 1px;";
-        borderString="QPushButton {"+borderString+"border-style: outset;";
-        if(color2==Qt::white)
-        {
-            color2.setHsv(color.hue(),255,220);
-        }
-        bgString="background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 "+color2.name()+", stop: 1 "+color.name()+");}";
-        hoverString="QPushButton:hover {background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 "+color.name()+", stop: 1 "+color2.name()+");border-style:inset;}";
+        color2.setHsv(color.hue(),255,220);
     }
-    else
-    {
-        bgString="background-color: "+color.name()+";";
-    }
+    bgString="background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 "+color2.name()+", stop: 1 "+color.name()+");}";
+    hoverString="QPushButton:hover {background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 "+color.name()+", stop: 1 "+color2.name()+");border-style:inset;}";
+
     QString textColor="QPushButton{color: black;}";
     button->setStyleSheet(borderString+bgString+hoverString+textColor);
     QPalette palette=button->palette();
@@ -330,7 +321,7 @@ bool boardVLM::confirmChange(QString question,QString info)
         return false;
     }
 
-    if(Settings::getSetting("askConfirmation","0").toInt()==0)
+    if(Settings::getSetting(askConfirmation).toInt()==0)
         return true;
 
     if(QMessageBox::question(mainWin,tr("Instruction pour ")+currentBoat()->getBoatPseudo(),
@@ -345,7 +336,7 @@ bool boardVLM::confirmChange(QString question,QString info)
 
 void boardVLM::paramChanged(void)
 {
-    chk_GPS->setEnabled(Settings::getSetting("gpsEmulEnable", "0").toString()=="1");
+    chk_GPS->setEnabled(Settings::getSetting(gpsEmulEnable).toString()=="1");
     if(!chk_GPS->isEnabled())
     {
         chk_GPS->setCheckState(Qt::Unchecked);
@@ -353,8 +344,7 @@ void boardVLM::paramChanged(void)
     }
     else
         chk_GPS->show();
-    COM=Settings::getSetting("serialName", "COM2").toString();
-    classicalButtons=Settings::getSetting("classicalButtons",0)==1;
+    COM=Settings::getSetting(gpsEmulSerialName).toString();
     set_style(this->btn_boatInfo);
     set_style(this->btn_chgAngle);
     set_style(this->btn_chgHeading);
@@ -470,11 +460,6 @@ void boardVLM::boatUpdated(void)
 
     /* Pilot mode */
     /* clearing all buttons*/
-//    btn_chgHeading->setStyleSheet(default_styleSheet);
-//    goVMG->setStyleSheet(default_styleSheet);
-//    goPilotOrtho->setStyleSheet(default_styleSheet);
-//    btn_chgAngle->setStyleSheet(default_styleSheet);
-//    goVBVMG->setStyleSheet(default_styleSheet);
     set_style(btn_chgHeading);
     set_style(goVMG);
     set_style(goPilotOrtho);
@@ -483,23 +468,18 @@ void boardVLM::boatUpdated(void)
     switch(myBoat->getPilotType())
     {
         case 1: /*heading*/
-             //btn_chgHeading->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
             set_style(btn_chgHeading,QColor(85,255,127));
             break;
         case 2: /*constant angle*/
-            //btn_chgAngle->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
             set_style(btn_chgAngle,QColor(85,255,127));
             break;
         case 3: /*pilotortho*/
-            //goPilotOrtho->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
             set_style(goPilotOrtho,QColor(85,255,127));
             break;
         case 4: /*VMG*/
-            //goVMG->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
             set_style(goVMG,QColor(85,255,127));
             break;
         case 5: /*VMG*/
-            //goVBVMG->setStyleSheet(QString::fromUtf8("background-color: rgb(85, 255, 127);"));
             set_style(goVBVMG,QColor(85,255,127));
             break;
     }
@@ -510,9 +490,6 @@ void boardVLM::boatUpdated(void)
 
 void boardVLM::setWP(double lat,double lon,double wph)
 {
-//    QString debug;
-//    debug=debug.sprintf("sending WPLon %.10f WPLat %.10f @WP %.10f",lon,lat,wph);
-//    qWarning()<<debug;
     if(currentBoat()->getLockStatus()) return;
     if(confirmChange(tr("Confirmer le changement du WP"),tr("WP change")))
        sendCmd(VLM_CMD_WP,lat,lon,wph);
@@ -526,11 +503,9 @@ void boardVLM::chgHeading()
 
 void boardVLM::headingUpdated(double heading)
 {
-    //qWarning()<<"heading value changed"<<heading;
     if(!currentBoat()) /*no current boat, nothing to do*/
         return;
 
-    //if(isComputing) return;
     this->editHeading->blockSignals(true);
     this->editAngle->blockSignals(true);
     isComputing=true;
@@ -858,7 +833,7 @@ void boardVLM::synch_GPS()
 
         if(!port->isOpen())
         {
-            qWarning("Serial Port not open");
+            qWarning("Serial Port for emulation not open");
             return;
         }
 
@@ -894,7 +869,6 @@ void boardVLM::synch_GPS()
             data="GPGLL,"+data1+now.toString("HHmmss")+",A";
             ch=chkSum(data);
             data="$"+data+"*"+QString().setNum(ch,16);
-            //qWarning() << "GPS-GLL: " << data;
             data=data+"\x0D\x0A";
             if(port->write(data.toLatin1(),data.length())!=data.length())
             {
@@ -908,9 +882,7 @@ void boardVLM::synch_GPS()
             data="GPRMC,"+now.toString("HHmmss")+",A,"+data1+data2+now.toString("ddMMyy")+",000.0,E";
             ch=chkSum(data);
             data="$"+data+"*"+QString().setNum(ch,16);
-            //qWarning() << "GPS-RMC: " << data;
             data=data+"\x0D\x0A";
-            //port->write(data.toAscii(),data.length());
             if(port->write(data.toLatin1(),data.length())!=data.length())
             {
                 delete port;
@@ -926,9 +898,7 @@ void boardVLM::synch_GPS()
         data="GPRMC,"+now.toString("HHmmss")+",A,"+data1+data2+now.toString("ddMMyy")+",000.0,E";
         ch=chkSum(data);
         data="$"+data+"*"+QString().setNum(ch,16);
-        //qWarning() << "GPS-RMC: " << data;
         data=data+"\x0D\x0A";
-        //port->write(data.toAscii(),data.length());
         if(port->write(data.toLatin1(),data.length())!=data.length())
         {
             delete port;
@@ -947,9 +917,7 @@ void boardVLM::synch_GPS()
         data="GPMWV,"+TWA+",T,"+TWS+",N";
         ch=chkSum(data);
         data="$"+data+"*"+QString().setNum(ch,16);
-        //qWarning() << "GPS-RMC: " << data;
         data=data+"\x0D\x0A";
-        //port->write(data.toAscii(),data.length());
         if(port->write(data.toLatin1(),data.length())!=data.length())
         {
             delete port;
@@ -962,9 +930,7 @@ void boardVLM::synch_GPS()
         data="GPMWD,"+TWD+",T,"+TWS+",N";
         ch=chkSum(data);
         data="$"+data+"*"+QString().setNum(ch,16);
-        //qWarning() << "GPS-RMC: " << data;
         data=data+"\x0D\x0A";
-        //port->write(data.toAscii(),data.length());
         if(port->write(data.toLatin1(),data.length())!=data.length())
         {
             delete port;
@@ -976,7 +942,7 @@ void boardVLM::synch_GPS()
 
         delete port;
         /* we will send this again in 30 secs */
-        GPS_timer->start(Settings::getSetting("GPS_DELAY",30).toInt()*1000);
+        GPS_timer->start(Settings::getSetting(gpsEmulDelay).toInt()*1000);
     }
 }
 
@@ -1049,8 +1015,6 @@ void boardVLM::sendCmd(int cmdNum,double  val1,double val2, double val3)
             instruction.insert("pim",5);
             break;
         case VLM_CMD_WP:
-            /*phpScript="pilot_set.php";
-            instruction.insert("pim",currentBoat()->getPilotType());*/
             phpScript="target_set.php";
             pip.insert("targetlat",cmd_val1);
             pip.insert("targetlong",cmd_val2);
@@ -1065,7 +1029,6 @@ void boardVLM::sendCmd(int cmdNum,double  val1,double val2, double val3)
 
         QTextStream(&data) << "parms=" << json;
         QTextStream(&data) << "&select_idu=" << currentBoat()->getId();
-        //qWarning()<<"sending:"<<url<<data;
         inetPost(VLM_DO_REQUEST,url,data,true);
     }
 }
@@ -1153,18 +1116,14 @@ void boardVLM::setCompassVisible(bool status)
 {
     if(status)
     {
-        Settings::setSetting("boardCompassShown",1);
+        Settings::setSetting(boardVLMCompassShown,1);
         windAngle->show();
-        //this->setMaximumHeight(680);
     }
     else
     {
-        Settings::setSetting("boardCompassShown",0);
+        Settings::setSetting(boardVLMCompassShown,0);
         windAngle->hide();
-        //this->setMaximumHeight(434);
     }
-    //this->updateGeometry();
-//    this->adjustSize();
 }
 
 void boardVLM::clearPilototo()

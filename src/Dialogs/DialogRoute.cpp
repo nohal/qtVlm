@@ -221,10 +221,10 @@ DialogRoute::DialogRoute(ROUTE *route, myCentralWidget *parent, bool createMode)
         min=route->getBoat()->getVacLen()/60;
         if(route->getBoat()->get_boatType()==BOAT_REAL)
         {
-            roadMapInterval->setValue(Settings::getSetting("roadMapInterval",5).toInt());
-            roadMapHDG->setValue(Settings::getSetting("roadMapHDG",0).toInt());
-            useInterval->setChecked(Settings::getSetting("roadMapUseInterval",1).toInt()==1);
-            if((Settings::getSetting("roadMapUseInterval",1).toInt()==1))
+            roadMapInterval->setValue(Settings::getSetting(roadMap_interval).toInt());
+            roadMapHDG->setValue(Settings::getSetting(roadMap_HDG).toInt());
+            useInterval->setChecked(Settings::getSetting(roadMap_useInterval).toInt()==1);
+            if((Settings::getSetting(roadMap_useInterval).toInt()==1))
             {
                 useInterval->setChecked(true);
                 useHDG->setChecked(false);
@@ -334,16 +334,16 @@ void DialogRoute::slotInterval()
     if(useHDG->isChecked())
     {
         val=roadMapHDG->value();
-        Settings::setSetting("roadMapHDG",val);
+        Settings::setSetting(roadMap_HDG,val);
     }
     else
     {
         roadMapInterval->setValue(val);
-        Settings::setSetting("roadMapInterval",val);
+        Settings::setSetting(roadMap_interval,val);
     }
     roadMapHDG->setDisabled(useInterval->isChecked());
     roadMapInterval->setEnabled(useInterval->isChecked());
-    Settings::setSetting("roadMapUseInterval",useInterval->isChecked()?1:0);
+    Settings::setSetting(roadMap_useInterval,useInterval->isChecked()?1:0);
     rmModel->removeRows(0,rmModel->rowCount());
     double dist=0;
     double speedMoy=0;
@@ -404,7 +404,7 @@ void DialogRoute::slotInterval()
         }
         else
         {
-            if(i==0 || i==route->getRoadMap()->count()-1 || Util::myDiffAngle(lastHeading,roadItems.at(3))>=val)
+            if(i==0 || i==route->getRoadMap()->count()-1 || AngleUtil::myDiffAngle(lastHeading,roadItems.at(3))>=val)
             {
                 lastHeading=roadItems.at(3);
                 insertIt=true;
@@ -749,10 +749,7 @@ void DialogRoute::drawTriangle(QPainter &pnt, bool south,
 
 void DialogRoute::done(int result)
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
-    Settings::setSetting(this->objectName()+".positionx",this->pos().x());
-    Settings::setSetting(this->objectName()+".positiony",this->pos().y());
+    Settings::saveGeometry(this);
     if(result == QDialog::Accepted || result==99)
     {
         if (!parent->freeRouteName((editName->text()).trimmed(),route))
@@ -1077,12 +1074,12 @@ void DialogRoute::fillPilotView(bool def)
 }
 void DialogRoute::slotExportCSV()
 {
-    QString routePath=Settings::getSetting("exportRouteCSVFolder","").toString();
+    QString routePath=Settings::getSetting(exportRouteCSVFolder).toString();
     QDir dirRoute(routePath);
     if(!dirRoute.exists())
     {
         routePath=Util::currentPath();
-        Settings::setSetting("exportRouteCSVFolder",routePath);
+        Settings::setSetting(exportRouteCSVFolder,routePath);
     }
     QString fileName = QFileDialog::getSaveFileName(this,
                          tr("Exporter un tableau de marche"), routePath, "CSV  (*.csv)");
@@ -1096,7 +1093,7 @@ void DialogRoute::slotExportCSV()
              QString(QObject::tr("Impossible de creer le fichier %1")).arg(fileName));
         return;
     }
-    Settings::setSetting("exportRouteCSVFolder",info.absoluteDir().path());
+    Settings::setSetting(exportRouteCSVFolder,info.absoluteDir().path());
     QTextStream stream(&routeFile);
     QString line;
     for (int n=0;n<rmModel->columnCount();++n)

@@ -73,23 +73,20 @@ DialogUnits::DialogUnits() : QDialog()
     QString tunit;
     int ind;
 
-//    tunit = Settings::getSetting("unitsWindSpeed", "").toString();
-//    ind = (tunit=="") ? 0 : cbWindSpeedUnit->findData(tunit);
-//    cbWindSpeedUnit->setCurrentIndex( ind );
 
-    tunit = Settings::getSetting("unitsPosition", "").toString();
+    tunit = Settings::getSetting(unitsPosition).toString();
     ind = (tunit=="") ? 0 : cbPositionUnit->findData(tunit);
     cbPositionUnit->setCurrentIndex( ind );
     
-    tunit = Settings::getSetting("unitsDistance", "NM").toString();
+    tunit = Settings::getSetting(unitsDistance).toString();
     ind = (tunit=="") ? 0 : cbDistanceUnit->findData(tunit);
     cbDistanceUnit->setCurrentIndex( ind );
     
-    tunit = Settings::getSetting("unitsLongitude", "").toString();
+    tunit = Settings::getSetting(unitsLongitude).toString();
     ind = (tunit=="") ? 0 : cbLongitude->findData(tunit);
     cbLongitude->setCurrentIndex( ind );
     
-    tunit = Settings::getSetting("unitsLatitude", "").toString();
+    tunit = Settings::getSetting(unitsLatitude).toString();
     ind = (tunit=="") ? 0 : cbLatitude->findData(tunit);
     cbLatitude->setCurrentIndex( ind );
     
@@ -101,32 +98,24 @@ DialogUnits::DialogUnits() : QDialog()
 //-------------------------------------------------------------------------------
 void DialogUnits::slotBtOK()
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
-    Settings::setSetting(this->objectName()+".positionx",this->pos().x());
-    Settings::setSetting(this->objectName()+".positiony",this->pos().y());
+    Settings::saveGeometry(this);
     QComboBox *cb;
 
-//    cb = cbWindSpeedUnit;
-//    Settings::setSetting("unitsWindSpeed", cb->itemData(cb->currentIndex()).toString());
     cb = cbPositionUnit;
-    Settings::setSetting("unitsPosition",  cb->itemData(cb->currentIndex()).toString());
+    Settings::setSetting(unitsPosition,  cb->itemData(cb->currentIndex()).toString());
     cb = cbDistanceUnit;
-    Settings::setSetting("unitsDistance",  cb->itemData(cb->currentIndex()).toString());
+    Settings::setSetting(unitsDistance,  cb->itemData(cb->currentIndex()).toString());
 
     cb = cbLongitude;
-    Settings::setSetting("longitudeDirection",  cb->itemData(cb->currentIndex()).toString());
+    Settings::setSetting(unitsLongitude,  cb->itemData(cb->currentIndex()).toString());
     cb = cbLatitude;
-    Settings::setSetting("latitudeDirection",  cb->itemData(cb->currentIndex()).toString());
+    Settings::setSetting(unitsLatitude,  cb->itemData(cb->currentIndex()).toString());
     accept();
 }
 //-------------------------------------------------------------------------------
 void DialogUnits::slotBtCancel()
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
-    Settings::setSetting(this->objectName()+".positionx",this->pos().x());
-    Settings::setSetting(this->objectName()+".positiony",this->pos().y());
+    Settings::saveGeometry(this);
     reject();
 }
 

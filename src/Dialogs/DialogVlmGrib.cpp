@@ -57,10 +57,7 @@ DialogVlmGrib::DialogVlmGrib(MainWindow * ,myCentralWidget * parent,inetConnexio
 
 void DialogVlmGrib::done(int res)
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
-    Settings::setSetting(this->objectName()+".positionx",this->pos().x());
-    Settings::setSetting(this->objectName()+".positiony",this->pos().y());
+    Settings::saveGeometry(this);
     if(res == QDialog::Accepted)
     {        
         if(!doRequest(VLM_REQUEST_GET_FILE))
@@ -137,16 +134,16 @@ int DialogVlmGrib::parseFolderListing(QString data)
 
 bool DialogVlmGrib::gribFileReceived(QByteArray * content)
 {
-    QString gribPath=Settings::getSetting("edtGribFolder",appFolder.value("grib")).toString();
+    QString gribPath=Settings::getSetting(edtGribFolder).toString();
     QDir dirGrib(gribPath);
     if(!dirGrib.exists())
     {
         gribPath=appFolder.value("grib");
-        Settings::setSetting("askGribFolder",1);
-        Settings::setSetting("edtGribFolder",gribPath);
+        Settings::setSetting(askGribFolder,1);
+        Settings::setSetting(edtGribFolder,gribPath);
     }
     filename=gribPath+"/"+filename;
-    if(Settings::getSetting("askGribFolder",1)==1)
+    if(Settings::getSetting(askGribFolder)==1)
     {
         filename = QFileDialog::getSaveFileName(this,
                          tr("Sauvegarde du fichier GRIB"), filename, "Grib (*.grb)");

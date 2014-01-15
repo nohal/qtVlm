@@ -36,10 +36,7 @@ DialogChooseMultipleBarrierSet::DialogChooseMultipleBarrierSet(QWidget *parent):
     activeSets=NULL;
 }
 DialogChooseMultipleBarrierSet::~DialogChooseMultipleBarrierSet() {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
-    Settings::setSetting(this->objectName()+".positionx",this->pos().x());
-    Settings::setSetting(this->objectName()+".positiony",this->pos().y());
+    Settings::saveGeometry(this);
 }
 
 void DialogChooseMultipleBarrierSet::init_dialog(QList<BarrierSet*> * activeSets, boat* myBoat) {
@@ -62,6 +59,7 @@ void DialogChooseMultipleBarrierSet::init_dialog(QList<BarrierSet*> * activeSets
 }
 
 void DialogChooseMultipleBarrierSet::done(int result) {
+    Settings::saveGeometry(this);
     if(result == QDialog::Accepted) {
         /* update list */
         activeSets->clear();

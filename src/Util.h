@@ -42,6 +42,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include "class_list.h"
 #include "dataDef.h"
+#include "AngleUtil.h"
 
 #include <QLineF>
 
@@ -55,7 +56,7 @@ class Util
     static void setSpecificFont(QMap<QWidget *, QFont> widgets);
     static QString formatDegres(const double &x);           // 123.4 -> 123°24.00'
     static QString formatPosition(const double &x, const double &y);    // 123°24.00'W 45°67.89'N
-    static QString formatLongitude(double x);
+    static QString formatLongitude(const double &x);
     static QString formatLatitude(const double &y);
 
     static QString formatDateLong(const time_t &t);
@@ -105,9 +106,6 @@ class Util
     static void computePosDouble(Projection * proj, const QPointF &position, QPointF * screenCoord);
     static void addAgent(QNetworkRequest & request, bool overrideForce=false);
     static bool lineIsCrossingRect(const QLineF &line, const QRectF &rect);
-    static double myDiffAngle(const double &a1, const double &a2);
-    static double A360(const double &hdg);
-    static double A180(double angle);
 
     static QString generateKey(int size);
 
@@ -149,19 +147,6 @@ class Util
         static void getCoordFromDistanceAngle3(const double &latitude, const double &longitude, const double &distance, const double &heading, double *res_lat, double *res_lon);
 };
 
-//======================================================================
-inline double Util::A360(const double &hdg)
-{
-    double newhdg=hdg;
-    while (newhdg>=360.0) newhdg-=360.0;
-    while (newhdg<0.0) newhdg+=360.0;
-    return newhdg;
-}
-inline double Util::myDiffAngle(const double &a1,const double &a2)
-{
-    return qAbs(A360(qAbs(a1)+ 180.0 -qAbs(a2)) -180.0);
-}
-
 inline int Util::kmhToBeaufort(const double &v) {
     return (int)(kmhToBeaufort_F(v)+0.5);
 }
@@ -183,12 +168,12 @@ inline QPointF Util::calculateSumVect(const double &angle1,const double &length1
 {
     QLineF line1(0,0,1,1);
     line1.setLength(length1);
-    line1.setAngle(A360(angle1));
+    line1.setAngle(AngleUtil::A360(angle1));
     QLineF line2(line1.p2().x(),line1.p2().y(),1,1);
     line2.setLength(length2);
-    line2.setAngle(A360(angle2));
+    line2.setAngle(AngleUtil::A360(angle2));
     QLineF temp(0,0,line2.p2().x(),line2.p2().y());
-    QPointF pointF(temp.length(),A360(temp.angle()));
+    QPointF pointF(temp.length(),AngleUtil::A360(temp.angle()));
     return pointF;
 }
 //-----------------------------------------------------------------------------
@@ -208,9 +193,9 @@ inline float Util::BeaufortToMs_F (float bf) {
 inline void Util::getCoordFromDistanceAngle3(const double &latitude, const double &longitude,
              const double &distance,const double &heading, double * res_lat,double * res_lon)
 {
-    double lat1=degToRad(A360(latitude));
-    double lon1=degToRad(A360(longitude));
-    double hdg=degToRad(A360(heading));
+    double lat1=degToRad(AngleUtil::A360(latitude));
+    double lon1=degToRad(AngleUtil::A360(longitude));
+    double hdg=degToRad(AngleUtil::A360(heading));
     double R=6371.0/1.852; // nm
     double lat2 = asin( sin(lat1)*cos(distance/R) +
                   cos(lat1)*sin(distance/R)*cos(hdg) );

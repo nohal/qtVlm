@@ -46,6 +46,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "orthoSegment.h"
 #include "vlmLine.h"
 #include <QStyleFactory>
+#include "AngleUtil.h"
 
 /**************************/
 /* Init & Clean           */
@@ -143,7 +144,7 @@ POI::POI(const QString &name, const int &type, const double &lat, const double &
         show();
     else
         hide();
-    if(Settings::getSetting("enableGesture","1").toString()=="1")
+    if(Settings::getSetting(enable_Gesture).toString()=="1")
         this->setAcceptTouchEvents(true);
     if(parent->getSelectedBoat()!=NULL)
     {
@@ -605,7 +606,7 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
         while(j.hasNext())
         {
             ROUTE * ptr_route = j.next();
-            if(Settings::getSetting("autoHideRoute",1).toInt()==1 && (ptr_route->getBoat()==NULL || !ptr_route->getBoat()->getIsSelected())) continue;
+            if(Settings::getSetting(autoHideRoute).toInt()==1 && (ptr_route->getBoat()==NULL || !ptr_route->getBoat()->getIsSelected())) continue;
             iconI.fill(ptr_route->getColor());
             QIcon icon(iconI);
             ptr=new QAction(ptr_route->getName(),ac_routeList);
@@ -711,7 +712,7 @@ void POI::setTip(QString tip)
         double   distance=orth2boat.getDistance();
         tt=tr("Ortho a partir de ")+w_boat->getBoatPseudo()+": "+
                    Util::formatDistance(distance)+
-                   "/"+QString().sprintf("%.2f",Util::A360(orth2boat.getAzimutDeg()-w_boat->getDeclinaison()))+tr("deg");
+                   "/"+QString().sprintf("%.2f",AngleUtil::A360(orth2boat.getAzimutDeg()-w_boat->getDeclinaison()))+tr("deg");
         tt=getTypeStr() + " : " + my_str +at+pilot+ "<br>"+tt+tip;
     }
     else
@@ -1101,10 +1102,10 @@ void POI::slot_delPoi()
 
 void POI::slot_paramChanged()
 {
-    poiColor = QColor(Settings::getSetting("POI_color",QColor(Qt::black).name()).toString());
-    mwpColor = QColor(Settings::getSetting("Marque_WP_color",QColor(Qt::red).name()).toString());
-    wpColor  = QColor(Settings::getSetting("WP_color",QColor(Qt::darkYellow).name()).toString());
-    baliseColor  = QColor(Settings::getSetting("Balise_color",QColor(Qt::darkMagenta).name()).toString());
+    poiColor = QColor(Settings::getSetting(POIColor).toString());
+    mwpColor = QColor(Settings::getSetting(MarqueWPColor).toString());
+    wpColor  = QColor(Settings::getSetting(WPColor).toString());
+    baliseColor  = QColor(Settings::getSetting(BaliseColor).toString());
     update();
 }
 
@@ -1468,7 +1469,7 @@ void POI::slot_finePosit(bool silent)
                 parent->slot_delPOI_list(best);
                 delete best;
             }
-            if(Settings::getSetting("keepOldPoi","0").toInt()==0 && previousMe!=NULL)
+            if(Settings::getSetting(KeepOldPoi).toInt()==0 && previousMe!=NULL)
             {
                 parent->slot_delPOI_list(previousMe);
                 delete previousMe;
@@ -1500,7 +1501,7 @@ void POI::slot_finePosit(bool silent)
             parent->slot_delPOI_list(best);
             delete best;
         }
-        if(Settings::getSetting("keepOldPoi","0").toInt()==0 && !silent && previousMe!=NULL)
+        if(Settings::getSetting(KeepOldPoi).toInt()==0 && !silent && previousMe!=NULL)
         {
             parent->slot_delPOI_list(previousMe);
             delete previousMe;

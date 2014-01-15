@@ -17,10 +17,10 @@ DialogTwaLine::DialogTwaLine(QPointF start, myCentralWidget *parent, MainWindow 
     this->dataManager=parent->get_dataManager();
     this->myBoat=parent->getSelectedBoat();
 
-    color=Settings::getSetting("traceLineColor", QColor(Qt::yellow)).value<QColor>();
+    color=Settings::getSetting(traceLineColor).value<QColor>();
     pen.setColor(color);
     pen.setBrush(color);
-    pen.setWidthF(Settings::getSetting("traceLineWidth", 2.0).toDouble());
+    pen.setWidthF(Settings::getSetting(traceLineWidth).toDouble());
     this->line=new vlmLine(parent->getProj(),parent->getScene(),Z_VALUE_ROUTE);
     line->setLinePen(pen);
     this->setWindowFlags(Qt::Tool);
@@ -142,10 +142,7 @@ void DialogTwaLine::slotTwa5(bool b)
 
 DialogTwaLine::~DialogTwaLine()
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
-    Settings::setSetting(this->objectName()+".positionx",this->pos().x());
-    Settings::setSetting(this->objectName()+".positiony",this->pos().y());
+    Settings::saveGeometry(this);
 }
 void DialogTwaLine::slot_delPOI_list(POI * poi)
 {
@@ -181,6 +178,7 @@ void DialogTwaLine::setStart(QPointF start)
 
 void DialogTwaLine::closeEvent(QCloseEvent *)
 {
+    Settings::saveGeometry(this);
     if(!this->checkBox_2->isChecked())
     {
         delete line;
@@ -275,13 +273,13 @@ void DialogTwaLine::traceIt()
             double TWA;
             if(mode[page])
             {
-                cap=A360(wind_angle+twa[page]);
+                cap=AngleUtil::A360(wind_angle+twa[page]);
                 TWA=twa[page];
             }
             else
             {
                 cap=twa[page];
-                TWA=A360(cap-wind_angle);
+                TWA=AngleUtil::A360(cap-wind_angle);
                 if(qAbs(TWA)>180)
                 {
                     if(TWA<0)
@@ -293,7 +291,7 @@ void DialogTwaLine::traceIt()
             double newSpeed=myBoat->getPolarData()->getSpeed(wind_speed,TWA);
             if(current_speed>0)
             {
-                QPointF p=Util::calculateSumVect(cap,newSpeed,A360(current_angle+180.0),current_speed);
+                QPointF p=Util::calculateSumVect(cap,newSpeed,AngleUtil::A360(current_angle+180.0),current_speed);
                 newSpeed=p.x(); //in this case newSpeed is SOG
                 cap=p.y(); //in this case cap is COG
             }
@@ -330,12 +328,6 @@ void DialogTwaLine::traceIt()
     }
     line->slot_showMe();
     QApplication::processEvents();
-}
-double DialogTwaLine::A360(double hdg)
-{
-    if(hdg>=360) hdg=hdg-360;
-    if(hdg<0) hdg=hdg+360;
-    return hdg;
 }
 
 void DialogTwaLine::on_doubleSpinBox_valueChanged(double /*d => unused*/)

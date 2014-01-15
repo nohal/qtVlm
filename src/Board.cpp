@@ -248,11 +248,11 @@ bool board::currentBoardIsVisibe()
 void board::setFontDialog(QObject * o)
 {
 
-    QFont myFont(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
+    QFont myFont(Settings::getSetting(defaultFontName).toString());
     if(o->isWidgetType())
     {
         QWidget * widget=qobject_cast<QWidget*> (o);
-        myFont.setPointSizeF(Settings::getSetting("applicationFontSize",8.0).toDouble());
+        myFont.setPointSizeF(Settings::getSetting(applicationFontSize).toDouble());
         myFont.setStyle(widget->font().style());
         myFont.setBold(widget->font().bold());
         myFont.setItalic(widget->font().italic());

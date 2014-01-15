@@ -57,10 +57,10 @@ loadImg::loadImg(Projection *proj, myCentralWidget *parent)
     gribKap->setPos(0,0);
     //connect (proj,SIGNAL(projectionUpdated()),this,SLOT(slot_updateProjection()));
     this->parent->getScene()->addItem(this);
-    this->alpha=Settings::getSetting("kapAlpha",1.0).toDouble();
-    this->gribAlpha=Settings::getSetting("kapGribAlpha",1.0).toDouble();
-    this->drawGribOverKap=Settings::getSetting("kapDrawGrib",1).toInt()==1;
-    this->gribColored=Settings::getSetting("kapGribColored",0).toInt()==1;
+    this->alpha=Settings::getSetting(kapAlpha).toDouble();
+    this->gribAlpha=Settings::getSetting(kapGribAlpha).toDouble();
+    this->drawGribOverKap=Settings::getSetting(kapDrawGrib).toInt()==1;
+    this->gribColored=Settings::getSetting(kapGribColored).toInt()==1;
     this->setOpacity(alpha);
     this->slot_updateProjection();
     this->hide();
@@ -77,10 +77,10 @@ void loadImg::setParams(double alpha, double gribAlpha, bool drawGribOverKap, bo
     this->drawGribOverKap=drawGribOverKap;
     bool b=this->gribColored;
     this->gribColored=gribColored;
-    Settings::setSetting("kapAlpha",alpha);
-    Settings::setSetting("kapGribAlpha",gribAlpha);
-    Settings::setSetting("kapDrawGrib",drawGribOverKap?1:0);
-    Settings::setSetting("kapGribColored",gribColored?1:0);
+    Settings::setSetting(kapAlpha,alpha);
+    Settings::setSetting(kapGribAlpha,gribAlpha);
+    Settings::setSetting(kapDrawGrib,drawGribOverKap?1:0);
+    Settings::setSetting(kapGribColored,gribColored?1:0);
     this->setOpacity(alpha);
     this->gribKap->setOpacity(gribAlpha);
     if(drawGribOverKap)

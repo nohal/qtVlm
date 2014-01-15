@@ -31,6 +31,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "dataDef.h"
 #include <QDebug>
 #include "Util.h"
+#include "AngleUtil.h"
 #ifndef M_PI_2
 #define M_PI_2     1.57079632679489661923
 #endif
@@ -219,7 +220,7 @@ inline void Projection::map2screenDouble(const double &x, const double &y, doubl
     if(y1<=-90) y1=-89.9999999999999999999999999999999999999999999999999999999;
     if(y1>=90) y1=89.999999999999999999999999999999999999999999999999999999999;
 
-    double diff=mySignedDiffAngle(Util::A360(x),Util::A360(CX));
+    double diff=mySignedDiffAngle(AngleUtil::A360(x),AngleUtil::A360(CX));
     if(diff>0)
     {
         if(360.0-diff<diff) diff-=360.0;
@@ -244,7 +245,7 @@ inline void Projection::map2screenByReference(const double &ref, const double &r
     double y1=y;
     if(y1<=-90) y1=-89.9999999999999999999999999999999999999999999999999999999;
     if(y1>=90) y1=89.999999999999999999999999999999999999999999999999999999999;
-    double diff=mySignedDiffAngle(Util::A360(x),Util::A360(ref));
+    double diff=mySignedDiffAngle(AngleUtil::A360(x),AngleUtil::A360(ref));
     if(diff>0)
     {
         if(360.0-diff<diff) diff-=360.0;
@@ -259,7 +260,7 @@ inline void Projection::map2screenByReference(const double &ref, const double &r
 }
 inline double Projection::mySignedDiffAngle(const double &a1,const double &a2) const
 {
-    return (Util::A360(qAbs(a1)+ 180 -qAbs(a2)) -180);
+    return (AngleUtil::A360(qAbs(a1)+ 180 -qAbs(a2)) -180);
 }
 
 #endif

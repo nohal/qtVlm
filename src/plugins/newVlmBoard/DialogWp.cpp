@@ -29,8 +29,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /************************/
 /* Dialog WP            */
 
-DialogWp::DialogWp(QWidget * parent) : QDialog(parent)
+DialogWp::DialogWp(MainWindowInterface *main, QWidget * parent) : QDialog(parent)
 {
+    this->main=main;
     setupUi(this);
     Util::setFontDialog(this);
     currentBoat=NULL;
@@ -88,10 +89,7 @@ void DialogWp::initDialog(double WPLat,double WPLon,double WPHd)
 
 void DialogWp::done(int result)
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
-    Settings::setSetting(this->objectName()+".positionx",this->pos().x());
-    Settings::setSetting(this->objectName()+".positiony",this->pos().y());
+    main->setting_saveGeometry(this);
     if(result == QDialog::Accepted)
     {
         QPointF pos;
@@ -124,7 +122,7 @@ void DialogWp::chgLat()
     else
     {
         double val = WP_lat->text().toDouble();
-        WP_conv_lat->setText(Util::pos2String(TYPE_LAT,val));
+        WP_conv_lat->setText(main->pos2String(TYPE_LAT,val));
     }
 }
 
@@ -135,7 +133,7 @@ void DialogWp::chgLon()
     else
     {
         double val = WP_lon->text().toDouble();
-        WP_conv_lon->setText(Util::pos2String(TYPE_LON,val));
+        WP_conv_lon->setText(main->pos2String(TYPE_LON,val));
     }
 }
 
@@ -144,7 +142,7 @@ void DialogWp::doPaste()
     double lat,lon,wph;
     if(!currentBoat)
         return;
-    if(!Util::getWPClipboard(NULL,&lat,&lon,&wph,NULL)) /*no need to get timestamp*/
+    if(!main->getWPClipboard(NULL,&lat,&lon,&wph,NULL)) /*no need to get timestamp*/
         return;
     WP_lat->setText(QString().setNum(lat));
     WP_lon->setText(QString().setNum(lon));
@@ -156,10 +154,10 @@ void DialogWp::doCopy()
     if(!currentBoat)
         return;
     if(WP_heading->text().isEmpty())
-        Util::setWPClipboard(WP_lat->text().toDouble(),WP_lon->text().toDouble(),
+        main->setWPClipboard(WP_lat->text().toDouble(),WP_lon->text().toDouble(),
             -1);
     else
-        Util::setWPClipboard(WP_lat->text().toDouble(),WP_lon->text().toDouble(),
+        main->setWPClipboard(WP_lat->text().toDouble(),WP_lon->text().toDouble(),
             WP_heading->text().toDouble());
     QDialog::done(QDialog::Rejected);
 

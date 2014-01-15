@@ -102,7 +102,7 @@ void GshhsDwnload::getMaps(void) {
     }
     if(!errorDuringDownload) {
         /* asking for folder holding maps */
-        QString dir = Settings::getSetting("mapsFolder",appFolder.value("maps")).toString();
+        QString dir = Settings::getSetting(mapsFolderName).toString();
 
         Progress * progress=centralWidget->getMainWindow()->get_progress();
 

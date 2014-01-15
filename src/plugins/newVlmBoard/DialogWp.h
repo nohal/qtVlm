@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class DialogWp: public QDialog, public Ui::WP_dialog_ui
 { Q_OBJECT
     public:
-        DialogWp(QWidget * parent=0);
+        DialogWp(MainWindowInterface *main,QWidget * parent=0);
         void show_WPdialog(BoatInterface * boat);
         void setLocked(const bool &locked);
         void show_WPdialog(POI * poi, BoatInterface *boat);
@@ -45,6 +45,7 @@ class DialogWp: public QDialog, public Ui::WP_dialog_ui
         void selectPOI(void);
 
     private:
+        MainWindowInterface *main;
         BoatInterface * currentBoat;
         void initDialog(double WPLat,double WPLon,double WPHd);
 };

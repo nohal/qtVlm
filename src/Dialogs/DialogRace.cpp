@@ -56,7 +56,7 @@ DialogRace::DialogRace(MainWindow * main,myCentralWidget * parent, inetConnexion
     model->setColumnCount(11);
     model->setHeaderData(0,Qt::Horizontal,QObject::tr("Sel"));
     model->setHeaderData(1,Qt::Horizontal,QObject::tr("Rang"));
-    switch (Settings::getSetting("opp_labelType",0).toInt())
+    switch (Settings::getSetting(opp_labelType).toInt())
     {
         case SHOW_PSEUDO:
             model->setHeaderData(2,Qt::Horizontal,QObject::tr("Pseudo"));
@@ -85,7 +85,7 @@ DialogRace::DialogRace(MainWindow * main,myCentralWidget * parent, inetConnexion
     modelResult= new QStandardItemModel(this);
     modelResult->setColumnCount(7);
     modelResult->setHeaderData(0,Qt::Horizontal,QObject::tr("Rang"));
-    switch (Settings::getSetting("opp_labelType",0).toInt())
+    switch (Settings::getSetting(opp_labelType).toInt())
     {
         case SHOW_PSEUDO:
             modelResult->setHeaderData(1,Qt::Horizontal,QObject::tr("Pseudo"));
@@ -123,14 +123,11 @@ DialogRace::DialogRace(MainWindow * main,myCentralWidget * parent, inetConnexion
 
 DialogRace::~DialogRace()
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
-    Settings::setSetting(this->objectName()+".positionx",this->pos().x());
-    Settings::setSetting(this->objectName()+".positiony",this->pos().y());
+    Settings::saveGeometry(this);
     for(int c=0;c<model->columnCount();++c)
-        Settings::setSetting(this->objectName()+".model"+QString().setNum(c)+".width",this->ranking->columnWidth(c));
+        Settings::setSettingOld(this->objectName()+".model"+QString().setNum(c)+".width",this->ranking->columnWidth(c),"DialogGeometry");
     for(int c=0;c<modelResult->columnCount();++c)
-        Settings::setSetting(this->objectName()+".result"+QString().setNum(c)+".width",this->arrived->columnWidth(c));
+        Settings::setSettingOld(this->objectName()+".result"+QString().setNum(c)+".width",this->arrived->columnWidth(c),"DialogGeometry");
     if(model)
         delete model;
     if(modelResult)
@@ -574,6 +571,7 @@ void DialogRace::clear(void)
 
 void DialogRace::done(int result)
 {
+    Settings::saveGeometry(this);
     if(result == QDialog::Accepted)
     {
         param_list[numRace]->colorNSZ=inputTraceColor->getLineColor();
@@ -691,7 +689,7 @@ void DialogRace::chgRace(int id)
     }
 
     model->blockSignals(true);
-    int labelType=Settings::getSetting("opp_labelType",0).toInt();
+    int labelType=Settings::getSetting(opp_labelType).toInt();
     switch (labelType)
     {
         case SHOW_PSEUDO:
@@ -797,7 +795,7 @@ void DialogRace::chgRace(int id)
         ranking->resizeColumnToContents(c);
         for(int c=0;c<model->columnCount();++c)
         {
-            int w=Settings::getSetting(this->objectName()+".model"+QString().setNum(c)+".width",-1).toInt();
+            int w=Settings::getSettingOld(this->objectName()+".model"+QString().setNum(c)+".width",-1,"DialogGeometry").toInt();
             if(w>1)
                 ranking->setColumnWidth(c,w);
         }
@@ -879,7 +877,7 @@ void DialogRace::chgRace(int id)
         arrived->resizeColumnToContents(c);
         for(int c=0;c<modelResult->columnCount();++c)
         {
-            int w=Settings::getSetting(this->objectName()+".result"+QString().setNum(c)+".width",-1).toInt();
+            int w=Settings::getSettingOld(this->objectName()+".result"+QString().setNum(c)+".width",-1,"DialogGeometry").toInt();
             if(w>1)
                 arrived->setColumnWidth(c,w);
         }

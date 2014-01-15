@@ -176,7 +176,10 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     BoardInterface.h \
     MainWindowInterface.h \
     BoatInterface.h \
-    PolarInterface.h
+    PolarInterface.h \
+    settings_ini.h \
+    settings_def.h \
+    AngleUtil.h
 
 
 
@@ -325,7 +328,8 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     GribV1Record.cpp \
     GribV1.cpp \
     DataManager.cpp \
-    Dialogs/DialogGribDrawing.cpp
+    Dialogs/DialogGribDrawing.cpp \
+    AngleUtil.cpp
 
 
 

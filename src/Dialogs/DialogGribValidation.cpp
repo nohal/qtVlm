@@ -54,10 +54,7 @@ DialogGribValidation::DialogGribValidation(myCentralWidget * my_centralWidget,Ma
 
 DialogGribValidation::~DialogGribValidation()
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
-    Settings::setSetting(this->objectName()+".positionx",this->pos().x());
-    Settings::setSetting(this->objectName()+".positiony",this->pos().y());
+    Settings::saveGeometry(this);
 }
 
 void DialogGribValidation::setMode(int mode)
@@ -69,6 +66,7 @@ void DialogGribValidation::setMode(int mode)
 void DialogGribValidation::done(int result)
 {
     int newMode;
+    Settings::saveGeometry(this);
     if(result == QDialog::Accepted)
         newMode=this->type->currentIndex()+1;
     else

@@ -41,7 +41,7 @@ Magnifier::Magnifier(myCentralWidget *parent)
 
 
 
-    int zoom=qMin(10,Settings::getSetting("magnifierZoom","3").toInt());
+    int zoom=qMin(10,Settings::getSetting(magnifierZoom).toInt());
     if(zoom*proj->getScale()>scalemax)
         zoom=floor((double)scalemax/proj->getScale());
     width=proj->getW()*zoom;
@@ -59,11 +59,10 @@ Magnifier::Magnifier(myCentralWidget *parent)
     pnt1.setRenderHint(QPainter::Antialiasing, true);
     pnt1.setRenderHint(QPainter::SmoothPixmapTransform, true);
     pnt1.setCompositionMode(QPainter::CompositionMode_SourceOver);
-    QColor landColor = Settings::getSetting("landColor", QColor(200,200,120)).value<QColor>();
-    reader->drawContinents(pnt1, myProj, Qt::transparent, landColor);
+    reader->drawContinents(pnt1, myProj, Qt::transparent, Settings::getSetting(landColor).value<QColor>());
     QPen seaBordersPen;
-    seaBordersPen.setColor(Settings::getSetting("seaBordersLineColor", QColor(40,45,30)).value<QColor>());
-    seaBordersPen.setWidthF(Settings::getSetting("seaBordersLineWidth", 1.8).toDouble());
+    seaBordersPen.setColor(Settings::getSetting(seaBordersLineColor).value<QColor>());
+    seaBordersPen.setWidthF(Settings::getSetting(seaBordersLineWidth).toDouble());
     pnt1.setPen(seaBordersPen);
     reader->drawSeaBorders(pnt1, myProj);
     if(parent->getSelectedBoat())
@@ -129,7 +128,7 @@ QVariant Magnifier::itemChange(GraphicsItemChange change, const QVariant &value)
 }
 void Magnifier::drawMask()
 {
-    int c=12-Settings::getSetting("magnifierSize","5").toInt();
+    int c=12-Settings::getSetting(magnifierSize).toInt();
 
     sizeMagnifier=QSize(parent->getProj()->getW()/c,parent->getProj()->getW()/c);
     imgMask=QPixmap(sizeMagnifier);
@@ -203,11 +202,11 @@ void Magnifier::slot_closeMe()
 void Magnifier::slot_changeSize()
 {
     bool ok=false;
-    int currentSize=Settings::getSetting("magnifierSize","5").toInt();
+    int currentSize=Settings::getSetting(magnifierSize).toInt();
     int newSize=QInputDialog::getInt(0,tr("New magnifier size"),tr("magnifier size"),
                                      currentSize,1,10,1,&ok);
     if(!ok || currentSize==newSize) return;
-    Settings::setSetting("magnifierSize",newSize);
+    Settings::setSetting(magnifierSize,newSize);
     this->drawMask();
     this->setPos(parent->getProj()->getW()/2.0-sizeMagnifier.width()/2.0,parent->getProj()->getH()/2.0-sizeMagnifier.height()/2.0);
     this->drawMe();
@@ -215,11 +214,11 @@ void Magnifier::slot_changeSize()
 void Magnifier::slot_changeZoom()
 {
     bool ok=false;
-    int currentZoom=Settings::getSetting("magnifierZoom","3").toInt();
+    int currentZoom=Settings::getSetting(magnifierZoom).toInt();
     int newZoom=QInputDialog::getInt(0,tr("New magnifier zoom"),tr("magnifier zoom"),
                                      currentZoom,2,10,1,&ok);
     if(!ok || currentZoom==newZoom) return;
-    Settings::setSetting("magnifierZoom",newZoom);
+    Settings::setSetting(magnifierZoom,newZoom);
     parent->setMagnifier(NULL);
     parent->slot_magnify();
     parent->getMagnifier()->setPos(this->pos());

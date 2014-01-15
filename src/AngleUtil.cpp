@@ -1,6 +1,6 @@
 /**********************************************************************
 qtVlm: Virtual Loup de mer GUI
-Copyright (C) 2010 - Christophe Thomas aka Oxygen77
+Copyright (C) 2013 - Christophe Thomas aka Oxygen77
 
 http://qtvlm.sf.net
 
@@ -16,21 +16,11 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 ***********************************************************************/
 
-#include "DialogSailDocs.h"
-#include "Util.h"
-#include "settings.h"
-DialogSailDocs::DialogSailDocs(QString param, QWidget * parent) : QDialog(parent)
-{
-    setupUi(this);
-    Util::setFontDialog(this);
-    this->param->setText(param);
-    this->param->setFocus();
-    this->param->selectAll();
-}
-DialogSailDocs::~DialogSailDocs()
-{
-    Settings::saveGeometry(this);
-}
+#include "AngleUtil.h"
+
+
+
 

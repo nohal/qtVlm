@@ -35,10 +35,7 @@ DialogChooseMultipleBoat::DialogChooseMultipleBoat(QWidget *parent): QDialog(par
 }
 
 DialogChooseMultipleBoat::~DialogChooseMultipleBoat() {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
-    Settings::setSetting(this->objectName()+".positionx",this->pos().x());
-    Settings::setSetting(this->objectName()+".positiony",this->pos().y());
+    Settings::saveGeometry(this);
 }
 
 void DialogChooseMultipleBoat::init_dialog(BarrierSet *barrierSet,QList<boat*> boatList) {
@@ -60,6 +57,7 @@ void DialogChooseMultipleBoat::init_dialog(BarrierSet *barrierSet,QList<boat*> b
 }
 
 void DialogChooseMultipleBoat::done(int result) {
+    Settings::saveGeometry(this);
     if(result == QDialog::Accepted) {
         for(int i=0;i<lst_barrierSet->count();++i) {
             QListWidgetItem * item = lst_barrierSet->item(i);

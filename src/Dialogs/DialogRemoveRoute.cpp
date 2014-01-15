@@ -94,10 +94,7 @@ void DialogRemoveRoute::slot_remove(void) {
                 centralWidget->myDeleteRoute(route,true);
             }
         }
-        Settings::setSetting(this->objectName()+".height",this->height());
-        Settings::setSetting(this->objectName()+".width",this->width());
-        Settings::setSetting(this->objectName()+".positionx",this->pos().x());
-        Settings::setSetting(this->objectName()+".positiony",this->pos().y());
+        Settings::saveGeometry(this);
         accept();
     }
 }

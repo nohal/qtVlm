@@ -403,7 +403,7 @@ void vlmLine::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
         case VLMLINE_POINT_MODE:
             if(!hidden)
             {
-                int nbVac=nbVacPerHour*Settings::getSetting("trace_length",12).toInt()+1;
+                int nbVac=nbVacPerHour*Settings::getSetting(traceLength).toInt()+1;
                 int x0=poly->point(0).x();
                 int y0=poly->point(0).y();
                 for(int i=1;i<poly->count() && i<nbVac;++i)

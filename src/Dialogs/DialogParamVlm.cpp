@@ -59,13 +59,13 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     connect(this->resetDialogPosition,SIGNAL(clicked()),this,SLOT(slot_resetDialogPosition()));
 
     /* Drawing / affichage */
-    opp_labelType->addItem(tr("Pseudo"));
-    opp_labelType->addItem(tr("Nom"));
-    opp_labelType->addItem(tr("Numero"));
-    opp_labelType->setCurrentIndex(Settings::getSetting("opp_labelType",0).toInt());
+    cb_oppLabelType->addItem(tr("Pseudo"));
+    cb_oppLabelType->addItem(tr("Nom"));
+    cb_oppLabelType->addItem(tr("Numero"));
+    cb_oppLabelType->setCurrentIndex(Settings::getSetting(opp_labelType).toInt());
 
-    this->chkPavillon->setCheckState(Settings::getSetting("showFlag",0,"showHideItem").toInt()==1?Qt::Checked:Qt::Unchecked);
-    this->chkFusion->setChecked(Settings::getSetting("fusionStyle",0).toInt()==1);
+    this->chkPavillon->setCheckState(Settings::getSetting(showFlag).toInt()==1?Qt::Checked:Qt::Unchecked);
+    this->chkFusion->setChecked(Settings::getSetting(fusionStyle).toInt()==1);
 #ifndef QT_V5
     chkFusion->hide();
 #endif
@@ -98,7 +98,7 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
            }
         }
     }
-    QString currentBoard=Settings::getSetting("vlmBoard","0").toString();
+    QString currentBoard=Settings::getSetting(vlmBoardType).toString();
     // foreach(const QString &filename,files)
     // {
     //     QFileInfo info(filename);
@@ -126,15 +126,15 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     else
         comboBoard->setCurrentIndex(0);
 
-    this->newBoardShadow->setChecked(Settings::getSetting("newBoardShadow",0).toInt()==1);
-    QString skinName=Settings::getSetting("defaultSkin",QFileInfo("img/skin_compas.png").absoluteFilePath()).toString();
+    this->newBoardShadow->setChecked(Settings::getSetting(newBoard_Shadow).toInt()==1);
+    QString skinName=Settings::getSetting(defaultSkin).toString();
     if(!QFile(skinName).exists())
         skinName=QFileInfo("img/skin_compas.png").absoluteFilePath();
     this->edt_skinFile->setText(skinName);
     connect(this->btn_browseSkin,SIGNAL(clicked()),this,SLOT(doBtn_browseSkin()));
 
 
-    QString mapsFolderString = Settings::getSetting("mapsFolder",appFolder.value("maps")).toString();
+    QString mapsFolderString = Settings::getSetting(mapsFolderName).toString();
     mapsFolder->setText(mapsFolderString);
     mapsFolder->setToolTip(mapsFolderString);
     if(QThread::idealThreadCount()<=1)
@@ -146,17 +146,17 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     }
     else
     {
-        int gdm=Settings::getSetting("gribDrawingMethod",0).toInt();
+        int gdm=Settings::getSetting(gribDrawingMethod).toInt();
         if(gdm==0)
             this->gribAuto->setChecked(true);
         else if (gdm==1)
             this->gribMono->setChecked(true);
         else
             this->gribMulti->setChecked(true);
-        int cal1=Settings::getSetting("gribBench1",-1).toInt();
+        int cal1=Settings::getSetting(gribBench1).toInt();
         if(cal1>0)
         {
-            int cal2=Settings::getSetting("gribBench2",-1).toInt();
+            int cal2=Settings::getSetting(gribBench2).toInt();
             QString tt=tr("If checked, let qtVlm choose the fastest way for your computer")+"<br>"+
                     tr("to display the Grib.")+"<br>";
             tt+=tr("The result of the benchmark gives ")+QString().setNum(cal1)+tr(" ms for multithread against")+"<br>"+
@@ -172,38 +172,38 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
 
     /* Colors */
 
-    setColor(Settings::getSetting("POI_Color",QColor(Qt::black).name()).toString(),0);
-    setColor(Settings::getSetting("Marque_WP_Color",QColor(Qt::red).name()).toString(),4);
-    setColor(Settings::getSetting("qtBoat_color",QColor(Qt::blue).name()).toString(),1);
-    setColor(Settings::getSetting("qtBoat_sel_color",QColor(Qt::red).name()).toString(),2);
-    setColor(Settings::getSetting("WP_Color",QColor(Qt::darkYellow).name()).toString(),5);
-    setColor(Settings::getSetting("Balise_Color",QColor(Qt::darkMagenta).name()).toString(),6);
+    setColor(Settings::getSetting(POIColor).toString(),0);
+    setColor(Settings::getSetting(MarqueWPColor).toString(),4);
+    setColor(Settings::getSetting(qtBoatColor).toString(),1);
+    setColor(Settings::getSetting(qtBoatSelColor).toString(),2);
+    setColor(Settings::getSetting(WPColor).toString(),5);
+    setColor(Settings::getSetting(BaliseColor).toString(),6);
 
     /* Bateau */
     initEstime();
 
-    chk_centerOnSynch->setCheckState(Settings::getSetting("centerOnSynch","0").toInt()==1?Qt::Checked:Qt::Unchecked);
-    chk_centerOnBoatChange->setCheckState(Settings::getSetting("centerOnBoatChange","1").toInt()==1?Qt::Checked:Qt::Unchecked);
-    chk_askConfirm->setCheckState(Settings::getSetting("askConfirmation","0").toInt()==1?Qt::Checked:Qt::Unchecked);
+    chk_centerOnSynch->setCheckState(Settings::getSetting(centerOnSynch).toInt()==1?Qt::Checked:Qt::Unchecked);
+    chk_centerOnBoatChange->setCheckState(Settings::getSetting(centerOnBoatChange).toInt()==1?Qt::Checked:Qt::Unchecked);
+    chk_askConfirm->setCheckState(Settings::getSetting(askConfirmation).toInt()==1?Qt::Checked:Qt::Unchecked);
 
     /*Route*/
-    this->speedLossOnTackReal->setValue(Settings::getSetting("speedLossOnTackReal","100").toInt());
-    this->speedLossOnTackVlm->setValue(Settings::getSetting("speedLossOnTackVlm","100").toInt());
-    this->chkHideRoute->setCheckState(Settings::getSetting("autoHideRoute",1).toInt()==1?Qt::Checked:Qt::Unchecked);
-    this->autoRemove->setCheckState(Settings::getSetting("autoRemovePoiFromRoute",0).toInt()==1?Qt::Checked:Qt::Unchecked);
-    this->autoAt->setCheckState(Settings::getSetting("autoFillPoiHeading",0).toInt()==1?Qt::Checked:Qt::Unchecked);
-    this->routeSortByName->setChecked(Settings::getSetting("routeSortByName",1).toInt()==1);
+    this->speedLossOnTackReal->setValue(Settings::getSetting(speedLoss_On_TackReal).toInt());
+    this->speedLossOnTackVlm->setValue(Settings::getSetting(speedLoss_On_TackVlm).toInt());
+    this->chkHideRoute->setCheckState(Settings::getSetting(autoHideRoute).toInt()==1?Qt::Checked:Qt::Unchecked);
+    this->autoRemove->setCheckState(Settings::getSetting(autoRemovePoiFromRoute).toInt()==1?Qt::Checked:Qt::Unchecked);
+    this->autoAt->setCheckState(Settings::getSetting(autoFillPoiHeading).toInt()==1?Qt::Checked:Qt::Unchecked);
+    this->routeSortByName->setChecked(Settings::getSetting(routeSort_ByName).toInt()==1);
 
     /* Trace */
-    trace_length->setValue(Settings::getSetting("trace_length",12).toInt());
-    speedReplay->setValue(Settings::getSetting("speed_replay",20).toInt());
-    chk_oppTrace->setCheckState(Settings::getSetting("opp_trace","1").toInt()==1?Qt::Checked:Qt::Unchecked);
+    trace_length->setValue(Settings::getSetting(traceLength).toInt());
+    speedReplay->setValue(Settings::getSetting(speed_replay).toInt());
+    chk_oppTrace->setCheckState(Settings::getSetting(opp_trace).toInt()==1?Qt::Checked:Qt::Unchecked);
 
     /* Compas */
-    chk_showCompass->setCheckState(Settings::getSetting("showCompass",0).toInt()==1?Qt::Checked:Qt::Unchecked);
-    chk_showPolar->setCheckState(Settings::getSetting("showPolar",0).toInt()==1?Qt::Checked:Qt::Unchecked);
+    chk_showCompass->setCheckState(Settings::getSetting(showCompass).toInt()==1?Qt::Checked:Qt::Unchecked);
+    chk_showPolar->setCheckState(Settings::getSetting(showPolar).toInt()==1?Qt::Checked:Qt::Unchecked);
 
-    if(Settings::getSetting("scalePolar",0).toInt()==1)
+    if(Settings::getSetting(scalePolar).toInt()==1)
     {
         chk_scalePolarF->setChecked(true);
     }
@@ -214,41 +214,40 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
 
      /* Grib */
 
-    chk_askGribFolder->setCheckState(Settings::getSetting("askGribFolder",1).toInt()==1?Qt::Checked:Qt::Unchecked);
-    edt_gribFolder->setText(Settings::getSetting("edtGribFolder",appFolder.value("grib")).toString());
+    chk_askGribFolder->setCheckState(Settings::getSetting(askGribFolder).toInt()==1?Qt::Checked:Qt::Unchecked);
+    edt_gribFolder->setText(Settings::getSetting(edtGribFolder).toString());
 
-    chk_gribZoomOnLoad->setCheckState(Settings::getSetting("gribZoomOnLoad",0).toInt()==1?Qt::Checked:Qt::Unchecked);
-    chk_gribDelete->setChecked(Settings::getSetting("gribDelete",0).toInt()==1);
-    //chk_autoGribDate->setCheckState(Settings::getSetting("autoGribDate",0).toInt()==1?Qt::Checked:Qt::Unchecked);
+    chk_gribZoomOnLoad->setCheckState(Settings::getSetting(gribZoomOnLoad).toInt()==1?Qt::Checked:Qt::Unchecked);
+    chk_gribDelete->setChecked(Settings::getSetting(gribDelete).toInt()==1);
 
-    chk_externalMail->setCheckState(Settings::getSetting("sDocExternalMail",1).toInt()==1?Qt::Checked:Qt::Unchecked);
-    sailsDocPress->setCheckState(Settings::getSetting("sailsDocPress",0).toInt()==1?Qt::Checked:Qt::Unchecked);
-    forceWind->setChecked(Settings::getSetting("forceWind",0).toInt()==1);
-    forcedTWS->setValue(Settings::getSetting("forcedTWS",0.0).toDouble());
-    forcedTWD->setValue(Settings::getSetting("forcedTWD",0.0).toDouble());
-    forceCurrents->setChecked(Settings::getSetting("forceCurrents",0).toInt()==1);
-    forcedCS->setValue(Settings::getSetting("forcedCS",0.0).toDouble());
-    forcedCD->setValue(Settings::getSetting("forcedCD",0.0).toDouble());
+    chk_externalMail->setCheckState(Settings::getSetting(sDocExternalMail).toInt()==1?Qt::Checked:Qt::Unchecked);
+    sailsDocPress->setCheckState(Settings::getSetting(sailsDoc_press).toInt()==1?Qt::Checked:Qt::Unchecked);
+    forceWind->setChecked(Settings::getSetting(force_Wind).toInt()==1);
+    forcedTWS->setValue(Settings::getSetting(forced_TWS).toDouble());
+    forcedTWD->setValue(Settings::getSetting(forced_TWD).toDouble());
+    forceCurrents->setChecked(Settings::getSetting(force_Currents).toInt()==1);
+    forcedCS->setValue(Settings::getSetting(forced_CS).toDouble());
+    forcedCD->setValue(Settings::getSetting(forced_CD).toDouble());
 
     /* GPS */
     chk_activateEmulation->setCheckState(
-         Settings::getSetting("gpsEmulEnable", "0").toString()=="1"?Qt::Checked:Qt::Unchecked);
+         Settings::getSetting(gpsEmulEnable).toString()=="1"?Qt::Checked:Qt::Unchecked);
     this->enableGesture->setCheckState(
-         Settings::getSetting("enableGesture", "1").toString()=="1"?Qt::Checked:Qt::Unchecked);
-    serialName->setText(Settings::getSetting("serialName", "COM2").toString());
-    spn_gpsDelay->setValue(Settings::getSetting("GPS_DELAY",30).toInt());
+         Settings::getSetting(enable_Gesture).toString()=="1"?Qt::Checked:Qt::Unchecked);
+    serialName->setText(Settings::getSetting(gpsEmulSerialName).toString());
+    spn_gpsDelay->setValue(Settings::getSetting(gpsEmulDelay).toInt());
 
     /* advanced */
 
-    chk_forceUserAgent->setCheckState(Settings::getSetting("forceUserAgent",0).toInt()==1?Qt::Checked:Qt::Unchecked);
-    userAgent->setText(Settings::getSetting("userAgent", "").toString());
-    userAgent->setEnabled(Settings::getSetting("forceUserAgent",0).toInt()==1);
-    defFontName->findText(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
-    defFontSize->setValue(8.0+Settings::getSetting("defaultFontSizeInc",0).toDouble());
+    chk_forceUserAgent->setCheckState(Settings::getSetting(forceUserAgent).toInt()==1?Qt::Checked:Qt::Unchecked);
+    txt_userAgent->setText(Settings::getSetting(userAgent).toString());
+    txt_userAgent->setEnabled(Settings::getSetting(forceUserAgent).toInt()==1);
+    defFontName->findText(Settings::getSetting(defaultFontName).toString());
+    defFontSize->setValue(8.0+Settings::getSetting(defaultFontSizeInc).toDouble());
 
     for(int i=0;i<NB_URL;i++)
         url_list->addItem(url_name[i]+": "+url_str[i]);
-    url_list->setCurrentIndex(Settings::getSetting("vlm_url",0).toInt());
+    url_list->setCurrentIndex(Settings::getSetting(vlm_url).toInt());
     switch(::INTERPOLATION_DEFAULT)
     {
         case INTERPOLATION_TWSA:
@@ -267,19 +266,13 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
 //    urlGroup->setVisible(false);
 //#endif
 
-    saveWinGeometry->setCheckState(Settings::getSetting("saveMainWindowGeometry","1").toInt()==1?Qt::Checked:Qt::Unchecked);
-
-    /*QString interpol_name[3] = { "TWSA", "selecive TWSA", "Hybride" };
-    for(int i=0;i<3;i++)
-        interpol_list->addItem(interpol_name[i]);
-    interpol_list->setCurrentIndex(Settings::getSetting("interpolation",INTERPOL_DEFAULT).toInt());*/
-
+    saveWinGeometry->setCheckState(Settings::getSetting(saveMainWindowGeometry).toInt()==1?Qt::Checked:Qt::Unchecked);
 }
 
 void DialogParamVlm::initEstime(void) {
-    estimeVal_dist->setValue(Settings::getSetting("estimeLen",100).toInt());
-    estimeVal_time->setValue(Settings::getSetting("estimeTime",60).toInt());
-    estimeVal_vac->setValue(Settings::getSetting("estimeVac",12).toInt());
+    estimeVal_dist->setValue(Settings::getSetting(estimeLen).toInt());
+    estimeVal_time->setValue(Settings::getSetting(estimeTime).toInt());
+    estimeVal_vac->setValue(Settings::getSetting(estimeVac).toInt());
 
     estimeVal_time->setEnabled(false);
     estimeVal_vac->setEnabled(false);
@@ -291,7 +284,7 @@ void DialogParamVlm::initEstime(void) {
 
 
 
-    switch(Settings::getSetting("estimeType",0).toInt())
+    switch(Settings::getSetting(estimeType).toInt())
     {
     case 0:
         radioBtn_time->setChecked(true);
@@ -312,26 +305,23 @@ void DialogParamVlm::initEstime(void) {
 
 void DialogParamVlm::done(int result)
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
-    Settings::setSetting(this->objectName()+".positionx",this->pos().x());
-    Settings::setSetting(this->objectName()+".positiony",this->pos().y());
+    Settings::saveGeometry(this);
     if(result == QDialog::Accepted)
     {
         /*drawing*/
-        Settings::setSetting("opp_labelType",QString().setNum(opp_labelType->currentIndex()));
-        Settings::setSetting("showFlag",this->chkPavillon->checkState()==Qt::Checked?"1":"0","showHideItem");
-        Settings::setSetting("fusionStyle",this->chkFusion->isChecked()?1:0);
-        QString previousBoardSetting=Settings::getSetting("vlmBoard","0").toString();
+        Settings::setSetting(opp_labelType,QString().setNum(cb_oppLabelType->currentIndex()));
+        Settings::setSetting(showFlag,this->chkPavillon->checkState()==Qt::Checked?"1":"0");
+        Settings::setSetting(fusionStyle,this->chkFusion->isChecked()?1:0);
+        QString previousBoardSetting=Settings::getSetting(vlmBoardType).toString();
         QString newBoardSetting=comboBoard->itemData(comboBoard->currentIndex()).toString();
-        Settings::setSetting("newBoardShadow",this->newBoardShadow->isChecked()?1:0);
+        Settings::setSetting(newBoard_Shadow,this->newBoardShadow->isChecked()?1:0);
         QString skinName=edt_skinFile->text();
         if(!QFile(skinName).exists())
             skinName=QFileInfo("img/skin_compas.png").absoluteFilePath();
-        Settings::setSetting("defaultSkin",skinName);
+        Settings::setSetting(defaultSkin,skinName);
         if(previousBoardSetting!=newBoardSetting)
         {
-            Settings::setSetting("vlmBoard",newBoardSetting);
+            Settings::setSetting(vlmBoardType,newBoardSetting);
             centralWidget->getMainWindow()->loadBoard();
         }
         int gdm=2;
@@ -339,11 +329,11 @@ void DialogParamVlm::done(int result)
             gdm=0;
         else if (this->gribMono->isChecked())
             gdm=1;
-        Settings::setSetting("gribDrawingMethod",gdm);
-        Settings::setSetting("defaultFontName",this->defFontName->currentText());
-        Settings::setSetting("defaultFontSizeInc",QString().setNum(this->defFontSize->value()-8.0));
+        Settings::setSetting(gribDrawingMethod,gdm);
+        Settings::setSetting(defaultFontName,this->defFontName->currentText());
+        Settings::setSetting(defaultFontSizeInc,QString().setNum(this->defFontSize->value()-8.0));
 
-        if(Settings::getSetting("mapsFolder",appFolder.value("maps")).toString() != mapsFolder->text())
+        if(Settings::getSetting(mapsFolderName).toString() != mapsFolder->text())
         {
             QString mapDir = mapsFolder->text();
             QDir dir(mapDir);
@@ -353,90 +343,89 @@ void DialogParamVlm::done(int result)
             else
                 mapDir=appDir.absoluteFilePath(mapDir);
             qWarning() << "Setting map folder to " << mapDir;
-            Settings::setSetting("mapsFolder",mapDir);
+            Settings::setSetting(mapsFolderName,mapDir);
             centralWidget->loadGshhs();
         }
 
 
         /* colors */
 
-        Settings::setSetting("POI_Color",POI_color);
-        Settings::setSetting("Marque_WP_Color",Marque_WP_color);
-        Settings::setSetting("qtBoat_color",qtBoat_color);
-        Settings::setSetting("qtBoat_sel_color",qtBoat_sel_color);
-        Settings::setSetting("WP_Color",WP_color);
-        Settings::setSetting("Balise_Color",Balise_color);
+        Settings::setSetting(POIColor,POI_color);
+        Settings::setSetting(MarqueWPColor,Marque_WP_color);
+        Settings::setSetting(qtBoatColor,qtBoat_color);
+        Settings::setSetting(qtBoatSelColor,qtBoat_sel_color);
+        Settings::setSetting(WPColor,WP_color);
+        Settings::setSetting(BaliseColor,Balise_color);
 
         /* Bateau */
-        Settings::setSetting("estimeLen", QString().setNum(estimeVal_dist->value()));
-        Settings::setSetting("estimeTime", QString().setNum(estimeVal_time->value()));
-        Settings::setSetting("estimeVac", QString().setNum(estimeVal_vac->value()));
+        Settings::setSetting(estimeLen, QString().setNum(estimeVal_dist->value()));
+        Settings::setSetting(estimeTime, QString().setNum(estimeVal_time->value()));
+        Settings::setSetting(estimeVac, QString().setNum(estimeVal_vac->value()));
 
 
         if(radioBtn_time->isChecked())
-            Settings::setSetting("estimeType","0");
+            Settings::setSetting(estimeType,0);
         else if(radioBtn_vac->isChecked())
-            Settings::setSetting("estimeType","1");
+            Settings::setSetting(estimeType,1);
         else
-            Settings::setSetting("estimeType","2");
+            Settings::setSetting(estimeType,2);
 
-        Settings::setSetting("centerOnSynch",chk_centerOnSynch->checkState()==Qt::Checked?"1":"0");
-        Settings::setSetting("centerOnBoatChange",chk_centerOnBoatChange->checkState()==Qt::Checked?"1":"0");
-        Settings::setSetting("askConfirmation",chk_askConfirm->checkState()==Qt::Checked?"1":"0");
+        Settings::setSetting(centerOnSynch,chk_centerOnSynch->checkState()==Qt::Checked?1:0);
+        Settings::setSetting(centerOnBoatChange,chk_centerOnBoatChange->checkState()==Qt::Checked?1:0);
+        Settings::setSetting(askConfirmation,chk_askConfirm->checkState()==Qt::Checked?1:0);
 
         /* Trace */
-        if(Settings::getSetting("trace_length",12).toInt()!=trace_length->value())
+        if(Settings::getSetting(traceLength).toInt()!=trace_length->value())
             emit resetTraceCache();
-        Settings::setSetting("trace_length",QString().setNum(trace_length->value()));
-        Settings::setSetting("speed_replay",QString().setNum(speedReplay->value()));
-        Settings::setSetting("opp_trace",chk_oppTrace->checkState()==Qt::Checked?"1":"0");
+        Settings::setSetting(traceLength,QString().setNum(trace_length->value()));
+        Settings::setSetting(speed_replay,QString().setNum(speedReplay->value()));
+        Settings::setSetting(opp_trace,chk_oppTrace->checkState()==Qt::Checked?1:0);
 
         /* Compas */
-        Settings::setSetting("showCompass",chk_showCompass->checkState()==Qt::Checked?"1":"0");
-        Settings::setSetting("showPolar",chk_showPolar->checkState()==Qt::Checked?"1":"0");
+        Settings::setSetting(showCompass,chk_showCompass->checkState()==Qt::Checked?1:0);
+        Settings::setSetting(showPolar,chk_showPolar->checkState()==Qt::Checked?1:0);
         if(this->chk_scalePolarF->isChecked())
-            Settings::setSetting("scalePolar","1");
+            Settings::setSetting(scalePolar,1);
         else
-            Settings::setSetting("scalePolar","2");
+            Settings::setSetting(scalePolar,2);
 
         /* Route */
 
-        Settings::setSetting("speedLossOnTackReal", QString().setNum(speedLossOnTackReal->value()));
-        Settings::setSetting("speedLossOnTackVlm", QString().setNum(speedLossOnTackVlm->value()));
-        Settings::setSetting("autoHideRoute",this->chkHideRoute->checkState()==Qt::Checked?"1":"0");
-        Settings::setSetting("autoRemovePoiFromRoute",this->autoRemove->isChecked()?"1":"0");
-        Settings::setSetting("autoFillPoiHeading",this->autoAt->isChecked()?"1":"0");
-        Settings::setSetting("routeSortByName",this->routeSortByName->isChecked()?"1":"0");
+        Settings::setSetting(speedLoss_On_TackReal, QString().setNum(speedLossOnTackReal->value()));
+        Settings::setSetting(speedLoss_On_TackVlm, QString().setNum(speedLossOnTackVlm->value()));
+        Settings::setSetting(autoHideRoute,this->chkHideRoute->checkState()==Qt::Checked?1:0);
+        Settings::setSetting(autoRemovePoiFromRoute,this->autoRemove->isChecked()?1:0);
+        Settings::setSetting(autoFillPoiHeading,this->autoAt->isChecked()?1:0);
+        Settings::setSetting(routeSort_ByName,this->routeSortByName->isChecked()?1:0);
 
         /* Grib */
 
-        Settings::setSetting("askGribFolder",chk_askGribFolder->checkState()==Qt::Checked?"1":"0");
-        Settings::setSetting("edtGribFolder",edt_gribFolder->text());
-        Settings::setSetting("gribZoomOnLoad",chk_gribZoomOnLoad->checkState()==Qt::Checked?"1":"0");
-        Settings::setSetting("gribDelete",chk_gribDelete->checkState()==Qt::Checked?"1":"0");
-        //Settings::setSetting("autoGribDate",chk_autoGribDate->checkState()==Qt::Checked?"1":"0");
-        Settings::setSetting("sDocExternalMail",chk_externalMail->checkState()==Qt::Checked?"1":"0");
-        Settings::setSetting("sailsDocPress",sailsDocPress->checkState()==Qt::Checked?"1":"0");
-        Settings::setSetting("forceWind",forceWind->isChecked()?1:0);
-        Settings::setSetting("forcedTWS",forcedTWS->value());
-        Settings::setSetting("forcedTWD",forcedTWD->value());
-        Settings::setSetting("forceCurrents",forceCurrents->isChecked()?1:0);
-        Settings::setSetting("forcedCS",forcedCS->value());
-        Settings::setSetting("forcedCD",forcedCD->value());
+        Settings::setSetting(askGribFolder,chk_askGribFolder->checkState()==Qt::Checked?"1":"0");
+        Settings::setSetting(edtGribFolder,edt_gribFolder->text());
+        Settings::setSetting(gribZoomOnLoad,chk_gribZoomOnLoad->checkState()==Qt::Checked?"1":"0");
+        Settings::setSetting(gribDelete,chk_gribDelete->checkState()==Qt::Checked?"1":"0");
+        Settings::setSetting(sDocExternalMail,chk_externalMail->checkState()==Qt::Checked?"1":"0");
+        Settings::setSetting(sailsDoc_press,sailsDocPress->checkState()==Qt::Checked?"1":"0");
+        Settings::setSetting(force_Wind,forceWind->isChecked()?1:0);
+        Settings::setSetting(forced_TWS,forcedTWS->value());
+        Settings::setSetting(forced_TWD,forcedTWD->value());
+        Settings::setSetting(force_Currents,forceCurrents->isChecked()?1:0);
+        Settings::setSetting(forced_CS,forcedCS->value());
+        Settings::setSetting(forced_CD,forcedCD->value());
         DataManager * dataManager=centralWidget->get_dataManager();
         if(dataManager) dataManager->load_forcedParam();
 
         /* advanced */
-        Settings::setSetting("gpsEmulEnable",chk_activateEmulation->checkState()==Qt::Checked?"1":"0");
-        Settings::setSetting("enableGesture",this->enableGesture->checkState()==Qt::Checked?"1":"0");
-        Settings::setSetting("serialName", serialName->text());
-        Settings::setSetting("GPS_DELAY",spn_gpsDelay->value());
+        Settings::setSetting(gpsEmulEnable,chk_activateEmulation->checkState()==Qt::Checked?"1":"0");
+        Settings::setSetting(enable_Gesture,this->enableGesture->checkState()==Qt::Checked?"1":"0");
+        Settings::setSetting(gpsEmulSerialName, serialName->text());
+        Settings::setSetting(gpsEmulDelay,spn_gpsDelay->value());
 
-        Settings::setSetting("forceUserAgent",chk_forceUserAgent->checkState()==Qt::Checked?"1":"0");
-        Settings::setSetting("userAgent",userAgent->text());
+        Settings::setSetting(forceUserAgent,chk_forceUserAgent->checkState()==Qt::Checked?1:0);
+        Settings::setSetting(userAgent,txt_userAgent->text());
 
-        int oldUrl = Settings::getSetting("vlm_url",0).toInt();
-        Settings::setSetting("vlm_url",QString().setNum(url_list->currentIndex()));
+        int oldUrl = Settings::getSetting(vlm_url).toInt();
+        Settings::setSetting(vlm_url,QString().setNum(url_list->currentIndex()));
         if(interpolTWSA->isChecked())
             INTERPOLATION_DEFAULT=INTERPOLATION_TWSA;
         else if(interpolSelect->isChecked())
@@ -444,12 +433,12 @@ void DialogParamVlm::done(int result)
         else
             INTERPOLATION_DEFAULT=INTERPOLATION_HYBRID;
         INTERPOLATION_DEFAULT=INTERPOLATION_HYBRID;
-        Settings::setSetting("defaultInterpolation",INTERPOLATION_DEFAULT);
+        Settings::setSetting(defaultInterpolation,INTERPOLATION_DEFAULT);
         //qWarning() << "old url=" << oldUrl << " new=" << url_list->currentIndex();
         if(oldUrl!=url_list->currentIndex())
             emit inetUpdated();
 
-        Settings::setSetting("saveMainWindowGeometry",saveWinGeometry->checkState()==Qt::Checked?"1":"0");
+        Settings::setSetting(saveMainWindowGeometry,saveWinGeometry->checkState()==Qt::Checked?"1":"0");
 
         emit paramVLMChanged();
         emit redrawGrib();
@@ -493,7 +482,7 @@ void DialogParamVlm::slot_chgMapFolder(void) {
 
 void DialogParamVlm::forceUserAgent_changed(int newVal)
 {
-    userAgent->setEnabled(newVal==Qt::Checked);
+    txt_userAgent->setEnabled(newVal==Qt::Checked);
 }
 
 void DialogParamVlm::changeColor_POI(void)
@@ -628,7 +617,7 @@ void DialogParamVlm::doBtn_browseSkin(void)
 void DialogParamVlm::slot_changeParam()
 {
     initEstime();
-    chk_showCompass->setCheckState(Settings::getSetting("showCompass",0).toInt()==1?Qt::Checked:Qt::Unchecked);
+    chk_showCompass->setCheckState(Settings::getSetting(showCompass).toInt()==1?Qt::Checked:Qt::Unchecked);
     bool real=centralWidget->getPlayer()->getType()!=BOAT_VLM;
     concurrent_box->setVisible(!real);
     newBoardShadow->setVisible(!real);

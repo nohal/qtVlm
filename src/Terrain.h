@@ -144,13 +144,11 @@ private:
     bool        mustRedraw;
     QCursor     enterCursor;
 
-    QColor  seaColor, landColor, backgroundColor, transparentColor;
-    QColor  selectColor;
+    QColor landColorVal;
 
     double isobarsStep;
     bool   showIsobars;
     bool   showIsobarsLabels;
-    bool   showPressureMinMax;
 
     double isotherms0Step;
     bool   showIsotherms0;
@@ -170,22 +168,22 @@ private:
     //-----------------------------------------------
     bool  showCountriesBorders;
     bool  showRivers;
-    bool  showOrthodromie;
     bool  interpolateValues;
     bool  windArrowsOnGribGrid;
 
-    bool  showWindColorMap;
-    bool  colorMapSmooth;
-    bool  showBarbules;
     int   showCitiesNamesLevel;
     bool  showCountriesNames;
 
     int	colorMapMode, colorMapLevelType, colorMapLevelValue;
+    bool colorMapSmooth;
     int frstArwMode, frstArwLevelType, frstArwLevelValue;
+    bool showBarbules;
     int secArwMode, secArwLevelType, secArwLevelValue;
     int labelMode,labelLevelType,labelLevelValue;
     int isoBarLevelType,isoBarLevelValue;
-    //void update_colorMapLevel(int *mode, int *levelType, int *levelValue);
+
+    bool showPressureMinMax;
+
     int compute_dataType(DataManager * dataManager,
                          int currentMode, int defaultMode1, int defaultMode2,
                          QMap<int,QStringList> * allowedMode);

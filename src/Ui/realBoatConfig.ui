@@ -324,7 +324,7 @@
        </spacer>
       </item>
       <item row="1" column="2">
-       <widget class="QSpinBox" name="polarEfficiency">
+       <widget class="QSpinBox" name="spn_polarEfficiency">
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
@@ -441,7 +441,7 @@
   <tabstop>baudRate</tabstop>
   <tabstop>declinaison</tabstop>
   <tabstop>polarList</tabstop>
-  <tabstop>polarEfficiency</tabstop>
+  <tabstop>spn_polarEfficiency</tabstop>
   <tabstop>buttonBox</tabstop>
  </tabstops>
  <resources/>

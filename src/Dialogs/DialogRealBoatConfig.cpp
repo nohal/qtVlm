@@ -47,14 +47,14 @@ void DialogRealBoatConfig::launch(boatReal * boat)
     //*** GPS ****
 
     // Serial part
-    serialName->setText(Settings::getSetting("gpsPortName","COM1","GPS_SERIAL").toString());
-    int idx = baudRate->findText(Settings::getSetting("gpsBaudRate",BAUD4800,"GPS_SERIAL").toString(),Qt::MatchExactly);
+    serialName->setText(Settings::getSetting(gpsSerial_portName).toString());
+    int idx = baudRate->findText(Settings::getSetting(gpsDerial_baudRate).toString(),Qt::MatchExactly);
     if(idx==-1) idx=baudRate->findText("4800",Qt::MatchExactly);
     if(idx==-1) idx=0;
     baudRate->setCurrentIndex(idx);
 
     // File part
-    gpsFileName=Settings::getSetting("FileName","fakeGPS.data","GPS_FILE").toString();
+    gpsFileName=Settings::getSetting(gpsFake_fileName).toString();
     lb_fileName->setText(gpsFileName);
 
     // GPSd part
@@ -69,7 +69,7 @@ void DialogRealBoatConfig::launch(boatReal * boat)
     rdGPSd->setChecked(false);
 #endif
 
-    gpsSource = Settings::getSetting("DeviceType",GPS_SERIAL,"GPS").toInt();
+    gpsSource = Settings::getSetting(deviceType).toInt();
     switch(gpsSource) {
         case GPS_GPSD:
 #ifdef __UNIX_QTVLM
@@ -116,50 +116,47 @@ void DialogRealBoatConfig::launch(boatReal * boat)
         polarList->setCurrentIndex(polarStr.isEmpty()?0:polarList->findText(polarStr));
     }
 
-     polarEfficiency->setValue(Settings::getSetting("polarEfficiency",100).toInt());
+    spn_polarEfficiency->setValue(Settings::getSetting(polar_efficiency).toInt());
 
-    this->declinaison->setValue(Settings::getSetting("declinaison",0).toDouble());
-    this->minSpeedForEngine->setValue(Settings::getSetting("minSpeedForEngine",0).toDouble());
-    this->speedWithEngine->setValue(Settings::getSetting("speedWithEngine",6).toDouble());
+    this->declinaison->setValue(Settings::getSetting(boat_declinaison).toDouble());
+    this->minSpeedForEngine->setValue(Settings::getSetting(boat_minSpeedForEngine).toDouble());
+    this->speedWithEngine->setValue(Settings::getSetting(boat_speedWithEngine).toDouble());
 
     exec();
 }
 
 void DialogRealBoatConfig::done(int result)
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
-    Settings::setSetting(this->objectName()+".positionx",this->pos().x());
-    Settings::setSetting(this->objectName()+".positiony",this->pos().y());
+    Settings::saveGeometry(this);
     if(result == QDialog::Accepted)
     {
         /* GPS settings */
         // Serial
-        Settings::setSetting("gpsPortName",serialName->text(),"GPS_SERIAL");
-        Settings::setSetting("gpsBaudRate",baudRate->currentText(),"GPS_SERIAL");
+        Settings::setSetting(gpsSerial_portName,serialName->text());
+        Settings::setSetting(gpsDerial_baudRate,baudRate->currentText());
 
         // File
-        Settings::setSetting("FileName",gpsFileName,"GPS_FILE");
+        Settings::setSetting(gpsFake_fileName,gpsFileName);
         // GPSd
 
         // GPS mode
-        Settings::setSetting("DeviceType",gpsSource,"GPS");
+        Settings::setSetting(deviceType,gpsSource);
 
         curBoat->setDisplayNMEA(this->displayNMEA->isChecked());
 
         if(curBoat->gpsIsRunning())
             curBoat->restartGPS();
 
-        Settings::setSetting("polarEfficiency",polarEfficiency->value());
-        Settings::setSetting("minSpeedForEngine",minSpeedForEngine->value());
-        Settings::setSetting("speedWithEngine",speedWithEngine->value());
+        Settings::setSetting(polar_efficiency,spn_polarEfficiency->value());
+        Settings::setSetting(boat_minSpeedForEngine,minSpeedForEngine->value());
+        Settings::setSetting(boat_speedWithEngine,speedWithEngine->value());
         if(curBoat)
         {
             qWarning() << "Saving polar in boat: " << polarList->currentText();
 
             curBoat->setPolar(polarList->currentIndex()==0?QString():polarList->currentText());
         }
-        Settings::setSetting("declinaison",QString().sprintf("%.1f",this->declinaison->value()));
+        Settings::setSetting(boat_declinaison,QString().sprintf("%.1f",this->declinaison->value()));
 
         curBoat->setDeclinaison(declinaison->value());
 

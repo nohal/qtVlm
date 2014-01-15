@@ -223,23 +223,22 @@ void MainWindow::slot_execDialogProxy()
 //----------------------------------------------------
 void MainWindow::slot_gribFileReceived(QString fileName)
 {
-    bool zoom =  (Settings::getSetting("gribZoomOnLoad",0).toInt()==1);
+    bool zoom =  (Settings::getSetting(gribZoomOnLoad).toInt()==1);
     openGribFile(fileName, zoom);
     if(my_centralWidget) my_centralWidget->fileInfo_GRIB(DataManager::GRIB_GRIB);
     updateTitle();
 }
 
 //=============================================================
-MainWindow::MainWindow(int w, int h, QWidget *parent)
+MainWindow::MainWindow(QWidget *parent)
 {
-    //pluginLoader=NULL;
     this->setParent(parent);
     restartNeeded=false;
     setWindowIcon (QIcon (appFolder.value("icon")+"qtVlm_48x48.png"));
     noSave=false;
     originalPalette=QApplication::palette();
 #ifdef QT_V5
-    if(Settings::getSetting("fusionStyle",0).toInt()==1)
+    if(Settings::getSetting(fusionStyle).toInt()==1)
     {
         qWarning()<<"setting up Black fusion style";
         QStyle * fusion=QStyleFactory::create("Fusion");
@@ -247,7 +246,6 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
         qApp->styleHints();
 
         QPalette p;
-        //p = QApplication::palette();
         p.setColor(QPalette::Window, QColor(53,53,53));
         p.setColor(QPalette::Button, QColor(53,53,53));
         p.setColor(QPalette::Base, QColor(53,53,53));
@@ -259,66 +257,10 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
         QBrush brush = p.window();
         brush.setColor(brush.color().light(300));
         QColor dis=brush.color();
-        //QColor red=Qt::red;
         p.setColor(QPalette::Disabled, QPalette::Text, dis); // color menu item base
         p.setColor(QPalette::Disabled, QPalette::Light, QColor(53,53,53));
         p.setColor(QPalette::Disabled, QPalette::WindowText, dis);
-//        p.setColor(QPalette::Disabled, QPalette::Window, dis);
-//        p.setColor(QPalette::Disabled, QPalette::ButtonText, dis);
-//        p.setColor(QPalette::Disabled, QPalette::Base, dis);
-//        p.setColor(QPalette::Disabled, QPalette::Button, dis);
-//        p.setColor(QPalette::Disabled, QPalette::BrightText, dis);
-//        p.setColor(QPalette::Disabled, QPalette::Midlight, dis);
-//        p.setColor(QPalette::Disabled, QPalette::Dark, dis);
-//        p.setColor(QPalette::Disabled, QPalette::Mid, dis);
-//        p.setColor(QPalette::Disabled, QPalette::Shadow, dis);
-
-//        p.setColor(QPalette::Inactive, QPalette::Window, dis);
-//        p.setColor(QPalette::Inactive, QPalette::WindowText, dis);
-//        p.setColor(QPalette::Inactive, QPalette::Text, dis);
-//        p.setColor(QPalette::Inactive, QPalette::ButtonText, dis);
-//        p.setColor(QPalette::Inactive, QPalette::Base, dis);
-//        p.setColor(QPalette::Inactive, QPalette::Button, dis);
-//        p.setColor(QPalette::Inactive, QPalette::HighlightedText, dis);
-//        p.setColor(QPalette::Inactive, QPalette::BrightText, dis);
-//        p.setColor(QPalette::Inactive, QPalette::Light, dis);
-//        p.setColor(QPalette::Inactive, QPalette::Midlight, dis);
-//        p.setColor(QPalette::Inactive, QPalette::Dark, dis);
-//        p.setColor(QPalette::Inactive, QPalette::Mid, dis);
-//        p.setColor(QPalette::Inactive, QPalette::Shadow, dis);
-
-
-//        p.setBrush(QPalette::Disabled, QPalette::WindowText, brush);
-//        p.setBrush(QPalette::Disabled, QPalette::Text, brush);
-//        p.setBrush(QPalette::Disabled, QPalette::ButtonText, brush);
-//        p.setBrush(QPalette::Disabled, QPalette::Base, brush);
-//        p.setBrush(QPalette::Disabled, QPalette::Button, brush);
-//        p.setBrush(QPalette::Disabled, QPalette::HighlightedText, brush);
-//        p.setBrush(QPalette::Disabled, QPalette::BrightText, brush);
-//        p.setBrush(QPalette::Disabled, QPalette::Light, brush);
-//        p.setBrush(QPalette::Disabled, QPalette::Midlight, brush);
-//        p.setBrush(QPalette::Disabled, QPalette::Dark, brush);
-//        p.setBrush(QPalette::Disabled, QPalette::Mid, brush);
-//        p.setBrush(QPalette::Disabled, QPalette::Shadow, brush);
-//        p.setBrush(QPalette::Inactive, QPalette::WindowText, brush);
-//        p.setBrush(QPalette::Inactive, QPalette::Text, brush);
-//        p.setBrush(QPalette::Inactive, QPalette::ButtonText, brush);
-//        p.setBrush(QPalette::Inactive, QPalette::Base, brush);
-//        p.setBrush(QPalette::Inactive, QPalette::Button, brush);
-//        p.setBrush(QPalette::Inactive, QPalette::HighlightedText, brush);
-//        p.setBrush(QPalette::Inactive, QPalette::BrightText, brush);
-//        p.setBrush(QPalette::Inactive, QPalette::Light, brush);
-//        p.setBrush(QPalette::Inactive, QPalette::Midlight, brush);
-//        p.setBrush(QPalette::Inactive, QPalette::Dark, brush);
-//        p.setBrush(QPalette::Inactive, QPalette::Mid, brush);
-//        p.setBrush(QPalette::Inactive, QPalette::Shadow, brush);
-//        p.setColor(QPalette::Disabled,QPalette::ButtonText,QColor(121,121,147));
-//        p.setColor(QPalette::Disabled,QPalette::Text,QColor(121,121,147));
-//        p.setColor(QPalette::Disabled,QPalette::WindowText,QColor(121,121,147));
-//        p.setColor(QPalette::Disabled,QPalette::HighlightedText,QColor(121,121,147));
         qApp->setPalette(p);
-//        QString styleMenu="QMenu::item:disabled{color:#101010;}";
-//        qApp->setStyleSheet(styleMenu);
     }
 #endif
     isStartingUp=true;
@@ -329,7 +271,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     updateTitle();
     selectedBoat = NULL;
 
-    INTERPOLATION_DEFAULT=Settings::getSetting("defaultInterpolation",INTERPOLATION_HYBRID).toInt();
+    INTERPOLATION_DEFAULT=Settings::getSetting(defaultInterpolation).toInt();
 
     qWarning() <<  "Starting qtVlm - " << Version::getCompleteName();
 
@@ -339,18 +281,18 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     nxtVac_cnt=0;
     connect(timer,SIGNAL(timeout()),this, SLOT(updateNxtVac()));
 
-    prcx = Settings::getSetting("projectionCX", 0.0).toDouble();
-    prcy = Settings::getSetting("projectionCY", 0.0).toDouble();
+    prcx = Settings::getSetting(projectionCX).toDouble();
+    prcy = Settings::getSetting(projectionCY).toDouble();
     proj = new Projection (width(), height(),prcx,prcy);
     connect(proj,SIGNAL(newZoom(double)),this,SLOT(slotNewZoom(double)));
 
-    scale = Settings::getSetting("projectionScale", 0.5).toDouble();
+    scale = Settings::getSetting(projectionScale).toDouble();
     proj->setScale(scale);
     QDesktopWidget * desktopWidget = QApplication::desktop ();
     QRect screenRect = desktopWidget->screenGeometry(desktopWidget->primaryScreen());
-    if(Settings::getSetting("saveMainWindowGeometry","1").toInt())
+    if(Settings::getSetting(saveMainWindowGeometry).toInt())
     {
-        QSize savedSize = Settings::getSetting("mainWindowSize", QSize(w,h)).toSize();
+        QSize savedSize = Settings::getSetting(mainWindowSize).toSize();
 
         if(savedSize.height()>screenRect.height() || savedSize.width() > screenRect.width())
         {
@@ -359,9 +301,9 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
         }
         else
         {
-            resize( Settings::getSetting("mainWindowSize", QSize(w,h)).toSize() );
-            move  ( Settings::getSetting("mainWindowPos", QPoint()).toPoint() );
-            if(Settings::getSetting("mainWindowMaximized","0").toInt()==1)
+            resize( Settings::getSetting(mainWindowSize).toSize() );
+            move  ( Settings::getSetting(mainWindowPos).toPoint() );
+            if(Settings::getSetting(mainWindowMaximized).toInt()==1)
                 showMaximized();
         }
     }
@@ -371,7 +313,7 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
 
     ver+=get_OSVersion();
 
-    Settings::setSetting("qtVlm_version",ver);
+    Settings::setSetting(qtVlm_version,ver);
 }
 void MainWindow::continueSetup()
 {
@@ -442,7 +384,7 @@ void MainWindow::continueSetup()
     loadBoard();
 
     /* restore state */
-    restoreState(Settings::getSetting("savedState","").toByteArray());
+    restoreState(Settings::getSetting(savedState).toByteArray());
     toolBar->load_settings();
 
 
@@ -670,7 +612,7 @@ void MainWindow::loadBoard()
 {
     qWarning()<<"loading board";
     use_old_board=true;
-    if(my_centralWidget->getPlayer() && my_centralWidget->getPlayer()->getType()==BOAT_VLM && Settings::getSetting("vlmBoard","0").toString()!="0")
+    if(my_centralWidget->getPlayer() && my_centralWidget->getPlayer()->getType()==BOAT_VLM && Settings::getSetting(vlmBoardType).toString()!="0")
         use_old_board=false;
     if(use_old_board && myBoard)
     {
@@ -721,7 +663,7 @@ void MainWindow::loadBoard()
     }
     else
     {
-        QFile       uiFile (Settings::getSetting("vlmBoard","0").toString());
+        QFile       uiFile (Settings::getSetting(vlmBoardType).toString());
         // Load the associated resources if they exist
         QFileInfo   uiFileInfo (uiFile);
         QString     rccFileName = uiFileInfo.dir().filePath (uiFileInfo.completeBaseName() + ".rcc");
@@ -738,11 +680,11 @@ void MainWindow::loadBoard()
         } else {
            if (w != NULL) delete w;
            qWarning() << "Error loading board definition"
-                      << Settings::getSetting("vlmBoard","0").toString();
+                      << Settings::getSetting(vlmBoardType).toString();
 #ifdef QT_V5
            qWarning() << loader.errorString();
 #endif
-           Settings::setSetting("vlmBoard","0");
+           Settings::setSetting(vlmBoardType,"0");
            loadBoard();
         }
     }
@@ -781,25 +723,21 @@ MainWindow::~MainWindow()
     //qWarning()<<"mainwindow destructor";
     my_centralWidget->setAboutToQuit();
     if(noSave) return;
-    if(Settings::getSetting("saveMainWindowGeometry","1").toInt())
+    if(Settings::getSetting(saveMainWindowGeometry).toInt())
     {
-        //qWarning() << "Saving window geometry: " << size() << " " << pos();
-        Settings::setSetting("mainWindowSize", size());
-        Settings::setSetting("mainWindowPos", pos());
-        Settings::setSetting("mainWindowMaximized",this->isMaximized()?"1":"0");
+        Settings::setSetting(mainWindowSize, size());
+        Settings::setSetting(mainWindowPos, pos());
+        Settings::setSetting(mainWindowMaximized,this->isMaximized()?"1":"0");
     }
 
     toolBar->save_settings();
-    //board->save_settings();
-    Settings::setSetting("savedState",saveState());
-    //qWarning() << "saving state: " <<  Settings::getSetting("savedState","").toByteArray();
+    Settings::setSetting(savedState,saveState());
+    //qWarning() << "State saved: " <<  Settings::getSetting(savedState).toByteArray();
 
-    Settings::setSetting("projectionCX", proj->getCX());
-    Settings::setSetting("projectionCY", proj->getCY());
-    Settings::setSetting("projectionScale",  proj->getScale());
-    //Settings::setSetting("gribFileName",  gribFileName);
-    //Settings::setSetting("gribFileNameCurrent",  gribFileNameCurrent);
-    //Settings::setSetting("gribFilePath",  gribFilePath);
+    Settings::setSetting(projectionCX, proj->getCX());
+    Settings::setSetting(projectionCY, proj->getCY());
+    Settings::setSetting(projectionScale, proj->getScale());
+
     /*freeze all routes*/
     if(selectedBoat) /* save the zoom factor */
         selectedBoat->setZoom(proj->getScale());
@@ -887,8 +825,8 @@ void MainWindow::closeProgress(void)
             proj->zoomOnZone(xW,yN, xE,yS);
             proj->blockSignals(false);
             qWarning()<<"result of benchmark: multiThread="<<cal1<<"monoThread="<<cal2;
-            Settings::setSetting("gribBench1",cal1);
-            Settings::setSetting("gribBench2",cal2);
+            Settings::setSetting(gribBench1,cal1);
+            Settings::setSetting(gribBench2,cal2);
 
             /** **/
             dataManager->close_data(DataManager::GRIB_GRIB);
@@ -897,33 +835,31 @@ void MainWindow::closeProgress(void)
     }
     else
     {
-        Settings::setSetting("gribBench1",10);
-        Settings::setSetting("gribBench2",0);
+        Settings::setSetting(gribBench1,10);
+        Settings::setSetting(gribBench2,0);
     }
     progress->newStep(90,tr("Opening grib"));
-    gribFilePath = Settings::getSetting("gribFilePath", appFolder.value("grib")).toString();
+    gribFilePath = Settings::getSetting(gribFile_Path).toString();
     if(gribFilePath.isEmpty())
         gribFilePath = appFolder.value("grib");
-    QString fname = Settings::getSetting("gribFileName", "").toString();
-    //int curMode = my_centralWidget->get_terrain()->get_colorMapMode();
+    QString fname = Settings::getSetting(grib_FileName).toString();
     if (fname != "" && QFile::exists(fname))
     {
         openGribFile(fname, false);
         gribFileName=fname;
     }
-    fname = Settings::getSetting("gribFileNameCurrent", "").toString();
+    fname = Settings::getSetting(gribCurrent_FileName).toString();
     if (fname != "" && QFile::exists(fname))
     {
         openGribFile(fname, false,true);
         gribFileNameCurrent=fname;
     }
-    slot_updateGribMono();    
-    //my_centralWidget->get_terrain()->setColorMapMode(curMode);
+    slot_updateGribMono();
     progress->close();\
-    if(!Settings::getSetting("LastKap","").toString().isEmpty())
+    if(!Settings::getSetting(LastKap).toString().isEmpty())
     {
         progress->newStep(95,tr("Opening kap"));
-        my_centralWidget->imgKap_open(Settings::getSetting("LastKap","").toString());
+        my_centralWidget->imgKap_open(Settings::getSetting(LastKap).toString());
     }
 //    QPluginLoader plugin("pluginExamplePlugin");
 //    plugin.load();
@@ -944,7 +880,7 @@ void MainWindow::closeProgress(void)
         if(selectedBoat->get_boatType()==BOAT_REAL)
         {                        
             proj->setScaleAndCenterInMap(selectedBoat->getZoom(),selectedBoat->getLon(),selectedBoat->getLat());
-            if(Settings::getSetting("polarEfficiency",100).toInt()!=100)
+            if(Settings::getSetting(polar_efficiency).toInt()!=100)
             {
                 selectedBoat->reloadPolar(true);
                 emit boatHasUpdated(selectedBoat);
@@ -1021,13 +957,13 @@ void MainWindow::openGribFile(QString fileName, bool zoom, bool current)
 
         if(!current)
         {
-            Settings::setSetting("gribFileName",  fileName);
-            Settings::setSetting("gribFilePath",  gribFilePath);
+            Settings::setSetting(grib_FileName,  fileName);
+            Settings::setSetting(gribFile_Path,  gribFilePath);
         }
         else
         {
-            Settings::setSetting("gribFileNameCurrent",  fileName);
-            Settings::setSetting("gribFilePath",  gribFilePath);
+            Settings::setSetting(gribCurrent_FileName,  fileName);
+            Settings::setSetting(gribFile_Path,  gribFilePath);
         }
     }
     else if (!badCurrent)
@@ -1168,7 +1104,7 @@ void MainWindow::slotOptions_Language()
     QAction *act = mb->acOptions_GroupLanguage->checkedAction();
     if (act == mb->acOptions_Lang_fr) {
         lang = "fr";
-        Settings::setSetting("appLanguage", lang);
+        Settings::setSetting(appLanguage, lang);
         QMessageBox::information (this,
             QString("Changement de langue"),
             QString("Langue : Français\n\n")
@@ -1178,7 +1114,7 @@ void MainWindow::slotOptions_Language()
     }
     else if (act == mb->acOptions_Lang_en) {
         lang = "en";
-        Settings::setSetting("appLanguage", lang);
+        Settings::setSetting(appLanguage, lang);
         QMessageBox::information (this,
             QString("Application Language"),
             QString("Language : English\n\n")
@@ -1187,7 +1123,7 @@ void MainWindow::slotOptions_Language()
     }
     else if (act == mb->acOptions_Lang_cz) {
         lang = "cz";
-        Settings::setSetting("appLanguage", lang);
+        Settings::setSetting(appLanguage, lang);
         QMessageBox::information (this,
             QString("Application Language"),
             QString("Language : Czech\n\n")
@@ -1196,7 +1132,7 @@ void MainWindow::slotOptions_Language()
     }
     else if (act == mb->acOptions_Lang_es) {
         lang = "es";
-        Settings::setSetting("appLanguage", lang);
+        Settings::setSetting(appLanguage, lang);
         QMessageBox::information (this,
             QString("Application Language"),
             QString("Language : Spanish\n\n")
@@ -1274,8 +1210,8 @@ void MainWindow::slotCombineGrib() {
     if(!dirGrib.exists())
     {
         gribFilePath=appFolder.value("grib");
-        Settings::setSetting("askGribFolder",1);
-        Settings::setSetting("edtGribFolder",gribFilePath);
+        Settings::setSetting(askGribFolder,1);
+        Settings::setSetting(edtGribFolder,gribFilePath);
     }
     QStringList files = QFileDialog::getOpenFileNames(
                 this,
@@ -1317,7 +1253,7 @@ void MainWindow::slotCombineGrib() {
             fdest.close();
             str=QString().setNum(added) +" " + tr("files successfully combined")+"\n"+tr("Open generated file ?");
             if(QMessageBox::question(this,tr("Grib combination"),str)==QMessageBox::Yes) {
-                bool zoom =  (Settings::getSetting("gribZoomOnLoad",0).toInt()==1);
+                bool zoom =  (Settings::getSetting(gribZoomOnLoad).toInt()==1);
                 openGribFile(filename, zoom);
                 if(my_centralWidget) my_centralWidget->fileInfo_GRIB(DataManager::GRIB_GRIB);
             }
@@ -1339,8 +1275,8 @@ void MainWindow::slotFile_Open()
     if(!dirGrib.exists())
     {
         gribFilePath=appFolder.value("grib");
-        Settings::setSetting("askGribFolder",1);
-        Settings::setSetting("edtGribFolder",gribFilePath);
+        Settings::setSetting(askGribFolder,1);
+        Settings::setSetting(edtGribFolder,gribFilePath);
     }
     QString fileName = QFileDialog::getOpenFileName(this,
                          tr("Choisir un fichier GRIB"),
@@ -1351,7 +1287,7 @@ void MainWindow::slotFile_Open()
     {
         QFileInfo finfo(fileName);
         gribFilePath = finfo.absolutePath();
-        bool zoom =  (Settings::getSetting("gribZoomOnLoad",0).toInt()==1);
+        bool zoom =  (Settings::getSetting(gribZoomOnLoad).toInt()==1);
         openGribFile(fileName, zoom);
         //my_centralWidget->get_terrain()->update_mapDataAndLevel();
         if(my_centralWidget) my_centralWidget->fileInfo_GRIB(DataManager::GRIB_GRIB);
@@ -1361,7 +1297,7 @@ void MainWindow::slotFile_Open()
 void MainWindow::slotFile_Reopen()
 {
    if(!my_centralWidget->get_dataManager()->get_grib(DataManager::GRIB_GRIB)) return;
-   openGribFile (my_centralWidget->get_dataManager()->get_grib(DataManager::GRIB_GRIB)->get_fileName(), (Settings::getSetting("gribZoomOnLoad",0).toInt() == 1));
+   openGribFile (my_centralWidget->get_dataManager()->get_grib(DataManager::GRIB_GRIB)->get_fileName(), (Settings::getSetting(gribZoomOnLoad).toInt() == 1));
    //my_centralWidget->get_terrain()->update_mapDataAndLevel();
    updateTitle();
 }
@@ -1374,8 +1310,8 @@ void MainWindow::slotFile_Open_Current()
     if(!dirGrib.exists())
     {
         gribFilePath=appFolder.value("grib");
-        Settings::setSetting("askGribFolder",1);
-        Settings::setSetting("edtGribFolder",gribFilePath);
+        Settings::setSetting(askGribFolder,1);
+        Settings::setSetting(edtGribFolder,gribFilePath);
     }
     QString fileName = QFileDialog::getOpenFileName(this,
                          tr("Choisir un fichier GRIB"),
@@ -1385,7 +1321,7 @@ void MainWindow::slotFile_Open_Current()
     {
         QFileInfo finfo(fileName);
         gribFilePath = finfo.absolutePath();
-        bool zoom =  (Settings::getSetting("gribZoomOnLoad",0).toInt()==1);
+        bool zoom =  (Settings::getSetting(gribZoomOnLoad).toInt()==1);
         openGribFile(fileName, zoom, true);
         //my_centralWidget->get_terrain()->update_mapDataAndLevel();
         if(my_centralWidget) my_centralWidget->fileInfo_GRIB(DataManager::GRIB_CURRENT);
@@ -1415,7 +1351,7 @@ void MainWindow::slotFile_Close()
 //========================================================================
 void MainWindow::slotDateStepChanged(int step)
 {
-    Settings::setSetting("gribDateStep",step);
+    Settings::setSetting(gribDateStep,step);
     updatePrevNext();
 }
 
@@ -1508,7 +1444,7 @@ int MainWindow::get_selectedBoatVacLen()
 }
 void MainWindow::showDashBoard()
 {
-    bool shTdb=Settings::getSetting("showDashBoard",1).toInt()==1;
+    bool shTdb=Settings::getSetting(show_DashBoard).toInt()==1;
     if(use_old_board)
         menuBar->acOptions_SH_Tdb->setVisible(false);
     else
@@ -1855,8 +1791,8 @@ void MainWindow::slotInetUpdated(void)
 void MainWindow::slot_positScale()
 {
     qWarning() << "[slot_positScale()]";
-    Settings::setSetting("scalePosX",this->mouseClicX);
-    Settings::setSetting("scalePosY",this->mouseClicY);
+    Settings::setSetting(scalePosX,this->mouseClicX);
+    Settings::setSetting(scalePosY,this->mouseClicY);
     my_centralWidget->get_terrain()->setScalePos(this->mouseClicX,this->mouseClicY);
     my_centralWidget->get_terrain()->redrawGrib();
     qWarning() << "[slot_positScale()] done";
@@ -1878,13 +1814,13 @@ void MainWindow::slotCompassLineForced(double a, double b)
 }
 void MainWindow::slotCompassCenterBoat(void)
 {
-    Settings::setSetting("compassCenterBoat", menuBar->ac_compassCenterBoat->isChecked()?"1":"0");
+    Settings::setSetting(compassCenterBoat, menuBar->ac_compassCenterBoat->isChecked()?1:0);
     emit showCompassCenterBoat();
 }
 void MainWindow::slotCompassCenterWp(void)
 {
     menuBar->ac_compassCenterBoat->setChecked(false);
-    Settings::setSetting("compassCenterBoat", "0");
+    Settings::setSetting(compassCenterBoat, 0);
     emit showCompassCenterWp();
 }
 
@@ -1968,7 +1904,7 @@ void MainWindow::VLM_Sync_sync(void)
     }
     else
     {
-        int lastBoatSelected=Settings::getSetting("LastBoatSelected","-10").toInt();
+        int lastBoatSelected=Settings::getSetting(LastBoatSelected).toInt();
         if(lastBoatSelected!=-10)
         {
             bool found=false;
@@ -1987,7 +1923,7 @@ void MainWindow::VLM_Sync_sync(void)
             if(!found)
             {
                 lastBoatSelected=-10;
-                Settings::setSetting("LastBoatSelected","-10");
+                Settings::setSetting(LastBoatSelected,lastBoatSelected);
             }
         }
         if(lastBoatSelected==-10)
@@ -1997,7 +1933,7 @@ void MainWindow::VLM_Sync_sync(void)
                 if(listBoats.at(nBoat)->getStatus())
                 {
                     listBoats.at(nBoat)->slot_selectBoat();
-                    Settings::setSetting("LastBoatSelected",listBoats.at(nBoat)->getId());
+                    Settings::setSetting(LastBoatSelected,listBoats.at(nBoat)->getId());
                     break;
                 }
             }
@@ -2005,7 +1941,7 @@ void MainWindow::VLM_Sync_sync(void)
         toolBar->boatList->setEnabled(true);
         closeProgress();
         isStartingUp=false;
-        if(Settings::getSetting("centerOnBoatChange","1").toInt()==1)
+        if(Settings::getSetting(centerOnBoatChange).toInt()==1)
             this->slot_centerSelectedBoat();
         my_centralWidget->emitUpdateRoute(NULL);
         updateTitle();
@@ -2084,12 +2020,12 @@ void MainWindow::slotBoatUpdated(boat * upBoat,bool newRace,bool doingSync)
                 //qWarning() << "Not first synch - doingSync="<< doingSync;
                 if(doingSync)
                 {
-                    if(Settings::getSetting("centerOnSynch",0).toInt()==1)
+                    if(Settings::getSetting(centerOnSynch).toInt()==1)
                         proj->setCenterInMap(boat->getLon(),boat->getLat());
                 }
                 else
                 {
-                    if(Settings::getSetting("centerOnBoatChange",1).toInt()==1)
+                    if(Settings::getSetting(centerOnBoatChange).toInt()==1)
                         proj->setScaleAndCenterInMap(boat->getZoom(),boat->getLon(),boat->getLat());
                 }
             }
@@ -2250,10 +2186,9 @@ void MainWindow::slotChgBoat(int num)
         {
             if(cnt==num)
             {
-                Settings::setSetting("LastBoatSelected", acc->getId());
+                Settings::setSetting(LastBoatSelected, acc->getId());
                 acc->slot_selectBoat();
                 /* sync lunched, update grib date */
-                //slotDateGribChanged_now();
                 emit WPChanged(0,0);
                 emit selectedBoatChanged();
                 for(int i=0;i<my_centralWidget->getRaces().size();++i)
@@ -2769,29 +2704,6 @@ void MainWindow::slotGribInterpolation(void)
 //#endif
 }
 
-/*
-void MainWindow::slot_estimeParamChanged(int valeur)
-{
-    int valeur;
-    switch(Settings::getSetting("estimeType","0").toInt())
-    {
-        case 0:
-            valeur=Settings::getSetting("estimeTime", valeur);
-            param->estimeVal_time->setValue(valeur);
-            break;
-        case 1:
-            valeur=Settings::getSetting("estimeVac", valeur);
-            param->estimeVal_vac->setValue(valeur);
-            break;
-        case 2:
-            valeur=Settings::getSetting("estimeLen", valeur);
-            param->estimeVal_dist->setValue(valeur);
-    }
-    emit paramVLMChanged();
-}
-
-*/
-
 void MainWindow::slot_updateGribMono()
 {
     //gribDrawingmethod (0=auto, 1=mono, 2=multi)
@@ -2800,16 +2712,16 @@ void MainWindow::slot_updateGribMono()
 #ifdef __WIN_QTVLM
         if (QSysInfo::windowsVersion()==QSysInfo::WV_XP)
         {
-            my_centralWidget->get_mapDataDrawer()->set_gribMonoCpu(true);
+            my_centralWidget->get_mapDataDrawer()->set_grib_monoCpu(true);
             return;
         }
 #endif
         bool gribMulti=false;
-        if(Settings::getSetting("gribDrawingMethod",0).toInt()==0)
-            gribMulti=Settings::getSetting("gribBench1",-1).toInt()<Settings::getSetting("gribBench2",-1).toInt();
+        if(Settings::getSetting(gribDrawingMethod).toInt()==0)
+            gribMulti=Settings::getSetting(gribBench1).toInt()<Settings::getSetting(gribBench2).toInt();
         else
-            gribMulti=Settings::getSetting("gribDrawingMethod",0).toInt()==2;
-        my_centralWidget->get_mapDataDrawer()->set_gribMonoCpu(!gribMulti);
+            gribMulti=Settings::getSetting(gribDrawingMethod).toInt()==2;
+        my_centralWidget->get_mapDataDrawer()->set_grib_monoCpu(!gribMulti);
     }
 
 }
@@ -2890,9 +2802,34 @@ void MainWindow::slot_barrierAddMenu(void) {
     else
         my_centralWidget->escKey_barrier();
 }
-QVariant MainWindow::getSetting(const QString &key, const QVariant &defaultValue) const
+
+QVariant MainWindow::getSettingApp(const int &key) const
 {
-    return Settings::getSetting(key,defaultValue);
+    return Settings::getSetting(key);
+}
+
+void MainWindow::setting_saveGeometry(QWidget * obj) {
+    Settings::saveGeometry(obj);
+}
+
+bool MainWindow::getWPClipboard(QString * str,double * lat,double * lon, double * wph, int * tStamp) {
+    return Util::getWPClipboard(str,lat,lon,wph,tStamp);
+}
+
+void MainWindow::setWPClipboard(double lat,double lon, double wph) {
+    Util::setWPClipboard(lat,lon,wph);
+}
+
+QString MainWindow::pos2String(const int &type,const double &value) {
+    return Util::pos2String(type,value);
+}
+
+QString MainWindow::formatLongitude(const double &x) {
+    return Util::formatLongitude(x);
+}
+
+QString MainWindow::formatLatitude(const double &y) {
+    return Util::formatLatitude(y);
 }
 
 QString MainWindow::get_folder(QString str) const {

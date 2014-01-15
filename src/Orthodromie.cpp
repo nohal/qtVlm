@@ -27,6 +27,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include "Orthodromie.h"
 #include "Projection.h"
+#include "AngleUtil.h"
 
 
 //------------------------------------------------------------------------------
@@ -43,10 +44,10 @@ Orthodromie::Orthodromie(QPointF p1, QPointF p2)
 //------------------------------------------------------------------------------
 void Orthodromie::setPoints(double x0,double y0, double x1,double y1)
 {
-    lon0 = degToRad(Util::A360(x0));
-    lat0 = degToRad(Util::A360(y0));
-    lon1 = degToRad(Util::A360(x1));
-    lat1 = degToRad(Util::A360(y1));
+    lon0 = degToRad(AngleUtil::A360(x0));
+    lat0 = degToRad(AngleUtil::A360(y0));
+    lon1 = degToRad(AngleUtil::A360(x1));
+    lat1 = degToRad(AngleUtil::A360(y1));
 //    lon0 = x0 *M_PI/180.0;
 //    lat0 = y0 *M_PI/180.0;
 //    lon1 = x1 *M_PI/180.0;

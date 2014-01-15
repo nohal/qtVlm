@@ -282,15 +282,15 @@ MenuBar::MenuBar(MainWindow *parent)
 
         QMenu *menuMap = new QMenu(tr("Planisphere"));
         acMap_Orthodromie = addActionCheck(menuMap, tr("Distance orthodromique"), tr(""), tr(""));
-        acMap_Orthodromie->setChecked(Settings::getSetting("showOrthodromie", false).toBool());
+        acMap_Orthodromie->setChecked(Settings::getSetting(showOrthodromie).toBool());
 
         menuMap->addSeparator();
         acMap_CountriesBorders = addActionCheck(menuMap, tr("Frontieres"), tr(""), tr("Afficher les frontieres"));
-        acMap_CountriesBorders->setChecked(Settings::getSetting("showCountriesBorders", true).toBool());
+        acMap_CountriesBorders->setChecked(Settings::getSetting(show_countriesBorders).toBool());
         acMap_Rivers = addActionCheck(menuMap, tr("Rivieres"), tr(""), tr("Afficher les rivieres"));
-        acMap_Rivers->setChecked(Settings::getSetting("showRivers", false).toBool());
+        acMap_Rivers->setChecked(Settings::getSetting(show_rivers).toBool());
         acMap_CountriesNames = addActionCheck(menuMap, tr("Noms des pays"), tr(""), tr("Afficher les noms des pays"));
-        acMap_CountriesNames->setChecked(Settings::getSetting("showCountriesNames", false).toBool());
+        acMap_CountriesNames->setChecked(Settings::getSetting(show_countriesNames).toBool());
 
 
         QMenu *menuCitiesNames = new QMenu(tr("Nom des villes"));
@@ -307,7 +307,7 @@ MenuBar::MenuBar(MainWindow *parent)
             acMap_GroupCitiesNames->addAction(acMap_CitiesNames4);
             menuMap->addMenu(menuCitiesNames);
         menuOptions->addMenu(menuMap);
-        setCitiesNamesLevel(Settings::getSetting("showCitiesNamesLevel", 0).toInt());
+        setCitiesNamesLevel(Settings::getSetting(show_citiesNamesLevel).toInt());
 
         QMenu *menuLanguage = new QMenu(tr("Language"));
             acOptions_GroupLanguage = new QActionGroup(menuLanguage);
@@ -320,11 +320,15 @@ MenuBar::MenuBar(MainWindow *parent)
                 acOptions_GroupLanguage->addAction(acOptions_Lang_es);
                 acOptions_GroupLanguage->addAction(acOptions_Lang_cz);
         menuOptions->addMenu(menuLanguage);
-        QString lang = Settings::getSetting("appLanguage", "none").toString();
+        QString lang = Settings::getSetting(appLanguage).toString();
         if (lang == "fr")
             acOptions_Lang_fr->setChecked(true);
         else if (lang == "en")
             acOptions_Lang_en->setChecked(true);
+        else if (lang == "cz")
+            acOptions_Lang_cz->setChecked(true);
+        else if (lang == "es")
+            acOptions_Lang_es->setChecked(true);
 
 
 
@@ -384,7 +388,7 @@ QMenu * MenuBar::createPopupBtRight(QWidget *parent)
     popup->addSeparator();
     ac_compassCenterBoat = addAction(popup, tr("Centrer le compas sur le bateau actif"),tr(""),tr(""),"");
     ac_compassCenterBoat->setCheckable(true);
-    ac_compassCenterBoat->setChecked(Settings::getSetting("compassCenterBoat", "0").toString()=="1"?Qt::Checked:Qt::Unchecked);
+    ac_compassCenterBoat->setChecked(Settings::getSetting(compassCenterBoat).toString()=="1"?Qt::Checked:Qt::Unchecked);
     ac_compassCenterWp = addAction(popup, tr("Centrer le compas sur le WP VLM"),tr(""),tr(""),"");
     mnCompassCenterRoute=new QMenu(tr("Centrer le compass sur l'interpolation de la route"));
     popup->addMenu(mnCompassCenterRoute);
@@ -509,21 +513,21 @@ void MenuBar::slot_showViewMenu(void) {
     toolBarMenu->clear();
     mainWindow->get_toolBar()->build_showHideMenu(toolBarMenu);
 
-    acKeep->setChecked(Settings::getSetting("keepBoatPosOnScreen",1).toInt()==1);    
-    acOptions_SH_Nig->setChecked(Settings::getSetting("showNight",1).toInt()==1);
-    acOptions_SH_Scale->setChecked(Settings::getSetting("showScale",1).toInt()==1);
+    acKeep->setChecked(Settings::getSetting(keepBoatPosOnScreen).toInt()==1);
+    acOptions_SH_Nig->setChecked(Settings::getSetting(showNight).toInt()==1);
+    acOptions_SH_Scale->setChecked(Settings::getSetting(showScale).toInt()==1);
 
-    acOptions_SH_Fla->setChecked(Settings::getSetting("showFlag",0,"showHideItem").toInt()==1);
-    acOptions_SH_Pol->setChecked(Settings::getSetting("showPolar",0,"showHideItem").toInt()==1);
-    acOptions_SH_Com->setChecked(Settings::getSetting("showCompass",0,"showHideItem").toInt()==1);
+    acOptions_SH_Fla->setChecked(Settings::getSetting(showFlag).toInt()==1);
+    acOptions_SH_Pol->setChecked(Settings::getSetting(showPolar).toInt()==1);
+    acOptions_SH_Com->setChecked(Settings::getSetting(showCompass).toInt()==1);
 
-    acOptions_SH_Opp->setChecked(Settings::getSetting("hideOpponent",0,"showHideItem").toInt()==0);
-    acOptions_SH_Por->setChecked(Settings::getSetting("hidePorte",0,"showHideItem").toInt()==0);
-    acOptions_SH_Poi->setChecked(Settings::getSetting("hidePoi",0,"showHideItem").toInt()==0);
-    acOptions_SH_Rou->setChecked(Settings::getSetting("hideRoute",0,"showHideItem").toInt()==0);
-    acOptions_SH_Lab->setChecked(Settings::getSetting("hideLabel",0,"showHideItem").toInt()==0);
-    acOptions_SH_barSet->setChecked(Settings::getSetting("hideBarrierSet",0,"showHideItem").toInt()==0);
-    acOptions_SH_trace->setChecked(Settings::getSetting("hideTrace",0,"showHideItem").toInt()==0);
+    acOptions_SH_Opp->setChecked(Settings::getSetting(hideOpponent).toInt()==0);
+    acOptions_SH_Por->setChecked(Settings::getSetting(hidePorte).toInt()==0);
+    acOptions_SH_Poi->setChecked(Settings::getSetting(hidePoi).toInt()==0);
+    acOptions_SH_Rou->setChecked(Settings::getSetting(hideRoute).toInt()==0);
+    acOptions_SH_Lab->setChecked(Settings::getSetting(hideLabel).toInt()==0);
+    acOptions_SH_barSet->setChecked(Settings::getSetting(hideBarrierSet).toInt()==0);
+    acOptions_SH_trace->setChecked(Settings::getSetting(hideTrace).toInt()==0);
 }
 
 void MenuBar::slot_showBarrierMenu(void) {

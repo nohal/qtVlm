@@ -41,7 +41,7 @@ class selectionWidget : public QGraphicsWidget
         void clearSelection(void);
         bool isSelecting(void) { return selecting; }
 
-        bool getShowOrthodromie(void) { return showOrthodromie; }
+        bool getShowOrthodromie(void) { return show_orthodromie; }
         bool getZone(double * x0, double * y0, double * x1, double * y1);
         bool getZoneWithSens(double * x0, double * y0, double * x1, double * y1);
 
@@ -59,7 +59,7 @@ class selectionWidget : public QGraphicsWidget
         int old_xa,old_xb,old_ya,old_yb;
         int width,height;
         bool selecting;
-        bool showOrthodromie;
+        bool show_orthodromie;
 
         myCentralWidget * centralWidget;
         Projection * proj;

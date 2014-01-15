@@ -81,9 +81,9 @@ boatReal::boatReal(QString pseudo, bool activated, Projection * proj,MainWindow 
     this->eta=-1;
     changeLocked=false;
     forceEstime=false;
-    this->declinaison=Settings::getSetting("declinaison",0).toDouble();
-    this->minSpeedForEngine=Settings::getSetting("minSpeedForEngine",0).toDouble();
-    this->speedWithEngine=Settings::getSetting("speedWithEngine",4).toDouble();
+    this->declinaison=Settings::getSetting(boat_declinaison).toDouble();
+    this->minSpeedForEngine=Settings::getSetting(boat_minSpeedForEngine).toDouble();
+    this->speedWithEngine=Settings::getSetting(boat_speedWithEngine).toDouble();
 
     myCreatePopUpMenu();
     connect(this->popup,SIGNAL(aboutToShow()),parent,SLOT(slot_resetGestures()));
@@ -143,7 +143,7 @@ void boatReal::myCreatePopUpMenu(void)
 
 void boatReal::startRead() {
 #ifndef __ANDROID__
-    int curDeviceType=Settings::getSetting("DeviceType",GPS_SERIAL,"GPS").toInt();
+    int curDeviceType=Settings::getSetting(deviceType).toInt();
     /* start loop */
     cnt=0;
     if(gpsReader && gpsReader->get_deviceType()!=curDeviceType) {
@@ -220,7 +220,7 @@ void boatReal::updateBoat(GpsData info)
     if(info.declination!=0)
         this->declinaison=info.declination;
     else
-        this->declinaison=Settings::getSetting("declinaison",0).toDouble();
+        this->declinaison=Settings::getSetting(boat_declinaison).toDouble();
     this->pdop=info.PDOP;
     if(sig<0 || sig>3)
         qWarning()<<"strange sig value:"<<sig;

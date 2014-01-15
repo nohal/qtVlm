@@ -308,12 +308,12 @@ QString inetConnexion::getHost()
 #if 1
     QString host;
     host="http://";
-    int num = Settings::getSetting("vlm_url",0).toInt();
+    int num = Settings::getSetting(vlm_url).toInt();
     if(num>=NB_URL)
     {
         qWarning() << "Updating wrong config for VLM url";
         num=0;
-        Settings::setSetting("vlm_url",0);
+        Settings::setSetting(vlm_url,0);
     }
     return host+url_str[num];
 #else

@@ -36,15 +36,15 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
     my_centralWidget = mainWindow->getMy_centralWidget();
     Util::setFontDialog(this);
 #ifdef __MAC_QTVLM
-    QFont font(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
-    double fontSize=Settings::getSetting("applicationFontSize",8.0).toDouble();
+    QFont font(Settings::getSetting(defaultFontName).toString());
+    double fontSize=Settings::getSetting(applicationFontSize).toDouble();
     font.setPointSizeF(fontSize);
 #else
     QFontInfo finfo = fontInfo();
     QFont font("", finfo.pointSize(), QFont::Normal, false);
     font.setStyleHint(QFont::TypeWriter);
     font.setFamily("Courier");
-    font.setPointSizeF(Settings::getSetting("applicationFontSize",8.0).toDouble());
+    font.setPointSizeF(Settings::getSetting(applicationFontSize).toDouble());
     font.setFixedPitch(true);
     setStyleSheet("QStatusBar::item {border: 0px;}");
 #endif
@@ -52,7 +52,7 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
     setFont(font);
 
     stBar_label_1 = new QLabel("Welcome in QtVlm", this);
-    if(Settings::getSetting("fusionStyle",0).toInt()==1)
+    if(Settings::getSetting(fusionStyle).toInt()==1)
         stBar_label_1->setStyleSheet("color: rgb(234, 221, 21);");
     else
         stBar_label_1->setStyleSheet("color: rgb(0, 0, 255);");
@@ -60,7 +60,7 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
     this->addWidget(stBar_label_1);
     font.setBold(true);
     stBar_label_2 = new QLabel("", this);
-    if(Settings::getSetting("fusionStyle",0).toInt()==1)
+    if(Settings::getSetting(fusionStyle).toInt()==1)
         stBar_label_2->setStyleSheet("color: rgb(234, 154, 84);");
     else
         stBar_label_2->setStyleSheet("color: rgb(255, 0, 0);");
