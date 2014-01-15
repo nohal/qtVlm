@@ -88,8 +88,6 @@ class MainWindow: public MainWindowInterface
         void setPilototoFromRoute(QList<POI*> poiList);
 
         myCentralWidget * getMy_centralWidget(){return this->my_centralWidget;}
-        void setRestartNeeded(){this->restartNeeded=true;}
-        bool getRestartNeeded(){return this->restartNeeded;}
         void continueSetup();
 
         QMenu *createPopupMenu(void);
@@ -108,6 +106,7 @@ class MainWindow: public MainWindowInterface
         QString pos2String(const int &type,const double &value);
         QString formatLongitude(const double &x);
         QString formatLatitude(const double &y);
+        void setFontDialog(QWidget * o);
 
 public slots:
         void slot_POI_input();
@@ -304,7 +303,6 @@ signals:
 
         void listAllChildren(QObject * ptr,int);
         bool noSave;
-        bool restartNeeded;
         void updateTitle();
         BoardInterface * boardPlugin;
         board * myBoard;

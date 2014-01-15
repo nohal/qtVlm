@@ -42,7 +42,7 @@ void Settings::initSettings(void) {
 
     // Check if file exists
     bool fExists=QFile(settingFname).exists();
-    if(!fExists) qWarning() << "[initSetting] no previous file";
+
 
     fileSettings = new QSettings(settingFname, QSettings::IniFormat);
 
@@ -59,8 +59,14 @@ void Settings::initSettings(void) {
         fileSettings = new QSettings(settingFname, QSettings::IniFormat);
         setSetting("settingVersion",SETTING_CUR_VERSION,"main");
     }
-    else
-        qWarning() << "[initSetting] setting OK";
+    else {
+        if(!fExists) {
+            setSetting("settingVersion",SETTING_CUR_VERSION,"main");
+            qWarning() << "[initSetting] no previous file";
+        }
+        else
+            qWarning() << "[initSetting] setting OK";
+    }
 
     initSettingArray();
 }

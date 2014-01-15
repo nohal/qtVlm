@@ -69,97 +69,8 @@ DialogPlayerAccount::DialogPlayerAccount(Projection * proj, MainWindow * main,
 
     connect(this,SIGNAL(playerSelected(Player*)),parent,SLOT(slot_playerSelected(Player*)));
 
-    QString settingLang= Settings::getSetting(appLanguage).toString();
-    qWarning()<<"langage is"<<settingLang;
-
-    if(settingLang == "en" || settingLang=="NO")
-        this->en->setChecked(true);
-    else if(settingLang == "fr")
-        this->fr->setChecked(true);
-    else if(settingLang == "cz")
-        this->cz->setChecked(true);
-    else if(settingLang == "es")
-        this->es->setChecked(true);
-
-
-    if(!parent->getIsStartingUp())
-        lang->hide();
-    else
-    {
-        connect(fr,SIGNAL(toggled(bool)),this,SLOT(slot_langChanged(bool)));
-        connect(en,SIGNAL(toggled(bool)),this,SLOT(slot_langChanged(bool)));
-        connect(cz,SIGNAL(toggled(bool)),this,SLOT(slot_langChanged(bool)));
-        connect(es,SIGNAL(toggled(bool)),this,SLOT(slot_langChanged(bool)));
-    }
-}
-
-void DialogPlayerAccount::initList(QList<Player*> * player_list)
-{
-    this->player_list=player_list;
-
-    player_idx=0;
-    Player * curPlayer=parent->getPlayer();
-    curPlayerIdp=curPlayer?curPlayer->getId():-1;
-    QListWidgetItem * curItem=NULL;
-
-    list_player->clear();
-    players.clear();
-
-    /* init Player list */
-
-    QListIterator<Player*> i (*player_list);
-    while(i.hasNext())
-    {
-        Player * player = i.next();
-        players.insert(player_idx,player);
-        QListWidgetItem * item = new QListWidgetItem(list_player);
-        setPlayerItemName(item,player);
-        item->setData(ROLE_IDX,player_idx);        
-        player_idx++;
-        if(curPlayerIdp != -1 && curPlayerIdp==player->getId())
-            curItem=item;
-        /* updating player */
-        if(player->getType()==BOAT_VLM)
-            updPlayer(player);
-    }
-
-    if(curItem)
-    {       
-        list_player->setCurrentItem(curItem);
-    }
-    else if(list_player->count()>0)
-    {        
-        list_player->setCurrentRow(0);
-        slot_selectItem_player(list_player->currentItem());
-    }
-    if(list_player->count()>0 && Settings::getSetting(appLanguage).toString()!="NO")
-        this->lang->hide();
-    updBtnAndString();
-}
-void DialogPlayerAccount::slot_langChanged(bool)
-{
-    QString la;
-    if(fr->isChecked())
-    {
-        Settings::setSetting(appLanguage, "fr");
-        la="fr";
-    }
-    else if (en->isChecked())
-    {
-        Settings::setSetting(appLanguage, "en");
-        la="en";
-    }
-    else if (cz->isChecked())
-    {
-        Settings::setSetting(appLanguage, "cz");
-        la="cz";
-    }
-    else if (es->isChecked())
-    {
-        Settings::setSetting(appLanguage, "es");
-        la="cz";
-    }
-
+    QString la= Settings::getSetting(appLanguage).toString();
+    qWarning()<<"langage is"<<la;
     if(la=="fr")
     {
         this->btn_playerAdd->setText("Nouveau");
@@ -224,7 +135,49 @@ void DialogPlayerAccount::slot_langChanged(bool)
         accDialog.realBoat->setText(tr("Skutecna lod"));
         accDialog.setWindowTitle(tr("Detaily uctu"));
     }
-    main->setRestartNeeded();
+}
+
+void DialogPlayerAccount::initList(QList<Player*> * player_list)
+{
+    this->player_list=player_list;
+
+    player_idx=0;
+    Player * curPlayer=parent->getPlayer();
+    curPlayerIdp=curPlayer?curPlayer->getId():-1;
+    QListWidgetItem * curItem=NULL;
+
+    list_player->clear();
+    players.clear();
+
+    /* init Player list */
+
+    QListIterator<Player*> i (*player_list);
+    while(i.hasNext())
+    {
+        Player * player = i.next();
+        players.insert(player_idx,player);
+        QListWidgetItem * item = new QListWidgetItem(list_player);
+        setPlayerItemName(item,player);
+        item->setData(ROLE_IDX,player_idx);        
+        player_idx++;
+        if(curPlayerIdp != -1 && curPlayerIdp==player->getId())
+            curItem=item;
+        /* updating player */
+        if(player->getType()==BOAT_VLM)
+            updPlayer(player);
+    }
+
+    if(curItem)
+    {       
+        list_player->setCurrentItem(curItem);
+    }
+    else if(list_player->count()>0)
+    {        
+        list_player->setCurrentRow(0);
+        slot_selectItem_player(list_player->currentItem());
+    }
+
+    updBtnAndString();
 }
 
 void DialogPlayerAccount::done(int result)
@@ -259,41 +212,7 @@ void DialogPlayerAccount::done(int result)
     }
     else
     {
-//        /* cleaning all structure */
-//        player_list->clear();
-//        QMapIterator<int,Player*> i (players);
-//        while(i.hasNext())
-//        {
-//            i.next();
-//            Player * player=i.value();
-//            if(!removeBoats(player)) continue;
-//            emit delPlayer(player);
-//            delete player;
-//        }
-//        /* reloading from disk */
-//        emit reloadPlayer();
-//        /* trying to find current player */
-//        if(curPlayerIdp!=-1)
-//        {
-//            QListIterator<Player*> j (*player_list);
-//            bool found=false;
-//            while(j.hasNext())
-//            {
-//                Player * player=j.next();
-//                if(player->getId()==curPlayerIdp)
-//                {
-//                    emit playerSelected(player);
-//                    found=true;
-//                }
-//            }
-//            if(!found)
-//            {
-//                QMessageBox::critical(parent,tr("Rechargement du compte courant"),
-//                                      tr("Erreur lors du rechargement du compte, le compte courant a disparu, relancez qtVlm"));
-//                QApplication::quit();
 
-//            }
-//        }
     }
 
     while(list_player->count())
@@ -304,7 +223,6 @@ void DialogPlayerAccount::done(int result)
     }
 
     list_player->clear();
-    //parent->emitUpdateRoute();
     QDialog::done(result);
 }
 

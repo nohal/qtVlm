@@ -35,6 +35,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Util.h"
 #include "MainWindow.h"
 #include "settings.h"
+#include "DialogLanguageSelection.h"
 
 QMap<QString,QString> appFolder;
 
@@ -70,8 +71,7 @@ int main(int argc, char *argv[])
 {
 #endif
     qWarning()<<"Starting-up";
-    int currentExitCode=0;
-    do{
+
     QApplication * app=new QApplication(argc, argv);
     qsrand(QTime::currentTime().msec());
     QString appExeFolder=QApplication::applicationDirPath();
@@ -178,6 +178,15 @@ int main(int argc, char *argv[])
     QTranslator translatorQt;
     QString lang = Settings::getSetting(appLanguage).toString();
 
+    if(lang == "NO") {
+        DialogLanguageSelection selectLanguage;
+        if(selectLanguage.exec()==QDialog::Rejected) {
+            app->quit();
+            return 0;
+        }
+        lang = Settings::getSetting(appLanguage).toString();
+    }
+
     if (lang == "fr") {
         qWarning() << "Loading fr";
         QLocale::setDefault(QLocale("fr_FR"));
@@ -212,26 +221,18 @@ int main(int argc, char *argv[])
 
     MainWindow win;
     win.continueSetup();
-    if(win.getRestartNeeded())
-    {
-        app->quit();
-        continue;
-    }
+
     if(win.getFinishStart())
     {
         win.show();
 
         app->installTranslator(NULL);
 
-        currentExitCode= app->exec();
-        break;
+        return app->exec();
     }
     else
     {
         app->quit();
-        currentExitCode= 0;
-        break;
+        return 0;
     }
-    }while (true);
-    return currentExitCode;
 }

@@ -19,6 +19,7 @@ class MainWindowInterface: public QMainWindow
         virtual QString pos2String(const int &type,const double &value) =0;
         virtual QString formatLongitude(const double &x) =0;
         virtual QString formatLatitude(const double &y) =0;
+        virtual void setFontDialog(QWidget * o) =0;
 
     public slots:
         virtual void slotVLM_Sync()=0;

@@ -21,8 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogWp.h"
 
 #include "POI.h"
-#include "Util.h"
-#include "settings.h"
+#include "MainWindowInterface.h"
 #include <QMessageBox>
 
 
@@ -33,7 +32,7 @@ DialogWp::DialogWp(MainWindowInterface *main, QWidget * parent) : QDialog(parent
 {
     this->main=main;
     setupUi(this);
-    Util::setFontDialog(this);
+    main->setFontDialog(this);
     currentBoat=NULL;
 
     WP_conv_lat->setText("");

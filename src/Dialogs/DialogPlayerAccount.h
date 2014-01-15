@@ -69,7 +69,6 @@ class DialogPlayerAccount : public QDialog, public Ui::playerAccount
         void slot_selectItem_player(QListWidgetItem *);
         void slot_selectAndValidateItem(QListWidgetItem* item);
         void slot_updFinished(bool res, Player * player);
-        void slot_langChanged(bool frSelected);
 
     signals:
         void addPlayer(Player*);

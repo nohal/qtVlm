@@ -233,7 +233,6 @@ void MainWindow::slot_gribFileReceived(QString fileName)
 MainWindow::MainWindow(QWidget *parent)
 {
     this->setParent(parent);
-    restartNeeded=false;
     setWindowIcon (QIcon (appFolder.value("icon")+"qtVlm_48x48.png"));
     noSave=false;
     originalPalette=QApplication::palette();
@@ -872,9 +871,8 @@ void MainWindow::closeProgress(void)
 //    }
     delete progress;
     progress=NULL;
-    if(restartNeeded)
-        this->my_centralWidget->setAboutToQuit();
-    else if(selectedBoat)
+
+    if(selectedBoat)
     {
         selectedBoat->cleanBarrierList();
         if(selectedBoat->get_boatType()==BOAT_REAL)
@@ -2839,5 +2837,9 @@ QString MainWindow::get_folder(QString str) const {
 QPalette MainWindow::getOriginalPalette() const
 {
     return originalPalette;
+}
+
+void MainWindow::setFontDialog(QWidget * o) {
+    Util::setFontDialog(o);
 }
 

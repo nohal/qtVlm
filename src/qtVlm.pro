@@ -179,7 +179,8 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     PolarInterface.h \
     settings_ini.h \
     settings_def.h \
-    AngleUtil.h
+    AngleUtil.h \
+    Dialogs/DialogLanguageSelection.h
 
 
 
@@ -223,7 +224,8 @@ FORMS += Ui/boatAccount_dialog.ui \
     Ui/DialogChooseMultipleBoat.ui \
     Ui/DialogChooseBarrierSet.ui \
     Ui/RouteComparator.ui \
-    Ui/DialogGribDrawing.ui
+    Ui/DialogGribDrawing.ui \
+    Ui/DialogLanguageSelection.ui
 
 SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/DialogLoadGrib.cpp \
@@ -329,7 +331,8 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     GribV1.cpp \
     DataManager.cpp \
     Dialogs/DialogGribDrawing.cpp \
-    AngleUtil.cpp
+    AngleUtil.cpp \
+    Dialogs/DialogLanguageSelection.cpp
 
 
 
