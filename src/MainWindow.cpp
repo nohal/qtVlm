@@ -39,6 +39,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QDesktopServices>
 #include <QDesktopWidget>
 #include <QClipboard>
+#include <QResource>
 
 #ifdef QT_V5
 #include <QUiLoader>
@@ -720,22 +721,15 @@ void MainWindow::loadBoard()
     }
     else
     {
-        // pluginLoader=new QPluginLoader(Settings::getSetting("vlmBoard","0").toString());
-        // pluginLoader->load();
-        // if(pluginLoader->isLoaded())
-        // {
-        //     boardPlugin = qobject_cast<BoardInterface*>(pluginLoader->instance());
-        //     boardPlugin->initBoard(this);
-        // }
-        // else
-        // {
-        //     qWarning()<<"error loadin board plugin"<<pluginLoader->fileName()<<pluginLoader->errorString();
-        //     Settings::setSetting("vlmBoard","0");
-        //     loadBoard();
-        // }
-        QUiLoader   loader;
         QFile       uiFile (Settings::getSetting("vlmBoard","0").toString());
+        // Load the associated resources if they exist
+        QFileInfo   uiFileInfo (uiFile);
+        QString     rccFileName = uiFileInfo.dir().filePath (uiFileInfo.completeBaseName() + ".rcc");
+        if (!QResource::registerResource (rccFileName))
+           qWarning() << "Could not load resources associated with the board" << rccFileName;
+        // Load the .ui file
         uiFile.open (QFile::ReadOnly);
+        QUiLoader   loader;
         QWidget* w = loader.load (&uiFile, NULL);
         boardPlugin = qobject_cast<BoardInterface*> (w);
         uiFile.close();
