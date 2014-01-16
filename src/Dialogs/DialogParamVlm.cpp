@@ -655,11 +655,11 @@ void DialogParamVlm::on_chk_scaleEstime_toggled(bool checked)
 }
 void DialogParamVlm::slot_resetDialogPosition()
 {
-    QStringList allKeys=Settings::getAllKeys();
+    QStringList allKeys=Settings::getAllKeys("DialogGeometry");
     for(int n=0;n<allKeys.size();++n)
     {
         if(allKeys.at(n).right(7)==".height" || allKeys.at(n).right(6)==".width" || allKeys.at(n).right(10)==".positionx" || allKeys.at(n).right(10)==".positiony" )
-            Settings::removeSetting(allKeys.at(n));
+            Settings::removeSetting(allKeys.at(n),"DialogGeometry");
     }
     Util::setFontDialog(this);
 }

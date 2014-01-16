@@ -314,8 +314,6 @@ void DialogLoadGrib::updateParameters()
     Settings::setSetting(downloadAltitudeData500,  chkAltitude500->isChecked());
     Settings::setSetting(downloadAltitudeData700,  chkAltitude700->isChecked());
     Settings::setSetting(downloadAltitudeData850,  chkAltitude850->isChecked());
-
-    Settings::saveGeometry(this);
 }
 
 //-------------------------------------------------------------------------------
