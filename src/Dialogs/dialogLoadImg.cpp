@@ -9,6 +9,7 @@
 #include "Util.h"
 #include <QMessageBox>
 #include "bsb.h"
+#include <QScroller>
 
 dialogLoadImg::dialogLoadImg(loadImg * carte, myCentralWidget *parent)
     : QDialog(parent)
@@ -16,6 +17,8 @@ dialogLoadImg::dialogLoadImg(loadImg * carte, myCentralWidget *parent)
     this->carte=carte;
     this->parent=parent;
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     this->alpha->setMaximum(100);
     this->gribAlpha->setMaximum(100);
@@ -35,6 +38,10 @@ dialogLoadImg::dialogLoadImg(loadImg * carte, myCentralWidget *parent)
     timerResize->setInterval(300);
     connect(timerResize,SIGNAL(timeout()),this,SLOT(showSnapshot()));
 //    showSnapshot();
+}
+void dialogLoadImg::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 void dialogLoadImg::resizeEvent(QResizeEvent *)
 {

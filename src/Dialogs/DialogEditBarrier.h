@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class DialogEditBarrier: public QDialog, public Ui::DialogEditBarrier_ui
 { Q_OBJECT
     public:
-        DialogEditBarrier(QWidget * parent);
+        DialogEditBarrier(MainWindow *parent);
         ~DialogEditBarrier(void);
 
         void initDialog(BarrierSet *barrierSet, QList<boat *> boatList);
@@ -40,7 +40,8 @@ class DialogEditBarrier: public QDialog, public Ui::DialogEditBarrier_ui
     public slots:
         void slot_chgColor(void);
 
-    private:
+        void slot_screenResize();
+private:
         BarrierSet * barrierSet;
         QColor color;
 

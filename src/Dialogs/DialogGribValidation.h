@@ -42,7 +42,8 @@ class DialogGribValidation: public QDialog, public Ui::gribValidation
         void doNow(void);
         void interpolationChanged(int);
 
-private:
+         void slot_screenResize();
+ private:
         myCentralWidget * my_centralWidget;
         MainWindow * mainWindow;
         DataManager * dataManager;

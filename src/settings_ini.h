@@ -65,7 +65,11 @@ void Settings::initSettingArray(void) {
 
     /* Main settings */
     INIT_SETTING(defaultFontName,        "defaultFontName",        "main", QApplication::font().family());
+#ifndef __ANDROID__
     INIT_SETTING(applicationFontSize,    "applicationFontSize",    "main", 8.0);
+#else
+    INIT_SETTING(applicationFontSize,    "applicationFontSize",    "main", 12.0);
+#endif
     INIT_SETTING(defaultFontSizeInc,     "defaultFontSizeInc",     "main", 0);
     INIT_SETTING(appLanguage,            "appLanguage",            "main", "NO");
     INIT_SETTING(enable_Gesture,         "enableGesture",          "main", 1);

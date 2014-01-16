@@ -145,6 +145,7 @@ class Util
 
         static double getOrthoDistance(const double &latitude1, const double &longitude1, const double &latitude2, const double &longitude2);
         static void getCoordFromDistanceAngle3(const double &latitude, const double &longitude, const double &distance, const double &heading, double *res_lat, double *res_lon);
+        static void setWidgetSize(QWidget *o, const QSize &s);
 };
 
 inline int Util::kmhToBeaufort(const double &v) {

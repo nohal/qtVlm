@@ -154,7 +154,8 @@ public slots:
 
         void slot_updateLockIcon(QString ic);
 
-    signals:
+        void manageToolbarBreak();
+signals:
         void estimeParamChanged(void);
         void gribZygrib(void);
         void gribVlm(void);

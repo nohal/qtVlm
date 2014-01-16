@@ -2,12 +2,14 @@
 #include "ui_dialoghorn.h"
 #include "Util.h"
 #include "settings.h"
-
+#include <QScroller>
 
 DialogHorn::DialogHorn(myCentralWidget *parent) : QDialog(parent)
 {
     this->parent=parent;
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     if(parent->getHornDate()<(QDateTime::currentDateTime()).toUTC())
     {
@@ -18,6 +20,10 @@ DialogHorn::DialogHorn(myCentralWidget *parent) : QDialog(parent)
         this->date->setDateTime(parent->getHornDate());
     if(parent->hornIsActivated())
         this->activated->setChecked(true);
+}
+void DialogHorn::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 
 DialogHorn::~DialogHorn()

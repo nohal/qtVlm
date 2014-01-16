@@ -49,6 +49,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #endif
 #include "LoadGribFile.h"
 #include <QTime>
+#include <QScrollArea>
 
 //#define HAS_TEMP
 
@@ -74,6 +75,7 @@ class DialogLoadGrib : public QDialog
         void slotAltitudeAll();
         void slotUngrayButtons();
         void slotProgress(qint64,qint64);
+        void slot_screenResize();
 signals:
         void signalGribFileReceived(QString fileName);
         void clearSelection();
@@ -133,7 +135,7 @@ signals:
         void    updateParameters();
         void    addSeparator (QLayout *layout, char orientation);	// 'H' or 'V'
         QString fileName;
-
+        QScrollArea * scrollarea;
 };
 
 

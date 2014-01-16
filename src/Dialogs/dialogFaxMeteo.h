@@ -24,6 +24,7 @@ public slots:
     void slotPreset6();
     void slotPreset7();
     void slotPreset8();
+    void slot_screenResize();
 private:
     QString presetNb;
     void loadPreset();

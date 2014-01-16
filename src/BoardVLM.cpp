@@ -39,6 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Polar.h"
 #include "POI.h"
 #include "DialogWp.h"
+#include <QScroller>
 
 /* VLM CMD type */
 #define VLM_CMD_HD     1
@@ -51,6 +52,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) : QWidget(mainWin), inetClient(inet)
 {
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
     board::setFontDialog(this);
 #ifdef QT_V5
     if(Settings::getSetting(fusionStyle).toInt()==1)
@@ -166,9 +168,11 @@ boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) :
     editAngle->setSingleStep(1.0);
 
     /* Etat du compass */
+#ifndef __ANDROID__
     if(Settings::getSetting(boardVLMCompassShown).toInt()==1)
         windAngle->show();
     else
+#endif
         windAngle->hide();
     this->editHeading->installEventFilter(this);
     this->editAngle->installEventFilter(this);

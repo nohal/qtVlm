@@ -7,13 +7,15 @@
 #include <QFileDialog>
 #include <QDebug>
 #include "Util.h"
-
+#include <QScroller>
 dialogFaxMeteo::dialogFaxMeteo(faxMeteo * fax, myCentralWidget *parent)
     : QDialog(parent)
 {
     this->fax=fax;
     fax->savePreset();
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     this->presetNb=fax->getPresetNb();
     this->previousPresetNb=presetNb;
@@ -43,6 +45,10 @@ dialogFaxMeteo::dialogFaxMeteo(faxMeteo * fax, myCentralWidget *parent)
     connect(this->preset6,SIGNAL(clicked()),this,SLOT(slotPreset6()));
     connect(this->preset7,SIGNAL(clicked()),this,SLOT(slotPreset7()));
     connect(this->preset8,SIGNAL(clicked()),this,SLOT(slotPreset8()));
+}
+void dialogFaxMeteo::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 
 dialogFaxMeteo::~dialogFaxMeteo()

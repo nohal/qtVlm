@@ -34,6 +34,9 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Util.h"
 #include "LoadGribFile.h"
 #include "MainWindow.h"
+#include "mycentralwidget.h"
+#include <QScrollArea>
+#include <QScroller>
 
 
 
@@ -122,7 +125,21 @@ DialogLoadGrib::DialogLoadGrib(MainWindow *main) : QDialog(main)
     connect(chkAltitudeAll, SIGNAL(stateChanged(int)), 	this,  SLOT(slotAltitudeAll()));
     this->setParent(main);
     this->resize(sbSouth->x()+sbSouth->width()+10,this->btOK->y()+this->btOK->height()+10);
+    QFrame * frame=new QFrame(this);
+    frame->setLayout(lay);
+    scrollarea=new QScrollArea(this);
+    scrollarea->setWidget(frame);
+    scrollarea->setLayout(new QVBoxLayout(this));
+    this->setLayout(new QVBoxLayout(this));
+    this->layout()->addWidget(scrollarea);
+    this->resize(scrollarea->size());
+    QScroller::grabGesture(scrollarea->viewport());
     Util::setFontDialog(this);
+
+}
+void DialogLoadGrib::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 
 //-------------------------------------------------------------------------------

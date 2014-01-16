@@ -26,9 +26,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "boat.h"
 #include "settings.h"
 #include "Util.h"
+#include <QScroller>
 
-DialogEditBarrier::DialogEditBarrier(QWidget * parent): QDialog(parent) {
+DialogEditBarrier::DialogEditBarrier(MainWindow * parent): QDialog(parent) {
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent->getMy_centralWidget(),SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     QMap<QWidget *,QFont> exceptions;
     QFont wfont=QApplication::font();
@@ -37,6 +40,10 @@ DialogEditBarrier::DialogEditBarrier(QWidget * parent): QDialog(parent) {
     Util::setSpecificFont(exceptions);
     QList<boat *> lst;
     initDialog(NULL,lst);
+}
+void DialogEditBarrier::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 
 DialogEditBarrier::~DialogEditBarrier(void) {

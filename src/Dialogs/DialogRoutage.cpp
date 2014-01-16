@@ -43,13 +43,14 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QDesktopWidget>
 #include "settings.h"
 #include "Terrain.h"
+#include <QScroller>
 
 
 //-------------------------------------------------------
 // ROUTAGE_Editor: Constructor for edit an existing ROUTAGE
 //-------------------------------------------------------
 DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent, POI *endPOI)
-    : QDialog(parent)
+    : QDialog(parent->getMainWindow())
 {
     QString m;
     this->routage=routage;
@@ -58,8 +59,10 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent, POI *endP
     if(endPOI)
         routage->setToPOI(endPOI);
     setupUi(this);
-    Util::setFontDialog(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    QScroller::grabGesture(this->scrollArea->viewport(),QScroller::LeftMouseButtonGesture);
     connect(this->Default,SIGNAL(clicked()),this,SLOT(slot_default()));
+    Util::setFontDialog(this);
     this->i_iso->setChecked(routage->getI_done());
     this->i_iso->setDisabled((!routage->isDone() || routage->getI_done()));
     this->isoRoute->setDisabled(!routage->isDone());
@@ -264,7 +267,14 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent, POI *endP
     this->multi_days->setValue(routage->get_multiDays());
     this->multi_hours->setValue(routage->get_multiHours());
     this->multi_min->setValue(routage->get_multiMin());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
 }
+void DialogRoutage::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
+}
+
+
 DialogRoutage::~DialogRoutage()
 {
     Settings::saveGeometry(this);

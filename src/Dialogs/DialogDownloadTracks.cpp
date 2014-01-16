@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Player.h"
 #include "settings.h"
 #include "Util.h"
+#include <QScroller>
 
 #define VLM_RACE_INFO 2
 #define VLM_GET_TRACK 3
@@ -41,6 +42,8 @@ DialogDownloadTracks::DialogDownloadTracks(MainWindow * ,myCentralWidget * paren
 {
     this->parent=parent;
     ui->setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     this->raceIsValid=false;
     this->setWhatsThis(tr("Permet de telecharger manuellement une trace pour une course VLM.\nLa boÃŪte Ã  cocher trace partielle s'active apres l'entree d'un numero de course valide, et permet de requÃĐrir une trace tronquÃĐe."));
@@ -49,6 +52,10 @@ DialogDownloadTracks::DialogDownloadTracks(MainWindow * ,myCentralWidget * paren
     ui->startTimeEdit->setToolTip(tr("Debut de la trace"));
     ui->startTimeEdit->setEnabled(false);
     ui->endTimeEdit->setToolTip(tr("Fin de la trace"));
+}
+void DialogDownloadTracks::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 
 DialogDownloadTracks::~DialogDownloadTracks()

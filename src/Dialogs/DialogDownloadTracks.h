@@ -30,6 +30,8 @@ public:
     void requestFinished (QByteArray);
     void init();
 
+public slots:
+    void slot_screenResize();
 private:
     Ui::DialogDownloadTracks *ui;
     int userID, raceID, boatID;

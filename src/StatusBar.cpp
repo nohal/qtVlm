@@ -48,7 +48,6 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
     font.setFixedPitch(true);
     setStyleSheet("QStatusBar::item {border: 0px;}");
 #endif
-
     setFont(font);
 
     stBar_label_1 = new QLabel("Welcome in QtVlm", this);
@@ -57,7 +56,6 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
     else
         stBar_label_1->setStyleSheet("color: rgb(0, 0, 255);");
     stBar_label_1->setFont(font);
-    this->addWidget(stBar_label_1);
     font.setBold(true);
     stBar_label_2 = new QLabel("", this);
     if(Settings::getSetting(fusionStyle).toInt()==1)
@@ -65,14 +63,18 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
     else
         stBar_label_2->setStyleSheet("color: rgb(255, 0, 0);");
     stBar_label_2->setFont(font);
-    this->addWidget(stBar_label_2);
 
     font.setBold(false);
     stBar_label_3 = new QLabel("", this);
     stBar_label_3->setFont(font);
-    this->addWidget(stBar_label_3);
     font.setFixedPitch(false);
-
+    this->addWidget(stBar_label_1,1);
+    this->addWidget(stBar_label_2,1);
+    this->addWidget(stBar_label_3,1);
+    stBar_label_1->setWordWrap(true);
+    stBar_label_2->setWordWrap(true);
+    stBar_label_3->setWordWrap(true);
+    //stBar_label_3->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
     showingSelectionMessage=false;
 
     //Util::setFontDialog(this);

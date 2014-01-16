@@ -42,11 +42,12 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     /*********************/
     this->mainWindow=mainWindow;
     centralWidget = mainWindow->getMy_centralWidget();
+    connect(centralWidget,SIGNAL(geometryChanged()),this,SLOT(manageToolbarBreak()));
 //    double ppi=QApplication::desktop()->physicalDpiX();
 //    int s=24*ppi/72;
 //    iconSize=QSize(s,s);
     iconSize=QToolBar().iconSize();
-    qWarning()<<"iconSize="<<iconSize;
+    //qWarning()<<"iconSize="<<iconSize;
     QPixmap add("img/add.png");
     add=add.scaled(iconSize,Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
     add.save("img/addResized.png");
@@ -65,18 +66,14 @@ ToolBar::ToolBar(MainWindow *mainWindow)
 
     boatToolBar=new MyToolBar("Boat",tr("Boat"),this,mainWindow);
     toolBarList.append(boatToolBar);
-#ifndef __ANDROID__
     etaToolBar=new MyToolBar("ETA",tr("ETA"),this,mainWindow);
     toolBarList.append(etaToolBar);
-#endif
     barrierToolBar=new MyToolBar("BarrierSet",tr("Barrier Set"),this,mainWindow);
     toolBarList.append(barrierToolBar);
 
     /* adding all toolBar to mainWindow dock */
     for(int i=0;i<toolBarList.count();++i)
-    {
-        mainWindow->addToolBar(toolBarList.at(i));
-    }
+        mainWindow->addToolBar(Qt::TopToolBarArea,toolBarList.at(i));
 
     /* font */
     QFontInfo finfo = gribToolBar->fontInfo();
@@ -202,14 +199,12 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     boatToolBar->addWidget((boatList));
 
     /* Eta toolBar */
-#ifndef __ANDROID__
     ETA = new QLabel(tr("No WP"),etaToolBar);
     if(Settings::getSetting(fusionStyle).toInt()==1)
         ETA->setStyleSheet("color: rgb(234, 221, 21);");
     else
         ETA->setStyleSheet("color: rgb(0, 0, 255);");
     etaToolBar->addWidget(ETA);
-#endif
     /* BarrierSet toolBar */
     barrierAdd = init_Action(tr("Add Barrier"),tr(""),tr(""),appFolder.value("img")+"add_barrier.png",barrierToolBar);
     barrierAdd->setCheckable(true);
@@ -326,12 +321,42 @@ QAction* ToolBar::init_Action(QString title, QString shortcut, QString statustip
 void ToolBar::load_settings(void) {
     for(int i=0;i<toolBarList.count();++i) {
         MyToolBar * toolBar = toolBarList.at(i);
+        bool myVisible=true;
+#ifndef __ANDROID__
         QString key = "TB_" + toolBar->get_name();
-        toolBar->setVisible(Settings::getSettingOld(key,true,"ToolBar").toBool());
-        toolBar->setEnabled(toolBar->isVisible());
-        toolBar->set_displayed(toolBar->isVisible());
+        myVisible=Settings::getSettingOld(key,true,"ToolBar").toBool();
+#endif
+        toolBar->setVisible(myVisible);
+        toolBar->setEnabled(myVisible);
+        toolBar->set_displayed(myVisible);
         toolBar->initCanHide();
+//#ifdef __ANDROID__
+        mainWindow->addToolBar(Qt::TopToolBarArea,toolBar);
+//#endif
+        manageToolbarBreak();
     }
+}
+void ToolBar::manageToolbarBreak()
+{
+    //return;
+    int Wmain=mainWindow->width();
+    int currentWidth=0;
+    for(int i=0;i<toolBarList.count();++i)
+    {
+        MyToolBar * tb=toolBarList.at(i);
+        if(mainWindow->toolBarBreak(tb))
+            mainWindow->removeToolBarBreak(tb);
+        if(tb->isFloating()) continue;
+        currentWidth+=tb->layout()->sizeHint().width();
+        //qWarning()<<currentWidth<<tb->layout()->sizeHint().width()<<tb->get_name()<<1;
+        if(currentWidth>Wmain)
+        {
+            currentWidth=tb->layout()->sizeHint().width();
+            mainWindow->insertToolBarBreak(tb);
+        }
+        //qWarning()<<currentWidth<<tb->layout()->sizeHint().width()<<tb->get_name()<<2;
+    }
+    //qWarning()<<"exit manageToolBarBreak";
 }
 
 void ToolBar::save_settings(void) {
@@ -352,9 +377,6 @@ void ToolBar::clear_eta(void) {
 
 void ToolBar::update_eta(QDateTime eta_dtm)
 {
-#ifdef __ANDROID__
-    return;
-#endif
     int nbS,j,h,m;
     QString txt;
     eta_dtm.setTimeSpec(Qt::UTC);
@@ -615,22 +637,20 @@ MyToolBar::MyToolBar(QString name,QString title,ToolBar *toolBar, QWidget *paren
     displayed=true;
     forceMenuHide=false;
     this->canHide=canHide;
+#ifdef __ANDROID__
+    this->canHide=false;
+#endif
     if(!canHide) {
         setFloatable(false);
         setMovable(false);
     }
-#ifdef __ANDROID__
-    setFloatable(false);
-    setMovable(false);
-#endif
     hide();
-    QString style=QString().sprintf("QToolButton#qt_toolbar_ext_button{min-width: %dpx; min-height: %dpx;}",toolBar->getIconSize().width()/2,toolBar->getIconSize().width()/2);
-    style+=QString().sprintf("QToolButton#qt_toolbar_ext_button{width: %dpx; height: %dpx;}",toolBar->getIconSize().width()/2,toolBar->getIconSize().width()/2);
-    style+="QToolButton#qt_toolbar_ext_button {qproperty-icon: url(img/addResized.png);}";
-    this->setStyleSheet(style);
+//    QString style=QString().sprintf("QToolButton#qt_toolbar_ext_button{min-width: %dpx; min-height: %dpx;}",toolBar->getIconSize().width()/2,toolBar->getIconSize().width()/2);
+//    style+=QString().sprintf("QToolButton#qt_toolbar_ext_button{width: %dpx; height: %dpx;}",toolBar->getIconSize().width()/2,toolBar->getIconSize().width()/2);
+//    style+="QToolButton#qt_toolbar_ext_button {qproperty-icon: url(img/addResized.png);}";
+//    this->setStyleSheet(style);
     connect(this,SIGNAL(visibilityChanged(bool)),this,SLOT(slot_visibilityChanged(bool)));
 }
-
 /*
 void MyToolBar::closeEvent ( QCloseEvent * event ) {
     qWarning() << "Closing tool " << name;

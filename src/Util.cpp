@@ -236,6 +236,17 @@ void Util::setFontDialog(QObject * o)
 void Util::setFontDialog(QWidget * o)
 {
     QObject * object=qobject_cast<QObject*>(o);
+#ifdef __ANDROID__
+    setFontDialog(object);
+    QFont myFont(Settings::getSetting(defaultFontName).toString());
+    myFont.setPointSizeF(Settings::getSetting(applicationFontSize).toDouble());
+    myFont.setStyle(o->font().style());
+    myFont.setBold(o->font().bold());
+    myFont.setItalic(o->font().italic());
+    o->setFont(myFont);
+    o->setLocale(QLocale::system());
+    Util::setWidgetSize(o,o->sizeHint());
+#else
     int h,w,px,py;
     Settings::restoreGeometry(o,&h,&w,&px,&py);
     if(h<=0)
@@ -243,7 +254,7 @@ void Util::setFontDialog(QWidget * o)
     if(w<=0)
         w=o->width();
     QDesktopWidget * desktopWidget = QApplication::desktop();
-    QRect screenRect = desktopWidget->screenGeometry(desktopWidget->primaryScreen());
+    QRect screenRect = desktopWidget->screenGeometry();
     if(o->maximumWidth()>10000)
     {
         o->setMaximumHeight(screenRect.height()-50);
@@ -260,6 +271,23 @@ void Util::setFontDialog(QWidget * o)
             o->parentWidget()->window()->rect().center() -
             o->rect().center());
     setFontDialog(object);
+#endif
+}
+void Util::setWidgetSize(QWidget *o, const QSize &s)
+{
+#ifndef __ANDROID__
+    return;
+#endif
+    QDesktopWidget * desktopWidget = QApplication::desktop();
+    QRect screenRect = desktopWidget->screenGeometry();
+    int H=screenRect.height()-1;
+    int W=screenRect.width()-1;
+    o->setMaximumHeight(H);
+    o->setMaximumWidth(W);
+    o->resize(qMin(s.width(),W),qMin(s.height(),H));
+    QRect oRect=o->rect();
+    oRect.moveCenter(screenRect.center());
+    o->move(oRect.topLeft());
 }
 
 QString Util::formatTemperature(const double &tempKelvin)

@@ -41,7 +41,9 @@ class DialogChooseBarrierSet: public QDialog, public Ui::DialogChooseBarrierSet_
         void done(int result);
         int init_dialog(void);
 
-    private:
+public slots:
+        void slot_screenResize();
+private:
         MainWindow * mainWindow;
         BarrierSet * choice;
 };

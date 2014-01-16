@@ -23,15 +23,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "settings.h"
 #include "Util.h"
 #include "DialogChooseMultipleBoat.h"
+#include <QScroller>
 
-DialogChooseMultipleBoat::DialogChooseMultipleBoat(QWidget *parent): QDialog(parent) {
+DialogChooseMultipleBoat::DialogChooseMultipleBoat(MainWindow *parent): QDialog(parent) {
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent->getMy_centralWidget(),SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     QMap<QWidget *,QFont> exceptions;
     QFont wfont=QApplication::font();
     wfont.setPointSizeF(9.0);
     exceptions.insert(lst_barrierSet,wfont);
     Util::setSpecificFont(exceptions);
+}
+void DialogChooseMultipleBoat::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 
 DialogChooseMultipleBoat::~DialogChooseMultipleBoat() {
@@ -72,7 +79,7 @@ void DialogChooseMultipleBoat::done(int result) {
     QDialog::done(result);
 }
 
-void DialogChooseMultipleBoat::chooseBoat(QWidget *parent, BarrierSet * barrierSet, QList<boat *> boatList) {
+void DialogChooseMultipleBoat::chooseBoat(MainWindow *parent, BarrierSet * barrierSet, QList<boat *> boatList) {
     if(!barrierSet) return;
     DialogChooseMultipleBoat dialog(parent);
     dialog.init_dialog(barrierSet,boatList);

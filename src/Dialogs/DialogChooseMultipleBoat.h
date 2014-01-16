@@ -31,14 +31,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class DialogChooseMultipleBoat: public QDialog, Ui::DialogChooseMultipleBoat_ui
 {
     public:
-        DialogChooseMultipleBoat(QWidget *parent);
+        DialogChooseMultipleBoat(MainWindow *parent);
         ~DialogChooseMultipleBoat();
         void done(int result);
         void init_dialog(BarrierSet * barrierSet, QList<boat *> boatList);
 
-        static void chooseBoat(QWidget *parent,BarrierSet * barrierSet,QList<boat*> boatList);
+        static void chooseBoat(MainWindow *parent, BarrierSet * barrierSet, QList<boat*> boatList);
 
-    private:
+public slots:
+        void slot_screenResize();
+private:
         BarrierSet *barrierSet;
 };
 

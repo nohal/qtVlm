@@ -91,6 +91,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "DialogEditBarrier.h"
 #include "DialogRouteComparator.h"
 #include <QStyleFactory>
+//#include <QtQuick/QQuickView>
 //#include <QPluginLoader>
 int INTERPOLATION_DEFAULT=INTERPOLATION_HYBRID;
 
@@ -501,6 +502,9 @@ QString MainWindow::get_OSVersion(void) {
     QString ver="";
 #ifdef __UNIX_QTVLM
     ver=" (UNIX)";
+#ifdef __ANDROID__
+    ver=" (ANDROID)";
+#endif
 #endif
 #ifdef __WIN_QTVLM
     QString OS_versionName;
@@ -740,6 +744,7 @@ MainWindow::~MainWindow()
     /*freeze all routes*/
     if(selectedBoat) /* save the zoom factor */
         selectedBoat->setZoom(proj->getScale());
+    delete toolBar;
 }
 
 QMenu * MainWindow::createPopupMenu(void) {
@@ -911,6 +916,10 @@ void MainWindow::closeProgress(void)
     statusBar->show();
     menuBar->show();
     this->showDashBoard();
+//    QQuickView *qml = new QQuickView;
+//    qml->setSource(QUrl::fromLocalFile("src/qml_ui.qml"));
+//    qml->show();
+
 #ifdef __ANDROID__
     menuBar->setNativeMenuBar(true);
     menuBar->hide();

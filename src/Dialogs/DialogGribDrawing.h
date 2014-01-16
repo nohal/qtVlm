@@ -41,10 +41,11 @@ class DialogGribDrawing: public QDialog,  Ui::DialogGribDrawing_ui {
         ~DialogGribDrawing();
         void showDialog(void);
 
-    signals:
+signals:
         void hideDialog(bool);
 
     public slots:
+        void slot_screenResize();
         void slot_bgDataType(int idx);
         void slot_bgDataAlt(int idx);
         void slot_smooth(bool st);

@@ -30,15 +30,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class DialogChooseMultipleBarrierSet: public QDialog, Ui::DialogChooseMultipleBarrierSet_ui
 {
     public:
-        DialogChooseMultipleBarrierSet(QWidget *parent);
+        DialogChooseMultipleBarrierSet(MainWindow *parent);
         ~DialogChooseMultipleBarrierSet();
 
         void done(int result);
         void init_dialog(QList<BarrierSet *> *activeSets, boat *myBoat);
 
-        static void chooseBarrierSet(QWidget *parent, QList<BarrierSet *> *activeSets, boat *myBoat);
+        static void chooseBarrierSet(MainWindow *parent, QList<BarrierSet *> *activeSets, boat *myBoat);
 
-   private:
+public slots:
+        void slot_screenResize();
+private:
         QList<BarrierSet*> * activeSets;
         boat *myBoat;
 };

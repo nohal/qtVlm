@@ -36,11 +36,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "MainWindow.h"
 #include "Util.h"
 #include "settings.h"
+#include <QScroller>
 DialogBoatAccount::DialogBoatAccount(Projection * proj, MainWindow * main, myCentralWidget * parent,inetConnexion * inet) : QDialog(parent)
 {
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
-
     this->proj = proj;
     this->main=main;
     this->parent=parent;
@@ -268,6 +270,10 @@ void DialogBoatAccount::setBoatItemName(QListWidgetItem * item,boatVLM * boat)
                 item->setText(boat->getBoatPseudo() + " " + tr("proprio")+": "+boat->getOwn()+" ("+boat->getRaceName()+")");
         }
     }
+}
+void DialogBoatAccount::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 
 void  DialogBoatAccount::slot_selectItem_boat(QListWidgetItem * item, QListWidgetItem * old)

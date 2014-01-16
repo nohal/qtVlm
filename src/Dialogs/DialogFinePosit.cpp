@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "mycentralwidget.h"
 #include "settings.h"
 #include "Util.h"
+#include <QScroller>
 
 
 DialogFinePosit::DialogFinePosit(POI * poi,myCentralWidget *parent)
@@ -31,6 +32,8 @@ DialogFinePosit::DialogFinePosit(POI * poi,myCentralWidget *parent)
     this->poi=poi;
     this->parent=parent;
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     setWindowTitle(tr("Parametres du positionnement automatique"));
     etendueLon->setValue(poi->getSearchRangeLon());
@@ -45,6 +48,10 @@ DialogFinePosit::DialogFinePosit(POI * poi,myCentralWidget *parent)
     etendueLat->setDisabled(poi->getAutoRange());
     buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
     buttonBox->button(QDialogButtonBox::Cancel)->setDefault(false);
+}
+void DialogFinePosit::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 DialogFinePosit::~DialogFinePosit()
 {

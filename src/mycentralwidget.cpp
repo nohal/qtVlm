@@ -505,7 +505,6 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     connect(this,SIGNAL(accountListUpdated()), parent, SLOT(slotAccountListUpdated()));
 
     connect(&dialogUnits, SIGNAL(accepted()), terrain, SLOT(redrawAll()));
-    connect(&dialogGraphicsParams, SIGNAL(accepted()), terrain, SLOT(updateGraphicsParameters()));
     scene->addItem(terrain);
     horn=new QSound(appFolder.value("img")+"boat_horn.wav");
     hornTimer=new QTimer(this);
@@ -558,10 +557,11 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
 
     dialogLoadGrib = new DialogLoadGrib(this->mainW);
     connect(dialogLoadGrib,SIGNAL(clearSelection()),this,SLOT(slot_clearSelection()));
+    connect(this,SIGNAL(geometryChanged()),dialogLoadGrib,SLOT(slot_screenResize()));
     dialogLoadGrib->checkQtvlmVersion();
     connect(dialogLoadGrib, SIGNAL(signalGribFileReceived(QString)),parent,  SLOT(slot_gribFileReceived(QString)));
     connect(menuBar->acOptions_Units, SIGNAL(triggered()), &dialogUnits, SLOT(exec()));
-    connect(menuBar->acOptions_GraphicsParams, SIGNAL(triggered()), &dialogGraphicsParams, SLOT(exec()));
+    connect(menuBar->acOptions_GraphicsParams, SIGNAL(triggered()), this, SLOT(slot_graphicParams()));
 
     /*Routes*/
     connect(menuBar->acRoute_add, SIGNAL(triggered()), this, SLOT(slot_addRouteFromMenu()));
@@ -1075,6 +1075,7 @@ void myCentralWidget::resizeEvent (QResizeEvent * /*e*/)
     //qWarning()<<"calling resize due to resizeEvent in mcw";
     proj->setScreenSize( width()-4, height()-4);
     resizing=false;
+    emit geometryChanged();
 }
 
 void myCentralWidget::mouseMove(int x, int y, QGraphicsItem * )
@@ -1363,7 +1364,7 @@ void myCentralWidget::showGribDate_dialog(void)
 {
     if(dataManager->isOk())
     {
-        DialogGribDate * gribDateDialog = new DialogGribDate();
+        DialogGribDate * gribDateDialog = new DialogGribDate(this);
         time_t res;
         gribDateDialog->showDialog(dataManager->get_currentDate(),dataManager->get_dateList(),&res);
         gribDateDialog->deleteLater();
@@ -4544,7 +4545,6 @@ void myCentralWidget::slot_addBoat(boat* boat)
     connect(proj,SIGNAL(projectionUpdated()),boat,SLOT(slot_projectionUpdated()));
     connect(boat, SIGNAL(clearSelection()),this,SLOT(slot_clearSelection()));
     connect(boat,SIGNAL(getTrace(QByteArray,QList<vlmPoint> *)),opponents,SLOT(getTrace(QByteArray,QList<vlmPoint> *)));
-    connect(&dialogGraphicsParams, SIGNAL(accepted()), boat, SLOT(slot_updateGraphicsParameters()));
     boat->slot_paramChanged();
 }
 
@@ -4555,7 +4555,6 @@ void myCentralWidget::slot_delBoat(boat* boat)
     disconnect(proj,SIGNAL(projectionUpdated()),boat,SLOT(slot_projectionUpdated()));
     disconnect(boat, SIGNAL(clearSelection()),this,SLOT(slot_clearSelection()));
     disconnect(boat,SIGNAL(getTrace(QByteArray,QList<vlmPoint> *)),opponents,SLOT(getTrace(QByteArray,QList<vlmPoint> *)));
-    disconnect(&dialogGraphicsParams, SIGNAL(accepted()), boat, SLOT(slot_updateGraphicsParameters()));
 }
 
 void myCentralWidget::slot_boatDialog(void)
@@ -4961,4 +4960,15 @@ void myCentralWidget::slotImg_close()
 void myCentralWidget::slot_resetGestures()
 {
     view->hideViewPix();
+}
+void myCentralWidget::slot_graphicParams()
+{
+    DialogGraphicsParams * dial=new DialogGraphicsParams(this);
+    if(dial->exec()==QDialog::Accepted)
+    {
+        terrain->updateGraphicsParameters();
+        if(mainW->getSelectedBoat())
+            mainW->getSelectedBoat()->slot_updateGraphicsParameters();
+    }
+    delete dial;
 }

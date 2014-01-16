@@ -39,6 +39,8 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "settings.h"
 #include <QDebug>
 #include "Util.h"
+#include <QScroller>
+#include "mycentralwidget.h"
 
 
 //===========================================================================
@@ -172,8 +174,8 @@ void InputLineParams::resetDefault()
 //===========================================================================
 // DialogGraphicsParams
 //===========================================================================
-DialogGraphicsParams::DialogGraphicsParams()
-		 : QDialog()
+DialogGraphicsParams::DialogGraphicsParams(myCentralWidget * mcp)
+         : QDialog(mcp)
 {
     setWindowTitle(tr("Parametres graphiques"));
     QFrame *ftmp;
@@ -195,36 +197,32 @@ DialogGraphicsParams::DialogGraphicsParams()
     layout->addWidget( frameGui,  lig,0,   1, 2);
     //-------------------------
     lig ++;
-    ftmp = new QFrame(this); ftmp->setFrameShape(QFrame::HLine); layout->addWidget( ftmp, lig,0, 1, -1);
+    ftmp = new QFrame(this);
+    ftmp->setFrameShape(QFrame::HLine);
+    layout->addWidget( ftmp, lig,0, 1, -1);
     //-------------------------
     lig ++;
     btOK     = new QPushButton(tr("Valider"), this);
     btCancel = new QPushButton(tr("Annuler"), this);
     layout->addWidget( btOK,    lig,0);
     layout->addWidget( btCancel, lig,1);
-    Util::setFontDialog(this);
-    QWidget *wid=new QWidget();
+    QFrame *wid=new QFrame(this);
     wid->setLayout(layout);
     scroll=new QScrollArea(this);
-    this->resize(wid->size());
-    scroll->resize(wid->size());
     scroll->setWidget(wid);
-    QSize mySize=QSize(wid->size().width()+20,wid->size().height()+20);
-    QSize screenSize=QApplication::desktop()->screenGeometry().size()*.8;
-    if(mySize.height() > screenSize.height())
-    {
-        mySize.setHeight(screenSize.height());
-    }
-    if(mySize.width() > screenSize.width())
-    {
-        mySize.setWidth(screenSize.width());
-    }
-    this->resize(mySize);
-    scroll->resize(mySize);
+    scroll->setLayout(new QVBoxLayout(this));
+    this->resize(wid->size());
+    QScroller::grabGesture(this->scroll->viewport());
+    Util::setFontDialog(this);
+    connect(mcp,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
 
     //===============================================================
     connect(btCancel, SIGNAL(clicked()), this, SLOT(slotBtCancel()));
     connect(btOK, SIGNAL(clicked()), this, SLOT(slotBtOK()));
+}
+void DialogGraphicsParams::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 
 //-------------------------------------------------------------------------------

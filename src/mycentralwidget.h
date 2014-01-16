@@ -361,12 +361,14 @@ public slots :
         void slot_resetGestures();
 
         void slot_shTdb(bool);
+        void slot_graphicParams();
 signals:
         /* drawing */
         void redrawAll(void);
         void redrawGrib(void);
         void startReplay(bool);
         void replay(int);
+        void geometryChanged();
 
         /* POI */
         void writePOIData(QList<ROUTE*> &,QList<POI*> &,QString);
@@ -445,7 +447,6 @@ signals:
         DialogRace * raceDialog;
         DialogLoadGrib  * dialogLoadGrib;
         DialogUnits     dialogUnits;
-        DialogGraphicsParams  dialogGraphicsParams;
         DialogRealBoatConfig * realBoatConfig;
         DialogVlmLog * vlmLogViewer;
         DialogDownloadTracks * vlmTrackRetriever;
