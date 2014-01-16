@@ -145,7 +145,7 @@ void DialogLoadGrib::slot_screenResize()
 //-------------------------------------------------------------------------------
 DialogLoadGrib::~DialogLoadGrib()
 {
-    Settings::saveGeometry(this);
+    //Settings::saveGeometry(this);
     if (loadgrib != NULL)
         delete loadgrib;
 }
@@ -446,6 +446,7 @@ void DialogLoadGrib::slotBtCancel()
         slotParameterUpdated();
     }
     else {
+        Settings::saveGeometry(this);
         reject();
     }
 }
