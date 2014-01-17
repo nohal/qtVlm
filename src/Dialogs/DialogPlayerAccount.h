@@ -70,7 +70,8 @@ class DialogPlayerAccount : public QDialog, public Ui::playerAccount
         void slot_selectAndValidateItem(QListWidgetItem* item);
         void slot_updFinished(bool res, Player * player);
 
-    signals:
+        void slot_screenResize();
+signals:
         void addPlayer(Player*);
         void delPlayer(Player*);
         void addBoat(boat*);

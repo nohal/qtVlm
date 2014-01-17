@@ -38,7 +38,7 @@ class POI_Editor;
 #include "boatVLM.h"
 #include <QDesktopWidget>
 #include "settings.h"
-
+#include <QScroller>
 #define POI_EDT_LAT 1
 #define POI_EDT_LON 2
 
@@ -49,6 +49,8 @@ DialogPoi::DialogPoi(MainWindow * main,myCentralWidget * parent)
     : QDialog(parent)
 {
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
 //    int minSize=qMax(this->lat_sig->width(),this->lon_sig->width());
 //    lat_sig->setMinimumWidth(minSize);
@@ -70,6 +72,10 @@ DialogPoi::DialogPoi(MainWindow * main,myCentralWidget * parent)
     navMode->addItem("VB-VMG");
     navMode->addItem("B-VMG");
     navMode->addItem("Ortho");
+}
+void DialogPoi::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 void DialogPoi::formatLatLon()
 {

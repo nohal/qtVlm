@@ -8,10 +8,13 @@
 #include "Orthodromie.h"
 #include "POI.h"
 #include "Util.h"
+#include <QScroller>
 
 DialogRouteComparator::DialogRouteComparator(myCentralWidget *parent) : QDialog(parent)
 {
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     this->mcw=parent;
     connect(this->closeButton,SIGNAL(clicked()),this,SLOT(close()));
@@ -69,6 +72,10 @@ DialogRouteComparator::DialogRouteComparator(myCentralWidget *parent) : QDialog(
     connect(routesCombo,SIGNAL(currentIndexChanged(int)),this,SLOT(slot_insertRoute(int)));
     connect(routesTable,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(slot_contextMenu(QPoint)));
     routesTable->setContextMenuPolicy(Qt::CustomContextMenu);
+}
+void DialogRouteComparator::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 void DialogRouteComparator::slot_contextMenu(QPoint P)
 {

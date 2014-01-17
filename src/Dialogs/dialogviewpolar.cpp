@@ -5,11 +5,14 @@
 //#include <QEvent>
 #include "Util.h"
 #include "settings.h"
-
-DialogViewPolar::DialogViewPolar(QWidget *parent) :
-    QDialog(parent)
+#include "mycentralwidget.h"
+#include <QScroller>
+DialogViewPolar::DialogViewPolar(myCentralWidget *parent) :
+    QDialog(parent->getMainWindow())
 {
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     QMap<QWidget *,QFont> exceptions;
     QFont wfont=QApplication::font();
@@ -31,6 +34,10 @@ DialogViewPolar::DialogViewPolar(QWidget *parent) :
     imageContainer->installEventFilter(this);
     connect(this->closeButton,SIGNAL(clicked()),this,SLOT(close()));
     this->doubleSpinBox->installEventFilter(this);
+}
+void DialogViewPolar::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 
 bool DialogViewPolar::eventFilter(QObject *obj, QEvent *event)

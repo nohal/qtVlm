@@ -46,11 +46,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Player.h"
 #include "BoardInterface.h"
 #include "inetConnexion.h"
+#include <QScroller>
 
 DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDialog(parent)
 {
     centralWidget=parent;
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     connect(this,SIGNAL(resetTraceCache()),parent,SIGNAL(resetTraceCache()));
     connect(this,SIGNAL(paramVLMChanged()),main,SLOT(slotParamChanged()));
@@ -267,6 +270,10 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
 //#endif
 
     saveWinGeometry->setCheckState(Settings::getSetting(saveMainWindowGeometry).toInt()==1?Qt::Checked:Qt::Unchecked);
+}
+void DialogParamVlm::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 
 void DialogParamVlm::initEstime(void) {

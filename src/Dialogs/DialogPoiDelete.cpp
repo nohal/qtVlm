@@ -25,10 +25,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Util.h"
 #include "DialogPoiDelete.h"
 #include "settings.h"
-
-DialogPoiDelete::DialogPoiDelete(QWidget * parent) : QDialog(parent)
+#include <QScroller>
+#include "mycentralwidget.h"
+DialogPoiDelete::DialogPoiDelete(myCentralWidget * parent) : QDialog(parent->getMainWindow())
 {
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     QMap<QWidget *,QFont> exceptions;
     QFont wfont=QApplication::font();
@@ -40,6 +43,10 @@ DialogPoiDelete::DialogPoiDelete(QWidget * parent) : QDialog(parent)
     exceptions.insert(lnk_none,wfont);
     Util::setSpecificFont(exceptions);
     mask=-1;
+}
+void DialogPoiDelete::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 
 void DialogPoiDelete::done(int result)

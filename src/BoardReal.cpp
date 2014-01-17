@@ -307,7 +307,7 @@ void boardReal::disp_boatInfo()
     t=t+"<br>"+"LONGITUDE: "+QString().sprintf("%03d-%02d",x1,x2)+letter;
     t=t+"<br>"+QString().sprintf("COURSE: %d",qRound(currentBoat()->getHeading()));
     t=t+"<br>"+QString().sprintf("SPEED: %d",qRound(currentBoat()->getSpeed()));
-    DialogSailDocs * s = new DialogSailDocs(t,this);
+    DialogSailDocs * s = new DialogSailDocs(t,this->mainWin->getMy_centralWidget());
     s->label_3->hide();
     s->label_2->hide();
     s->lineEdit->hide();

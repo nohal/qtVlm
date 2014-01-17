@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Util.h"
 #include "inetConnexion.h"
 #include "DialogInetProgess.h"
+#include <QScroller>
 #define VLM_REQUEST_GET_FOLDER 0
 #define VLM_REQUEST_GET_FILE   1
 
@@ -41,6 +42,8 @@ DialogVlmGrib::DialogVlmGrib(MainWindow * ,myCentralWidget * parent,inetConnexio
         inetClient(inet)
 {
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     listRadio[0]=radio1;
     listRadio[1]=radio2;
@@ -53,6 +56,10 @@ DialogVlmGrib::DialogVlmGrib(MainWindow * ,myCentralWidget * parent,inetConnexio
                              tr("Chargement de la liste de grib"));
     saveDialog=new QFileDialog();
     saveDialog->setModal(false);
+}
+void DialogVlmGrib::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 
 void DialogVlmGrib::done(int res)

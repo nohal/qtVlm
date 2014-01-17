@@ -38,13 +38,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "routage.h"
 #include "Util.h"
 #include "settings.h"
-
+#include <QScroller>
 
 
 DialogPlayerAccount::DialogPlayerAccount(Projection * proj, MainWindow * main,
                              myCentralWidget * parent, inetConnexion * inet) : QDialog(parent)
 {
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     QMap<QWidget *,QFont> exceptions;
     QFont wfont=QApplication::font();
@@ -135,6 +137,10 @@ DialogPlayerAccount::DialogPlayerAccount(Projection * proj, MainWindow * main,
         accDialog.realBoat->setText(tr("Skutecna lod"));
         accDialog.setWindowTitle(tr("Detaily uctu"));
     }
+}
+void DialogPlayerAccount::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 
 void DialogPlayerAccount::initList(QList<Player*> * player_list)

@@ -1623,7 +1623,7 @@ void myCentralWidget::slot_delPOI_list(POI * poi)
 
 void myCentralWidget::slot_removePOIType(void) {
     int res_mask;
-    DialogPoiDelete * dialog_sel = new DialogPoiDelete();
+    DialogPoiDelete * dialog_sel = new DialogPoiDelete(this);
     dialog_sel->exec();
     if((res_mask=dialog_sel->getResult())<0)
         return;
@@ -1732,7 +1732,7 @@ void myCentralWidget::slot_delSelPOIs(void)
         proj->map2screenDouble(lon1,lat1,&x1,&y1);
         QRectF selRect=QRectF(QPointF(x0,y0),QPointF(x1,y1)).normalized();
         int res_mask;
-        DialogPoiDelete * dialog_sel = new DialogPoiDelete();
+        DialogPoiDelete * dialog_sel = new DialogPoiDelete(this);
         dialog_sel->exec();
         if((res_mask=dialog_sel->getResult())<0)
             return;

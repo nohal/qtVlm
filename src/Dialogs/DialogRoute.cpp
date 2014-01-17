@@ -50,7 +50,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QPixmap>
 #include <Terrain.h>
 #include <MapDataDrawer.h>
-
+#include <QScroller>
 //-------------------------------------------------------
 // ROUTE_Editor: Constructor for edit an existing ROUTE
 //-------------------------------------------------------
@@ -61,6 +61,8 @@ DialogRoute::DialogRoute(ROUTE *route, myCentralWidget *parent, bool createMode)
     this->parent=parent;
     tabWidthRatio=-1;
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     this->warning_icon->setPixmap(QPixmap(appFolder.value("img")+"warning.png"));
     connect(this->useVbvmgVlm,SIGNAL(stateChanged(int)),this,SLOT(slot_hideShowWarning()));
     QString tip=tr("Ce bouton a 3 etats:<br><b>Non coche:</b> La route ne sera pas simplifiee.<br><b>Partiellement coche:</b> La route sera simplifiee en mode minimum, c'est le meilleur mode.<br><b>Completement coche:</b> La route sera simplifiee au maximum. Ce mode peut degrader la qualite du routage.");
@@ -283,6 +285,10 @@ DialogRoute::DialogRoute(ROUTE *route, myCentralWidget *parent, bool createMode)
     drawBoat.quadTo(28,22,20,10);
     if(route->getBoat()->getLockStatus())
         this->Envoyer->setDisabled(true);
+}
+void DialogRoute::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 void DialogRoute::slot_hideShowWarning()
 {

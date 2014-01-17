@@ -15,63 +15,82 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QPlainTextEdit" name="POI_list">
-     <property name="toolTip">
-      <string>Coller ou inserer des POI au format LAT,LON@WPH</string>
+    <widget class="QScrollArea" name="scrollArea">
+     <property name="widgetResizable">
+      <bool>true</bool>
      </property>
-     <property name="plainText">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QLabel" name="nbValid">
-       <property name="text">
-        <string>0/0 valid WP</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_3">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QComboBox" name="type">
+     <widget class="QWidget" name="scrollAreaWidgetContents">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>244</width>
+        <height>237</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <property name="text">
-         <string>POI</string>
-        </property>
+        <widget class="QPlainTextEdit" name="POI_list">
+         <property name="toolTip">
+          <string>Coller ou inserer des POI au format LAT,LON@WPH</string>
+         </property>
+         <property name="plainText">
+          <string/>
+         </property>
+        </widget>
        </item>
        <item>
-        <property name="text">
-         <string>Route</string>
-        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QLabel" name="nbValid">
+           <property name="text">
+            <string>0/0 valid WP</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_3">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QComboBox" name="type">
+           <item>
+            <property name="text">
+             <string>POI</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Route</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Balise</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
-        <property name="text">
-         <string>Balise</string>
-        </property>
+        <widget class="QDialogButtonBox" name="buttonBox">
+         <property name="standardButtons">
+          <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+         </property>
+        </widget>
        </item>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>

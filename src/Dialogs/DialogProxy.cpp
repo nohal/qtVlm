@@ -27,10 +27,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogProxy.h"
 #include "settings.h"
 #include "Util.h"
-
-DialogProxy::DialogProxy() : QDialog()
+#include <QScroller>
+#include "mycentralwidget.h"
+DialogProxy::DialogProxy(myCentralWidget * parent) : QDialog(parent->getMainWindow())
 {
     qWarning() << "Init dialogProxy";
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     setupUi(this);
     Util::setFontDialog(this);
 
@@ -48,6 +51,10 @@ DialogProxy::DialogProxy() : QDialog()
         proxyType->setCurrentIndex(usep-1);
 
     slot_useProxy_changed();
+}
+void DialogProxy::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 
 void DialogProxy::slot_useProxy_changed()

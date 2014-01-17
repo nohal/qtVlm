@@ -26,19 +26,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Util.h"
 #include "settings.h"
 #include <QMessageBox>
-
+#include "mycentralwidget.h"
+#include <QScroller>
 
 /************************/
 /* Dialog WP            */
 
-DialogWp::DialogWp(QWidget * parent) : QDialog(parent)
+DialogWp::DialogWp(myCentralWidget * parent) : QDialog(parent->getMainWindow())
 {
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     currentBoat=NULL;
 
     WP_conv_lat->setText("");
     WP_conv_lon->setText("");
+}
+void DialogWp::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 void DialogWp::setLocked(const bool &locked)
 {

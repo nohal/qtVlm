@@ -66,6 +66,7 @@ class DialogRace : public QDialog, public Ui::race_dialog_ui, public inetClient
         void slotFilterReal();
 
         void showAllToggle(bool b);
+        void slot_screenResize();
 signals:
         void readRace(void);
         void writeBoat(void);

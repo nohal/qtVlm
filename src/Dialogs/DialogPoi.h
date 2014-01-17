@@ -53,7 +53,8 @@ class DialogPoi : public QDialog, public Ui::POI_editor_ui
         void latLonSignChg(int);
         void type_chg(int);
 
-    signals:
+        void slot_screenResize();
+signals:
         void addPOI_list(POI*);
         void delPOI_list(POI*);
         void doChgWP(double,double,double);

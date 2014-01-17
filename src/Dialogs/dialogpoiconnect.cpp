@@ -3,11 +3,13 @@
 #include <QMessageBox>
 #include "Util.h"
 #include "settings.h"
-
+#include <QScroller>
 DialogPoiConnect::DialogPoiConnect(POI * poi,myCentralWidget *parent) :
     QDialog(parent)
 {
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     this->poi=poi;
     this->parent=parent;
@@ -26,6 +28,10 @@ DialogPoiConnect::DialogPoiConnect(POI * poi,myCentralWidget *parent) :
         }
     }
     ortho->setChecked(poi->get_drawLineOrtho());
+}
+void DialogPoiConnect::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 
 DialogPoiConnect::~DialogPoiConnect()

@@ -39,7 +39,8 @@ class DialogPoiInput : public QDialog, public Ui::POI_input_ui
         void txtHasChanged(void);
         void slot_showPOI_input(void);
         
-    signals:
+        void slot_screenResize();
+signals:
         void addPOI(QString,int,double,double,double,int,bool);
 };
 

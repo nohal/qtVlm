@@ -24,12 +24,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Util.h"
 #include "boatReal.h"
 #include "settings.h"
+#include "mycentralwidget.h"
+#include <QScroller>
 #define POI_EDT_LAT 1
 #define POI_EDT_LON 2
 
-DialogRealBoatPosition::DialogRealBoatPosition(QWidget * parent) : QDialog(parent)
+DialogRealBoatPosition::DialogRealBoatPosition(myCentralWidget * parent) : QDialog(parent->getMainWindow())
 {
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     connect (buttonBox,SIGNAL(accepted()),this,SLOT(accept()));
     connect (buttonBox,SIGNAL(rejected()),this,SLOT(reject()));
@@ -45,6 +49,10 @@ DialogRealBoatPosition::DialogRealBoatPosition(QWidget * parent) : QDialog(paren
     connect(this->lon_deg,SIGNAL(valueChanged(double)),this,SLOT(latLonChg(double)));
     connect(this->lon_min,SIGNAL(valueChanged(double)),this,SLOT(latLonChg(double)));
     connect(this->lon_sec,SIGNAL(valueChanged(double)),this,SLOT(latLonChg(double)));
+}
+void DialogRealBoatPosition::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 void DialogRealBoatPosition::formatLatLon()
 {

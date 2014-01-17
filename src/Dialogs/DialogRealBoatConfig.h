@@ -41,7 +41,8 @@ class DialogRealBoatConfig: public QDialog, public Ui::realBoatConfig
         void slot_file(bool st);
         void slot_gpsd(bool st);
 
-    private:
+        void slot_screenResize();
+private:
         boatReal * curBoat;
         myCentralWidget *parent;
 

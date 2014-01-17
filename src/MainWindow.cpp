@@ -213,7 +213,7 @@ void MainWindow::connectSignals()
 }
 void MainWindow::slot_execDialogProxy()
 {
-    dialogProxy = new DialogProxy();
+    dialogProxy = new DialogProxy(my_centralWidget);
     connect(dialogProxy, SIGNAL(proxyUpdated()), this, SLOT(slotInetUpdated()));
     dialogProxy->exec();
     delete dialogProxy;
@@ -2398,7 +2398,7 @@ bool MainWindow::getBoatLockStatus(void)
 void MainWindow::slotShowPolar()
 {
     if(!selectedBoat) return;
-    DialogViewPolar *dvp=new DialogViewPolar(this);
+    DialogViewPolar *dvp=new DialogViewPolar(this->my_centralWidget);
     dvp->setBoat(selectedBoat);
     dvp->exec();
     if(dvp)

@@ -123,7 +123,7 @@ boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) :
     connect(GPS_timer,SIGNAL(timeout()),this, SLOT(synch_GPS()));
 
     /* wpDialog */
-    wpDialog = new DialogWp();
+    wpDialog = new DialogWp(mainWin->getMy_centralWidget());
     connect(wpDialog,SIGNAL(selectPOI()),mainWin,SLOT(slotSelectWP_POI()));
     connect(mainWin,SIGNAL(editWP_POI(POI*)),this,SLOT(show_WPdialog(POI *)));
 

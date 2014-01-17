@@ -22,14 +22,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define POI_DELETE_H
 
 #include <QDialog>
-
+#include "class_list.h"
 #include "ui_poi_delete.h"
 
 class DialogPoiDelete : public QDialog, public Ui::POI_delete_ui
 {
     Q_OBJECT
     public:
-        DialogPoiDelete(QWidget * parent = 0);
+        DialogPoiDelete(myCentralWidget * parent);
         void done(int result);
         int getResult(void) { return mask; }
 
@@ -37,7 +37,8 @@ class DialogPoiDelete : public QDialog, public Ui::POI_delete_ui
         void do_chkAll(QString);
         void do_chkNone(QString);
 
-     private:
+        void slot_screenResize();
+private:
         int mask;
 
 };

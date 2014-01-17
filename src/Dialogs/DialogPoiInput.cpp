@@ -26,13 +26,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Util.h"
 #include "mycentralwidget.h"
 #include "settings.h"
-
+#include <QScroller>
 DialogPoiInput::DialogPoiInput(myCentralWidget * parent) : QDialog(parent)
 {
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     connect(this,SIGNAL(addPOI(QString,int,double,double,double,int,bool)),
             parent,SLOT(slot_addPOI(QString,int,double,double,double,int,bool)));
+}
+void DialogPoiInput::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 
 void DialogPoiInput::slot_showPOI_input(void)

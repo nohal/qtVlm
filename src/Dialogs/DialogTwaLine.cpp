@@ -9,7 +9,7 @@
 #include "settings.h"
 #include "GshhsReader.h"
 #include "Projection.h"
-
+#include <QScroller>
 DialogTwaLine::DialogTwaLine(QPointF start, myCentralWidget *parent, MainWindow *main) : QDialog(parent)
 {
     this->parent=parent;
@@ -24,6 +24,8 @@ DialogTwaLine::DialogTwaLine(QPointF start, myCentralWidget *parent, MainWindow 
     this->line=new vlmLine(parent->getProj(),parent->getScene(),Z_VALUE_ROUTE);
     line->setLinePen(pen);
     this->setWindowFlags(Qt::Tool);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     setupUi(this);
     Util::setFontDialog(this);
     this->tabWidget->setCurrentIndex(0);
@@ -48,6 +50,10 @@ DialogTwaLine::DialogTwaLine(QPointF start, myCentralWidget *parent, MainWindow 
     connect(TWA4,SIGNAL(toggled(bool)),this,SLOT(slotTwa4(bool)));
     connect(TWA5,SIGNAL(toggled(bool)),this,SLOT(slotTwa5(bool)));
     traceIt();
+}
+void DialogTwaLine::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 void DialogTwaLine::slotTwa1(bool b)
 {

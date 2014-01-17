@@ -32,6 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogPilototo.h"
 #include "DialogPilototoParam.h"
 #include "settings.h"
+#include <QScroller>
 
 DialogPilototo::DialogPilototo(MainWindow *main,myCentralWidget * parent,inetConnexion * inet):QDialog(parent), inetClient(inet)
 {
@@ -40,6 +41,8 @@ DialogPilototo::DialogPilototo(MainWindow *main,myCentralWidget * parent,inetCon
     navModeToDo=false;
     this->move(250,100);
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     QMap<QWidget *,QFont> exceptions;
     QFont wfont=QApplication::font();
@@ -48,7 +51,7 @@ DialogPilototo::DialogPilototo(MainWindow *main,myCentralWidget * parent,inetCon
     Util::setSpecificFont(exceptions);
     selectPOI_mode=1;
 
-    instructionEditor = new DialogPilototoParam(this);
+    instructionEditor = new DialogPilototoParam(parent);
     connect(instructionEditor,SIGNAL(doSelectPOI(DialogPilototoInstruction *,int)),
             this,SLOT(doSelectPOI(DialogPilototoInstruction *,int)));
     connect(this,SIGNAL(selectPOI(DialogPilototoInstruction *)),
@@ -82,6 +85,10 @@ DialogPilototo::DialogPilototo(MainWindow *main,myCentralWidget * parent,inetCon
     currentList=NULL;
     this->updateBoat=false;
 
+}
+void DialogPilototo::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 
 void DialogPilototo::updateDrawList(void)

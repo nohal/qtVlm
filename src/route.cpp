@@ -1755,7 +1755,6 @@ void ROUTE::read_routeData(myCentralWidget * centralWidget) {
     QDomNode subNode;
     QDomNode dataNode;
     bool hasOldSystem=false;
-
     QString fname = appFolder.value("userFiles")+"poi.dat";
 
     QDomNode * root=XmlFile::get_dataNodeFromDisk(fname,ROOT_NAME);

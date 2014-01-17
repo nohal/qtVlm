@@ -151,7 +151,8 @@ class DialogPilototo : public QDialog, public Ui::pilototo_ui, public inetClient
         QString getAuthLogin(bool * ok);
         QString getAuthPass(bool * ok);
 
-    public slots:
+public slots:
+        void slot_screenResize();
         void delInstruction(DialogPilototoInstruction *);
         void setInstructions(boat *pvBoat,QList<POI*> pois);
         void editInstructions(void);
