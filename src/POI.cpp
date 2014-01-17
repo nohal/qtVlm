@@ -1508,8 +1508,6 @@ void POI::slot_finePosit(bool silent)
         }
         setLongitude(simplex[0].lon);
         setLatitude(simplex[0].lat);
-        if(isWp && !silent) slot_setWP();
-        else this->chkIsWP();
     }
     Util::computePos(proj,lat, lon, &pi, &pj);
     setPos(pi, pj-height/2);
@@ -1535,10 +1533,11 @@ void POI::slot_finePosit(bool silent)
         lat=savedLat;
         Util::computePos(proj,lat, lon, &pi, &pj);
         setPos(pi, pj-height/2);
-        if(isWp && !silent) slot_setWP();
         update();
         route->slot_recalculate();
     }
+    if(isWp && !silent) slot_setWP();
+    else this->chkIsWP();
     QApplication::processEvents();
 }
 
