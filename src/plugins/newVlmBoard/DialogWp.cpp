@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "POI.h"
 #include "MainWindowInterface.h"
 #include <QMessageBox>
+#include "settings_def.h"
 
 
 /************************/
@@ -34,6 +35,12 @@ DialogWp::DialogWp(MainWindowInterface *main, QWidget * parent) : QDialog(parent
     setupUi(this);
     main->setFontDialog(this);
     currentBoat=NULL;
+    if(main->getSettingApp(fusionStyle).toInt()==1)
+    {
+        WP_lat->setStyleSheet("background-color: rgb(53, 53, 53);");
+        WP_lon->setStyleSheet("background-color: rgb(53, 53, 53);");
+        WP_heading->setStyleSheet("background-color: rgb(53, 53, 53);");
+    }
 
     WP_conv_lat->setText("");
     WP_conv_lon->setText("");

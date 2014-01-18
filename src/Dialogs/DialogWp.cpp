@@ -39,7 +39,12 @@ DialogWp::DialogWp(myCentralWidget * parent) : QDialog(parent->getMainWindow())
     connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     currentBoat=NULL;
-
+    if(Settings::getSetting(fusionStyle).toInt()==1)
+    {
+        WP_lat->setStyleSheet("background-color: rgb(53, 53, 53);");
+        WP_lon->setStyleSheet("background-color: rgb(53, 53, 53);");
+        WP_heading->setStyleSheet("background-color: rgb(53, 53, 53);");
+    }
     WP_conv_lat->setText("");
     WP_conv_lon->setText("");
 }
@@ -51,6 +56,7 @@ void DialogWp::setLocked(const bool &locked)
 {
     this->WP_lat->setEnabled(locked);
     this->WP_lon->setEnabled(locked);
+    this->WP_heading->setEnabled(locked);
     this->btn_clear->setEnabled(locked);
     this->btn_paste->setEnabled(locked);
     this->btn_selectPOI->setEnabled(locked);

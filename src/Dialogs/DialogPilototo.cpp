@@ -69,9 +69,9 @@ DialogPilototo::DialogPilototo(MainWindow *main,myCentralWidget * parent,inetCon
     drawList.clear();
     delList.clear();
 
-    layout()->setSizeConstraint(QLayout::SetFixedSize);
+    //layout()->setSizeConstraint(QLayout::SetFixedSize);
     frameLayout = new QVBoxLayout(frame);
-    frameLayout->setSizeConstraint(QLayout::SetFixedSize);
+    //frameLayout->setSizeConstraint(QLayout::SetFixedSize);
 
 
 
@@ -191,6 +191,7 @@ void DialogPilototo::editInstructions(void)
 void DialogPilototo::editInstructionsPOI(DialogPilototoInstruction * instruction,POI * poi)
 {
     show();
+    slot_screenResize();
     if(selectPOI_mode==1)
     {
         if(poi)
@@ -302,6 +303,7 @@ void DialogPilototo::slot_boatUpdated(boat * pvBoat)
     updateTime();
 
     updateDrawList();
+    slot_screenResize();
     exec();
 }
 
