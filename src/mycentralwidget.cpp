@@ -4325,7 +4325,7 @@ void myCentralWidget::slot_editRoutage(ROUTAGE * routage,bool createMode,POI *en
     else
     {
         delete routage_editor;
-        if(routage && (createMode || !routage->isConverted()))
+        if(routage && (createMode || !routage->isConverted() || routage->getIsNewPivot()))
         {
             update_menuRoutage();
             QApplication::processEvents();
