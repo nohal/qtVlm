@@ -116,10 +116,6 @@ class ToolBar : public QObject
         void updateBoatList(QList<boatVLM*> & boat_list);
         void setSelectedBoatIndex(int index);
 
-        /* ETA toolBar */
-        QLabel * ETA;
-        void clear_eta(void);
-        void update_eta(QDateTime eta_dtm);
 
         /* BarrierSet toolBar */
         QAction *barrierAdd;
@@ -170,7 +166,6 @@ signals:
         MyToolBar * mapToolBar;
         MyToolBar * estimeToolBar;
         MyToolBar * boatToolBar;
-        MyToolBar * etaToolBar;
         MyToolBar * barrierToolBar;
 
         QList<MyToolBar*> toolBarList;

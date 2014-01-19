@@ -66,8 +66,6 @@ ToolBar::ToolBar(MainWindow *mainWindow)
 
     boatToolBar=new MyToolBar("Boat",tr("Boat"),this,mainWindow);
     toolBarList.append(boatToolBar);
-    etaToolBar=new MyToolBar("ETA",tr("ETA"),this,mainWindow);
-    toolBarList.append(etaToolBar);
     barrierToolBar=new MyToolBar("BarrierSet",tr("Barrier Set"),this,mainWindow);
     toolBarList.append(barrierToolBar);
 
@@ -198,13 +196,6 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     boatToolBar->addAction(acLock);
     boatToolBar->addWidget((boatList));
 
-    /* Eta toolBar */
-    ETA = new QLabel(tr("No WP"),etaToolBar);
-    if(Settings::getSetting(fusionStyle).toInt()==1)
-        ETA->setStyleSheet("color: rgb(234, 221, 21);");
-    else
-        ETA->setStyleSheet("color: rgb(0, 0, 255);");
-    etaToolBar->addWidget(ETA);
     /* BarrierSet toolBar */
     barrierAdd = init_Action(tr("Add Barrier"),tr(""),tr(""),appFolder.value("img")+"add_barrier.png",barrierToolBar);
     barrierAdd->setCheckable(true);
@@ -367,34 +358,6 @@ void ToolBar::save_settings(void) {
     }
 }
 
-/**********************************************************************/
-/*                         ETA                                        */
-/**********************************************************************/
-
-void ToolBar::clear_eta(void) {
-    ETA->setText(tr("No WP"));
-}
-
-void ToolBar::update_eta(QDateTime eta_dtm)
-{
-    int nbS,j,h,m;
-    QString txt;
-    eta_dtm.setTimeSpec(Qt::UTC);
-    QDateTime now = (QDateTime::currentDateTime()).toUTC();
-    nbS=now.secsTo(eta_dtm);
-    j = nbS/(24*3600);
-    nbS-=j*24*3600;
-    h=nbS/3600;
-    nbS-=h*3600;
-    m=nbS/60;
-    nbS-=m*60;
-    txt.sprintf("(%dj %02dh%02dm%02ds)",j,h,m,nbS);
-    txt.replace("j",tr("j"));
-    txt.replace("h",tr("h"));
-    txt.replace("m",tr("m"));
-    txt.replace("s",tr("s"));
-    ETA->setText(tr(" Arrivee WP")+": " +eta_dtm.toString(tr("dd-MM-yyyy, HH:mm:ss"))+ " " +txt);
-}
 
 /**********************************************************************/
 /*                         Estime                                     */

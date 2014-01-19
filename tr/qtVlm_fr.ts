@@ -1023,6 +1023,29 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
     </message>
 </context>
 <context>
+    <name>DialogLanguageSelection_ui</name>
+    <message>
+        <source>Language selection</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Français</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>English</source>
+        <translation>English</translation>
+    </message>
+    <message>
+        <source>Española</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>České</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
     <name>DialogLoadGrib</name>
     <message>
         <source>Telechargement</source>
@@ -5711,6 +5734,14 @@ p, li { white-space: pre-wrap; }
         <source>Il existe des parametres locaux, les importer dans qtvlm.ini?</source>
         <translation type="obsolete">Il existe des paramètres locaux, les importer?</translation>
     </message>
+    <message>
+        <source>Setting file version</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wrong setting file version, previous one has been saved in qtVlm.ini.sav, new one created</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StatusBar</name>
@@ -5745,6 +5776,30 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Prochaine vac dans</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>No WP</source>
+        <translation>Pas de WP</translation>
+    </message>
+    <message>
+        <source>j</source>
+        <translation>j</translation>
+    </message>
+    <message>
+        <source>h</source>
+        <translation>h</translation>
+    </message>
+    <message>
+        <source>m</source>
+        <translation>m</translation>
+    </message>
+    <message>
+        <source>s</source>
+        <translation>s</translation>
+    </message>
+    <message>
+        <source> Arrivee WP</source>
+        <translation>Arrivée WP</translation>
     </message>
 </context>
 <context>
@@ -5798,7 +5853,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>ETA</source>
-        <translation>ETA</translation>
+        <translation type="vanished">ETA</translation>
     </message>
     <message>
         <source>Telechargement zyGrib</source>
@@ -5922,31 +5977,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>No WP</source>
-        <translation>Pas de WP</translation>
+        <translation type="vanished">Pas de WP</translation>
     </message>
     <message>
         <source>j</source>
-        <translation>j</translation>
+        <translation type="vanished">j</translation>
     </message>
     <message>
         <source>h</source>
-        <translation>h</translation>
+        <translation type="vanished">h</translation>
     </message>
     <message>
         <source>m</source>
-        <translation>m</translation>
+        <translation type="vanished">m</translation>
     </message>
     <message>
         <source>s</source>
-        <translation>s</translation>
+        <translation type="vanished">s</translation>
     </message>
     <message>
         <source> Arrivee WP</source>
-        <translation>Arrivée WP</translation>
-    </message>
-    <message>
-        <source>dd-MM-yyyy, HH:mm:ss</source>
-        <translation></translation>
+        <translation type="vanished">Arrivée WP</translation>
     </message>
     <message>
         <source>Hold to select download method</source>
@@ -8577,23 +8628,15 @@ Please select another point or press esc to exit barrier creation mode</source>
     </message>
     <message>
         <source>Francais</source>
-        <translation>Français</translation>
+        <translation type="vanished">Français</translation>
     </message>
     <message>
         <source>English</source>
-        <translation>English</translation>
+        <translation type="vanished">English</translation>
     </message>
     <message>
         <source>Czech</source>
-        <translation>Čeština</translation>
-    </message>
-    <message>
-        <source>Language/Langage/Idioma</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Spanish</source>
-        <translation></translation>
+        <translation type="vanished">Čeština</translation>
     </message>
 </context>
 <context>

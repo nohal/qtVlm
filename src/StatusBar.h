@@ -39,7 +39,9 @@ class StatusBar : public QStatusBar
         void drawVacInfo(void);
     
 
-    signals:
+        void update_eta(QDateTime eta_dtm);
+        void clear_eta();
+signals:
     
     public slots:
 
@@ -55,6 +57,7 @@ class StatusBar : public QStatusBar
         QLabel       *stBar_label_1;
         QLabel       *stBar_label_2;
         QLabel       *stBar_label_3;
+        QLabel       *ETA;
     
 };
 

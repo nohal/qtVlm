@@ -1227,13 +1227,15 @@ void POI::slot_finePosit(bool silent)
     if (route->getLastPoi()==this) return;
     if (route->isBusy()) return;
     if (route->getOptimizing()) return;
-    if (/*false && */route->getUseVbvmgVlm() && !route->getNewVbvmgVlm())
+#ifndef ALLOW_VBVMG_VLM_OPTIM
+    if (route->getUseVbvmgVlm() && !route->getNewVbvmgVlm())
     {
         if(!silent)
             QMessageBox::critical(0,tr("Optimisation du placement d'un POI"),
                                   tr("Vous ne pouvez pas optimiser en mode VBVMG-VLM"));
         return;
     }
+#endif
     this->abortSearch=false;
     double savedLon=lon;
     double savedLat=lat;

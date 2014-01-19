@@ -321,6 +321,10 @@ void MainWindow::continueSetup()
     this->activateWindow();
 
     progress=new Progress(this);
+    progress->move(this->window()->frameGeometry().topLeft() +
+        this->window()->rect().center() -
+        progress->rect().center());
+
 
     QFile testWrite;
     testWrite.setFileName("testWrite.txt");
@@ -890,9 +894,9 @@ void MainWindow::closeProgress(void)
             }
             QDateTime dtm =QDateTime::fromTime_t(((boatReal*)selectedBoat)->getEta()).toUTC();
             if(!dtm.isValid() || ((boatReal*)selectedBoat)->getEta()<=0)
-                toolBar->clear_eta();
+                statusBar->clear_eta();
             else
-                toolBar->update_eta(dtm);
+                statusBar->update_eta(dtm);
         }
         else
         {
@@ -902,9 +906,9 @@ void MainWindow::closeProgress(void)
             statusBar->drawVacInfo();
             QDateTime dtm =QDateTime::fromString(((boatVLM*)selectedBoat)->getETA(),"yyyy-MM-ddTHH:mm:ssZ");
             if(!dtm.isValid())
-                toolBar->clear_eta();
+                statusBar->clear_eta();
             else
-                toolBar->update_eta(dtm);
+                statusBar->update_eta(dtm);
             timer->start(1000);
         }
         if(use_old_board)
@@ -2046,9 +2050,9 @@ void MainWindow::slotBoatUpdated(boat * upBoat,bool newRace,bool doingSync)
             /* Updating ETA */            
             QDateTime dtm =QDateTime::fromString(boat->getETA(),"yyyy-MM-ddTHH:mm:ssZ");
             if(!dtm.isValid())
-                toolBar->clear_eta();
+                statusBar->clear_eta();
             else
-                toolBar->update_eta(dtm);
+                statusBar->update_eta(dtm);
 
             /* change data displayed in all pilototo buttons or menu entry: (nb of instructions passed / tot nb) */
             updatePilototo_Btn(boat);
@@ -2080,14 +2084,14 @@ void MainWindow::slotBoatUpdated(boat * upBoat,bool newRace,bool doingSync)
         /* Updating ETA */
         boatReal *boat=(boatReal *) upBoat;
         if((boat->getWPLat()==0 && boat->getWPLon()==0) ||boat->getEta()==-1)
-            toolBar->clear_eta();
+            statusBar->clear_eta();
         else
         {
             QDateTime dtm =QDateTime::fromTime_t(boat->getEta()).toUTC();
             if(!dtm.isValid() || boat->getEta()<=0)
-                toolBar->clear_eta();
+                statusBar->clear_eta();
             else
-                toolBar->update_eta(dtm);
+                statusBar->update_eta(dtm);
         }
         emit boatHasUpdated(upBoat);
         //emit WPChanged(upBoat->getWPLat(),upBoat->getWPLon());

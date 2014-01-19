@@ -3852,8 +3852,10 @@ void myCentralWidget::treatRoute(ROUTE* route)
         route->setOptimize(false);
         if(route->getFrozen() || (simplify && !route->getHas_eta()))
             QMessageBox::critical(0,QString(QObject::tr("Simplification/Optimisation de route")),QString(QObject::tr("Cette operation est impossible pour une route figee ou une route sans ETA")));
-        else if(/*false && */route->getUseVbvmgVlm() && !route->getNewVbvmgVlm())
+#ifndef ALLOW_VBVMG_VLM_OPTIM
+        else if(route->getUseVbvmgVlm() && !route->getNewVbvmgVlm())
             QMessageBox::critical(0,QString(QObject::tr("Simplification/Optimisation de route")),QString(QObject::tr("Cette operation est impossible si le mode de calcul VBVMG est celui de VLM")));
+#endif
         else
         {
             int poiCt=route->getPoiList().count();

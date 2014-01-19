@@ -68,12 +68,22 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
     stBar_label_3 = new QLabel("", this);
     stBar_label_3->setFont(font);
     font.setFixedPitch(false);
-    this->addWidget(stBar_label_1,1);
-    this->addWidget(stBar_label_2,1);
-    this->addWidget(stBar_label_3,1);
+    this->addWidget(stBar_label_1);
+    this->addWidget(stBar_label_2);
+    this->addWidget(stBar_label_3);
+    ETA=new QLabel("",this);
+    ETA->setFont(font);
+    if(Settings::getSetting(fusionStyle).toInt()==1)
+        ETA->setStyleSheet("color: rgb(51, 212, 195);");
+    else
+        ETA->setStyleSheet("color: rgb(33,33,179);");
+    this->addWidget(ETA);
+#ifdef __ANDROID__
     stBar_label_1->setWordWrap(true);
     stBar_label_2->setWordWrap(true);
     stBar_label_3->setWordWrap(true);
+    ETA->setWordWrap(true);
+#endif
     //stBar_label_3->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
     showingSelectionMessage=false;
 
@@ -305,4 +315,32 @@ void StatusBar::drawVacInfo(void)
         stBar_label_3->setText("- "+ tr("Derniere synchro") + ": " + lastVac_date.toString(tr("dd-MM-yyyy, HH:mm:ss")) + " - "+
                                tr("Prochaine vac dans") + ": " + QString().setNum(mainWindow->get_nxtVac_cnt()) + "s");
     }
+}
+/**********************************************************************/
+/*                         ETA                                        */
+/**********************************************************************/
+
+void StatusBar::clear_eta(void) {
+    ETA->setText(" - "+tr("No WP"));
+}
+
+void StatusBar::update_eta(QDateTime eta_dtm)
+{
+    int nbS,j,h,m;
+    QString txt;
+    eta_dtm.setTimeSpec(Qt::UTC);
+    QDateTime now = (QDateTime::currentDateTime()).toUTC();
+    nbS=now.secsTo(eta_dtm);
+    j = nbS/(24*3600);
+    nbS-=j*24*3600;
+    h=nbS/3600;
+    nbS-=h*3600;
+    m=nbS/60;
+    nbS-=m*60;
+    txt.sprintf("(%dj %02dh%02dm%02ds)",j,h,m,nbS);
+    txt.replace("j",tr("j"));
+    txt.replace("h",tr("h"));
+    txt.replace("m",tr("m"));
+    txt.replace("s",tr("s"));
+    ETA->setText(" - "+tr(" Arrivee WP")+": " +eta_dtm.toString(tr("dd-MM-yyyy, HH:mm:ss"))+ " " +txt);
 }
