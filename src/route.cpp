@@ -419,7 +419,7 @@ void ROUTE::slot_recalculate(boat * boat)
         }
         double newSpeed,distanceParcourue,remaining_distance,res_lon,res_lat,cap1,cap2,diff1,diff2;
         remaining_distance=0;
-        double previous_remaining_distance=10e6;
+        double previous_remaining_distance=10e5;
         lastKnownSpeed=10e-4;
         double wind_angle,wind_speed,cap,angle,capSaved;
         cap=-1;
@@ -1648,10 +1648,10 @@ void ROUTE::setAutoAt(bool b)
 routeStats ROUTE::getStats()
 {
     routeStats stats;
-    stats.maxBS=-10e6;
-    stats.minBS=10e6;
-    stats.maxTWS=-10e6;
-    stats.minTWS=10e6;
+    stats.maxBS=-10e3;
+    stats.minBS=10e3;
+    stats.maxTWS=-10e3;
+    stats.minTWS=10e3;
     stats.averageTWS=0;
     stats.averageBS=0;
     stats.totalTime=0;

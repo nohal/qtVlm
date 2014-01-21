@@ -407,9 +407,9 @@ QList<vlmPoint> ROUTAGE::finalEpuration(const QList<vlmPoint> &listPoints)
     double initialDist=listPoints.at(0).internal_2;
     if(toBeRemoved<=0) return listPoints;
     QMultiMap<double,QPoint> byCriteres;
-    QHash<quint32,double> byIndices;
+    QHash<quint64,double> byIndices;
     QList<bool> deadStatus;
-    quint32 s;
+    quint64 s;
     double critere=0;
     double xa=listPoints.at(0).routage->getXa();
     double ya=listPoints.at(0).routage->getYa();
@@ -462,8 +462,10 @@ QList<vlmPoint> ROUTAGE::finalEpuration(const QList<vlmPoint> &listPoints)
     deadStatus.append(false);
     QMutableMapIterator<double,QPoint> d(byCriteres);
     int currentCount=listPoints.size();
+    //int replaced=0;
     while(toBeRemoved>0 && currentCount>=0)
     {
+        //QMapIterator<double,QPoint> d(byCriteres);
         d.toFront();
         if(!d.hasNext()) break;
         QPoint couple=d.next().value();
@@ -479,6 +481,7 @@ QList<vlmPoint> ROUTAGE::finalEpuration(const QList<vlmPoint> &listPoints)
         else
             badOne=couple.y();
         deadStatus.replace(badOne,true);
+        //qWarning()<<++replaced<<badOne;
         int previous=-1;
         int next=-1;
         if(badOne>0)
@@ -556,6 +559,7 @@ QList<vlmPoint> ROUTAGE::finalEpuration(const QList<vlmPoint> &listPoints)
         if(!deadStatus.at(nn))
             result.append(listPoints.at(nn));
     }
+    //qWarning()<<listPoints.size()<<result.size()<<toBeRemoved<<deadStatus.count(true)<<deadStatus.count(false);
     return result;
 }
 QList<vlmPoint> ROUTAGE::findRoute(const QList<vlmPoint> & pointList)
@@ -834,7 +838,7 @@ inline int ROUTAGE::calculateTimeRoute(const vlmPoint &routeFrom,const vlmPoint 
     } while (has_eta);
     if(!has_eta)
     {
-        return 10e6;
+        return 10e5;
     }
     if(lastLonFound!=NULL)
     {
@@ -938,7 +942,7 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, DataManager *dataManager, QGrap
     this->poiPrefix="R";
     this->speedLossOnTack=1;
     highlightedIso=0;
-    isoRouteValue=10e6;
+    isoRouteValue=10e5;
     this->running=false;
     this->multiRoutage=false;
     this->multiNb=-1;
@@ -2771,7 +2775,7 @@ double ROUTAGE::findDistancePreviousIso(const vlmPoint &P, const QPolygonF * pol
 {
     double cx=P.x;
     double cy=P.y;
-    double minDistanceSegment=10e6;
+    double minDistanceSegment=10e5;
 
     for(int i=0;i<poly->size()-1;++i)
     {
@@ -2825,7 +2829,7 @@ double ROUTAGE::findDistancePoly(const QPointF P, const QPolygonF * poly, QPoint
 {
     double cx=P.x();
     double cy=P.y();
-    double minDistanceSegment=10e6;
+    double minDistanceSegment=10e5;
 
     for(int i=0;i<poly->size()-1;++i)
     {
@@ -3646,9 +3650,9 @@ void ROUTAGE::removeCrossedSegments()
 {
     if(tempPoints.isEmpty()) return;
     QMultiMap<double,QPoint> byCriteres;
-    QHash<quint32,double> byIndices;
+    QHash<quint64,double> byIndices;
     QList<bool> deadStatus;
-    quint32 s;
+    quint64 s;
     double critere=0;
     for(int n=0;n<tempPoints.size()-1;++n)
     {
@@ -3705,6 +3709,7 @@ void ROUTAGE::removeCrossedSegments()
     int currentCount=tempPoints.count();
     while(currentCount>0)
     {
+        //QMapIterator<double,QPoint> d(byCriteres);
         d.toBack();
         if(!d.hasPrevious()) break;
         d.previous();
@@ -3814,9 +3819,9 @@ void ROUTAGE::removeCrossedSegments()
 {
     if(tempPoints.isEmpty()) return;
     QMultiMap<double,QPoint> byCriteres;
-    QHash<quint32,double> byIndices;
+    QHash<quint64,double> byIndices;
     QList<bool> deadStatus;
-    quint32 s;
+    quint64 s;
     double critere=0;
     QList<vlmLine *> isos=i_iso?i_isochrones:isochrones;
     for(int n=0;n<tempPoints.size()-1;++n)
@@ -4259,7 +4264,7 @@ void ROUTAGE::showIsoRoute()
             Cross=result->getPoints()->at(n);
             proj->map2screenDouble(Cross.lon,Cross.lat,&X,&Y);
             int js=0;
-            double minDist=10e10;
+            double minDist=10e5;
             for(int s=indice;s<isochrone->getPoints()->size()-1;++s)
             {
                 vlmPoint p1=isochrone->getPoints()->at(s);
@@ -4406,7 +4411,7 @@ void ROUTAGE::showIsoRoute()
             Cross=result->getPoints()->at(n);
             proj->map2screenDouble(Cross.lon,Cross.lat,&X,&Y);
             found=false;
-            minDist=10e10;
+            minDist=10e5;
             for(int s=indice;s>0;--s)
             {
                 vlmPoint p1=isochrone->getPoints()->at(s);
@@ -4618,13 +4623,13 @@ double ROUTAGE::pointDistanceRatio(double x, double goal, QPolygonF *poly, QPoly
     if(prev_poly->isEmpty())
         qWarning()<<"prev_poly is empty";
     if(i_poly->isEmpty() || poly->isEmpty() || prev_poly->isEmpty())
-        return 10e6;
+        return 10e5;
     QPointF point=pointAt(i_poly,x);
     QPointF intersection;
     double dist1=this->findDistancePoly(point,poly,&intersection);
     double dist2=this->findDistancePoly(point,prev_poly,&intersection);
     if(dist2==0) return -goal;
-    if(dist1+dist2==0) return 10e6;
+    if(dist1+dist2==0) return 10e5;
     return (dist1/(dist1+dist2))-goal;
 }
 double ROUTAGE::pointDistanceRatioDeriv(double x, double xStep, double goal, bool * status, QPolygonF *poly, QPolygonF *prev_poly, QPolygonF *i_poly)
@@ -4665,7 +4670,7 @@ bool ROUTAGE::newtownRaphson(double * root, double goal,double precision,QPolygo
     double xPos=0,xNeg=0, yPos=0, yNeg=0;
     double df0=0;
     int iterations;
-    double bestY=10e6,bestX=0;
+    double bestY=10e5,bestX=0;
     int nbRestart=-1;
     QList<double> alternativeGuesses;
     alternativeGuesses<<0.1<<0.2<<0.3<<0.4<<0.6<<0.7<<0.8<<0.9;
@@ -5133,7 +5138,7 @@ void ROUTAGE::calculateShapeIso()
     }
     shapeIso.clear();
     QPointF depart=i_iso?QPointF(xa,ya):QPointF(xs,ys);
-    double minDist=10e6;
+    double minDist=10e5;
     iso=isos.last()->getPoints();
     for(n=0;n<iso->size();++n)
         minDist=qMin(minDist,QLineF(QPointF(iso->at(n).x,iso->at(n).y),depart).length());

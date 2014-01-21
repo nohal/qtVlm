@@ -54,8 +54,6 @@ DialogVlmGrib::DialogVlmGrib(MainWindow * ,myCentralWidget * parent,inetConnexio
     waitBox = new QMessageBox(QMessageBox::Information,
                              tr("VLM Grib"),
                              tr("Chargement de la liste de grib"));
-    saveDialog=new QFileDialog();
-    saveDialog->setModal(false);
 }
 void DialogVlmGrib::slot_screenResize()
 {
@@ -195,7 +193,8 @@ bool DialogVlmGrib::doRequest(int reqType)
     switch(reqType)
     {
         case VLM_REQUEST_GET_FOLDER:
-            inetGet(VLM_REQUEST_GET_FOLDER,"/","http://grib.v-l-m.org",false);
+            page="/";
+            inetGet(VLM_REQUEST_GET_FOLDER,page,"http://grib.v-l-m.org",false);
             break;
         case VLM_REQUEST_GET_FILE:
             /*search selected file*/
@@ -227,13 +226,14 @@ void DialogVlmGrib::slot_abort()
 
 void DialogVlmGrib::requestFinished (QByteArray data)
 {
+    //qWarning()<<"vlmgrib requestFinished";
     int nb;
     if(data.isEmpty() || data.isNull()) return;
     switch(getCurrentRequest())
     {
         case VLM_REQUEST_GET_FOLDER:
-            if(!waitBox->isVisible())
-                return;
+//            if(!waitBox->isVisible())
+//                return;
             waitBox->hide();
             nb=parseFolderListing(QString(data));
             if(nb==0)
@@ -242,6 +242,7 @@ void DialogVlmGrib::requestFinished (QByteArray data)
                 return;
             }
             listRadio[nb-1]->setChecked(true);
+            Util::setFontDialog(this);
             exec();
             break;
         case VLM_REQUEST_GET_FILE:
@@ -258,5 +259,4 @@ void DialogVlmGrib::requestFinished (QByteArray data)
 DialogVlmGrib::~DialogVlmGrib()
 {
     delete waitBox;
-    delete saveDialog;
 }

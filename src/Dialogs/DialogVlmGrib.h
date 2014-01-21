@@ -58,7 +58,6 @@ private:
         bool doRequest(int reqType);
         int parseFolderListing(QString data);
         bool gribFileReceived(QByteArray * content);
-        QFileDialog * saveDialog;
 };
 
 #endif // DIALOGVLM_GRIB_H

@@ -77,6 +77,12 @@ int main(int argc, char *argv[])
     QString appExeFolder=QApplication::applicationDirPath();
 #ifdef __ANDROID__
     QDir::setCurrent("/storage/emulated/0/qtVlm");
+//    QFile testWrite;
+//    testWrite.setFileName("testWrite.txt");
+//    if(testWrite.open(QIODevice::WriteOnly | QIODevice::Text ))
+//        qWarning()<<"test write succesfull";
+//    else
+//        qWarning()<<"test write failed";
 #elif defined (__UNIX_QTVLM)
     QString curDir=QDir::currentPath();
     qWarning() << "currentPath returns: " << curDir << "applicationDirPath returns: " << appExeFolder;

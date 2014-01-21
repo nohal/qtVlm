@@ -1164,7 +1164,7 @@ void myCentralWidget::escapeKeyPressed(void)
     emit POI_selectAborted(NULL);
     slot_clearSelection();
     horn->stop();
-    this->replayStep=10e6;
+    this->replayStep=10e4;
     escKey_barrier();
 }
 void myCentralWidget::slot_mousePress(QGraphicsSceneMouseEvent* e)

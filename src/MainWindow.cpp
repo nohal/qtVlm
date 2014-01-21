@@ -237,6 +237,7 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowIcon (QIcon (appFolder.value("icon")+"qtVlm_48x48.png"));
     noSave=false;
     originalPalette=QApplication::palette();
+    qWarning()<<QStyleFactory::keys();
 #ifdef QT_V5
     if(Settings::getSetting(fusionStyle).toInt()==1)
     {
@@ -273,7 +274,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     INTERPOLATION_DEFAULT=Settings::getSetting(defaultInterpolation).toInt();
 
-    qWarning() <<  "Starting qtVlm - " << Version::getCompleteName();
+    qWarning() <<  "Starting qtVlm - " << Version::getCompleteName()+" "+QString().setNum(sizeof(int*)*8)+" bits ";
 
     /* timer de gestion des VAC */
     timer = new QTimer(this);

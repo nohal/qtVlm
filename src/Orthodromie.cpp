@@ -207,7 +207,7 @@ double Orthodromie::getLoxoDistance() const
     double L0=log(tan(M_PI_4+lat0/2));
     double L1=log(tan(M_PI_4+lat1/2));
     double q=0;
-    if(qRound(qAbs(L0-L1)*10e8)==0)
+    if(qRound(qAbs(L0-L1)*10e4)==0)
         q=cos(lat1);
     else
         q=(lat1-lat0)/(L1-L0);
