@@ -53,6 +53,7 @@ class BarrierSet: public QObject
 
         static void get_barrierSetListFromKeys(QList<QString> keyList,QList<BarrierSet*>* mySetList);
         static bool barrierSetListContains(QString key);
+        static bool hasShownBarrierSet(void);
 
         void cleanEmptyBarrier(Barrier * barrier, bool withMsgBox=false);
 

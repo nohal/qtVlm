@@ -2012,8 +2012,14 @@ void myCentralWidget::do_shPor(bool val) {
     emit shPor(shPor_st);
 }
 
-void myCentralWidget::slot_shBarSet(bool){
-    do_shBarSet(!shBarSet_st);
+void myCentralWidget::slot_shBarSet(bool val){
+    if(BarrierSet::hasShownBarrierSet())
+        do_shBarSet(!shBarSet_st);
+    else {
+        menuBar->acOptions_SH_barSet->blockSignals(true);
+        menuBar->acOptions_SH_barSet->setChecked(!val);
+        menuBar->acOptions_SH_barSet->blockSignals(false);
+    }
 }
 
 void myCentralWidget::do_shBarSet(bool val) {

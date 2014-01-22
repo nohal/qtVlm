@@ -309,6 +309,13 @@ bool BarrierSet::barrierSetListContains(QString key) {
     return false;
 }
 
+bool BarrierSet::hasShownBarrierSet(void) {
+    for(int i=0;i<barrierSetList.count();++i)
+        if(!barrierSetList.at(i)->get_isHidden())
+            return true;
+    return false;
+}
+
 void BarrierSet::saveBarriersToDisk(void) {
     QString fname = appFolder.value("userFiles")+"poi.dat";
 
