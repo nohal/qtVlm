@@ -283,7 +283,7 @@ void BarrierSet::readBarriersFromDisk(MainWindow * mainWindow) {
             if(barrierSet->get_name().isEmpty() && barrierSet->get_barriers()->isEmpty()) {
                 delete barrierSet;
             }
-            else {
+            else { // remove duplicated barrierSet
                 if(barrierSetListContains(barrierSet->get_key())) {
                     discarded++;
                     delete barrierSet;

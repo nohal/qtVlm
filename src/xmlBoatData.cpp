@@ -66,7 +66,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define BOAT_LAT_NAME       "Latitude"
 #define BOAT_LON_NAME       "Longitude"
 #define BOAT_NPD            "NotePad"
-#define BOAT_GROUP_SET_NAME "BarrierSetKey"
+#define BOAT_GROUP_SET_NAME "BarrierSetGroup"
+#define BOAT_GROUP_SET_NAME_OLD "BarrierSetKey"
 #define BOAT_KEY_NAME       "BarrierSetKey"
 #define BOAT_USE_SKIN       "UseSkin"
 #define BOAT_BOARD_SKIN     "BoardSkin"
@@ -723,7 +724,8 @@ void xml_boatData::readBoat(QDomNode node,PlayerMap * pList)
                     }
                 }               
 
-                if(subNode.toElement().tagName() == BOAT_GROUP_SET_NAME)
+                if(subNode.toElement().tagName() == BOAT_GROUP_SET_NAME
+                        || subNode.toElement().tagName() == BOAT_GROUP_SET_NAME_OLD)
                 {
                     QDomNode subSubNode= subNode.firstChild();
 

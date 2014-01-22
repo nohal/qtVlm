@@ -412,6 +412,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     shRoute_st = Settings::getSetting(hideRoute).toInt()==1;
     shOpp_st = Settings::getSetting(hideOpponent).toInt()==1;
     shPor_st = Settings::getSetting(hidePorte).toInt()==1;
+    shBarSet_st = Settings::getSetting(hideBarrierSet).toInt()==1;
 
     selectionTool=false;
     magnifier=NULL;
