@@ -38,6 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QTranslator>
 #include <QDebug>
 #include <QStyleFactory>
+#include <QLCDNumber>
 
 BoardVlmNew::BoardVlmNew (QWidget* parent): BoardInterface (parent)
 {
@@ -137,13 +138,64 @@ void BoardVlmNew::initBoard(MainWindowInterface *main)
     lab_polar->installEventFilter(this);
     lab_polarData->clear();
     QString tabStyle;
+    QPalette palette=main->getOriginalPalette();
+    tabWidget->setPalette(palette);
+    tabWidget->setStyleSheet("");
     tabStyle+="QTabWidget::pane { border: 0; } ";
     tabStyle+="QTabWidget::tab-bar {alignment: left;}";
     tabStyle+="QTabWidget { background: transparent; } ";
-    tabStyle+="QTabBar::tab { font-size: 8.5;border: 0px solid #000000;border-bottom-right-radius: 8px;border-top-right-radius: 8px;padding: 2px;margin-left: 4px;margin-right: 4px;margin-bottom:3px;}";
-    tabStyle+="QTabBar::tab:selected { background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #CC9900, stop: 0.8 #FFE085);margin-left:0;}";
-    tabStyle+="QTabBar::tab:!selected { background: #C2C7CB;margin-right: 4px;}";
+    tabStyle+="QTabBar::tab { font-size: 8.5;color: #000000;border: 0px solid #000000;border-bottom-right-radius: 8px;border-top-right-radius: 8px;padding: 2px;padding-top: 2px;padding-bottom: 2px;margin-left: 4px;margin-right: 4px;margin-bottom:3px;}";
+    tabStyle+="QTabBar::tab:selected { background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #CC9900, stop: 0.8 #FFE085);margin-left:0;;padding: 2px;padding-top: 2px;padding-bottom:2px;}";
+    tabStyle+="QTabBar::tab:!selected { background: #C2C7CB;margin-right: 4px;;padding: 2px;padding-top: 2px;padding-bottom:2px;margin-top:0px;}";
     tabWidget->setStyleSheet(tabStyle);
+    lab_BS->setStyleSheet("QLabel {color: #000000;}");
+    lab_TWS->setStyleSheet("QLabel {color: #000000;}");
+    lab_TWD->setStyleSheet("QLabel {color: #000000;}");
+    this->rd_HDG->setPalette(palette);
+    this->rd_ORTHO->setPalette(palette);
+    this->rd_TWA->setPalette(palette);
+    this->rd_VBVMG->setPalette(palette);
+    this->rd_VMG->setPalette(palette);
+    QString myColor1="#818181";
+    QString myColor4="#ffffff"; // white
+    QString myColor6="#090c98"; // blue
+    QString stylerd=""
+            "QRadioButton::indicator:checked, QRadioButton::indicator:unchecked{"
+                "color: myColor4;"
+                "background-color: myColor4;"
+                "border: 2px solid myColor1;"
+                "border-radius: 6px;}"
+
+            "QRadioButton::indicator:checked{"
+                "background-color: qradialgradient("
+                    "cx: 0.5, cy: 0.5,"
+                    "fx: 0.5, fy: 0.5,"
+                    "radius: 1.0,"
+                    "stop: 0 myColor6,"
+                    "stop: 0.5 myColor4,"
+                    "stop: 1 myColor1);}"
+
+            "QRadioButton::indicator{"
+                "border-radius: 6px;}"
+
+            "QRadioButton::indicator:hover{"
+                "border: 2px solid myColor6;}"
+
+            "QRadioButton::indicator:disabled{"
+                "border: 1px solid #444;}";
+    stylerd.replace("myColor1",myColor1);
+    stylerd.replace("myColor4",myColor4);
+    stylerd.replace("myColor6",myColor6);
+    this->rd_HDG->setStyleSheet(stylerd);
+    this->rd_ORTHO->setStyleSheet(stylerd);
+    this->rd_TWA->setStyleSheet(stylerd);
+    this->rd_VBVMG->setStyleSheet(stylerd);
+    this->rd_VMG->setStyleSheet(stylerd);
+    palette.setColor(QPalette::Light,QColor(Qt::white));
+    palette.setColor(QPalette::Dark,QColor(Qt::black));
+    this->lcd_BS->setPalette(palette);
+    this->lcd_TWD->setPalette(palette);
+    this->lcd_TWS->setPalette(palette);
     //spin_HDG->setStyleSheet("QDoubleSpinBox::up-arrow {background-color: rgb(100, 100, 100);}");
     this->lab_backTab1->installEventFilter(this);
     this->lab_backTab2->installEventFilter(this);
@@ -771,6 +823,12 @@ void BoardVlmNew::updateLcds()
     color=Qt::white;
     this->lcd_TWD->setStyleSheet((QString().sprintf("background-color: rgba(%d, %d, %d,%d);",color.red(),color.green(),color.blue(),180)));
     this->lcd_BS->setStyleSheet((QString().sprintf("background-color: rgba(%d, %d, %d, %d);",color.red(),color.green(),color.blue(),180)));
+    QPalette palette=main->getOriginalPalette();
+    palette.setColor(QPalette::Light,QColor(Qt::white));
+    palette.setColor(QPalette::Dark,QColor(Qt::black));
+    this->lcd_BS->setPalette(palette);
+    this->lcd_TWS->setPalette(palette);
+    this->lcd_TWD->setPalette(palette);
 }
 void BoardVlmNew::slot_timerElapsed()
 {
@@ -793,6 +851,10 @@ void BoardVlmNew::slot_timerElapsed()
     lcd_BS->setDigitCount(s.count());
     this->lcd_BS->display(s);
     this->lcd_BS->setStyleSheet((QString().sprintf("background-color: rgba(%d, %d, %d, %d);",color.red(),color.green(),color.blue(),180)));
+    QPalette palette=main->getOriginalPalette();
+    palette.setColor(QPalette::Light,QColor(Qt::white));
+    palette.setColor(QPalette::Dark,QColor(Qt::black));
+    this->lcd_BS->setPalette(palette);
 }
 void BoardVlmNew::timerStop()
 {

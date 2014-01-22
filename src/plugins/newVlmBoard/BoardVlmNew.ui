@@ -1265,7 +1265,7 @@
    <widget class="QRadioButton" name="rd_TWA">
     <property name="geometry">
      <rect>
-      <x>137</x>
+      <x>140</x>
       <y>61</y>
       <width>16</width>
       <height>17</height>
@@ -1294,7 +1294,7 @@
    <widget class="QRadioButton" name="rd_HDG">
     <property name="geometry">
      <rect>
-      <x>149</x>
+      <x>151</x>
       <y>102</y>
       <width>16</width>
       <height>17</height>
