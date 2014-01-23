@@ -175,6 +175,7 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     spnEstime=new QSpinBox(estimeToolBar);
     spnEstime->setMaximum(999);
     spnEstime->setMinimum(1);
+    spnEstime->setAlignment(Qt::AlignRight);
     cbEstime=new QComboBox(estimeToolBar);
     cbEstime->addItem(tr("mins"));
     cbEstime->addItem(tr("vacs"));

@@ -68,7 +68,16 @@ DialogRoute::DialogRoute(ROUTE *route, myCentralWidget *parent, bool createMode)
     QString tip=tr("Ce bouton a 3 etats:<br><b>Non coche:</b> La route ne sera pas simplifiee.<br><b>Partiellement coche:</b> La route sera simplifiee en mode minimum, c'est le meilleur mode.<br><b>Completement coche:</b> La route sera simplifiee au maximum. Ce mode peut degrader la qualite du routage.");
     Simplifier->setToolTip(tip.replace(" ","&nbsp;"));
     Util::setFontDialog(this);
-
+    if(Settings::getSetting(fusionStyle).toInt()==1)
+    {
+        warning_text->setStyleSheet("color: #dc759b;");
+        useVbvmgVlm->setStyleSheet("color: yellow;");
+    }
+    else
+    {
+        warning_text->setStyleSheet("color: red;");
+        useVbvmgVlm->setStyleSheet("color: blue;");
+    }
     QMap<QWidget *,QFont> exceptions;
     QFont wfont=QApplication::font();
     wfont.setPointSizeF(8.0);
@@ -610,20 +619,6 @@ void DialogRoute::slotInterval()
         this->engineTime->setText(Util::formatElapsedTime(elapsed));
     }
     delete waitBox;
-    routeStats stats=route->getStats();
-    qWarning()<<"total time"<<Util::formatElapsedTime(stats.totalTime);
-    qWarning()<<"total time beating"<<Util::formatElapsedTime(stats.beatingTime);
-    qWarning()<<"total time largue"<<Util::formatElapsedTime(stats.largueTime);
-    qWarning()<<"total time downwind"<<Util::formatElapsedTime(stats.reachingTime);
-    qWarning()<<"total time at night"<<Util::formatElapsedTime(stats.nightTime);
-    qWarning()<<"total distance"<<stats.totalDistance;
-    qWarning()<<"average tws"<<stats.averageTWS;
-    qWarning()<<"max tws"<<stats.maxTWS;
-    qWarning()<<"min tws"<<stats.minTWS;
-    qWarning()<<"average bs"<<stats.averageBS;
-    qWarning()<<"max bs"<<stats.maxBS;
-    qWarning()<<"min bs"<<stats.minBS;
-    qWarning()<<"nb gybes/tacks"<<stats.nbTacksGybes;
 }
 void DialogRoute::drawTransformedLine( QPainter &pnt,
         double si, double co,int di, int dj, int i,int j, int k,int l)

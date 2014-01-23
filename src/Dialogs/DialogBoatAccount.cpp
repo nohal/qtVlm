@@ -47,6 +47,10 @@ DialogBoatAccount::DialogBoatAccount(Projection * proj, MainWindow * main, myCen
     this->main=main;
     this->parent=parent;
     this->inet=inet;
+    if(Settings::getSetting(fusionStyle).toInt()==1)
+        enable_state->setStyleSheet("color: yellow;");
+    else
+        enable_state->setStyleSheet("color: red;");
 
     /* signal / slot init */
 
@@ -102,7 +106,10 @@ bool DialogBoatAccount::initList( QList<boatVLM*> * boat_list, Player * player)
             item = new QListWidgetItem(list_boatSit);
         if(boat->getStatus())
         {
-            item->setData(Qt::ForegroundRole,QColor(Qt::darkRed));
+            if(Settings::getSetting(fusionStyle).toInt()==1)
+                item->setData(Qt::ForegroundRole,QColor(Qt::yellow));
+            else
+                item->setData(Qt::ForegroundRole,QColor(Qt::darkRed));
         }
         setBoatItemName(item,boat);
         item->setData(ROLE_IDX,boat_idx);
@@ -407,9 +414,14 @@ void DialogBoatAccount::setItem(QListWidgetItem * item)
 void DialogBoatAccount::slot_enableChanged(bool b)
 {
     if(b)
-        this->currentItem->setData(Qt::ForegroundRole,QColor(Qt::darkRed));
+    {
+        if(Settings::getSetting(fusionStyle).toInt()==1)
+            this->currentItem->setData(Qt::ForegroundRole,QColor(Qt::yellow));
+        else
+            this->currentItem->setData(Qt::ForegroundRole,QColor(Qt::darkRed));
+    }
     else
-        this->currentItem->setData(Qt::ForegroundRole,QColor(Qt::black));
+        this->currentItem->setData(Qt::ForegroundRole,this->palette().text().color());
 }
 
 void  DialogBoatAccount::chkAlias_changed(int state)
