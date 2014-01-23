@@ -477,8 +477,8 @@ void DialogPilototo::sendPilototo(void)
             {
                 poiToWp->slot_setWP();
                 poiToWp=NULL;
+                return;
             }
-            return;
         }
 
 
