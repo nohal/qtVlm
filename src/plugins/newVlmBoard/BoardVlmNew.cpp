@@ -59,6 +59,7 @@ void BoardVlmNew::initBoard(MainWindowInterface *main)
         QApplication::installTranslator(translator);
         qWarning()<<"loading"<<lang<<"in plugin";
     }
+    this->setStyle(QStyleFactory::create("Windows"));
     this->setupUi(this);
     this->setFontDialog(this);
     this->windAngle->setMain(main);

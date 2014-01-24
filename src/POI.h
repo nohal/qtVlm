@@ -36,6 +36,8 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #define POI_TYPE_WP     1
 #define POI_TYPE_BALISE 2
 
+#define ALLOW_VBVMG_VLM_OPTIM
+
 //===================================================================
 class POI : public QGraphicsWidget
 { Q_OBJECT
