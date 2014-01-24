@@ -49,7 +49,9 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     iconSize=QToolBar().iconSize();
     //qWarning()<<"iconSize="<<iconSize;
     QPixmap add("img/add.png");
+#ifdef __ANDROID__
     add=add.scaled(iconSize,Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
+#endif
     add.save("img/addResized.png");
 
 //    miscToolBar=new MyToolBar("Misc",tr("Misc"),this,mainWindow);
@@ -256,14 +258,18 @@ ToolBar::ToolBar(MainWindow *mainWindow)
 void ToolBar::mySetIcon(QToolButton * button,QString iconFile)
 {
     QPixmap pix=QPixmap(iconFile);
+#ifdef __ANDROID__
     pix=pix.scaled(iconSize,Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
+#endif
     button->setIconSize(iconSize);
     button->setIcon(QIcon(pix));
 }
 void ToolBar::mySetIcon(QAction * action,QString iconFile)
 {
     QPixmap pix=QPixmap(iconFile);
+#ifdef __ANDROID__
     pix=pix.scaled(iconSize,Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
+#endif
     action->setIcon(QIcon(pix));
 }
 
