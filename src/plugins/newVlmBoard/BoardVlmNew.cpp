@@ -59,7 +59,7 @@ void BoardVlmNew::initBoard(MainWindowInterface *main)
         QApplication::installTranslator(translator);
         qWarning()<<"loading"<<lang<<"in plugin";
     }
-    this->setStyle(QStyleFactory::create("Windows"));
+    //this->setStyle(QStyleFactory::create("Windows"));
     this->setupUi(this);
     this->setFontDialog(this);
     this->windAngle->setMain(main);
@@ -152,46 +152,49 @@ void BoardVlmNew::initBoard(MainWindowInterface *main)
     this->rd_TWA->setPalette(palette);
     this->rd_VBVMG->setPalette(palette);
     this->rd_VMG->setPalette(palette);
-    QString myColor1="#818181";
-    QString myColor4="#ffffff"; // white
-    QString myColor6="#090c98"; // blue
-    QString stylerd=""
-            "QRadioButton::indicator:checked, QRadioButton::indicator:unchecked{"
-                "color: myColor4;"
-                "background-color: myColor4;"
-                "border: 2px solid myColor1;"
-                "border-radius: 6px;}"
+    if(main->getSettingApp(fusionStyle).toInt()==1)
+    {
+        QString myColor1="#818181";
+        QString myColor4="#ffffff"; // white
+        QString myColor6="#090c98"; // blue
+        QString stylerd=""
+                "QRadioButton::indicator:checked, QRadioButton::indicator:unchecked{"
+                    "color: myColor4;"
+                    "background-color: myColor4;"
+                    "border: 2px solid myColor1;"
+                    "border-radius: 6px;}"
 
-            "QRadioButton::indicator:checked{"
-                "background-color: qradialgradient("
-                    "cx: 0.5, cy: 0.5,"
-                    "fx: 0.5, fy: 0.5,"
-                    "radius: 1.0,"
-                    "stop: 0 myColor6,"
-                    "stop: 0.5 myColor4,"
-                    "stop: 1 myColor1);}"
+                "QRadioButton::indicator:checked{"
+                    "background-color: qradialgradient("
+                        "cx: 0.5, cy: 0.5,"
+                        "fx: 0.5, fy: 0.5,"
+                        "radius: 1.0,"
+                        "stop: 0 myColor6,"
+                        "stop: 0.5 myColor4,"
+                        "stop: 1 myColor1);}"
 
-            "QRadioButton::indicator{"
-                "border-radius: 6px;}"
+                "QRadioButton::indicator{"
+                    "border-radius: 6px;}"
 
-            "QRadioButton::indicator:hover{"
-                "border: 2px solid myColor6;}"
+                "QRadioButton::indicator:hover{"
+                    "border: 2px solid myColor6;}"
 
-            "QRadioButton::indicator:disabled{"
-                "border: 1px solid #444;}";
-    stylerd.replace("myColor1",myColor1);
-    stylerd.replace("myColor4",myColor4);
-    stylerd.replace("myColor6",myColor6);
-    this->rd_HDG->setStyleSheet(stylerd);
-    this->rd_ORTHO->setStyleSheet(stylerd);
-    this->rd_TWA->setStyleSheet(stylerd);
-    this->rd_VBVMG->setStyleSheet(stylerd);
-    this->rd_VMG->setStyleSheet(stylerd);
-    palette.setColor(QPalette::Light,QColor(Qt::white));
-    palette.setColor(QPalette::Dark,QColor(Qt::black));
-    this->lcd_BS->setPalette(palette);
-    this->lcd_TWD->setPalette(palette);
-    this->lcd_TWS->setPalette(palette);
+                "QRadioButton::indicator:disabled{"
+                    "border: 1px solid #444;}";
+        stylerd.replace("myColor1",myColor1);
+        stylerd.replace("myColor4",myColor4);
+        stylerd.replace("myColor6",myColor6);
+        this->rd_HDG->setStyleSheet(stylerd);
+        this->rd_ORTHO->setStyleSheet(stylerd);
+        this->rd_TWA->setStyleSheet(stylerd);
+        this->rd_VBVMG->setStyleSheet(stylerd);
+        this->rd_VMG->setStyleSheet(stylerd);
+        palette.setColor(QPalette::Light,QColor(Qt::white));
+        palette.setColor(QPalette::Dark,QColor(Qt::black));
+        this->lcd_BS->setPalette(palette);
+        this->lcd_TWD->setPalette(palette);
+        this->lcd_TWS->setPalette(palette);
+    }
     //spin_HDG->setStyleSheet("QDoubleSpinBox::up-arrow {background-color: rgb(100, 100, 100);}");
     this->lab_backTab1->installEventFilter(this);
     this->lab_backTab2->installEventFilter(this);
