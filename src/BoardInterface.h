@@ -30,6 +30,8 @@ public:
     virtual ~BoardInterface(){}
     virtual void initBoard(MainWindowInterface * main)=0;
     virtual QString getName() =0;
+public slots:
+    virtual void slot_selectWP_POI()=0;
 };
 Q_DECLARE_INTERFACE(BoardInterface,"qtVlm.plugins.boardInterface/1.1")
 #endif // BOARDINTERFACE_H

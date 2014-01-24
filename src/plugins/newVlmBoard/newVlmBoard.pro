@@ -35,9 +35,9 @@ TRANSLATIONS = ../../../tr/pluginNewBoardVlm_en.ts \
     ../../../tr/pluginNewBoardVlm_fr.ts \
     ../../../tr/pluginNewBoardVlm_cz.ts \
     ../../../tr/pluginNewBoardVlm_es.ts
-HEADERS = ../../BoardInterface.h BoardVlmNew.h DialogWp.h BoardTools.h ../../AngleUtil.h ../../Orthodromie.h
-SOURCES = BoardVlmNew.cpp DialogWp.cpp ../../AngleUtil.cpp ../../Orthodromie.cpp plugin.cpp
-FORMS = BoardVlmNew.ui WP_dialog.ui
+HEADERS = ../../BoardInterface.h BoardVlmNew.h BoardTools.h ../../AngleUtil.h ../../Orthodromie.h
+SOURCES = BoardVlmNew.cpp ../../AngleUtil.cpp ../../Orthodromie.cpp plugin.cpp
+FORMS = BoardVlmNew.ui
 
 unix:!macx: DEFINES += _TTY_POSIX_ __TERRAIN_QIMAGE __UNIX_QTVLM
 win32:DEFINES += _TTY_WIN_ \

@@ -90,6 +90,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "dialogviewpolar.h"
 #include "DialogEditBarrier.h"
 #include "DialogRouteComparator.h"
+#include "DialogWp.h"
 #include <QStyleFactory>
 //#include <QtQuick/QQuickView>
 //#include <QPluginLoader>
@@ -242,6 +243,7 @@ MainWindow::MainWindow(QWidget *parent)
 #ifdef __ANDROID__
     QStyle * android=QStyleFactory::create("Android");
     qApp->setStyle(android);
+#if 0
     QPalette p=qApp->palette();
     p.setColor(QPalette::Window, QColor(53,53,53));
     p.setColor(QPalette::Button, QColor(53,53,53));
@@ -258,7 +260,6 @@ MainWindow::MainWindow(QWidget *parent)
     p.setColor(QPalette::Disabled, QPalette::Light, QColor(53,53,53));
     p.setColor(QPalette::Disabled, QPalette::WindowText, dis);
     qApp->setPalette(p);
-#if 0
     QString myColor1="#323232"; // dark grey
     QString myColor2="#5a5712"; // yellow dark
     QString myColor3="#6b0b86"; // violet legerement fonce
@@ -400,9 +401,11 @@ MainWindow::MainWindow(QWidget *parent)
         QPalette p=qApp->palette();
         p.setColor(QPalette::Window, QColor(53,53,53));
         p.setColor(QPalette::Button, QColor(53,53,53));
+        p.setColor(QPalette::Disabled, QPalette::Button, QColor(83,83,83));
         p.setColor(QPalette::Base, QColor(53,53,53));
         p.setColor(QPalette::Highlight, QColor(142,45,197));
         p.setColor(QPalette::ButtonText, QColor(234,221,21));
+        p.setColor(QPalette::Disabled, QPalette::ButtonText, QColor(247,251,141));
         p.setColor(QPalette::WindowText, QColor(255,255,255));
         p.setColor(QPalette::Text, QColor(255,255,255));
         p.setColor(QPalette::AlternateBase,QColor(100,100,100));
@@ -2631,6 +2634,7 @@ bool MainWindow::get_selPOI_instruction()
 
 void MainWindow::slot_POIselected(POI* poi)
 {
+    qWarning()<<"main slot_Poiselected with"<<isSelectingWP;
     if(selPOI_instruction)
     {
         DialogPilototoInstruction * tmp=selPOI_instruction;
@@ -3198,4 +3202,13 @@ QPalette MainWindow::getOriginalPalette() const
 void MainWindow::setFontDialog(QWidget * o) {
     Util::setFontDialog(o);
 }
-
+void MainWindow::manageWPDialog(BoatInterface * myBoat, BoardInterface * boardPlugin)
+{
+    if(!myBoat) return;
+    DialogWp * wpDialog = new DialogWp(this->my_centralWidget);
+    wpDialog->setLocked(!myBoat->getLockStatus());
+    connect(wpDialog,SIGNAL(selectPOI()),boardPlugin,SLOT(slot_selectWP_POI()));
+    connect(this,SIGNAL(editWP_POI(POI*)),wpDialog,SLOT(slot_selectPOI(POI*)));
+    connect(wpDialog,SIGNAL(finished(int)),wpDialog,SLOT(deleteLater()));
+    wpDialog->show_WPdialog((boat*)myBoat);
+}

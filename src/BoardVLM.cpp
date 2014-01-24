@@ -733,7 +733,10 @@ void boardVLM::update_btnWP(void)
 
 void boardVLM::doWP_edit()
 {
-    wpDialog->show_WPdialog(currentBoat());
+    if(mainWin->get_selPOI_instruction())
+        mainWin->slot_POIselected(NULL);
+    else
+        wpDialog->show_WPdialog(currentBoat());
 }
 void boardVLM::show_WPdialog(POI * poi)
 {

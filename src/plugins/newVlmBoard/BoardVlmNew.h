@@ -79,7 +79,6 @@ private:
     QLabel * currentRB;
     void timerStop();
     bool blocking;
-    DialogWp * wpDialog;
     double computeAngle();
     void update_btnPilototo();
     void set_style(QPushButton * button, QColor color=QColor(230,230,230), QColor color2=Qt::white);

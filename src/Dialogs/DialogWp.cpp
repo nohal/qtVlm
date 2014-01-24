@@ -48,6 +48,11 @@ DialogWp::DialogWp(myCentralWidget * parent) : QDialog(parent->getMainWindow())
     WP_conv_lat->setText("");
     WP_conv_lon->setText("");
 }
+DialogWp::~DialogWp()
+{
+    qWarning()<<"deleting dialogWP";
+}
+
 void DialogWp::slot_screenResize()
 {
     Util::setWidgetSize(this,this->sizeHint());
@@ -79,7 +84,13 @@ void DialogWp::show_WPdialog(POI * poi, boat * boat)
         initDialog(poi->getLatitude(),poi->getLongitude(),poi->getWph());
     else
         initDialog(currentBoat->getWPLat(),currentBoat->getWPLon(),currentBoat->getWPHd());
-    exec();
+    show();
+}
+void DialogWp::slot_selectPOI(POI * poi)
+{
+    if(poi!=NULL)
+        initDialog(poi->getLatitude(),poi->getLongitude(),poi->getWph());
+    show();
 }
 
 void DialogWp::initDialog(double WPLat,double WPLon,double WPHd)
@@ -103,6 +114,7 @@ void DialogWp::initDialog(double WPLat,double WPLon,double WPHd)
 
 void DialogWp::done(int result)
 {
+    //qWarning()<<"done with "<<result;
     Settings::saveGeometry(this);
     if(result == QDialog::Accepted)
     {
@@ -193,5 +205,5 @@ void DialogWp::doCopy()
 void DialogWp::doSelPOI()
 {
     emit selectPOI();
-    QDialog::done(QDialog::Rejected);
+    hide();
 }

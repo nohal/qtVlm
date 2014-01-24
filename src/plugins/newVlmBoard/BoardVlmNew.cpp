@@ -28,7 +28,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "BoardVlmNew.h"
 #include "ui_BoardVlmNew.h"
 #include "POI.h"
-#include "DialogWp.h"
 #include "PolarInterface.h"
 #include "vlmLine.h"
 #include "BoatInterface.h"
@@ -43,7 +42,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 BoardVlmNew::BoardVlmNew (QWidget* parent): BoardInterface (parent)
 {
     translator=NULL;
-    wpDialog=NULL;
 }
 
 void BoardVlmNew::initBoard(MainWindowInterface *main)
@@ -99,12 +97,9 @@ void BoardVlmNew::initBoard(MainWindowInterface *main)
     connect(this->btn_clearPilototo,SIGNAL(clicked()),this,SLOT(slot_clearPilototo()));
     connect(btn_pilototo,SIGNAL(clicked()),main,SLOT(slotPilototo()));
     connect(btn_clearWP,SIGNAL(clicked()),this,SLOT(slot_clearWP()));
-    connect(main,SIGNAL(selectPOI(bool)),this,SLOT(slot_selectPOI(bool)));
     connect(main,SIGNAL(wpChanged()),this,SLOT(slot_updateBtnWP()));
     connect(main,SIGNAL(paramVLMChanged()),this,SLOT(slot_reloadSkin()));
     connect(main,SIGNAL(updateLockIcon(QString)),this,SLOT(slot_lock()));
-    wpDialog = new DialogWp(main);
-    connect(wpDialog,SIGNAL(selectPOI()),this,SLOT(slot_selectWP_POI()));
     connect(main,SIGNAL(editWP_POI(POI*)),this,SLOT(slot_selectPOI(POI*)));
     connect(tabWidget,SIGNAL(currentChanged(int)),this,SLOT(slot_tabChanged(int)));
     connect(btn_wp,SIGNAL(clicked()),this,SLOT(slot_editWP()));
@@ -237,8 +232,6 @@ QString BoardVlmNew::getName()
 }
 BoardVlmNew::~BoardVlmNew()
 {
-    if(wpDialog)
-        delete wpDialog;
     if(translator)
         QApplication::removeTranslator(translator);
 }
@@ -435,7 +428,6 @@ void BoardVlmNew::slot_lock()
     this->rd_VMG->setDisabled(lock);
     this->dial->setDisabled(lock);
     this->btn_angleFlip->setDisabled(lock);
-    wpDialog->setLocked(!lock);
     this->btn_clearPilototo->setDisabled(lock);
     this->btn_clearWP->setDisabled(lock);
 }
@@ -947,7 +939,7 @@ void BoardVlmNew::slot_editWP()
     if(main->get_selPOI_instruction())
         main->slot_POIselected(NULL);
     else
-        wpDialog->show_WPdialog(myBoat);
+        main->manageWPDialog(myBoat,this);
 }
 
 void BoardVlmNew::slot_updateBtnWP(void)
@@ -1063,7 +1055,6 @@ void BoardVlmNew::slot_clearWP()
 }
 void BoardVlmNew::slot_selectPOI(bool doSelect)
 {
-    //qWarning()<<"inside slot_selectPOI with"<<doSelect;
     if(doSelect)
     {
         btn_pilototo->setText(tr("Annuler"));
@@ -1076,25 +1067,19 @@ void BoardVlmNew::slot_selectPOI(bool doSelect)
         update_btnPilototo();
         this->set_enabled(true);
     }
-    //qWarning()<<"exit slot_selectPOI with"<<doSelect;
 }
-void BoardVlmNew::slot_selectPOI(POI * poi)
+void BoardVlmNew::slot_selectPOI(POI *)
 {
-    //qWarning()<<"inside slot_selectPOI";
     this->set_enabled(true);
     slot_updateBtnWP();
-    wpDialog->show_WPdialog(poi, myBoat);
-    //qWarning()<<"exit slot_selectPOI";
 }
 void BoardVlmNew::slot_selectWP_POI()
 {
-    //qWarning()<<"inside slot_selectWP_POI";
     btn_wp->setText(tr("Annuler"));
     set_style(btn_wp,QColor(151,179,210));/*blue*/
     this->set_enabled(false);
     btn_wp->setEnabled(true);
     main->slotSelectWP_POI();
-    //qWarning()<<"exit slot_selectWP_POI";
 }
 void BoardVlmNew::set_enabled(const bool &b)
 {

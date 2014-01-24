@@ -20,6 +20,7 @@ class MainWindowInterface: public QMainWindow
         virtual QString formatLongitude(const double &x) =0;
         virtual QString formatLatitude(const double &y) =0;
         virtual void setFontDialog(QWidget * o) =0;
+        virtual void manageWPDialog(BoatInterface * myBoat, BoardInterface *boardPlugin)=0;
 
     public slots:
         virtual void slotVLM_Sync()=0;
