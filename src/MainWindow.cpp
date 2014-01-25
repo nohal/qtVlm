@@ -2459,6 +2459,7 @@ void MainWindow::slotSelectBoat(boat* newSelect)
         emit boatSelected(selectedBoat);
         selectedBoat->slot_selectBoat();
         selectedBoat->setZoom(proj->getScale());
+        emit updateRoute(selectedBoat);
         return;
     }
 
@@ -2517,6 +2518,7 @@ void MainWindow::slotSelectBoat(boat* newSelect)
 
     }
     emit paramVLMChanged();
+    emit updateRoute(newSelect);
 }
 
 /***********************************
