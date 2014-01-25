@@ -77,13 +77,22 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
         ETA->setStyleSheet("color: rgb(51, 212, 195);");
     else
         ETA->setStyleSheet("color: rgb(33,33,179);");
-    this->addWidget(ETA);
+    this->addPermanentWidget(ETA);
+    this->setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Minimum);
+    this->stBar_label_1->setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Minimum);
+    this->stBar_label_2->setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Minimum);
+    this->stBar_label_3->setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Minimum);
+    this->ETA->setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Minimum);
 #ifdef __ANDROID__
     stBar_label_1->setWordWrap(true);
     stBar_label_2->setWordWrap(true);
 #endif
     stBar_label_3->setWordWrap(true);
     ETA->setWordWrap(true);
+    stBar_label_1->setTextFormat(Qt::RichText);
+    stBar_label_2->setTextFormat(Qt::RichText);
+    stBar_label_3->setTextFormat(Qt::RichText);
+    ETA->setTextFormat(Qt::RichText);
     //stBar_label_3->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
     showingSelectionMessage=false;
 
@@ -200,6 +209,7 @@ void StatusBar::showGribData(double x,double y)
                 QString().sprintf(" %7.2fNM",oo.getDistance());
     }
     stBar_label_1->setText(label1);
+    this->adjustSize();
 
     DataManager * dataManager=my_centralWidget->get_dataManager();
     Terrain * terrain=my_centralWidget->get_terrain();
@@ -239,6 +249,7 @@ void StatusBar::showGribData(double x,double y)
     }
 
     stBar_label_2->setText(res);
+    this->adjustSize();
 }
 
 QString StatusBar::compute_dataTxt(DataManager * dataManager, MapDataDrawer* mapDrawer,
@@ -300,6 +311,7 @@ void StatusBar::showSelectedZone(double x0, double y0, double x1, double y1)
 
     showingSelectionMessage=true;
     showMessage(message);
+    this->adjustSize();
 
 }
 
@@ -312,8 +324,9 @@ void StatusBar::drawVacInfo(void)
         QDateTime lastVac_date;
         lastVac_date.setTimeSpec(Qt::UTC);
         lastVac_date.setTime_t(((boatVLM*)selBoat)->getPrevVac());
-        stBar_label_3->setText("- "+ tr("Derniere synchro") + ": " + lastVac_date.toString(tr("dd-MM-yyyy, HH:mm:ss")) + " - "+
-                               tr("Prochaine vac dans") + ": " + QString().setNum(mainWindow->get_nxtVac_cnt()) + "s");
+        stBar_label_3->setText("<pre>- "+ tr("Derniere synchro") + ": " + lastVac_date.toString(tr("dd-MM-yyyy, HH:mm:ss")) + " </pre><pre>- "+
+                               tr("Prochaine vac dans") + ": " + QString().setNum(mainWindow->get_nxtVac_cnt()) + "s</pre>");
+        this->adjustSize();
     }
 }
 /**********************************************************************/
@@ -321,7 +334,8 @@ void StatusBar::drawVacInfo(void)
 /**********************************************************************/
 
 void StatusBar::clear_eta(void) {
-    ETA->setText(" - "+tr("No WP"));
+    ETA->setText("<pre> - "+tr("No WP")+"</pre>");
+    this->adjustSize();
 }
 
 void StatusBar::update_eta(QDateTime eta_dtm)
@@ -337,10 +351,11 @@ void StatusBar::update_eta(QDateTime eta_dtm)
     nbS-=h*3600;
     m=nbS/60;
     nbS-=m*60;
-    txt.sprintf("(%dj %02dh%02dm%02ds)",j,h,m,nbS);
+    txt.sprintf(" - %dj %02dh%02dm%02ds",j,h,m,nbS);
     txt.replace("j",tr("j"));
     txt.replace("h",tr("h"));
     txt.replace("m",tr("m"));
     txt.replace("s",tr("s"));
-    ETA->setText(" - "+tr(" Arrivee WP")+": " +eta_dtm.toString(tr("dd-MM-yyyy, HH:mm:ss"))+ " " +txt);
+    ETA->setText("<pre> - "+tr(" Arrivee WP")+": " +eta_dtm.toString(tr("dd-MM-yyyy, HH:mm:ss"))+ " </pre><pre>" +txt+"</pre>");
+    this->adjustSize();
 }
