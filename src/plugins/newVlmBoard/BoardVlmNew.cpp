@@ -135,7 +135,10 @@ void BoardVlmNew::initBoard(MainWindowInterface *main)
     lab_polarData->clear();
     QString tabStyle;
     QPalette palette=main->getOriginalPalette();
+    if(main->getSettingApp(fusionStyle).toInt()==1)
+    {
     tabWidget->setPalette(palette);
+    }
     tabWidget->setStyleSheet("");
     tabStyle+="QTabWidget::pane { border: 0; } ";
     tabStyle+="QTabWidget::tab-bar {alignment: left;}";
@@ -147,13 +150,13 @@ void BoardVlmNew::initBoard(MainWindowInterface *main)
     lab_BS->setStyleSheet("QLabel {color: #000000;}");
     lab_TWS->setStyleSheet("QLabel {color: #000000;}");
     lab_TWD->setStyleSheet("QLabel {color: #000000;}");
-    this->rd_HDG->setPalette(palette);
-    this->rd_ORTHO->setPalette(palette);
-    this->rd_TWA->setPalette(palette);
-    this->rd_VBVMG->setPalette(palette);
-    this->rd_VMG->setPalette(palette);
     if(main->getSettingApp(fusionStyle).toInt()==1)
     {
+        this->rd_HDG->setPalette(palette);
+        this->rd_ORTHO->setPalette(palette);
+        this->rd_TWA->setPalette(palette);
+        this->rd_VBVMG->setPalette(palette);
+        this->rd_VMG->setPalette(palette);
         QString myColor1="#818181";
         QString myColor4="#ffffff"; // white
         QString myColor6="#090c98"; // blue
