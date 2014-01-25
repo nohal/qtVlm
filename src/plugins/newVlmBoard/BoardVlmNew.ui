@@ -111,7 +111,7 @@
     <widget class="QLCDNumber" name="lcd_TWS">
      <property name="geometry">
       <rect>
-       <x>30</x>
+       <x>42</x>
        <y>300</y>
        <width>71</width>
        <height>31</height>
@@ -130,10 +130,10 @@
     <widget class="QLabel" name="lab_TWS">
      <property name="geometry">
       <rect>
-       <x>0</x>
+       <x>-3</x>
        <y>300</y>
-       <width>31</width>
-       <height>16</height>
+       <width>41</width>
+       <height>21</height>
       </rect>
      </property>
      <property name="font">
@@ -146,13 +146,16 @@
      <property name="text">
       <string>TWS</string>
      </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
     </widget>
     <widget class="QLCDNumber" name="lcd_TWD">
      <property name="geometry">
       <rect>
-       <x>150</x>
+       <x>163</x>
        <y>300</y>
-       <width>91</width>
+       <width>81</width>
        <height>31</height>
       </rect>
      </property>
@@ -172,10 +175,10 @@
     <widget class="QLabel" name="lab_TWD">
      <property name="geometry">
       <rect>
-       <x>120</x>
+       <x>118</x>
        <y>300</y>
-       <width>31</width>
-       <height>16</height>
+       <width>41</width>
+       <height>21</height>
       </rect>
      </property>
      <property name="font">
@@ -187,6 +190,9 @@
      </property>
      <property name="text">
       <string>TWD</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
     <widget class="QLabel" name="lab_backTab1">
@@ -1104,24 +1110,30 @@
    <widget class="QLabel" name="lab_TWA">
     <property name="geometry">
      <rect>
-      <x>104</x>
+      <x>105</x>
       <y>60</y>
-      <width>32</width>
+      <width>31</width>
       <height>20</height>
      </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
     </property>
     <property name="text">
      <string>TWA</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignCenter</set>
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
    <widget class="QDial" name="dial">
     <property name="geometry">
      <rect>
-      <x>150</x>
-      <y>56</y>
+      <x>152</x>
+      <y>59</y>
       <width>50</width>
       <height>50</height>
      </rect>
@@ -1149,7 +1161,7 @@
     <property name="geometry">
      <rect>
       <x>169</x>
-      <y>42</y>
+      <y>44</y>
       <width>16</width>
       <height>17</height>
      </rect>
@@ -1161,24 +1173,30 @@
    <widget class="QLabel" name="lab_VMG">
     <property name="geometry">
      <rect>
-      <x>214</x>
+      <x>215</x>
       <y>60</y>
-      <width>33</width>
+      <width>41</width>
       <height>16</height>
      </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
     </property>
     <property name="text">
      <string>VMG</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignCenter</set>
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
    <widget class="QRadioButton" name="rd_ORTHO">
     <property name="geometry">
      <rect>
       <x>186</x>
-      <y>102</y>
+      <y>103</y>
       <width>16</width>
       <height>17</height>
      </rect>
@@ -1190,17 +1208,23 @@
    <widget class="QLabel" name="lab_HDG">
     <property name="geometry">
      <rect>
-      <x>116</x>
+      <x>114</x>
       <y>110</y>
-      <width>28</width>
+      <width>31</width>
       <height>20</height>
      </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
     </property>
     <property name="text">
      <string>HDG</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignCenter</set>
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
    <widget class="QRadioButton" name="rd_VMG">
@@ -1219,11 +1243,17 @@
    <widget class="QLabel" name="lab_VBVMG">
     <property name="geometry">
      <rect>
-      <x>147</x>
+      <x>146</x>
       <y>22</y>
       <width>61</width>
       <height>20</height>
      </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
     </property>
     <property name="text">
      <string>VBVMG</string>
@@ -1280,9 +1310,15 @@
      <rect>
       <x>207</x>
       <y>110</y>
-      <width>21</width>
+      <width>41</width>
       <height>16</height>
      </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
     </property>
     <property name="text">
      <string>ORT</string>
@@ -1295,7 +1331,7 @@
     <property name="geometry">
      <rect>
       <x>151</x>
-      <y>102</y>
+      <y>103</y>
       <width>16</width>
       <height>17</height>
      </rect>

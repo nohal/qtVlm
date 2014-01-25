@@ -81,9 +81,9 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
 #ifdef __ANDROID__
     stBar_label_1->setWordWrap(true);
     stBar_label_2->setWordWrap(true);
+#endif
     stBar_label_3->setWordWrap(true);
     ETA->setWordWrap(true);
-#endif
     //stBar_label_3->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
     showingSelectionMessage=false;
 
