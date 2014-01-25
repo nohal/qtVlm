@@ -63,6 +63,14 @@ void BoardVlmNew::initBoard(MainWindowInterface *main)
     this->setupUi(this);
     this->setFontDialog(this);
     this->windAngle->setMain(main);
+#ifdef __MAC_QTVLM
+    if(main->getSettingApp(fusionStyle).toInt()!=1) /*only if not in fusion mode*/
+    {
+        int offsetX=5;
+        int offsetY=0;
+        dial->move(dial->x()+offsetX,dial->y()+offsetY);
+    }
+#endif
     windAngle->loadSkin();
     tryMoving=false;
     setWindowFlags(Qt::FramelessWindowHint|Qt::WindowStaysOnTopHint);
