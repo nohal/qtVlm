@@ -98,15 +98,15 @@ void Orthodromie::initOrthodromie()
 //------------------------------------------------------------------------------
 void Orthodromie::setStartPoint (double x,double y)
 {
-    lat0 = y *M_PI/180.0;
-    lon0 = x *M_PI/180.0;
+    lon0 = degToRad(AngleUtil::A360(x));
+    lat0 = degToRad(AngleUtil::A360(y));
     initOrthodromie();
 }
 //------------------------------------------------------------------------------
 void Orthodromie::setEndPoint   (double x,double y)
 {
-    lat1 = y *M_PI/180.0;
-    lon1 = x *M_PI/180.0;
+    lon1 = degToRad(AngleUtil::A360(x));
+    lat1 = degToRad(AngleUtil::A360(y));
     initOrthodromie();
 }
 
