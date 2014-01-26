@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="es_ES">
+<TS version="2.1" language="es_ES">
 <context>
     <name>BoardVlmNew</name>
     <message>
@@ -16,346 +16,375 @@
     </message>
     <message>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="80"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="1046"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="1156"/>
         <source>BS</source>
         <translation>BS</translation>
     </message>
     <message>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="147"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="996"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="980"/>
         <source>TWS</source>
         <translation>TWS</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="189"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="192"/>
         <source>TWD</source>
         <translation>TWD</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="225"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="231"/>
         <source>Details</source>
         <translation>Detalles</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="245"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="251"/>
         <source>Bateau</source>
         <translation>Barco</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="273"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="279"/>
         <source>Position</source>
         <translation>Posición</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="296"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="302"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="808"/>
         <source>BS:</source>
         <translation>BS:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="313"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="384"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="319"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="390"/>
         <source>14.32kts</source>
         <translation>14.32kts</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="328"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="334"/>
         <source>HDG:</source>
         <translation>HDG:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="345"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="416"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="487"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="519"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="558"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="693"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="732"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="764"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="885"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="917"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="351"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="422"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="493"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="525"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="564"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="699"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="738"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="770"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="809"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="826"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="903"/>
         <source>132.23d</source>
         <translation>132.23g</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="367"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="373"/>
         <source>Moy:</source>
         <translation>Med:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="399"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="405"/>
         <source>Loch:</source>
         <translation>Dis:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="442"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1339"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="448"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1353"/>
         <source>WP</source>
         <translation>WP</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="470"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="868"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="476"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="856"/>
         <source>Ortho:</source>
         <translation>Orto:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="502"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="508"/>
         <source>DNM:</source>
         <translation>DNM:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="541"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="547"/>
         <source>Angle:</source>
         <translation>Ángulo:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="573"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="579"/>
         <source>VMG:</source>
         <translation>VMG:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="590"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="596"/>
         <source>25.25kts</source>
         <translation>25,25kts</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="616"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="622"/>
         <source>Wind</source>
         <translation>Viento</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="644"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="650"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="806"/>
         <source>TWS:</source>
         <translation>TWS:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="661"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="667"/>
         <source>25.35kts</source>
         <translation>25,35kts</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="676"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="682"/>
         <source>TWD:</source>
         <translation>TWD:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="715"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="721"/>
         <source>Pres:</source>
         <translation>Ceñida:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="747"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="753"/>
         <source>Port.:</source>
         <translation>Portante:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="790"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="796"/>
         <source>Race</source>
         <translation>Carrera</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="818"/>
-        <source>-&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="833"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="841"/>
         <source>Fasnet gate</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="900"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="871"/>
         <source>Dist:</source>
         <translation>Dist:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="955"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="886"/>
+        <source>B-VMG:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="939"/>
         <source>Polaire</source>
         <translation>Polares</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="967"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="951"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="996"/>
         <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1012"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1028"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1047"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1505"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1031"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1519"/>
         <source>TextLabel</source>
         <translation>Etiqueta</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="983"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="967"/>
         <source> kts</source>
         <translation> kts</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1117"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1275"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1101"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1283"/>
         <source>°</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1136"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="1044"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1126"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="1154"/>
         <source>TWA</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1193"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="1052"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1189"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="1162"/>
         <source>VMG</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1222"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1224"/>
         <source>HDG</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1251"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1259"/>
         <source>VBVMG</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1310"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1324"/>
         <source>ORT</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1352"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="778"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1366"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="895"/>
         <source>Pilototo</source>
         <translation>Piloto automático</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1383"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1417"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1451"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1397"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1431"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1465"/>
         <source>background-color: rgb(239, 243, 247);</source>
         <translation>color fondo: rgb(239, 243, 247);</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1467"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.ui" line="1481"/>
         <source>VLM Sync</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="473"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="475"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="489"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="491"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="500"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="502"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="547"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="549"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="563"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="565"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="583"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="585"/>
         <source>nm</source>
         <translation>mn</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="476"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="480"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="482"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="485"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="486"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="493"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="498"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="518"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="519"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="629"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="877"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="1045"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="1049"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="550"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="554"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="556"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="559"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="560"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="567"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="572"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="581"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="601"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="602"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="722"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="804"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="807"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="994"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="1155"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="1159"/>
         <source>deg</source>
         <translation>°</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="477"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="481"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="492"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="494"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="1047"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="1051"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="1053"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="551"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="555"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="566"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="568"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="803"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="806"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="808"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="1157"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="1161"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="1163"/>
         <source>kts</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="518"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="601"/>
         <source>Meilleurs angles au pres/portant:</source>
         <translation>Best angles upwind/downwind:</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="584"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="675"/>
         <source>pas de polaire chargee</source>
         <translation>No se han cargado polares</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="854"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="803"/>
+        <source>Max Speed:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="804"/>
+        <source>at</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="805"/>
+        <source>Absolute&lt;br&gt;max speed:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="807"/>
+        <source>TWA:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="971"/>
         <source>Pas de WP</source>
         <translation>Sin WP activo</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="856"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="973"/>
         <source>Pas de WP actif</source>
         <translation>Sin WP activo</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="897"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="1014"/>
         <source>WP defini dans VLM (pas de POI correspondant)</source>
         <translation>WP defininido en VLM (sin POI correspondiente en qtVlm)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="899"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="1016"/>
         <source>WP VLM</source>
         <translation>WP-VLM</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="903"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="1020"/>
         <source>WP: </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="907"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="913"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="1024"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="1030"/>
         <source>WP defini dans VLM (</source>
         <translation>WP definido en VLM (</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="907"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="913"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="1024"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="1030"/>
         <source> dans qtVlm)</source>
         <translation> en qtVlm)</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="915"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="1032"/>
         <source>Le cap a suivre n&apos;est pas le meme</source>
         <translation>El rumbo a seguir no es el mismo</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="921"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="1038"/>
         <source>WP defini dans VLM mais le mode de navigation n&apos;est pas coherent</source>
         <translation>WP definido en VLM pero el modo de navegación no es compatible</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="959"/>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="982"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="1075"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="1093"/>
         <source>Annuler</source>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="1048"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="1158"/>
         <source>AWA</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="1050"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="1160"/>
         <source>AWS</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="1122"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="1243"/>
         <source>Confirmation a chaque ordre vers VLM</source>
         <translation>Confirmar cada orden a VLM</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="1123"/>
+        <location filename="../src/plugins/newVlmBoard/BoardVlmNew.cpp" line="1244"/>
         <source>Confirmez-vous cet ordre?</source>
         <translation>¿Confirmas tu roden?</translation>
     </message>
@@ -363,84 +392,43 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/Util.cpp" line="136"/>
-        <location filename="../src/Util.cpp" line="201"/>
         <source>oui</source>
-        <translation>si</translation>
+        <translation type="vanished">si</translation>
     </message>
     <message>
-        <location filename="../src/Util.cpp" line="137"/>
-        <location filename="../src/Util.cpp" line="202"/>
         <source>non</source>
-        <translation>no</translation>
+        <translation type="vanished">no</translation>
     </message>
     <message>
-        <location filename="../src/Util.cpp" line="315"/>
-        <source>nds</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/Util.cpp" line="369"/>
         <source>deg</source>
-        <translation>°</translation>
+        <translation type="vanished">°</translation>
     </message>
     <message>
-        <location filename="../src/Util.cpp" line="926"/>
         <source>jours</source>
-        <translation>días</translation>
+        <translation type="vanished">días</translation>
     </message>
 </context>
 <context>
     <name>WP_dialog_ui</name>
     <message>
-        <location filename="../src/plugins/newVlmBoard/WP_dialog.ui" line="14"/>
         <source>Mon WP</source>
-        <translation>Mi WP</translation>
+        <translation type="vanished">Mi WP</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/WP_dialog.ui" line="26"/>
         <source>Paste</source>
-        <translation>Pegar</translation>
+        <translation type="vanished">Pegar</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/WP_dialog.ui" line="39"/>
-        <source>00a00a00N</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/newVlmBoard/WP_dialog.ui" line="52"/>
         <source>Copy</source>
-        <translation>Copiar</translation>
+        <translation type="vanished">Copiar</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/WP_dialog.ui" line="74"/>
-        <source>Lat</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/newVlmBoard/WP_dialog.ui" line="91"/>
-        <source>Lon</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/newVlmBoard/WP_dialog.ui" line="105"/>
-        <source>@WPH</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/newVlmBoard/WP_dialog.ui" line="128"/>
         <source>Selectionner une marque</source>
-        <translation>Selecciona una marca</translation>
+        <translation type="vanished">Selecciona una marca</translation>
     </message>
     <message>
-        <location filename="../src/plugins/newVlmBoard/WP_dialog.ui" line="148"/>
         <source>Clear</source>
-        <translation>Borrar</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/newVlmBoard/WP_dialog.ui" line="161"/>
-        <source>000a00a00W</source>
-        <translation></translation>
+        <translation type="vanished">Borrar</translation>
     </message>
 </context>
 </TS>
