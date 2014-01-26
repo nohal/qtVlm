@@ -85,6 +85,7 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
     showingSelectionMessage=false;
 
     ETA->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Expanding);
+    stBar_label_3->setAlignment(Qt::AlignRight);
     this->addPermanentWidget(stBar_label_3);
     this->addWidget(ETA);
 //    QVBoxLayout *layETA=new QVBoxLayout();
