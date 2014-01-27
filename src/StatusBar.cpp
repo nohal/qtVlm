@@ -329,7 +329,7 @@ void StatusBar::drawVacInfo(void)
         lastVac_date.setTime_t(((boatVLM*)selBoat)->getPrevVac());
 //        stBar_label_3->setText("<pre>- "+ tr("Derniere synchro") + ": " + lastVac_date.toString(tr("dd-MM-yyyy, HH:mm:ss")) + " </pre><pre>- "+
 //                               tr("Prochaine vac dans") + ": " + QString().setNum(mainWindow->get_nxtVac_cnt()) + "s</pre>");
-        stBar_label_3->setText("- "+ tr("Derniere synchro") + ": " + lastVac_date.toString(tr("dd-MM-yyyy, HH:mm:ss")) + " - "+
+        stBar_label_3->setText(tr("Derniere synchro") + ": " + lastVac_date.toString(tr("dd-MM-yyyy, HH:mm:ss")) + " - "+
                                tr("Prochaine vac dans") + ":<b>" + QString().setNum(mainWindow->get_nxtVac_cnt()) + "s</b>");
     }
 }

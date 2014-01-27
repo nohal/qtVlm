@@ -2518,7 +2518,6 @@ void MainWindow::slotSelectBoat(boat* newSelect)
 
     }
     emit paramVLMChanged();
-    emit updateRoute(newSelect);
 }
 
 /***********************************
@@ -2547,9 +2546,10 @@ void MainWindow::slotChgBoat(int num)
             {
                 Settings::setSetting(LastBoatSelected, acc->getId());
                 acc->slot_selectBoat();
-                /* sync lunched, update grib date */
+                /* sync launched, update grib date */
                 emit WPChanged(0,0);
                 emit selectedBoatChanged();
+                emit updateRoute(acc);
                 for(int i=0;i<my_centralWidget->getRaces().size();++i)
                 {
                     if(my_centralWidget->getRaces()[i]->idrace == acc->getRaceId())
