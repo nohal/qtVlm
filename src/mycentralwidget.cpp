@@ -481,6 +481,9 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     connect(terrain,SIGNAL(showContextualMenu(QGraphicsSceneContextMenuEvent *)),
             parent, SLOT(slotShowContextualMenu(QGraphicsSceneContextMenuEvent *)));
 
+    connect(menuBar->acMap_Rivers, SIGNAL(triggered(bool)), terrain,  SLOT(setDrawRivers(bool)));
+    connect(menuBar->acMap_CountriesBorders, SIGNAL(triggered(bool)), terrain,  SLOT(setDrawCountriesBorders(bool)));
+    connect(menuBar->acMap_CountriesNames, SIGNAL(triggered(bool)), terrain,  SLOT(setCountriesNames(bool)));
 
     connect(menuBar->acOptions_SH_sAll, SIGNAL(triggered(bool)), this,  SLOT(slot_showALL(bool)));
     connect(menuBar->acOptions_SH_hAll, SIGNAL(triggered(bool)), this,  SLOT(slot_hideALL(bool)));

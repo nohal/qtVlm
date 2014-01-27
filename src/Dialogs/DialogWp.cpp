@@ -18,6 +18,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
+#include <QScroller>
+#include <QMessageBox>
+#include <QDebug>
+
 #include "DialogWp.h"
 
 #include "boatVLM.h"
@@ -25,9 +29,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "POI.h"
 #include "Util.h"
 #include "settings.h"
-#include <QMessageBox>
 #include "mycentralwidget.h"
-#include <QScroller>
+
 
 /************************/
 /* Dialog WP            */
