@@ -274,7 +274,6 @@ MenuBar::MenuBar(MainWindow *parent)
     //-------------------------------------
     menuOptions = new QMenu(tr("Options"));
         acOptions_Proxy = addAction(menuOptions, tr("Proxy Internet"),tr(""),tr(""),"");
-        acOptions_Units = addAction(menuOptions, tr("Unites"),tr("Ctrl+U"),tr(""),"");
         acOptions_GraphicsParams = addAction(menuOptions,
                             tr("Parametres graphiques"),tr("Ctrl+G"),tr(""),"");
         acVLMParam = addAction(menuOptions,tr("Parametres"),"","","");

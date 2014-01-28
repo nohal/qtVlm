@@ -1389,6 +1389,18 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
         <source>Classical VLM board</source>
         <translation>Tableau de bord VLM classique</translation>
     </message>
+    <message>
+        <source>dddegmm&apos;ss&quot;</source>
+        <translation>dd°mm&apos;ss&quot;</translation>
+    </message>
+    <message>
+        <source>dddegmm,mm&apos;</source>
+        <translation>dd°mm,mm&apos;</translation>
+    </message>
+    <message>
+        <source>dd,dddeg</source>
+        <translation>dd,dd°</translation>
+    </message>
 </context>
 <context>
     <name>DialogPilototo</name>
@@ -5799,11 +5811,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>s</source>
-        <translation>s</translation>
+        <translation type="vanished">s</translation>
     </message>
     <message>
         <source> Arrivee WP</source>
-        <translation>Arrivée WP</translation>
+        <translation type="vanished">Arrivée WP</translation>
+    </message>
+    <message>
+        <source> ETA WP</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -6437,6 +6453,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Tableau de board</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Coordonnees</source>
+        <translation>Coordonées</translation>
     </message>
 </context>
 <context>

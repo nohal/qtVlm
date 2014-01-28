@@ -172,7 +172,6 @@ public:
         QAction *acMap_CitiesNames4;
 
     QAction *acOptions_Proxy;
-    QAction *acOptions_Units;
     QAction *acOptions_GraphicsParams;
     QActionGroup *acOptions_GroupLanguage;
     QAction *acOptions_Lang_fr;

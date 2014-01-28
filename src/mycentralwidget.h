@@ -34,7 +34,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "class_list.h"
 #include "dataDef.h"
 
-#include "DialogUnits.h"
 #include "DialogGraphicsParams.h"
 #include "selectionWidget.h"
 #include "MainWindow.h"
@@ -446,7 +445,6 @@ signals:
         DialogPlayerAccount * playerAcc;
         DialogRace * raceDialog;
         DialogLoadGrib  * dialogLoadGrib;
-        DialogUnits     dialogUnits;
         DialogRealBoatConfig * realBoatConfig;
         DialogVlmLog * vlmLogViewer;
         DialogDownloadTracks * vlmTrackRetriever;

@@ -37,8 +37,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>469</width>
-        <height>556</height>
+        <width>452</width>
+        <height>572</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_14">
@@ -138,6 +138,47 @@
               <string>Apparence</string>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_3">
+              <item>
+               <widget class="QFrame" name="frame_3">
+                <property name="frameShape">
+                 <enum>QFrame::StyledPanel</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_17">
+                 <item>
+                  <widget class="QLabel" name="label_26">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="text">
+                    <string>Coordonnees</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QComboBox" name="displayCoords"/>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer_4">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </widget>
+              </item>
               <item>
                <widget class="QCheckBox" name="chkFusion">
                 <property name="toolTip">
@@ -1564,6 +1605,7 @@
   <tabstop>chkPavillon</tabstop>
   <tabstop>defFontName</tabstop>
   <tabstop>defFontSize</tabstop>
+  <tabstop>displayCoords</tabstop>
   <tabstop>chkFusion</tabstop>
   <tabstop>comboBoard</tabstop>
   <tabstop>newBoardShadow</tabstop>
@@ -1627,6 +1669,9 @@
   <tabstop>gribMono</tabstop>
   <tabstop>gribAuto</tabstop>
   <tabstop>chk_gribDelete</tabstop>
+  <tabstop>scrollArea</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>buttonBox</tabstop>
  </tabstops>
  <resources/>
  <connections>

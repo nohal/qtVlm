@@ -508,7 +508,6 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
 
     connect(this,SIGNAL(accountListUpdated()), parent, SLOT(slotAccountListUpdated()));
 
-    connect(&dialogUnits, SIGNAL(accepted()), terrain, SLOT(redrawAll()));
     scene->addItem(terrain);
     horn=new QSound(appFolder.value("img")+"boat_horn.wav");
     hornTimer=new QTimer(this);
@@ -564,7 +563,6 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     connect(this,SIGNAL(geometryChanged()),dialogLoadGrib,SLOT(slot_screenResize()));
     dialogLoadGrib->checkQtvlmVersion();
     connect(dialogLoadGrib, SIGNAL(signalGribFileReceived(QString)),parent,  SLOT(slot_gribFileReceived(QString)));
-    connect(menuBar->acOptions_Units, SIGNAL(triggered()), &dialogUnits, SLOT(exec()));
     connect(menuBar->acOptions_GraphicsParams, SIGNAL(triggered()), this, SLOT(slot_graphicParams()));
 
     /*Routes*/

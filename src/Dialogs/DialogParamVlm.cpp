@@ -62,6 +62,14 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     connect(this->resetDialogPosition,SIGNAL(clicked()),this,SLOT(slot_resetDialogPosition()));
 
     /* Drawing / affichage */
+    displayCoords->addItem( tr("dddegmm'ss\""), "dddegmm'ss");
+    displayCoords->addItem( tr("dddegmm,mm'"), "dddegmm,mm'");
+    displayCoords->addItem( tr("dd,dddeg"), "dd,dddeg");
+    QString tunit;
+    int ind;
+    tunit = Settings::getSetting(unitsPosition).toString();
+    ind = (tunit=="") ? 0 : displayCoords->findData(tunit);
+    displayCoords->setCurrentIndex(ind);
     cb_oppLabelType->addItem(tr("Pseudo"));
     cb_oppLabelType->addItem(tr("Nom"));
     cb_oppLabelType->addItem(tr("Numero"));
@@ -316,6 +324,7 @@ void DialogParamVlm::done(int result)
     if(result == QDialog::Accepted)
     {
         /*drawing*/
+        Settings::setSetting(unitsPosition,  displayCoords->itemData(displayCoords->currentIndex()).toString());
         Settings::setSetting(opp_labelType,QString().setNum(cb_oppLabelType->currentIndex()));
         Settings::setSetting(showFlag,this->chkPavillon->checkState()==Qt::Checked?"1":"0");
         Settings::setSetting(fusionStyle,this->chkFusion->isChecked()?1:0);

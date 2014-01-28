@@ -69,7 +69,6 @@ RC_FILE = qtVlm.rc
 HEADERS += Dialogs/DialogGraphicsParams.h \
     Dialogs/DialogLoadGrib.h \
     Dialogs/DialogProxy.h \
-    Dialogs/DialogUnits.h \
     Dialogs/DialogGribDate.h \
     Dialogs/DialogHorn.h \
     Dialogs/DialogVlmGrib.h \
@@ -230,7 +229,6 @@ FORMS += Ui/boatAccount_dialog.ui \
 SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/DialogLoadGrib.cpp \
     Dialogs/DialogProxy.cpp \
-    Dialogs/DialogUnits.cpp \
     Dialogs/DialogGribDate.cpp \
     Dialogs/DialogHorn.cpp \
     Dialogs/DialogVlmGrib.cpp \
