@@ -66,7 +66,7 @@ void BoardVlmNew::initBoard(MainWindowInterface *main)
 #ifdef __MAC_QTVLM
     if(main->getSettingApp(fusionStyle).toInt()!=1) /*only if not in fusion mode*/
     {
-        int offsetX=0;
+        int offsetX=1;
         int offsetY=2;
         dial->move(dial->x()+offsetX,dial->y()+offsetY);
     }
