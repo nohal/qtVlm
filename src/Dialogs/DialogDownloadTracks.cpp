@@ -42,7 +42,7 @@ DialogDownloadTracks::DialogDownloadTracks(MainWindow * ,myCentralWidget * paren
 {
     this->parent=parent;
     ui->setupUi(this);
-    QScroller::grabGesture(this->scrollArea->viewport());
+    QScroller::grabGesture(this->ui->scrollArea->viewport());
     connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     this->raceIsValid=false;

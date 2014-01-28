@@ -14,7 +14,7 @@ DialogVlmLog::DialogVlmLog(myCentralWidget *parent) :
     ui(new Ui::DialogVlmLog)
 {
     ui->setupUi(this);
-    QScroller::grabGesture(this->scrollArea->viewport());
+    QScroller::grabGesture(this->ui->scrollArea->viewport());
     connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     // for some reason QTableView::setFont crashed.
