@@ -32,10 +32,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 DialogProxy::DialogProxy(myCentralWidget * parent) : QDialog(parent->getMainWindow())
 {
     qWarning() << "Init dialogProxy";
-    QScroller::grabGesture(this->scrollArea->viewport());
     connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     setupUi(this);
     Util::setFontDialog(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
 
     lineProxyHostname->setText(Settings::getSetting(httpProxyHostname).toString());
     lineProxyPort->setText(Settings::getSetting(httpProxyPort).toString());
