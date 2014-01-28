@@ -49,7 +49,6 @@ signals:
         MainWindow * mainWindow;
         myCentralWidget * my_centralWidget;
 
-        bool showingSelectionMessage;
 
         QString compute_dataTxt(DataManager * dataManager, MapDataDrawer* mapDrawer, QMap<int,QStringList> * mapDataTypes,
                                 int mode, int levelType, int levelValue, double x, double y);

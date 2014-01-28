@@ -46,7 +46,6 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
     font.setFamily("Courier");
     font.setPointSizeF(Settings::getSetting(applicationFontSize).toDouble());
     font.setFixedPitch(true);
-    setStyleSheet("QStatusBar::item {border: 0px;}");
 #endif
 
     stBar_label_1 = new QLabel("Welcome in QtVlm", this);
@@ -56,16 +55,13 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
         stBar_label_1->setStyleSheet("color: rgb(0, 0, 255);");
     stBar_label_2 = new QLabel("", this);
     if(Settings::getSetting(fusionStyle).toInt()==1)
-        stBar_label_2->setStyleSheet("color: rgb(234, 154, 84);");
+        stBar_label_2->setStyleSheet("color: rgb(234, 154, 84); font: bold;");
     else
-        stBar_label_2->setStyleSheet("color: rgb(255, 0, 0);");
+        stBar_label_2->setStyleSheet("color: rgb(255, 0, 0); font: bold;");
     stBar_label_3 = new QLabel("", this);
-    stBar_label_3->setFont(font);
-    font.setFixedPitch(false);
-    this->addWidget(stBar_label_1);
-    this->addWidget(stBar_label_2);
+    stBar_label_1->setFont(font);
+    stBar_label_2->setFont(font);
     ETA=new QLabel("",this);
-    ETA->setFont(font);
     if(Settings::getSetting(fusionStyle).toInt()==1)
         ETA->setStyleSheet("color: rgb(51, 212, 195);");
     else
@@ -82,27 +78,17 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
     stBar_label_2->setTextFormat(Qt::RichText);
     stBar_label_3->setTextFormat(Qt::RichText);
     ETA->setTextFormat(Qt::RichText);
-    showingSelectionMessage=false;
 
     ETA->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Expanding);
     stBar_label_3->setAlignment(Qt::AlignRight);
-    this->addPermanentWidget(stBar_label_3);
-    this->addWidget(ETA);
-//    QVBoxLayout *layETA=new QVBoxLayout();
-//    layETA->setSizeConstraint(QLayout::SetNoConstraint);
-//    ETA->setLayout(layETA);
-//    QHBoxLayout *layETA=new QHBoxLayout();
-//    layETA->setSizeConstraint(QLayout::SetMinimumSize);
-//    QFrame * fraETA=new QFrame();
-//    fraETA->setLayout(layETA);
-//    ETA->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Preferred);
-//    layETA->addWidget(ETA);
-//    this->addWidget(fraETA);
-    Util::setFontDialog(this);
-    //stBar_label_1->setFont(font);
+//    Util::setFontDialog(this);
     font=stBar_label_2->font();
     font.setBold(true);
     stBar_label_2->setFont(font);
+    this->addWidget(stBar_label_1,1);
+    this->addWidget(stBar_label_2,1);
+    this->addWidget(ETA,1);
+    this->addWidget(stBar_label_3,1);
     mainWindow->setStatusBar(this);
 }
 
@@ -198,14 +184,6 @@ void StatusBar::showGribData(double x,double y)
 #endif
     QString res;
 
-    if(showingSelectionMessage)
-    {
-        showingSelectionMessage=false;
-        clearMessage();
-    }
-
-    if(!currentMessage().isEmpty())
-        return;
 
     QString label1= Util::pos2String(TYPE_LAT,y) + " " + Util::pos2String(TYPE_LON,x);
     if(mainWindow->getSelectedBoat())
@@ -214,7 +192,7 @@ void StatusBar::showGribData(double x,double y)
         label1=label1+QString().sprintf(" - %6.2f",oo.getAzimutDeg())+tr("deg")+
                 QString().sprintf(" %7.2fNM",oo.getDistance());
     }
-    stBar_label_1->setText(label1);
+    stBar_label_1->setText("<pre>"+label1+"</pre>");
 
     DataManager * dataManager=my_centralWidget->get_dataManager();
     Terrain * terrain=my_centralWidget->get_terrain();
@@ -253,7 +231,7 @@ void StatusBar::showGribData(double x,double y)
         }
     }
 
-    stBar_label_2->setText(res);
+    stBar_label_2->setText("<pre>"+res+"</pre>");
 }
 
 QString StatusBar::compute_dataTxt(DataManager * dataManager, MapDataDrawer* mapDrawer,
@@ -278,7 +256,7 @@ QString StatusBar::compute_dataTxt(DataManager * dataManager, MapDataDrawer* map
             if(dataManager->getInterpolatedValue_2D(mode,drawerInfo->secData_2D,levelType,levelValue,
                                                     x,y,dataManager->get_currentDate(),&v1,&v2,
                                                     interpol,drawerInfo->UV)) {
-                res = " - " + mapDataTypes->value(mode).at(1);
+                res = mapDataTypes->value(mode).at(1);
                 res += " " + Util::formatData(mode,v1,v2);
             }
         }
@@ -287,7 +265,7 @@ QString StatusBar::compute_dataTxt(DataManager * dataManager, MapDataDrawer* map
             double v1=dataManager->getInterpolatedValue_1D(mode,levelType,levelValue,x,y,
                                                            dataManager->get_currentDate());
             //qWarning() << "[showGribData] val " << v1;
-            res = " - " + mapDataTypes->value(mode).at(1);
+            res = mapDataTypes->value(mode).at(1);
             res += " " + Util::formatData(mode,v1);
         }
     }
@@ -306,23 +284,20 @@ void StatusBar::showSelectedZone(double x0, double y0, double x1, double y1)
 
     Orthodromie orth(x0,y0, x1,y1);
     QString s;
-    message = message+ "   "
+    message = message+ " "
                 + tr("(dist.orthodromique:")
                 + Util::formatDistance(orth.getDistance())
-//                + tr("  init.dir: %1deg").arg(qRound(orth.getAzimutDeg()))
                 + tr("  init.dir: %1deg").arg(s.sprintf("%.1f",orth.getAzimutDeg()))
                 + ")";
-
-    showingSelectionMessage=true;
-    showMessage(message);
-
+    showMessage(message,0);
 }
 
 void StatusBar::drawVacInfo(void)
 {
+    if(!mainWindow->getMy_centralWidget()->isSelecting())
+        clearMessage();
     boat * selBoat = mainWindow->getSelectedBoat();
-    if(selBoat && selBoat->get_boatType()==BOAT_VLM
-            && currentMessage().isEmpty())
+    if(selBoat && selBoat->get_boatType()==BOAT_VLM)
     {
         QDateTime lastVac_date;
         lastVac_date.setTimeSpec(Qt::UTC);
@@ -330,7 +305,7 @@ void StatusBar::drawVacInfo(void)
 //        stBar_label_3->setText("<pre>- "+ tr("Derniere synchro") + ": " + lastVac_date.toString(tr("dd-MM-yyyy, HH:mm:ss")) + " </pre><pre>- "+
 //                               tr("Prochaine vac dans") + ": " + QString().setNum(mainWindow->get_nxtVac_cnt()) + "s</pre>");
         stBar_label_3->setText(tr("Derniere synchro") + ": " + lastVac_date.toString(tr("dd-MM-yyyy, HH:mm:ss")) + " - "+
-                               tr("Prochaine vac dans") + ":<b>" + QString().setNum(mainWindow->get_nxtVac_cnt()) + "s</b>");
+                               tr("Prochaine vac dans") + ": <b>" + QString().setNum(mainWindow->get_nxtVac_cnt()) + "s</b>");
     }
 }
 /**********************************************************************/
@@ -339,7 +314,7 @@ void StatusBar::drawVacInfo(void)
 
 void StatusBar::clear_eta(void) {
     //ETA->setText("<pre> - "+tr("No WP")+"</pre>");
-    ETA->setText(" - "+tr("No WP"));
+    ETA->setText(tr("No WP"));
     this->ETA->setMinimumSize(ETA->sizeHint());
 }
 
@@ -354,15 +329,12 @@ void StatusBar::update_eta(QDateTime eta_dtm)
     nbS-=j*24*3600;
     h=nbS/3600;
     nbS-=h*3600;
-    m=nbS/60;
-    nbS-=m*60;
-    txt.sprintf("- %dj %02dh%02dm%02ds",j,h,m,nbS);
+    m=qRound((double) nbS/60.0);
+    txt.sprintf("- %dj %02dh%02dm",j,h,m);
     txt.replace("j",tr("j"));
     txt.replace("h",tr("h"));
     txt.replace("m",tr("m"));
-    txt.replace("s",tr("s"));
-    //ETA->setText("<pre> - "+tr(" Arrivee WP")+": " +eta_dtm.toString(tr("dd-MM-yyyy, HH:mm:ss"))+ " </pre><pre>" +txt+"</pre>");
-    QString myEta=" - "+tr(" Arrivee WP")+": " +eta_dtm.toString(tr("dd-MM-yyyy, HH:mm:ss"));
+    QString myEta=tr(" ETA WP")+": " +eta_dtm.toString(tr("dd-MM-yyyy, HH:mm:ss"));
     myEta.replace(" ","&nbsp;");
     txt.replace(" ","&nbsp;");
     ETA->setText(myEta+" "+txt);
