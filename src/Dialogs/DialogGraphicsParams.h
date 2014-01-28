@@ -146,6 +146,7 @@ class DialogGraphicsParams : public QDialog
 { Q_OBJECT
     public:
         DialogGraphicsParams(myCentralWidget * parent);
+        ~DialogGraphicsParams();
     
     public slots:
         void slotBtOK();

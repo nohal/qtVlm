@@ -178,6 +178,7 @@ DialogGraphicsParams::DialogGraphicsParams(myCentralWidget * mcp)
          : QDialog(mcp)
 {
     setWindowTitle(tr("Parametres graphiques"));
+    this->setObjectName("GraphicSettingsDialog");
     QFrame *ftmp;
     QLabel *label;
     frameGui = createFrameGui(this);
@@ -211,15 +212,29 @@ DialogGraphicsParams::DialogGraphicsParams(myCentralWidget * mcp)
     scroll=new QScrollArea(this);
     scroll->setWidget(wid);
     scroll->setLayout(new QVBoxLayout(this));
-    this->resize(wid->size());
+
     QScroller::grabGesture(this->scroll->viewport());
     Util::setFontDialog(this);
+    int h,w,px,py;
+    Settings::restoreGeometry(this,&h,&w,&px,&py);
+    if(px<=0)
+    {
+        this->resize(wid->size());
+        this->move(this->parentWidget()->window()->frameGeometry().topLeft() +
+            this->parentWidget()->window()->rect().center() -
+            this->rect().center());
+    }
     connect(mcp,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
 
     //===============================================================
     connect(btCancel, SIGNAL(clicked()), this, SLOT(slotBtCancel()));
     connect(btOK, SIGNAL(clicked()), this, SLOT(slotBtOK()));
 }
+DialogGraphicsParams::~DialogGraphicsParams()
+{
+    Settings::saveGeometry(this);
+}
+
 void DialogGraphicsParams::slot_screenResize()
 {
     Util::setWidgetSize(this,this->sizeHint());
