@@ -4705,7 +4705,7 @@ Etes-vous sur ?</source>
     <message>
         <location filename="../src/MenuBar.cpp" line="186"/>
         <source>Combine grib files</source>
-        <translation>From VLM autopilot</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../src/MenuBar.cpp" line="196"/>

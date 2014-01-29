@@ -1500,7 +1500,7 @@ void myCentralWidget::slotLoadSailsDocGrib(void) {
 
     if (get_gribZone(&x0,&y0, &x1,&y1))
     {
-        param.sprintf("%f%s,%f%s,%f%s,%f%s",fabs(y0),DIR_STR_LAT(y0),
+        param.sprintf("%f%s,%f%s,%f%s>%f%s",fabs(y0),DIR_STR_LAT(y0),
                       fabs(y1),DIR_STR_LAT(y1),
                       fabs(x0),DIR_STR_LON(x0),
                       fabs(x1),DIR_STR_LON(x1));
