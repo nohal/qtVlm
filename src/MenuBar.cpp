@@ -422,7 +422,7 @@ QAction* MenuBar::addAction(QWidget *menu,
     action = new QAction(title, menu);
     action->setShortcut  (shortcut);
     action->setShortcutContext (Qt::ApplicationShortcut);
-    action->setStatusTip (statustip);
+    action->setToolTip (statustip);
     if (iconFileName != "")
         action->setIcon(QIcon(iconFileName));
     if (menu != NULL)

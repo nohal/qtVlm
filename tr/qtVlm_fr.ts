@@ -2046,76 +2046,28 @@ Etes-vous sur ?</source>
 <context>
     <name>DialogUnits</name>
     <message>
-        <source>Valider</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Annuler</source>
-        <translation>Annuler</translation>
-    </message>
-    <message>
-        <source>Vitesse du vent :</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Distances :</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>mille marin</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>km</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Longitudes :</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Auto</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Est positive</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Ouest positive</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Latitudes :</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Nord positive</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Sud positive</source>
-        <translation></translation>
+        <translation type="vanished">Annuler</translation>
     </message>
     <message>
         <source>Unites</source>
-        <translation>Unités</translation>
+        <translation type="vanished">Unités</translation>
     </message>
     <message>
         <source>Coordonnees :</source>
-        <translation>Coordonées:</translation>
+        <translation type="vanished">Coordonées:</translation>
     </message>
     <message>
         <source>dddegmm&apos;ss&quot;</source>
-        <translation>dd°mm&apos;ss&quot;</translation>
+        <translation type="vanished">dd°mm&apos;ss&quot;</translation>
     </message>
     <message>
         <source>dddegmm,mm&apos;</source>
-        <translation>dd°mm,mm&apos;</translation>
+        <translation type="vanished">dd°mm,mm&apos;</translation>
     </message>
     <message>
         <source>dd,dddeg</source>
-        <translation>dd,dd°</translation>
+        <translation type="vanished">dd,dd°</translation>
     </message>
 </context>
 <context>
@@ -2978,10 +2930,6 @@ Etes-vous sur ?</source>
         <translation></translation>
     </message>
     <message>
-        <source>Ctrl+U</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Ctrl+G</source>
         <translation></translation>
     </message>
@@ -3251,7 +3199,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Unites</source>
-        <translation>Unités</translation>
+        <translation type="vanished">Unités</translation>
     </message>
     <message>
         <source>Parametres graphiques</source>

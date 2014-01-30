@@ -310,7 +310,7 @@ QAction* ToolBar::init_Action(QString title, QString shortcut, QString statustip
     action = new QAction(title,toolBar);
     action->setShortcut  (shortcut);
     action->setShortcutContext (Qt::ApplicationShortcut);
-    action->setStatusTip (statustip);
+    action->setToolTip (statustip);
     if (iconFileName != "")
         mySetIcon(action,QString(iconFileName));
     return action;
