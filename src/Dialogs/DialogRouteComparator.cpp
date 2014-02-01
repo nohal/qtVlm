@@ -82,6 +82,7 @@ void DialogRouteComparator::slot_contextMenu(QPoint P)
     item = model->itemFromIndex(routesTable->indexAt(P));
     if(!item) return;
     QMenu *menu = new QMenu;
+    Util::setFontDialog(menu);
     int currentRouteIndex=item->data().toInt();
     menu->addAction(tr("Remove route")+" "+mcw->getRouteList().at(currentRouteIndex)->getName()+" "+tr("from comparator"), this, SLOT(slot_removeRoute()));
     menu->addAction(tr("Delete route")+" "+mcw->getRouteList().at(currentRouteIndex)->getName(), this, SLOT(slot_deleteRoute()));

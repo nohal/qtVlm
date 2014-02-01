@@ -38,6 +38,7 @@ selectionWidget::selectionWidget(myCentralWidget *centralWidget, Projection * pr
     setData(0,SELECTION_WTYPE);
 
     popup = new QMenu(centralWidget->getMainWindow());
+    Util::setFontDialog(popup);
     connect(this->popup,SIGNAL(aboutToShow()),centralWidget,SLOT(slot_resetGestures()));
     connect(this->popup,SIGNAL(aboutToHide()),centralWidget,SLOT(slot_resetGestures()));
     connect(this->popup,SIGNAL(aboutToShow()),this,SLOT(slot_protect()));

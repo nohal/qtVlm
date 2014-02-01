@@ -1100,6 +1100,7 @@ MainWindow::~MainWindow()
 QMenu * MainWindow::createPopupMenu(void) {
 
     QMenu * menu = new QMenu;
+    Util::setFontDialog(menu);
     int entry=0;
 
     if(use_old_board)

@@ -94,6 +94,7 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     mySetIcon(gribDwnld,QString(appFolder.value("img")+"wind.png"));
     gribDwnld->setToolTip(tr("Hold to select download method"));
     gribSubMenu = new QMenu(gribDwnld);
+    Util::setFontDialog(gribSubMenu);
     acWindZygrib = init_Action(tr("Telechargement zyGrib"),tr(""),tr(""),appFolder.value("img")+ "network.png",gribToolBar);
     acWindVlm = init_Action(tr("Telechargement VLM"),tr(""),tr(""), appFolder.value("img")+"VLM_mto.png",gribToolBar);
     acWindSailsDoc = init_Action(tr("Telechargement SailsDoc"),tr(""),tr(""),appFolder.value("img")+ "kmail.png",gribToolBar);

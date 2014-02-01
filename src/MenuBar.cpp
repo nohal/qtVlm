@@ -46,12 +46,14 @@ MenuBar::MenuBar(MainWindow *parent)
     : QMenuBar(parent)
 {
     mainWindow=parent;
+    Util::setFontDialog(this);
     this->setAccessibleName("mainMenuQtvlm");
 
     //-------------------------------------
     // Menu + Actions
     //-------------------------------------
     menuFile = new QMenu(tr("QtVlm"));
+    Util::setFontDialog(menuFile);
 
         acFile_Quit = addAction(menuFile,
                     tr("Quitter"), tr("Ctrl+Q"), tr("Bye"), appFolder.value("img")+"exit.png");
@@ -64,6 +66,7 @@ MenuBar::MenuBar(MainWindow *parent)
                     tr("Verrouiller"), tr("Ctrl+L"), tr("Verrouiller l'envoi d'ordre a VLM"), appFolder.value("img")+"unlock.png");
         separator1=menuFile->addSeparator();
         mn_img=new QMenu(tr("Gestion des fichiers KAP"));
+        Util::setFontDialog(mn_img);
         acImg_Open = addAction(mn_img, tr("Ouvrir un fichier KAP"), "K", tr(""));
         mn_img->addAction(acImg_Open);
         acImg_Close = addAction(mn_img, tr("Fermer le fichier KAP"), "Shift+K", tr(""));
@@ -81,16 +84,19 @@ MenuBar::MenuBar(MainWindow *parent)
     addMenu(menuFile);
 
     menuView = new QMenu(tr("View"));
+    Util::setFontDialog(menuView);
     connect(menuView,SIGNAL(aboutToShow()),this,SLOT(slot_showViewMenu()));
     /*boardMenu = new QMenu(tr("Board"));
     menuView->addMenu(boardMenu);*/
     toolBarMenu = new QMenu(tr("ToolBar"));
+    Util::setFontDialog(toolBarMenu);
     menuView->addMenu(toolBarMenu);
     menuView->addSeparator();
     acOptions_SH_sAll = addAction(menuView, tr("Tout montrer"), "S", tr(""));
     acOptions_SH_hAll = addAction(menuView, tr("Tout cacher sauf les bateaux actifs"), "H", tr(""));
     menuView->addSeparator();
     QMenu * boatPoiSH = new QMenu(tr("Show/Hide boat and POI"));
+    Util::setFontDialog(boatPoiSH);
         acOptions_SH_Boa = addAction(boatPoiSH, tr("Centrer sur le bateau actif"), "B", tr(""));
         acKeep=addAction(boatPoiSH,tr("Conserver la position du bateau dans l'ecran lors de zoom +/-"),"Z","",tr(""));
         acKeep->setCheckable(true);
@@ -114,6 +120,7 @@ MenuBar::MenuBar(MainWindow *parent)
         acOptions_SH_trace->setCheckable(true);
     menuView->addMenu(boatPoiSH);
     QMenu * compasSH = new QMenu(tr("Show/Hide compas"));
+    Util::setFontDialog(compasSH);
     acOptions_SH_Com = addAction(compasSH, tr("Cacher/Montrer le compas"), "C", tr(""));
     acOptions_SH_Com->setCheckable(true);
     acOptions_SH_Pol = addAction(compasSH, tr("Cacher/Montrer la polaire"), "L", tr(""));
@@ -136,6 +143,7 @@ MenuBar::MenuBar(MainWindow *parent)
 
     //-------------------------------------
     menuGrib = new QMenu(tr("Fichier GRIB"));
+    Util::setFontDialog(menuGrib);
         acFile_Open = addAction(menuGrib, tr("Ouvrir"),
                     tr("Ctrl+O"),
                     tr("Ouvrir un fichier GRIB"), appFolder.value("img")+"fileopen.png");
@@ -177,6 +185,7 @@ MenuBar::MenuBar(MainWindow *parent)
 
         menuGrib->addSeparator();
         mn_fax=new QMenu(tr("Fax meteo"));
+        Util::setFontDialog(mn_fax);
         acFax_Open = addAction(mn_fax, tr("Ouvrir un fax meteo"), "", tr(""));
         mn_fax->addAction(acFax_Open);
         acFax_Close = addAction(mn_fax, tr("Fermer le fax meteo"), "", tr(""));
@@ -189,6 +198,7 @@ MenuBar::MenuBar(MainWindow *parent)
 
     //-------------------------------------
     menuBoat = new QMenu(tr("Bateau"));
+    Util::setFontDialog(menuBoat);
         acVLMParamPlayer = addAction(menuBoat,tr("Gestion des comptes"),"","","");
  #ifdef __REAL_BOAT_ONLY
         acVLMParamPlayer->setEnabled(false);
@@ -205,15 +215,20 @@ MenuBar::MenuBar(MainWindow *parent)
     //-------------------------------------
     //Porte
     menuRoute = new QMenu(tr("Routes"));
+    Util::setFontDialog(menuRoute);
 
         acRoute_add = addAction(menuRoute,
                     tr("Creer une route"),"", "", "");
         mnRoute_delete = new QMenu(tr("Supprimer une route"));
+        Util::setFontDialog(mnRoute_delete);
         mnRoute_edit = new QMenu(tr("Editer une route"));
+        Util::setFontDialog(mnRoute_edit);
         mnRoute_export = new QMenu(tr("Exporter une route"));
+        Util::setFontDialog(mnRoute_export);
         menuRoute->addMenu(mnRoute_edit);
         menuRoute->addMenu(mnRoute_export);
         mnRoute_import=new QMenu(tr("Importer une route"));
+        Util::setFontDialog(mnRoute_import);
         acRoute_import = addAction(mnRoute_import,
                     tr("En mode VB-VMG"),"", "", "");
         acRoute_import2 = addAction(mnRoute_import,
@@ -231,10 +246,13 @@ MenuBar::MenuBar(MainWindow *parent)
     addMenu(menuRoute);
 
     menuRoutage = new QMenu(tr("Routages"));
+    Util::setFontDialog(menuRoutage);
         acRoutage_add = addAction(menuRoutage,
                     tr("Creer un routage"),"", "", "");
         mnRoutage_delete = new QMenu(tr("Supprimer un routage"));
+        Util::setFontDialog(mnRoutage_delete);
         mnRoutage_edit = new QMenu(tr("Editer un routage"));
+        Util::setFontDialog(mnRoutage_edit);
         mnRoutage_edit->setEnabled(false);
         mnRoutage_delete->setEnabled(false);
         menuRoutage->addMenu(mnRoutage_edit);
@@ -243,11 +261,13 @@ MenuBar::MenuBar(MainWindow *parent)
     addMenu(menuRoutage);
 
     menuPOI = new QMenu(tr("Marques"));
+    Util::setFontDialog(menuPOI);
         acPOIinput = addAction(menuPOI,tr("Ajout en masse"),"","","");
         acPOISave = addAction(menuPOI,tr("Sauvegarder POIs et routes"),"Ctrl+S","","");
         acPOIRestore = addAction(menuPOI,tr("Recharger POIs et routes"),"Ctrl+R","","");
         menuPOI->addSeparator();
         QMenu *menuImportPoi = new QMenu(tr("Importer"));
+        Util::setFontDialog(menuImportPoi);
         acPOIimport = addAction(menuImportPoi,tr("Importer de zyGrib"),"","","");
         acPOIgeoData = addAction(menuImportPoi,tr("Importer un fichier GeoData"),"","","");
         menuPOI->addMenu(menuImportPoi);
@@ -257,14 +277,17 @@ MenuBar::MenuBar(MainWindow *parent)
         menuPOI->addSeparator();
 
         subMenuBarrier= new QMenu(tr("Barrier set"));
+        Util::setFontDialog(subMenuBarrier);
         connect(subMenuBarrier,SIGNAL(aboutToShow()),this,SLOT(slot_showBarrierMenu()));
         menuPOI->addMenu(subMenuBarrier);
         ac_addBarrierSet= addAction(subMenuBarrier,tr("Add barrier set"), tr(""), tr(""), "");
         subMenuBarrier->addSeparator();
         ac_addBarrier= addAction(subMenuBarrier,tr("Add barrier"), tr(""), tr(""), "");        
         subSubMenuEditBarrierSet= new QMenu(tr("Parameters"));
+        Util::setFontDialog(subSubMenuEditBarrierSet);
         subMenuBarrier->addMenu(subSubMenuEditBarrierSet);
         subSubMenuDelBarrierSet= new QMenu(tr("Delete"));
+        Util::setFontDialog(subSubMenuDelBarrierSet);
         subMenuBarrier->addMenu(subSubMenuDelBarrierSet);
 
     addMenu(menuPOI);
@@ -273,6 +296,7 @@ MenuBar::MenuBar(MainWindow *parent)
 
     //-------------------------------------
     menuOptions = new QMenu(tr("Options"));
+    Util::setFontDialog(menuOptions);
         acOptions_Proxy = addAction(menuOptions, tr("Proxy Internet"),tr(""),tr(""),"");
         acOptions_GraphicsParams = addAction(menuOptions,
                             tr("Parametres graphiques"),tr("Ctrl+G"),tr(""),"");
@@ -280,6 +304,7 @@ MenuBar::MenuBar(MainWindow *parent)
 
 
         QMenu *menuMap = new QMenu(tr("Planisphere"));
+        Util::setFontDialog(menuMap);
         acMap_Orthodromie = addActionCheck(menuMap, tr("Distance orthodromique"), tr(""), tr(""));
         acMap_Orthodromie->setChecked(Settings::getSetting(showOrthodromie).toBool());
 
@@ -293,6 +318,7 @@ MenuBar::MenuBar(MainWindow *parent)
 
 
         QMenu *menuCitiesNames = new QMenu(tr("Nom des villes"));
+        Util::setFontDialog(menuCitiesNames);
         acMap_GroupCitiesNames = new QActionGroup(menuMap);
             acMap_CitiesNames0 = addActionCheck(menuCitiesNames, tr("Aucun"), tr(""), tr(""));
             acMap_CitiesNames1 = addActionCheck(menuCitiesNames, tr("Niveau 1"), tr(""), tr(""));
@@ -309,6 +335,7 @@ MenuBar::MenuBar(MainWindow *parent)
         setCitiesNamesLevel(Settings::getSetting(show_citiesNamesLevel).toInt());
 
         QMenu *menuLanguage = new QMenu(tr("Language"));
+        Util::setFontDialog(menuLanguage);
             acOptions_GroupLanguage = new QActionGroup(menuLanguage);
                 acOptions_Lang_fr = addActionCheck(menuLanguage, tr("Francais"), tr(""), tr(""));
                 acOptions_Lang_en = addActionCheck(menuLanguage, tr("English"), tr(""), tr(""));
@@ -341,15 +368,18 @@ MenuBar::MenuBar(MainWindow *parent)
 
     //-------------------------------------
     menuHelp = new QMenu(tr("Aide"));
+    Util::setFontDialog(menuHelp);
         acHelp_Help = addAction(menuHelp, tr("Aide"),"F1",tr(""),appFolder.value("img")+"help.png");
         acHelp_APropos = addAction(menuHelp, tr("A propos de qtVlm"),tr(""),tr(""),"");
         acHelp_AProposQT = addAction(menuHelp, tr("A propos de QT"),tr(""),tr(""),"");
         acHelp_Forum = addAction(menuHelp, tr("QtVlm forum"),tr(""),tr(""),"");
     addMenu(menuHelp);
     foreach (QAction * act, this->actions())
+    {
         setRules(act);
+        Util::setFontDialog(act);
+    }
     acFile_Quit->setMenuRole(QAction::QuitRole);
-
 }
 
 void MenuBar::setRules(QAction * act)
@@ -410,6 +440,7 @@ QMenu * MenuBar::createPopupBtRight(QWidget *parent)
     ac_zoomRoute=addAction(popup,tr("Zoom sur la route "),"","","");
     ac_deleteRoute=addAction(popup,tr("Supprimer la route"),"","","");
     ac_pasteRoute=addAction(popup,tr("Coller une route"),"","","");
+    Util::setFontDialog(popup);
     return popup;
 }
 
@@ -427,6 +458,7 @@ QAction* MenuBar::addAction(QWidget *menu,
         action->setIcon(QIcon(iconFileName));
     if (menu != NULL)
         menu->addAction(action);
+    Util::setFontDialog(action);
     return action;
 }
 //-------------------------------------------------
@@ -437,6 +469,7 @@ QAction* MenuBar::addActionCheck(QWidget *menu,
     QAction *action;
     action = addAction(menu, title, shortcut, statustip, iconFileName);
     action->setCheckable  (true);
+    Util::setFontDialog(action);
     return action;
 }
 
@@ -462,11 +495,16 @@ void MenuBar::addMenuRoute(ROUTE* route)
     action2->setIcon(icon);
     action3->setIcon(icon);
     action4->setIcon(icon);
+    Util::setFontDialog(action1);
+    Util::setFontDialog(action2);
+    Util::setFontDialog(action3);
+    Util::setFontDialog(action4);
 }
 QAction * MenuBar::addReleaseCompass()
 {
     QAction *action;
     action=addAction(mnCompassCenterRoute,tr("Aucune"),"","","");
+    Util::setFontDialog(action);
     return action;
 }
 void MenuBar::addMenuRoutage(ROUTAGE* routage)
@@ -483,6 +521,8 @@ void MenuBar::addMenuRoutage(ROUTAGE* routage)
     connect(action2, SIGNAL(triggered()), my_CentralWidget, SLOT(slot_deleteRoutage()));
     action1->setIcon(icon);
     action2->setIcon(icon);
+    Util::setFontDialog(action1);
+    Util::setFontDialog(action2);
 }
 //-------------------------------------------------
 void MenuBar::setCitiesNamesLevel(int level) {

@@ -54,6 +54,8 @@ Barrier::Barrier(MainWindow *mainWindow,BarrierSet * barrierSet) {
 
     popUpMenu = new QMenu();
     popUpMenu2 = new QMenu();
+    Util::setFontDialog(popUpMenu);
+    Util::setFontDialog(popUpMenu2);
 
     ac_insert = new QAction(tr("Insert a point"),popUpMenu);
     popUpMenu->addAction(ac_insert);
@@ -369,6 +371,8 @@ BarrierPoint::BarrierPoint(MainWindow * mainWindow, Barrier *barrier, QColor col
 
     popUpMenu = new QMenu();
     popUpMenu2 = new QMenu();
+    Util::setFontDialog(popUpMenu);
+    Util::setFontDialog(popUpMenu2);
 
     ac_remove = new QAction(tr("Remove point"),popUpMenu);
     popUpMenu->addAction(ac_remove);

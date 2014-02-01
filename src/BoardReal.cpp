@@ -62,6 +62,7 @@ boardReal::boardReal(MainWindow * mainWin, board * parent) : QWidget(mainWin)
 
     /* Contextual Menu */
     popup = new QMenu(this);
+    Util::setFontDialog(popup);
     ac_showHideCompass = new QAction(tr("Cacher compas"),popup);
     popup->addAction(ac_showHideCompass);
     connect(ac_showHideCompass,SIGNAL(triggered()),this,SLOT(slot_hideShowCompass()));
