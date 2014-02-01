@@ -67,28 +67,33 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
     else
         ETA->setStyleSheet("color: rgb(33,33,179);");
 
-#ifdef __ANDROID__
-    stBar_label_1->setWordWrap(true);
-    stBar_label_2->setWordWrap(true);
-#endif
-    stBar_label_3->setWordWrap(true);
-    stBar_label_3->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Expanding);
-    ETA->setWordWrap(true);
     stBar_label_1->setTextFormat(Qt::RichText);
     stBar_label_2->setTextFormat(Qt::RichText);
     stBar_label_3->setTextFormat(Qt::RichText);
     ETA->setTextFormat(Qt::RichText);
 
-    ETA->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Expanding);
     stBar_label_3->setAlignment(Qt::AlignRight);
 //    Util::setFontDialog(this);
     font=stBar_label_2->font();
     font.setBold(true);
     stBar_label_2->setFont(font);
-    this->addWidget(stBar_label_1,1);
-    this->addWidget(stBar_label_2,1);
-    this->addWidget(ETA,1);
-    this->addWidget(stBar_label_3,1);
+    this->addWidget(ETA,0);
+#ifdef __ANDROID__
+    stBar_label_1->setWordWrap(true);
+    stBar_label_2->setWordWrap(true);
+    stBar_label_3->setWordWrap(true);
+    ETA->setWordWrap(true);
+    stBar_label_3->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Expanding);
+//    ETA->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Expanding);
+#else
+    QLabel *a1=new QLabel(" - ");
+    QLabel *a2=new QLabel(" - ");
+    this->addWidget(a1);
+    this->addWidget(stBar_label_2,0);
+    this->addWidget(a2);
+    this->addWidget(stBar_label_1,0);
+#endif
+    this->addPermanentWidget(stBar_label_3,0);
     mainWindow->setStatusBar(this);
 }
 
