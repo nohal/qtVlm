@@ -20,7 +20,12 @@ class MainWindowInterface: public QMainWindow
         virtual QString formatLongitude(const double &x) =0;
         virtual QString formatLatitude(const double &y) =0;
         virtual void setFontDialog(QWidget * o) =0;
-        virtual void manageWPDialog(BoatInterface * myBoat, BoardInterface *boardPlugin)=0;
+       /* Note: the `boardPlugin` parameter may be any object that
+        * defines the `void slot_selectWP_POI()` slot. The function
+        * will still work if the given object does not define this
+        * slot, but in that case it will not be possible to pick a POI
+        * from the dialog. */
+        virtual void manageWPDialog(BoatInterface * myBoat, QObject *boardPlugin)=0;
 
     public slots:
         virtual void slotVLM_Sync()=0;
