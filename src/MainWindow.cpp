@@ -3204,7 +3204,7 @@ QPalette MainWindow::getOriginalPalette() const
 void MainWindow::setFontDialog(QWidget * o) {
     Util::setFontDialog(o);
 }
-void MainWindow::manageWPDialog(BoatInterface * myBoat, BoardInterface * boardPlugin)
+void MainWindow::manageWPDialog(BoatInterface * myBoat, QObject * boardPlugin)
 {
     if(!myBoat) return;
     DialogWp * wpDialog = new DialogWp(this->my_centralWidget);
