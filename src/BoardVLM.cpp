@@ -40,6 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "POI.h"
 #include "DialogWp.h"
 #include <QScroller>
+#include <QScrollBar>
 
 /* VLM CMD type */
 #define VLM_CMD_HD     1
@@ -188,8 +189,11 @@ boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) :
     set_style(this->goPilotOrtho);
     set_style(this->goVBVMG);
     set_style(this->goVMG);
-//    editAngle->setPalette(QApplication::palette());
-//    editHeading->setPalette(QApplication::palette());
+//    QScrollBar * vert=this->scrollArea->verticalScrollBar();
+//    qWarning()<<this->size()<<vert->minimum()<<vert->maximum();
+//    int myW=vert->size().width();
+//    this->setMaximumWidth(this->scrollAreaWidgetContents_2->minimumSizeHint().width()+myW);
+//    qWarning()<<this->size();
 }
 void boardVLM::set_style(QPushButton * button, QColor color, QColor color2)
 {
@@ -491,7 +495,6 @@ void boardVLM::boatUpdated(void)
 
     /* send data as a GPS */
     synch_GPS();
-    //this->adjustSize();
 }
 
 void boardVLM::setWP(double lat,double lon,double wph)

@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>283</width>
-    <height>680</height>
+    <width>277</width>
+    <height>330</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Maximum" vsizetype="Minimum">
+   <sizepolicy hsizetype="Maximum" vsizetype="MinimumExpanding">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -25,9 +25,12 @@
   <property name="styleSheet">
    <string notr="true">selection-color: rgb(85, 85, 255);</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_4">
+  <layout class="QHBoxLayout" name="horizontalLayout_10">
    <item>
     <widget class="QScrollArea" name="scrollArea">
+     <property name="sizeAdjustPolicy">
+      <enum>QAbstractScrollArea::AdjustToContents</enum>
+     </property>
      <property name="widgetResizable">
       <bool>true</bool>
      </property>
@@ -35,9 +38,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
-        <width>263</width>
-        <height>660</height>
+        <y>-292</y>
+        <width>262</width>
+        <height>676</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -1193,25 +1196,43 @@
         </widget>
        </item>
        <item>
-        <widget class="tool_windAngle" name="windAngle" native="true">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
+        <widget class="QFrame" name="frame_3">
          <property name="minimumSize">
           <size>
-           <width>224</width>
-           <height>188</height>
+           <width>0</width>
+           <height>0</height>
           </size>
          </property>
-         <property name="maximumSize">
-          <size>
-           <width>224</width>
-           <height>188</height>
-          </size>
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
          </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_9">
+          <item>
+           <widget class="tool_windAngle" name="windAngle" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>224</width>
+              <height>188</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>224</width>
+              <height>188</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
        <item>
