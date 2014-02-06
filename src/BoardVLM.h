@@ -74,7 +74,8 @@ class boardVLM: public QWidget , public Ui::boardVLM_ui, public inetClient
         void update_btnWP(void);
         void show_WPdialog(POI * poi);
 
-    signals:
+        void drawVacInfo();
+signals:
         void VLM_Sync(void);
         void POI_selectAborted(POI*);
         void showMessage(QString,int);

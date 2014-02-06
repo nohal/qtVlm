@@ -5731,14 +5731,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Derniere synchro</source>
-        <translation>Dernière synchro</translation>
+        <translation type="vanished">Dernière synchro</translation>
     </message>
     <message>
         <source>dd-MM-yyyy, HH:mm:ss</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Prochaine vac dans</source>
         <translation></translation>
     </message>
     <message>
@@ -6841,6 +6837,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>format</source>
         <translation>format</translation>
+    </message>
+    <message>
+        <source>Derniere synchro</source>
+        <translation>Dernière synchro</translation>
+    </message>
+    <message>
+        <source>dd-MM-yyyy, HH:mm:ss</source>
+        <translation></translation>
     </message>
 </context>
 <context>

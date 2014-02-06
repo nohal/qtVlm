@@ -45,6 +45,7 @@ class BoatInterface: public QGraphicsWidget
     virtual double getWPLon(void)=0;
     virtual double getWPHd(void)=0;
     virtual void setWP(QPointF point,double w)=0;
+    virtual time_t getPrevVac()=0;
 };
 
 #endif // BOATINTERFACE_H

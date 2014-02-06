@@ -66,6 +66,7 @@ boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) :
         frame_2->setStyleSheet("background-color: rgb(40,40,40);");
     }
 #endif
+    connect(mainWin,SIGNAL(drawVacInfo()),this,SLOT(drawVacInfo()));
     QMap<QWidget *,QFont> exceptions;
     QFont font=QApplication::font();
     font.setBold(true);
@@ -1144,9 +1145,22 @@ void boardVLM::clearPilototo()
     set_style(ClearPilot,QColor(255,0,0));
     mainWin->slot_clearPilototo();
 }
+void boardVLM::drawVacInfo(void)
+{
+    boat * selBoat = mainWin->getSelectedBoat();
+    if(selBoat && selBoat->get_boatType()==BOAT_VLM)
+    {
+        QDateTime lastVac_date;
+        lastVac_date.setTimeSpec(Qt::UTC);
+        lastVac_date.setTime_t(((boatVLM*)selBoat)->getPrevVac());
+        btn_Synch->setToolTip(tr("Derniere synchro") + ": " + lastVac_date.toString(tr("dd-MM-yyyy, HH:mm:ss")));
+        btn_Synch->setText("Sync: "+QString().setNum(mainWin->get_nxtVac_cnt()) + "s");
+    }
+}
 
 /************************/
 /* Board custom spinBox */
+/************************/
 
 
 tool_edtSpinBox::tool_edtSpinBox(QWidget * parent): QDoubleSpinBox(parent)

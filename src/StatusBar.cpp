@@ -48,57 +48,46 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
     font.setFixedPitch(true);
 #endif
 
-    stBar_label_1 = new QLabel("Welcome in QtVlm", this);
+    labelOrtho = new QLabel("Welcome in QtVlm", this);
     if(Settings::getSetting(fusionStyle).toInt()==1)
-        stBar_label_1->setStyleSheet("color: rgb(234, 221, 21);");
+        labelOrtho->setStyleSheet("color: rgb(234, 221, 21);");
     else
-        stBar_label_1->setStyleSheet("color: rgb(0, 0, 255);");
-    stBar_label_2 = new QLabel("", this);
+        labelOrtho->setStyleSheet("color: rgb(0, 0, 255);");
+    labelGrib = new QLabel("", this);
     if(Settings::getSetting(fusionStyle).toInt()==1)
-        stBar_label_2->setStyleSheet("color: rgb(234, 154, 84); font: bold;");
+        labelGrib->setStyleSheet("color: rgb(234, 154, 84); font: bold;");
     else
-        stBar_label_2->setStyleSheet("color: rgb(255, 0, 0); font: bold;");
-    stBar_label_3 = new QLabel("", this);
-    stBar_label_1->setFont(font);
-    stBar_label_2->setFont(font);
-    ETA=new QLabel("",this);
+        labelGrib->setStyleSheet("color: rgb(255, 0, 0); font: bold;");
+    labelOrtho->setFont(font);
+    labelGrib->setFont(font);
+    labelEta=new QLabel("",this);
     if(Settings::getSetting(fusionStyle).toInt()==1)
-        ETA->setStyleSheet("color: rgb(51, 212, 195);");
+        labelEta->setStyleSheet("color: rgb(51, 212, 195);");
     else
-        ETA->setStyleSheet("color: rgb(33,33,179);");
-
-    stBar_label_1->setTextFormat(Qt::RichText);
-    stBar_label_2->setTextFormat(Qt::RichText);
-    stBar_label_3->setTextFormat(Qt::RichText);
-    ETA->setTextFormat(Qt::RichText);
-
-    stBar_label_3->setAlignment(Qt::AlignRight);
-//    Util::setFontDialog(this);
-    font=stBar_label_2->font();
+        labelEta->setStyleSheet("color: rgb(33,33,179);");
+    labelOrtho->setTextFormat(Qt::RichText);
+    labelGrib->setTextFormat(Qt::RichText);
+    labelEta->setTextFormat(Qt::RichText);
+    labelEta->setAlignment(Qt::AlignRight);
+    font=labelGrib->font();
     font.setBold(true);
-    stBar_label_2->setFont(font);
-    this->addWidget(ETA,0);
+    labelGrib->setFont(font);
 #ifdef __ANDROID__
-    stBar_label_1->setWordWrap(true);
-    stBar_label_2->setWordWrap(true);
-    stBar_label_3->setWordWrap(true);
-    ETA->setWordWrap(true);
-    stBar_label_3->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Expanding);
-//    ETA->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Expanding);
+    labelEta->setWordWrap(true);
 #else
     QLabel *a1=new QLabel(" - ");
-    QLabel *a2=new QLabel(" - ");
+    this->addWidget(labelGrib,0);
     this->addWidget(a1);
-    this->addWidget(stBar_label_2,0);
-    this->addWidget(a2);
-    this->addWidget(stBar_label_1,0);
+    this->addWidget(labelOrtho,0);
 #endif
-    this->addPermanentWidget(stBar_label_3,0);
+    this->addPermanentWidget(labelEta,0);
     mainWindow->setStatusBar(this);
 }
 
 void StatusBar::showGribData(double x,double y)
 {
+    if(mainWindow->getMy_centralWidget()->isSelecting()) return;
+    clearMessage();
 #if 0 /*unflag to visualize closest point to next gate from mouse position*/
     if(!selectedBoat) return;
     QList<vlmLine*> gates=((boatVLM*)mainWindow->selectedBoat)->getGates();
@@ -197,7 +186,7 @@ void StatusBar::showGribData(double x,double y)
         label1=label1+QString().sprintf(" - %6.2f",oo.getAzimutDeg())+tr("deg")+
                 QString().sprintf(" %7.2fNM",oo.getDistance());
     }
-    stBar_label_1->setText("<pre>"+label1+"</pre>");
+    labelOrtho->setText("<pre>"+label1+"</pre>");
 
     DataManager * dataManager=my_centralWidget->get_dataManager();
     Terrain * terrain=my_centralWidget->get_terrain();
@@ -236,7 +225,7 @@ void StatusBar::showGribData(double x,double y)
         }
     }
 
-    stBar_label_2->setText("<pre>"+res+"</pre>");
+    labelGrib->setText("<pre>"+res+"</pre>");
 }
 
 QString StatusBar::compute_dataTxt(DataManager * dataManager, MapDataDrawer* mapDrawer,
@@ -297,30 +286,14 @@ void StatusBar::showSelectedZone(double x0, double y0, double x1, double y1)
     showMessage(message,0);
 }
 
-void StatusBar::drawVacInfo(void)
-{
-    if(!mainWindow->getMy_centralWidget()->isSelecting())
-        clearMessage();
-    boat * selBoat = mainWindow->getSelectedBoat();
-    if(selBoat && selBoat->get_boatType()==BOAT_VLM)
-    {
-        QDateTime lastVac_date;
-        lastVac_date.setTimeSpec(Qt::UTC);
-        lastVac_date.setTime_t(((boatVLM*)selBoat)->getPrevVac());
-//        stBar_label_3->setText("<pre>- "+ tr("Derniere synchro") + ": " + lastVac_date.toString(tr("dd-MM-yyyy, HH:mm:ss")) + " </pre><pre>- "+
-//                               tr("Prochaine vac dans") + ": " + QString().setNum(mainWindow->get_nxtVac_cnt()) + "s</pre>");
-        stBar_label_3->setText(tr("Derniere synchro") + ": " + lastVac_date.toString(tr("dd-MM-yyyy, HH:mm:ss")) + " - "+
-                               tr("Prochaine vac dans") + ": <b>" + QString().setNum(mainWindow->get_nxtVac_cnt()) + "s</b>");
-    }
-}
 /**********************************************************************/
 /*                         ETA                                        */
 /**********************************************************************/
 
 void StatusBar::clear_eta(void) {
     //ETA->setText("<pre> - "+tr("No WP")+"</pre>");
-    ETA->setText(tr("No WP"));
-    this->ETA->setMinimumSize(ETA->sizeHint());
+    labelEta->setText(tr("No WP"));
+    this->labelEta->setMinimumSize(labelEta->sizeHint());
 }
 
 void StatusBar::update_eta(QDateTime eta_dtm)
@@ -342,5 +315,5 @@ void StatusBar::update_eta(QDateTime eta_dtm)
     QString myEta=tr(" ETA WP")+": " +eta_dtm.toString(tr("dd-MM-yyyy, HH:mm:ss"));
     myEta.replace(" ","&nbsp;");
     txt.replace(" ","&nbsp;");
-    ETA->setText(myEta+" "+txt);
+    labelEta->setText(myEta+" "+txt);
 }

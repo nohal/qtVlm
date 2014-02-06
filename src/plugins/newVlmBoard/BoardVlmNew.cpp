@@ -49,6 +49,7 @@ void BoardVlmNew::initBoard(MainWindowInterface *main)
 {
     qWarning()<<"start of init board for"<<this->getName();
     this->main=main;
+    connect(main,SIGNAL(drawVacInfo()),this,SLOT(drawVacInfo()));
     this->setParent(main);
     if(translator==NULL)
     {
@@ -1243,6 +1244,15 @@ bool BoardVlmNew::confirmChange()
     return QMessageBox::question(0,tr("Confirmation a chaque ordre vers VLM"),
                                  tr("Confirmez-vous cet ordre?"),QMessageBox::Yes|QMessageBox::No,
                              QMessageBox::Yes)==QMessageBox::Yes;
+}
+void BoardVlmNew::drawVacInfo(void)
+{
+    if(!myBoat) return;
+    QDateTime lastVac_date;
+    lastVac_date.setTimeSpec(Qt::UTC);
+    lastVac_date.setTime_t(myBoat->getPrevVac());
+    btn_sync->setToolTip(tr("Derniere synchro") + ": " + lastVac_date.toString(tr("dd-MM-yyyy, HH:mm:ss")));
+    btn_sync->setText("Sync: "+QString().setNum(main->get_nxtVac_cnt()) + "s");
 }
 /*********************/
 /* VLM20 windAngle   */

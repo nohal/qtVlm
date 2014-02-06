@@ -42,6 +42,8 @@ public:
     void initBoard(MainWindowInterface *main);
     QString getName();
     ~BoardVlmNew();
+public slots:
+    void drawVacInfo();
 private slots:
     void slot_updateBtnWP();
     void slot_vibrate();

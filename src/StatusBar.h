@@ -36,7 +36,6 @@ class StatusBar : public QStatusBar
 
         void showGribData(double x,double y);
         void showSelectedZone(double x0, double y0, double x1, double y1);
-        void drawVacInfo(void);
     
 
         void update_eta(QDateTime eta_dtm);
@@ -53,10 +52,9 @@ signals:
         QString compute_dataTxt(DataManager * dataManager, MapDataDrawer* mapDrawer, QMap<int,QStringList> * mapDataTypes,
                                 int mode, int levelType, int levelValue, double x, double y);
 
-        QLabel       *stBar_label_1;
-        QLabel       *stBar_label_2;
-        QLabel       *stBar_label_3;
-        QLabel       *ETA;
+        QLabel       *labelOrtho;
+        QLabel       *labelGrib;
+        QLabel       *labelEta;
     
 };
 

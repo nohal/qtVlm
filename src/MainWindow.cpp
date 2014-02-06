@@ -1250,7 +1250,7 @@ void MainWindow::closeProgress(void)
             updatePilototo_Btn((boatVLM*)selectedBoat);
             this->slotUpdateOpponent();
             nxtVac_cnt=((boatVLM*)selectedBoat)->getNextVac();
-            statusBar->drawVacInfo();
+            emit drawVacInfo();
             QDateTime dtm =QDateTime::fromString(((boatVLM*)selectedBoat)->getETA(),"yyyy-MM-ddTHH:mm:ssZ");
             if(!dtm.isValid())
                 statusBar->clear_eta();
@@ -1891,7 +1891,7 @@ void MainWindow::updateNxtVac(void)
                 myBoard->outdatedVLM();
         }
     }
-    statusBar->drawVacInfo();
+    emit drawVacInfo();
 }
 
 QList<POI*> * MainWindow::getPois()
@@ -2390,7 +2390,7 @@ void MainWindow::slotBoatUpdated(boat * upBoat,bool newRace,bool doingSync)
 
             /* updating Vac info */
             nxtVac_cnt=boat->getNextVac();
-            statusBar->drawVacInfo();
+            emit drawVacInfo();
             timer->start(1000);
 
 

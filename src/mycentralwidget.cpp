@@ -1096,7 +1096,6 @@ void myCentralWidget::mouseMove(int x, int y, QGraphicsItem * )
         double xx, yy;
         proj->screen2map(x,y, &xx, &yy);
         statusBar->showGribData(xx, yy);
-        statusBar->drawVacInfo();
     }
     if(selection->tryMoving(x,y))
         return;
