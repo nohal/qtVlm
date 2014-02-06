@@ -611,7 +611,10 @@ MyToolBar::MyToolBar(QString name,QString title,ToolBar *toolBar, QWidget *paren
 #ifdef __ANDROID__
     this->canHide=false;
 #endif
-    if(!canHide) {
+#ifdef __MAC_QTVLM
+    this->canHide=false;
+#endif
+    if(!this->canHide) {
         setFloatable(false);
         setMovable(false);
     }
