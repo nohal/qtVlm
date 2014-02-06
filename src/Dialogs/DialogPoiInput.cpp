@@ -26,13 +26,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Util.h"
 #include "mycentralwidget.h"
 #include "settings.h"
-
+#include <QScroller>
 DialogPoiInput::DialogPoiInput(myCentralWidget * parent) : QDialog(parent)
 {
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
-    connect(this,SIGNAL(addPOI(QString,int,double,double,double,int,bool,boat*)),
-            parent,SLOT(slot_addPOI(QString,int,double,double,double,int,bool,boat*)));
+    connect(this,SIGNAL(addPOI(QString,int,double,double,double,int,bool)),
+            parent,SLOT(slot_addPOI(QString,int,double,double,double,int,bool)));
+}
+void DialogPoiInput::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 
 void DialogPoiInput::slot_showPOI_input(void)
@@ -68,11 +74,10 @@ void DialogPoiInput::txtHasChanged(void)
 
 void DialogPoiInput::done(int result)
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
+    Settings::saveGeometry(this);
     if(result == QDialog::Accepted)
     {
-        QStringList lsbuf,lsval1,lsval2,lsval3;
+        QStringList lsbuf;
         QString name;
         double lat,lon,wph;
         int tstamp;
@@ -80,7 +85,7 @@ void DialogPoiInput::done(int result)
         for (int i=0; i < lsbuf.size(); i++)
         {
             if(Util::convertPOI(lsbuf.at(i),&name,&lat,&lon,&wph,&tstamp,type->currentIndex()))
-                emit addPOI(name,type->currentIndex(),lat,lon,wph,tstamp,tstamp!=-1,NULL);
+                emit addPOI(name,type->currentIndex(),lat,lon,wph,tstamp,tstamp!=-1);
         }
     }
     POI_list->clear();

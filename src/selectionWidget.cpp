@@ -38,6 +38,7 @@ selectionWidget::selectionWidget(myCentralWidget *centralWidget, Projection * pr
     setData(0,SELECTION_WTYPE);
 
     popup = new QMenu(centralWidget->getMainWindow());
+    Util::setFontDialog(popup);
     connect(this->popup,SIGNAL(aboutToShow()),centralWidget,SLOT(slot_resetGestures()));
     connect(this->popup,SIGNAL(aboutToHide()),centralWidget,SLOT(slot_resetGestures()));
     connect(this->popup,SIGNAL(aboutToShow()),this,SLOT(slot_protect()));
@@ -74,7 +75,7 @@ selectionWidget::selectionWidget(myCentralWidget *centralWidget, Projection * pr
     xa=xb=ya=yb=0;
     width=height=0;
     selecting=false;
-    showOrthodromie   = Settings::getSetting("showOrthodromie", false).toBool();
+    show_orthodromie   = Settings::getSetting(showOrthodromie).toBool();
     hide();
 }
 
@@ -113,9 +114,16 @@ void selectionWidget::slot_protect()
     updateSize();
     update();
     show();
-    if(showOrthodromie)
+    if(show_orthodromie)
     {
-        seg->initSegment(xa,ya,xb,yb);
+        QPen pen;
+        pen.setWidthF(Settings::getSetting(orthoLineWidth).toDouble());
+        pen.setColor(Settings::getSetting(orthoLineColor).value<QColor>());
+        seg->setLinePen(pen);
+        double X1,Y1,X2,Y2;
+        proj->screen2mapDouble(xa,ya,&X1,&Y1);
+        proj->screen2mapDouble(xb,yb,&X2,&Y2);
+        seg->initSegment(X1,Y1,X2,Y2);
         seg->show();
     }
 }
@@ -135,9 +143,16 @@ void selectionWidget::startSelection(int start_x,int start_y)
 
     update();
 
-    if(showOrthodromie)
+    if(show_orthodromie)
     {
-        seg->initSegment(xa,ya,xb,yb);
+        QPen pen;
+        pen.setWidthF(Settings::getSetting(orthoLineWidth).toDouble());
+        pen.setColor(Settings::getSetting(orthoLineColor).value<QColor>());
+        seg->setLinePen(pen);
+        double X1,Y1,X2,Y2;
+        proj->screen2mapDouble(xa,ya,&X1,&Y1);
+        proj->screen2mapDouble(xb,yb,&X2,&Y2);
+        seg->initSegment(X1,Y1,X2,Y2);
         seg->show();
     }
 }
@@ -170,8 +185,18 @@ bool selectionWidget::tryMoving(int mouse_x,int mouse_y)
 
     update();
 
-    if(showOrthodromie)
-        seg->moveSegment(xb,yb);
+    if(show_orthodromie)
+    {
+        QPen pen;
+        pen.setWidthF(Settings::getSetting(orthoLineWidth).toDouble());
+        pen.setColor(Settings::getSetting(orthoLineColor).value<QColor>());
+        seg->setLinePen(pen);
+        double X1,Y1,X2,Y2;
+        proj->screen2mapDouble(xa,ya,&X1,&Y1);
+        proj->screen2mapDouble(xb,yb,&X2,&Y2);
+        seg->initSegment(X1,Y1,X2,Y2);
+        seg->show();
+    }
     return true;
 }
 
@@ -189,14 +214,23 @@ void selectionWidget::updateSize(void)
 
 void selectionWidget::slot_setDrawOrthodromie(bool b)
 {
-    qWarning() << "Set ortho: " << b;
-    if (showOrthodromie != b)
+    //qWarning() << "Set ortho: " << b;
+    if (show_orthodromie != b)
     {
-        showOrthodromie = b;
-        Settings::setSetting("showOrthodromie", b);
+        show_orthodromie = b;
+        Settings::setSetting(showOrthodromie, b);
         update();
-        if(showOrthodromie)
-            seg->initSegment(xa,ya,xb,yb);
+        if(show_orthodromie)
+        {
+            QPen pen;
+            pen.setWidthF(Settings::getSetting(orthoLineWidth).toDouble());
+            pen.setColor(Settings::getSetting(orthoLineColor).value<QColor>());
+            seg->setLinePen(pen);
+            double X1,Y1,X2,Y2;
+            proj->screen2mapDouble(xa,ya,&X1,&Y1);
+            proj->screen2mapDouble(xb,yb,&X2,&Y2);
+            seg->initSegment(X1,Y1,X2,Y2);
+        }
         else
             seg->hideSegment();
     }
@@ -216,7 +250,7 @@ void selectionWidget::clearSelection(void)
     if(isProtected) return;
     stopSelection();
     hide();
-    if(showOrthodromie)
+    if(show_orthodromie)
         seg->hideSegment();
 }
 

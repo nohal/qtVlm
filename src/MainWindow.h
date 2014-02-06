@@ -42,13 +42,14 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include "class_list.h"
 #include "dataDef.h"
-
-class MainWindow: public QMainWindow
+#include "MainWindowInterface.h"
+//#include <QPluginLoader>
+class MainWindow: public MainWindowInterface
 {
     Q_OBJECT
 
     public:
-        MainWindow(int w, int h, QWidget *parent = 0);
+        MainWindow(QWidget *parent = 0);
         ~MainWindow();
 
         void openGribFile(QString fileName, bool zoom=true, bool current=false);
@@ -87,14 +88,26 @@ class MainWindow: public QMainWindow
         void setPilototoFromRoute(QList<POI*> poiList);
 
         myCentralWidget * getMy_centralWidget(){return this->my_centralWidget;}
-        void setRestartNeeded(){this->restartNeeded=true;}
-        bool getRestartNeeded(){return this->restartNeeded;}
         void continueSetup();
 
         QMenu *createPopupMenu(void);
 
         void loadBoard();
         void showDashBoard();
+        BoatInterface * get_selectedBoatInterface(){return (BoatInterface*)this->getSelectedBoat();}
+        QColor getWindColorStatic(const double &v, const bool &smooth=true);
+        QVariant getSettingApp(const int &key) const;
+        QString get_folder(QString str) const;
+        void showContextualMenu(const int &xPos, const int &yPos);
+        QPalette getOriginalPalette() const;
+        void setting_saveGeometry(QWidget * obj);
+        bool getWPClipboard(QString *,double * lat,double * lon, double * wph, int * tStamp);
+        void setWPClipboard(double lat,double lon, double wph);
+        QString pos2String(const int &type,const double &value);
+        QString formatLongitude(const double &x);
+        QString formatLatitude(const double &y);
+        void setFontDialog(QWidget * o);
+        void manageWPDialog(BoatInterface *myBoat, QObject *boardPlugin);
 public slots:
         void slot_POI_input();
         void slot_showPOI_input(POI *poi=NULL, const bool &fromMenu=false);        
@@ -120,8 +133,6 @@ public slots:
         void slotDateGribChanged_now(bool b=true);
         void slotDateGribChanged_sel();
         void slotSetGribDate(time_t);
-
-        void slotWindArrows(bool b);
 
         void slotOptions_Language();
         void slotHelp_Help();
@@ -194,6 +205,7 @@ public slots:
 signals:
         void setChangeStatus(bool status,bool pilototo,bool syncBtn);
         void outDatedVlmData(void);
+        void drawVacInfo();
         void editPOI(POI *);
         void newPOI(double,double,Projection *, boat *);
         void editInstructions(void);
@@ -205,7 +217,7 @@ signals:
         void updateInet(void);
         void showCompassLine(double,double);
         void addPOI_list(POI*);
-        void addPOI(QString name,int type,double lat,double lon, double wph,int timestamp,bool useTimeStamp, boat *);
+        void addPOI(QString name,int type,double lat,double lon, double wph,int timestamp,bool useTimeStamp);
         void updateRoute(boat * boat);
         void showCompassCenterBoat();
         void showCompassCenterWp();
@@ -217,7 +229,7 @@ signals:
         void boatSelected(boat*);
         void accountListUpdated(Player*);
         void selectPOI(bool);
-        void updateLockIcon(QIcon ic);
+        void updateLockIcon(QString ic);
 
 
     protected:
@@ -292,13 +304,16 @@ signals:
 
         void listAllChildren(QObject * ptr,int);
         bool noSave;
-        bool restartNeeded;
         void updateTitle();
-        BoardVlmNew * newBoard;
+        BoardInterface * boardPlugin;
         board * myBoard;
         bool use_old_board;
 
         void loadGrib2();
+
+        QString get_OSVersion(void);
+        QPalette originalPalette;
+        //QPluginLoader * pluginLoader;
 };
 
 #endif

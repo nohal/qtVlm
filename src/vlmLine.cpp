@@ -61,7 +61,7 @@ vlmLine::vlmLine(Projection * proj, QGraphicsScene * myScene,double z_level) :
     this->coastDetected=false;
     this->coastDetection=false;
     this->mcp=NULL;
-    if(myZvalue==Z_VALUE_ROUTE || myZvalue==Z_VALUE_BOAT || myZvalue==Z_VALUE_OPP)
+    if(myZvalue==Z_VALUE_ROUTE || myZvalue==Z_VALUE_BOAT || myZvalue==Z_VALUE_OPP || myZvalue==Z_VALUE_LINE_POI)
         this->setAcceptHoverEvents(true);
     show();
 }
@@ -162,9 +162,18 @@ void vlmLine::setTip(QString tip)
     setToolTip(tip);
     myToolTip=tip;
 }
-
+void vlmLine::setHidden(const bool &hidden)
+{
+    this->hidden=hidden;
+    this->setVisible(!hidden);
+    calculatePoly();
+    update();
+}
 void vlmLine::calculatePoly(void)
 {
+    collision.clear();
+    polyList.clear();
+    if(hidden) return;
     int n=0;
     double X,Y,previousX=0,previousY=0;
     QPainterPath myPath2;
@@ -200,7 +209,10 @@ void vlmLine::calculatePoly(void)
                 proj->map2screenDouble(worldPoint.lon,worldPoint.lat,&X,&Y);
             else
                 proj->map2screenByReference(previousWorldPoint.lon,previousX,worldPoint.lon,worldPoint.lat,&X,&Y);
-            bool reverseWorld=!proj->isInBounderies(X,Y) && proj->isPointVisible(worldPoint.lon,worldPoint.lat) && n!=0;
+            bool reverseWorld=false;
+            if(n!=0)
+                reverseWorld=(!proj->isInBounderies(X,Y) && proj->isPointVisible(worldPoint.lon,worldPoint.lat)) ||
+                             (!proj->isInBounderies(previousX,previousY) && proj->isPointVisible(previousWorldPoint.lon,previousWorldPoint.lat));
             poly->putPoints(n,1,X-x(),Y-y());
             if(this->coastDetection && n!=0 && !coasted && map && map->crossing(QLineF(previousX,previousY,X,Y),
                QLineF(previousWorldPoint.lon,previousWorldPoint.lat,worldPoint.lon,worldPoint.lat)))
@@ -216,16 +228,22 @@ void vlmLine::calculatePoly(void)
                 poly=new QPolygon();
                 polyList.append(poly);
                 proj->map2screenDouble(worldPoint.lon,worldPoint.lat,&X,&Y);
+                double myX=X;
+                double myY=Y;
                 previousX=X;
                 poly->putPoints(0,1,X-x(),Y-y());
                 proj->map2screenByReference(worldPoint.lon,previousX,previousWorldPoint.lon,previousWorldPoint.lat,&X,&Y);
                 poly->putPoints(1,1,X-x(),Y-y());
-                n=0;
                 collision.append(coasted);
                 tempBound=tempBound.united(poly->boundingRect());
                 poly=new QPolygon();
                 polyList.append(poly);
+                poly->putPoints(0,1,myX-x(),myY-y());
                 coasted=false;
+                n=1;
+                previousWorldPoint=worldPoint;
+                previousX=myX;
+                previousY=myY;
                 continue;
             }
             previousWorldPoint=worldPoint;
@@ -284,11 +302,7 @@ void vlmLine::calculatePoly(void)
                 y+=10;
             QRectF r;
             r.setRect(x,y, width-10,height-1);
-#ifdef __ANDROIDD__
-            float x1,y1,x2,y2;
-#else
             double x1,y1,x2,y2;
-#endif
             tempBound=tempBound.united(r);
             tempBound=tempBound.normalized();
             tempBound.getCoords(&x1,&y1,&x2,&y2);
@@ -304,7 +318,7 @@ void vlmLine::calculatePoly(void)
 }
 void vlmLine::drawInMagnifier(QPainter * pnt, Projection * tempProj)
 {
-    if(!this->isVisible()) return;
+    if(!this->isVisible() || this->hidden) return;
     drawingInMagnifier=true;
     Projection * myProj=proj;
     proj=tempProj;
@@ -319,7 +333,7 @@ void vlmLine::hoverEnterEvent(QGraphicsSceneHoverEvent *)
 {
     //qWarning()<<"entering hoverEnter event";
     emit hovered();
-    this->setZValue(myZvalue+30);
+    this->setZValue(myZvalue+0.5);
     this->linePen.setWidthF(this->lineWidth*2.0);
     update();
     //qWarning()<<"end of hoverEnter event";
@@ -345,7 +359,7 @@ void vlmLine::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
 //    int debug;
 //    if(this->desc=="WP1: Latitude Cap Vert") //for debug point
 //        debug=0;
-    if(!this->isVisible()) return;
+    if(!this->isVisible() || this->hidden) return;
     pnt->setRenderHint(QPainter::Antialiasing);
     pnt->setPen(linePen);
     QPen coastedPen=linePen;
@@ -369,6 +383,7 @@ void vlmLine::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
         else
             pnt->setPen(linePen);
         if(poly->size()==0) continue;
+        //pnt->drawText(poly->at(0),QString().setNum(nn));
         switch(mode)
         {
         case VLMLINE_LINE_MODE:
@@ -388,7 +403,7 @@ void vlmLine::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
         case VLMLINE_POINT_MODE:
             if(!hidden)
             {
-                int nbVac=nbVacPerHour*Settings::getSetting("trace_length",12).toInt()+1;
+                int nbVac=nbVacPerHour*Settings::getSetting(traceLength).toInt()+1;
                 int x0=poly->point(0).x();
                 int y0=poly->point(0).y();
                 for(int i=1;i<poly->count() && i<nbVac;++i)

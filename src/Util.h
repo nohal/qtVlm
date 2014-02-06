@@ -42,17 +42,9 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include "class_list.h"
 #include "dataDef.h"
+#include "AngleUtil.h"
 
 #include <QLineF>
-
-#ifdef __QTVLM_WITH_TEST
-#define NB_URL 4
-#else
-#define NB_URL 3
-#endif
-
-extern QString url_name[NB_URL];
-extern QString url_str[NB_URL];
 
 class Util
 {
@@ -64,7 +56,7 @@ class Util
     static void setSpecificFont(QMap<QWidget *, QFont> widgets);
     static QString formatDegres(const double &x);           // 123.4 -> 123°24.00'
     static QString formatPosition(const double &x, const double &y);    // 123°24.00'W 45°67.89'N
-    static QString formatLongitude(double x);
+    static QString formatLongitude(const double &x);
     static QString formatLatitude(const double &y);
 
     static QString formatDateLong(const time_t &t);
@@ -79,6 +71,11 @@ class Util
     static QString formatTemperature(const double &tempKelvin);
     static QString formatTemperature_short(const double &tempKelvin);
     static QString formatPercentValue(double v);
+
+    static QString formatSimpleIntUnit(int val,QString unit);
+    static QString formatSimpleDoubleUnit(double val,QString unit);
+    static QString formatData(int type,double val1,double val2=0);
+    static QString formatSimpleData(int type,double val);
 
     static int    kmhToBeaufort(const double &v);
     static double  kmhToBeaufort_F(const double &v);
@@ -95,23 +92,20 @@ class Util
     static void setWPClipboard(double lat,double lon, double wph);
     static bool convertPOI(const QString & str,QString * name,double * lat,double * lon,double * wph,int * tstamp,
                            int type);
-    static void getCoordFromDistanceAngle(double latitude, double longitude,
-             double distance, double heading, double * res_lat, double * res_lon);
+    static void getCoordFromDistanceAngle(const double &latitude, const double &longitude,
+             const double &distance, const double &heading, double * res_lat, double * res_lon);
     static void getCoordFromDistanceLoxo(const double &latitude, const double &longitude,
              const double &distance,const double &heading, double * res_lat,double * res_lon);
     static void getCoordFromDistanceAngle2(const double &latitude, const double &longitude,
                                            const double &distance, const double &heading, double * res_lat,double * res_lon);
     static QString pos2String(const int &type,const double &value);
-    static QString getHost();
+
     static void computePos(Projection * proj, const QPointF &position, QPoint * screenCoord);
     static void computePos(Projection * proj, const double &lat, const double &lon, int * x, int * y);
     static void computePosDouble(Projection * proj, const double &lat, const double &lon, double * x, double * y);
     static void computePosDouble(Projection * proj, const QPointF &position, QPointF * screenCoord);
     static void addAgent(QNetworkRequest & request, bool overrideForce=false);
     static bool lineIsCrossingRect(const QLineF &line, const QRectF &rect);
-    static double myDiffAngle(const double &a1, const double &a2);
-    static double A360(const double &hdg);
-    static double A180(double angle);
 
     static QString generateKey(int size);
 
@@ -149,20 +143,10 @@ class Util
             ls.clear();
         }
 
+        static double getOrthoDistance(const double &latitude1, const double &longitude1, const double &latitude2, const double &longitude2);
+        static void getCoordFromDistanceAngle3(const double &latitude, const double &longitude, const double &distance, const double &heading, double *res_lat, double *res_lon);
+        static void setWidgetSize(QWidget *o, const QSize &s);
 };
-
-//======================================================================
-inline double Util::A360(const double &hdg)
-{
-    double newhdg=hdg;
-    while (newhdg>=360.0) newhdg-=360.0;
-    while (newhdg<0.0) newhdg+=360.0;
-    return newhdg;
-}
-inline double Util::myDiffAngle(const double &a1,const double &a2)
-{
-    return qAbs(A360(qAbs(a1)+ 180.0 -qAbs(a2)) -180.0);
-}
 
 inline int Util::kmhToBeaufort(const double &v) {
     return (int)(kmhToBeaufort_F(v)+0.5);
@@ -185,12 +169,12 @@ inline QPointF Util::calculateSumVect(const double &angle1,const double &length1
 {
     QLineF line1(0,0,1,1);
     line1.setLength(length1);
-    line1.setAngle(A360(angle1));
+    line1.setAngle(AngleUtil::A360(angle1));
     QLineF line2(line1.p2().x(),line1.p2().y(),1,1);
     line2.setLength(length2);
-    line2.setAngle(A360(angle2));
+    line2.setAngle(AngleUtil::A360(angle2));
     QLineF temp(0,0,line2.p2().x(),line2.p2().y());
-    QPointF pointF(temp.length(),A360(temp.angle()));
+    QPointF pointF(temp.length(),AngleUtil::A360(temp.angle()));
     return pointF;
 }
 //-----------------------------------------------------------------------------
@@ -207,8 +191,31 @@ inline float Util::BeaufortToMs_F (float bf) {
     return sqrt (bf*bf*bf/1.44);
 }
 //-----------------------------------------------------------------------------
-inline void Util::getCoordFromDistanceAngle(double latitude, double longitude,
-             double distance,double heading, double * res_lat,double * res_lon)
+inline void Util::getCoordFromDistanceAngle3(const double &latitude, const double &longitude,
+             const double &distance,const double &heading, double * res_lat,double * res_lon)
+{
+    double lat1=degToRad(AngleUtil::A360(latitude));
+    double lon1=degToRad(AngleUtil::A360(longitude));
+    double hdg=degToRad(AngleUtil::A360(heading));
+    double R=6371.0/1.852; // nm
+    double lat2 = asin( sin(lat1)*cos(distance/R) +
+                  cos(lat1)*sin(distance/R)*cos(hdg) );
+    double lon2 = lon1 + atan2(sin(hdg)*sin(distance/R)*cos(lat1),
+                         cos(distance/R)-sin(lat1)*sin(lat2));
+    if (lon2 > PI)
+    {
+        lon2 -= TWO_PI;
+    }
+    else if (lon2 < -PI)
+    {
+        lon2 += TWO_PI;
+    }
+    *res_lon=radToDeg(lon2);
+    *res_lat=radToDeg(lat2);
+    return;
+}
+inline void Util::getCoordFromDistanceAngle(const double &latitude, const double &longitude,
+             const double &distance,const double &heading, double * res_lat,double * res_lon)
 {
     if(qAbs(latitude)>=89.9)
     {
@@ -216,14 +223,18 @@ inline void Util::getCoordFromDistanceAngle(double latitude, double longitude,
         *res_lon=longitude;
         return;
     }
+#if 1
+    getCoordFromDistanceAngle3(latitude,longitude,distance,heading,res_lat,res_lon);
+    return;
+#else
     double d, new_lat, t_lat, new_lon;
-    latitude = degToRad(latitude);
-    longitude = fmod(degToRad(longitude), TWO_PI);
-    heading=degToRad(heading);
+    double lat = degToRad(latitude);
+    double lon = fmod(degToRad(longitude), TWO_PI);
+    double hdg=degToRad(heading);
     d = degToRad(distance/60.0);
-    new_lat = latitude + d*cos(heading);
-    t_lat = (latitude + new_lat) / 2.0;
-    new_lon =  longitude + (d*sin(heading))/cos(t_lat);
+    new_lat = lat + d*cos(hdg);
+    t_lat = (lat + new_lat) / 2.0;
+    new_lon =  lon + (d*sin(hdg))/cos(t_lat);
     if (new_lon > PI)
     {
         new_lon -= TWO_PI;
@@ -234,6 +245,7 @@ inline void Util::getCoordFromDistanceAngle(double latitude, double longitude,
     }
     *res_lat = radToDeg(new_lat);
     *res_lon = radToDeg(new_lon);
+#endif
 }
 
 #endif

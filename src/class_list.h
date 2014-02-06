@@ -28,19 +28,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /*****************************/
 
 /* BoardVLM.h */
+class BoardInterface;
 class board;
 class boardVLM;
 class boardReal;
-class BoardVlmNew;
 
 /* horn */
 class DialogHorn;
 
 /* boat*.h */
+class BoatInterface;
 class boat;
 class boatVLM;
 class boatReal;
 class Player;
+
+/* GPS */
+class ReceiverThread;
+class FileReceiverThread;
+class SerialReceiverThread;
+class GPSdReceiverThread;
+struct SatData;
+struct GpsData;
+
 
 /* DialogBoatAccount.h */
 class DialogBoatAccount;
@@ -91,6 +101,7 @@ class DataColors;
 class ColorElement;
 class DataCode;
 class grb2DataType;
+class DialogGribDrawing;
 
 
 /* GshhsReader.h */
@@ -112,6 +123,7 @@ class IsoLine;
 class LoadGribFile;
 
 /* MainWindow.h */
+class MainWindowInterface;
 class MainWindow;
 class Progress;
 
@@ -171,6 +183,7 @@ class DialogPoi;
 class DialogPoiDelete;
 
 /* Polar.h */
+class PolarInterface;
 class Polar;
 class polarList;
 

@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "mycentralwidget.h"
 #include "settings.h"
 #include "Util.h"
+#include <QScroller>
 
 
 DialogFinePosit::DialogFinePosit(POI * poi,myCentralWidget *parent)
@@ -31,6 +32,8 @@ DialogFinePosit::DialogFinePosit(POI * poi,myCentralWidget *parent)
     this->poi=poi;
     this->parent=parent;
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     setWindowTitle(tr("Parametres du positionnement automatique"));
     etendueLon->setValue(poi->getSearchRangeLon());
@@ -39,28 +42,32 @@ DialogFinePosit::DialogFinePosit(POI * poi,myCentralWidget *parent)
     drawRoute->setChecked(poi->getOptimizing());
     this->etendueLon->setFocus();
     this->etendueLon->selectAll();
-    this->keepOldMe->setChecked(Settings::getSetting("KeepOldPoi","0").toInt()==1);
+    this->keepOldMe->setChecked(Settings::getSetting(KeepOldPoi).toInt()==1);
     this->autoRange->setChecked(poi->getAutoRange());
     etendueLon->setDisabled(poi->getAutoRange());
     etendueLat->setDisabled(poi->getAutoRange());
     buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
     buttonBox->button(QDialogButtonBox::Cancel)->setDefault(false);
 }
+void DialogFinePosit::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
+}
 DialogFinePosit::~DialogFinePosit()
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
+    Settings::saveGeometry(this);
 }
 //---------------------------------------
 void DialogFinePosit::done(int result)
 {
+    Settings::saveGeometry(this);
     if(result == QDialog::Accepted)
     {
         poi->setSearchRangeLon(etendueLon->value());
         poi->setSearchRangeLat(etendueLat->value());
         poi->setSearchStep(step->value());
         poi->setOptimizing(drawRoute->isChecked());
-        Settings::setSetting("KeepOldPoi",keepOldMe->isChecked()?"1":"0");
+        Settings::setSetting(KeepOldPoi,keepOldMe->isChecked()?"1":"0");
         poi->setAutoRange (autoRange->isChecked());
     }
     if(result == QDialog::Rejected)

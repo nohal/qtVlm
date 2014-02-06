@@ -31,11 +31,12 @@ class DialogPilototoInstruction;
 class DialogPilototoParam : public QDialog, public Ui::pilototo_param_ui
 {Q_OBJECT
     public:
-        DialogPilototoParam(QWidget *parent);
+        DialogPilototoParam(myCentralWidget *parent);
         
         void done(int);
 
-    public slots:
+public slots:
+        void slot_screenResize();
         void editInstruction(DialogPilototoInstruction *);
         void editInstructionPOI(DialogPilototoInstruction *,POI*);
 

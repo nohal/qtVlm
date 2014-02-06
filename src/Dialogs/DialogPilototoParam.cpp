@@ -27,13 +27,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogPilototo.h"
 #include "POI.h"
 #include "settings.h"
-
+#include <QScroller>
 #define EDT_LAT 1
 #define EDT_LON 2
 
-DialogPilototoParam::DialogPilototoParam(QWidget *parent) : QDialog(parent)
+DialogPilototoParam::DialogPilototoParam(myCentralWidget *parent) : QDialog(parent->getMainWindow())
 {
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     instruction=NULL;
     //btn_selectPOI->setEnabled(false);
@@ -46,6 +48,10 @@ DialogPilototoParam::DialogPilototoParam(QWidget *parent) : QDialog(parent)
 
     btn_copyPOI->setIcon(QIcon(appFolder.value("img")+"copy.png"));
     btn_pastePOI->setIcon(QIcon(appFolder.value("img")+"paste.png"));
+}
+void DialogPilototoParam::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 
 void DialogPilototoParam::editInstruction(DialogPilototoInstruction * instruction)
@@ -95,8 +101,7 @@ void DialogPilototoParam::editInstructionPOI(DialogPilototoInstruction * instruc
 
 void DialogPilototoParam::done(int result)
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
+    Settings::saveGeometry(this);
     if(result==QDialog::Accepted)
     {
         int index=mode->currentIndex();

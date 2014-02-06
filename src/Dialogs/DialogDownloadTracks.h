@@ -3,10 +3,11 @@
 
 #include <QDialog>
 #include <QFileDialog>
+
 #include "inetClient.h"
 #include "ui_DialogDownloadTracks.h"
 #include "class_list.h"
-#include "parser.h"
+
 
 namespace Ui {
     class DialogDownloadTracks;
@@ -29,6 +30,8 @@ public:
     void requestFinished (QByteArray);
     void init();
 
+public slots:
+    void slot_screenResize();
 private:
     Ui::DialogDownloadTracks *ui;
     int userID, raceID, boatID;
@@ -38,9 +41,9 @@ private:
     QFile jsonFile;
     myCentralWidget * parent;
     bool raceIsValid,boatIsValid,cached;
+    bool dlRunning;
 
     bool doRequest(int reqType);
-    void jsonError (QJson::Parser * parser);
     void updateFileName(bool truncTrack);
 
 private slots:
@@ -49,6 +52,7 @@ private slots:
     void on_startTimeEdit_dateTimeChanged(QDateTime);
     void on_endTimeEdit_dateTimeChanged(QDateTime);
     void on_frameTrackCheckBox_clicked(bool checked=false);
+    void slot_fetch(void);
 };
 
 #endif // DIALOGDOWNLOADTRACKS_H

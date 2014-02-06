@@ -33,6 +33,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "dataDef.h"
 #include "inetClient.h"
 #include "vlmLine.h"
+
 struct raceData {
     QString idrace;
     QString oppList;
@@ -64,6 +65,10 @@ class opponent : public QGraphicsWidget
         vlmLine * getTraceDrawing(){return trace_drawing;}
         QColor getColor() { return myColor; }
 
+        FCT_GET(QString,loch1h)
+        FCT_GET(QString,loch3h)
+        FCT_GET(QString,loch24h)
+
         void setNewData(double lat, double lon,QString name);
         void setRealData(QString shortName, QString longName, QString desc, QString pavillon, QString color);
         void setOtherData(int rank, QString loch1h, QString loch3h, QString loch24h, QString statusVLM,QString pavillon){this->rank=rank;this->loch1h=loch1h;
@@ -93,6 +98,7 @@ public slots:
         void paramChanged();
         void slot_shOpp(bool isHidden);
         void slot_shLab(bool state){this->labelHidden=state;update();}
+        void slot_shTrace(bool);
         void slot_resetTraceCache();
 
     protected:
@@ -115,7 +121,7 @@ public slots:
         QColor    myColor;
         int       pi, pj;
         int       label_type;
-        int       opp_trace;
+        int       oppTrace;
         QString   my_str;
         int       width,height;
 
@@ -146,6 +152,7 @@ class opponentList : public QWidget, public inetClient
         void clear(void);
         QString getRaceId();
         QList<opponent*> * getList(void) { return &opponent_list; }
+        opponent * get_opponent(int idu);
 
         void requestFinished (QByteArray);
 

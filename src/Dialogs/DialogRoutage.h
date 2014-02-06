@@ -35,9 +35,9 @@ class DialogRoutage : public QDialog, public Ui::ROUTAGE_Editor_ui
         DialogRoutage(ROUTAGE *route, myCentralWidget *parent,POI *endPOI=NULL);
         ~DialogRoutage();
         void done(int result);
-
     public slots:
         void GybeTack(int i);
+        void slot_screenResize();
     signals:
 
     private:
@@ -46,8 +46,8 @@ class DialogRoutage : public QDialog, public Ui::ROUTAGE_Editor_ui
         bool  modeCreation;
         InputLineParams *inputTraceColor;
 
-private slots:
-    void slot_default();
+    private slots:
+        void slot_default();
 };
 
 #endif

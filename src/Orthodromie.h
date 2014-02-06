@@ -60,7 +60,7 @@ class Orthodromie
         //// Reduce an angle to (0, 2*PI), for direction and azimuth.
         double  reduceAzimut(double azimuth) const;
 
-        static void draw_OrthodromieSegment(Projection * proj, QPainter * pnt, double x0,double y0, double x1,double y1, int recurs=0);
+        //static void draw_OrthodromieSegment(Projection * proj, QPainter * pnt, double x0,double y0, double x1,double y1, int recurs=0);
 
     private:
         void initOrthodromie();

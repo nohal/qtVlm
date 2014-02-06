@@ -29,6 +29,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDebug>
 
 #include "class_list.h"
+#include "dataDef.h"
+
+#ifdef __QTVLM_WITH_TEST
+#define NB_URL 4
+#else
+#define NB_URL 3
+#endif
+
+extern QString url_name[NB_URL];
+extern QString url_str[NB_URL];
 
 class inetConnexion : public QObject
 {
@@ -38,15 +48,17 @@ class inetConnexion : public QObject
         DialogInetProgess * getProgressDialog() {return progressDialog;}
         ~inetConnexion(void);
 
-        void doRequestGet(inetClient* client,QString requestUrl,bool needAuth);
+        /*void doRequestGet(inetClient* client,QString requestUrl,bool needAuth);
         void doRequestGetProgress(inetClient* client,QString requestUrl,bool needAuth);
-        void doRequestPost(inetClient* client,QString requestUrl,QString data,bool needAuth);
+        void doRequestPost(inetClient* client,QString requestUrl,QString data,bool needAuth);*/
 
         void doRequestGet(inetClient* client,QString requestUrl, QString host,bool needAuth);
         void doRequestGetProgress(inetClient* client,QString requestUrl, QString host,bool needAuth);
         void doRequestPost(inetClient* client,QString requestUrl,QString data, QString host,bool needAuth);
 
         bool isAvailable(void);
+
+        static QString getHost();
 
     signals:
         void errorDuringGet();
@@ -58,11 +70,11 @@ class inetConnexion : public QObject
 
     private:
         bool hasProgress;
-	QNetworkAccessManager *inetManager;
+        QNetworkAccessManager *inetManager;
 
         DialogInetProgess * progressDialog;
 
-	void resetInet(void);
+        void resetInet(void);
         void doRequest(int type,inetClient* client,QString requestUrl,QString data, QString host, bool needAuth);
 
         QList<inetClient*> replyList;

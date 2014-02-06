@@ -23,27 +23,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QWidget>
 #endif
 #include <QDebug>
+#include <QTranslator>
+#include <QCoreApplication>
 
 
 #include "DialogPlayerAccount.h"
 
 #include "boatVLM.h"
+#include "boatReal.h"
 #include "dataDef.h"
 #include "mycentralwidget.h"
 #include "MainWindow.h"
 #include "route.h"
 #include "routage.h"
-#include "boatReal.h"
 #include "Util.h"
 #include "settings.h"
-#include <QTranslator>
-#include <QCoreApplication>
+#include <QScroller>
 
 
 DialogPlayerAccount::DialogPlayerAccount(Projection * proj, MainWindow * main,
                              myCentralWidget * parent, inetConnexion * inet) : QDialog(parent)
 {
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     QMap<QWidget *,QFont> exceptions;
     QFont wfont=QApplication::font();
@@ -67,86 +70,9 @@ DialogPlayerAccount::DialogPlayerAccount(Projection * proj, MainWindow * main,
     connect(this,SIGNAL(delPlayer(Player*)),parent,SLOT(slot_delPlayer_list(Player*)));
 
     connect(this,SIGNAL(playerSelected(Player*)),parent,SLOT(slot_playerSelected(Player*)));
-    this->en->setChecked(Settings::getSetting("appLanguage","fr").toString()=="en");
-    qWarning()<<"langage is"<<Settings::getSetting("appLanguage","fr").toString();
-    if(!parent->getIsStartingUp())
-        lang->hide();
-    else
-    {
-        connect(fr,SIGNAL(toggled(bool)),this,SLOT(slot_langChanged(bool)));
-        connect(en,SIGNAL(toggled(bool)),this,SLOT(slot_langChanged(bool)));
-        connect(cz,SIGNAL(toggled(bool)),this,SLOT(slot_langChanged(bool)));
-        connect(es,SIGNAL(toggled(bool)),this,SLOT(slot_langChanged(bool)));
-    }
-}
 
-void DialogPlayerAccount::initList(QList<Player*> * player_list)
-{
-    this->player_list=player_list;
-
-    player_idx=0;
-    Player * curPlayer=parent->getPlayer();
-    curPlayerIdp=curPlayer?curPlayer->getId():-1;
-    QListWidgetItem * curItem=NULL;
-
-    list_player->clear();
-    players.clear();
-
-    /* init Player list */
-
-    QListIterator<Player*> i (*player_list);
-    while(i.hasNext())
-    {
-        Player * player = i.next();
-        players.insert(player_idx,player);
-        QListWidgetItem * item = new QListWidgetItem(list_player);
-        setPlayerItemName(item,player);
-        item->setData(ROLE_IDX,player_idx);        
-        player_idx++;
-        if(curPlayerIdp != -1 && curPlayerIdp==player->getId())
-            curItem=item;
-        /* updating player */
-        if(player->getType()==BOAT_VLM)
-            updPlayer(player);
-    }
-
-    if(curItem)
-    {       
-        list_player->setCurrentItem(curItem);
-    }
-    else if(list_player->count()>0)
-    {        
-        list_player->setCurrentRow(0);
-        slot_selectItem_player(list_player->currentItem());
-    }
-    if(list_player->count()>0)
-        this->lang->hide();
-    updBtnAndString();
-}
-void DialogPlayerAccount::slot_langChanged(bool)
-{
-    QString la;
-    if(fr->isChecked())
-    {
-        Settings::setSetting("appLanguage", "fr");
-        la="fr";
-    }
-    else if (en->isChecked())
-    {
-        Settings::setSetting("appLanguage", "en");
-        la="en";
-    }
-    else if (cz->isChecked())
-    {
-        Settings::setSetting("appLanguage", "cz");
-        la="cz";
-    }
-    else if (es->isChecked())
-    {
-        Settings::setSetting("appLanguage", "es");
-        la="cz";
-    }
-
+    QString la= Settings::getSetting(appLanguage).toString();
+    qWarning()<<"langage is"<<la;
     if(la=="fr")
     {
         this->btn_playerAdd->setText("Nouveau");
@@ -211,13 +137,58 @@ void DialogPlayerAccount::slot_langChanged(bool)
         accDialog.realBoat->setText(tr("Skutecna lod"));
         accDialog.setWindowTitle(tr("Detaily uctu"));
     }
-    main->setRestartNeeded();
+}
+void DialogPlayerAccount::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
+}
+
+void DialogPlayerAccount::initList(QList<Player*> * player_list)
+{
+    this->player_list=player_list;
+
+    player_idx=0;
+    Player * curPlayer=parent->getPlayer();
+    curPlayerIdp=curPlayer?curPlayer->getId():-1;
+    QListWidgetItem * curItem=NULL;
+
+    list_player->clear();
+    players.clear();
+
+    /* init Player list */
+
+    QListIterator<Player*> i (*player_list);
+    while(i.hasNext())
+    {
+        Player * player = i.next();
+        players.insert(player_idx,player);
+        QListWidgetItem * item = new QListWidgetItem(list_player);
+        setPlayerItemName(item,player);
+        item->setData(ROLE_IDX,player_idx);        
+        player_idx++;
+        if(curPlayerIdp != -1 && curPlayerIdp==player->getId())
+            curItem=item;
+        /* updating player */
+        if(player->getType()==BOAT_VLM)
+            updPlayer(player);
+    }
+
+    if(curItem)
+    {       
+        list_player->setCurrentItem(curItem);
+    }
+    else if(list_player->count()>0)
+    {        
+        list_player->setCurrentRow(0);
+        slot_selectItem_player(list_player->currentItem());
+    }
+
+    updBtnAndString();
 }
 
 void DialogPlayerAccount::done(int result)
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
+    Settings::saveGeometry(this);
     if(result == QDialog::Accepted)
     {
         if(list_player->count()==0)
@@ -247,41 +218,7 @@ void DialogPlayerAccount::done(int result)
     }
     else
     {
-//        /* cleaning all structure */
-//        player_list->clear();
-//        QMapIterator<int,Player*> i (players);
-//        while(i.hasNext())
-//        {
-//            i.next();
-//            Player * player=i.value();
-//            if(!removeBoats(player)) continue;
-//            emit delPlayer(player);
-//            delete player;
-//        }
-//        /* reloading from disk */
-//        emit reloadPlayer();
-//        /* trying to find current player */
-//        if(curPlayerIdp!=-1)
-//        {
-//            QListIterator<Player*> j (*player_list);
-//            bool found=false;
-//            while(j.hasNext())
-//            {
-//                Player * player=j.next();
-//                if(player->getId()==curPlayerIdp)
-//                {
-//                    emit playerSelected(player);
-//                    found=true;
-//                }
-//            }
-//            if(!found)
-//            {
-//                QMessageBox::critical(parent,tr("Rechargement du compte courant"),
-//                                      tr("Erreur lors du rechargement du compte, le compte courant a disparu, relancez qtVlm"));
-//                QApplication::quit();
 
-//            }
-//        }
     }
 
     while(list_player->count())
@@ -292,7 +229,6 @@ void DialogPlayerAccount::done(int result)
     }
 
     list_player->clear();
-    //parent->emitUpdateRoute();
     QDialog::done(result);
 }
 
@@ -706,17 +642,17 @@ bool DialogParamAccount::initDialog(player_data * data)
     edit_pass->setHidden(realBoat->isChecked());
     QString s1="Identifiant";
     QString s2="Nom du bateau";
-    if(Settings::getSetting("appLanguage", "en").toString()=="en")
+    if(Settings::getSetting(appLanguage).toString()=="en")
     {
         s1="Login";
         s2="Boat name";
     }
-    else if(Settings::getSetting("appLanguage", "en").toString()=="cz")
+    else if(Settings::getSetting(appLanguage).toString()=="cz")
     {
         s1="Jmeno";
         s2="Lod jmeno";
     }
-    else if(Settings::getSetting("appLanguage", "en").toString()=="es")
+    else if(Settings::getSetting(appLanguage).toString()=="es")
     {
         s1="Login";
         s2="Nombre del barco";
@@ -745,17 +681,17 @@ void DialogParamAccount::slot_typeChanged(bool)
     edit_pass->setEnabled(vlmBoat->isChecked());
     QString s1="Identifiant";
     QString s2="Nom du bateau";
-    if(Settings::getSetting("appLanguage", "en").toString()=="en")
+    if(Settings::getSetting(appLanguage).toString()=="en")
     {
         s1="Login";
         s2="Boat name";
     }
-    else if(Settings::getSetting("appLanguage", "en").toString()=="cz")
+    else if(Settings::getSetting(appLanguage).toString()=="cz")
     {
         s1="Jmeno";
         s2="Lod jmeno";
     }
-    else if(Settings::getSetting("appLanguage", "en").toString()=="es")
+    else if(Settings::getSetting(appLanguage).toString()=="es")
     {
         s1="Login";
         s2="Nombre del barco";

@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef PLAYERACCOUNT_H
 #define PLAYERACCOUNT_H
+
 #ifdef QT_V5
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QMessageBox>
@@ -68,9 +69,9 @@ class DialogPlayerAccount : public QDialog, public Ui::playerAccount
         void slot_selectItem_player(QListWidgetItem *);
         void slot_selectAndValidateItem(QListWidgetItem* item);
         void slot_updFinished(bool res, Player * player);
-        void slot_langChanged(bool frSelected);
 
-    signals:
+        void slot_screenResize();
+signals:
         void addPlayer(Player*);
         void delPlayer(Player*);
         void addBoat(boat*);

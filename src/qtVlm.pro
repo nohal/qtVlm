@@ -4,7 +4,7 @@ contains ( QT_VERSION, "^5.*"){
     warning("qt5 detected")
     DEFINES += QT_V5
     CONFIG += QT_V5
-    QT+=core gui widgets multimedia concurrent
+    QT+=core gui widgets multimedia concurrent uitools
 }
 CONFIG += qt
 TEMPLATE = app
@@ -14,32 +14,32 @@ INCLUDEPATH += objs \
     Dialogs \
     libs/bzip2 \
     libs/zlib-1.2.7 \
-    libs/qextserialport12/src \
-    libs/qjson \
+        libs/qextserialport12/src \
     libs/nmealib/src/nmea \
     libs/libbsb \
     libs/miniunz \
     libs/g2clib-1.4.0 \
     libs/jasper/include \
-#    libs/libgps \
     .
 
 LIBS += -Llibs/build \
     -lminiunz \
     -lbz2 \
     -lz \
-    -lqjson \
     -lnmea \
     -lbsb \
     -lg2clib \
     -ljpc \
     -ljp2 \
     -lbase
-#    -lgps
+
 QT_V5{
 LIBS += -lQt5ExtSerialPort
 } else {
-LIBS += -lqextserialport
+LIBS += -lqextserialport \
+    -lqjson
+INCLUDEPATH += libs/qjson
+CONFIG += uitools
 }
 
 asan {
@@ -69,7 +69,6 @@ RC_FILE = qtVlm.rc
 HEADERS += Dialogs/DialogGraphicsParams.h \
     Dialogs/DialogLoadGrib.h \
     Dialogs/DialogProxy.h \
-    Dialogs/DialogUnits.h \
     Dialogs/DialogGribDate.h \
     Dialogs/DialogHorn.h \
     Dialogs/DialogVlmGrib.h \
@@ -156,8 +155,6 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     BoardReal.h \
     BoardVLM.h \
     BoardVLM_tools.h \
-    Dialogs/BoardTools.h \
-    Dialogs/BoardVlmNew.h \
     BarrierSet.h \
     Barrier.h \
     Dialogs/DialogEditBarrier.h \
@@ -174,7 +171,16 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     GribV1Record.h \
     GribV1.h \
     DataManager.h \
-    Dialogs/DialogGribDrawing.h
+    Dialogs/DialogGribDrawing.h \
+    BoardInterface.h \
+    MainWindowInterface.h \
+    BoatInterface.h \
+    PolarInterface.h \
+    settings_ini.h \
+    settings_def.h \
+    AngleUtil.h \
+    Dialogs/DialogLanguageSelection.h
+
 
 
 FORMS += Ui/boatAccount_dialog.ui \
@@ -212,18 +218,17 @@ FORMS += Ui/boatAccount_dialog.ui \
     Ui/dialogLoadImg.ui \
     Ui/routeInfo.ui \
     Ui/DialogRemovePoi.ui \
-    Ui/BoardVlmNew.ui \
     Ui/DialogEditBarrier.ui \
     Ui/DialogChooseMultipleBarrierSet.ui \
     Ui/DialogChooseMultipleBoat.ui \
     Ui/DialogChooseBarrierSet.ui \
     Ui/RouteComparator.ui \
-    Ui/DialogGribDrawing.ui
+    Ui/DialogGribDrawing.ui \
+    Ui/DialogLanguageSelection.ui
 
 SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/DialogLoadGrib.cpp \
     Dialogs/DialogProxy.cpp \
-    Dialogs/DialogUnits.cpp \
     Dialogs/DialogGribDate.cpp \
     Dialogs/DialogHorn.cpp \
     Dialogs/DialogVlmGrib.cpp \
@@ -307,7 +312,6 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Progress.cpp \
     StatusBar.cpp \
     Magnifier.cpp \
-    Dialogs/BoardVlmNew.cpp \
     BarrierSet.cpp \
     Barrier.cpp \
     Dialogs/DialogEditBarrier.cpp \
@@ -324,9 +328,20 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     GribV1Record.cpp \
     GribV1.cpp \
     DataManager.cpp \
-    Dialogs/DialogGribDrawing.cpp
+    Dialogs/DialogGribDrawing.cpp \
+    AngleUtil.cpp \
+    Dialogs/DialogLanguageSelection.cpp
+
+
 
 unix:!macx: DEFINES += _TTY_POSIX_ __TERRAIN_QIMAGE __UNIX_QTVLM
+unix:!android: LIBS += -lgps
+!android {
+    HEADERS+=GpsReceiver.h
+    SOURCES+=GpsReceiver.cpp
+}
+unix:!android: INCLUDEPATH += libs/libgps
+
 win32:DEFINES += _TTY_WIN_ \
     QWT_DLL \
     QT_DLL \
@@ -370,3 +385,5 @@ OTHER_FILES += \
     android/src/org/qtproject/qt5/android/bindings/QtActivity.java \
     android/src/org/qtproject/qt5/android/bindings/QtApplication.java \
     android/version.xml
+
+ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android

@@ -27,19 +27,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogProxy.h"
 #include "settings.h"
 #include "Util.h"
-
-DialogProxy::DialogProxy() : QDialog()
+#include <QScroller>
+#include "mycentralwidget.h"
+DialogProxy::DialogProxy(myCentralWidget * parent) : QDialog(parent->getMainWindow())
 {
     qWarning() << "Init dialogProxy";
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     setupUi(this);
     Util::setFontDialog(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
 
-    lineProxyHostname->setText(Settings::getSetting("httpProxyHostname", "").toString());
-    lineProxyPort->setText(Settings::getSetting("httpProxyPort", "").toString());
-    lineProxyUsername->setText(Settings::getSetting("httpProxyUsername", "").toString());
-    lineProxyUserPassword->setText(Settings::getSetting("httpProxyUserPassword", "").toString());
+    lineProxyHostname->setText(Settings::getSetting(httpProxyHostname).toString());
+    lineProxyPort->setText(Settings::getSetting(httpProxyPort).toString());
+    lineProxyUsername->setText(Settings::getSetting(httpProxyUsername).toString());
+    lineProxyUserPassword->setText(Settings::getSetting(httpProxyUserPassword).toString());
 
-    int usep = Settings::getSetting("httpUseProxy", 0).toInt();
+    int usep = Settings::getSetting(httpUseProxy).toInt();
 
     useProxy_btn->setChecked(usep!=0);
     noProxy_btn->setChecked(usep==0);
@@ -48,6 +51,10 @@ DialogProxy::DialogProxy() : QDialog()
         proxyType->setCurrentIndex(usep-1);
 
     slot_useProxy_changed();
+}
+void DialogProxy::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 
 void DialogProxy::slot_useProxy_changed()
@@ -70,8 +77,7 @@ void DialogProxy::slot_proxyType_changed(int /*type*/)
 
 void DialogProxy::done(int result)
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
+    Settings::saveGeometry(this);
     if(result == QDialog::Accepted)
     {
         int type;
@@ -79,11 +85,11 @@ void DialogProxy::done(int result)
             type=proxyType->currentIndex()+1;
         else
             type=0;
-        Settings::setSetting("httpUseProxy",type);
-        Settings::setSetting("httpProxyHostname", lineProxyHostname->text());
-        Settings::setSetting("httpProxyPort", lineProxyPort->text());
-        Settings::setSetting("httpProxyUsername", lineProxyUsername->text());
-        Settings::setSetting("httpProxyUserPassword", lineProxyUserPassword->text());
+        Settings::setSetting(httpUseProxy,type);
+        Settings::setSetting(httpProxyHostname, lineProxyHostname->text());
+        Settings::setSetting(httpProxyPort, lineProxyPort->text());
+        Settings::setSetting(httpProxyUsername, lineProxyUsername->text());
+        Settings::setSetting(httpProxyUserPassword, lineProxyUserPassword->text());
         emit proxyUpdated();
     }
     QDialog::done(result);

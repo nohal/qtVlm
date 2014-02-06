@@ -55,7 +55,8 @@ public slots:
         void slotCopy();
         void slotExportCSV();
 
-    signals:
+        void slot_screenResize();
+signals:
 
     private:
         QTimer  * intervalTimer;

@@ -50,7 +50,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QPixmap>
 #include <Terrain.h>
 #include <MapDataDrawer.h>
-
+#include <QScroller>
 //-------------------------------------------------------
 // ROUTE_Editor: Constructor for edit an existing ROUTE
 //-------------------------------------------------------
@@ -61,16 +61,28 @@ DialogRoute::DialogRoute(ROUTE *route, myCentralWidget *parent, bool createMode)
     this->parent=parent;
     tabWidthRatio=-1;
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     this->warning_icon->setPixmap(QPixmap(appFolder.value("img")+"warning.png"));
     connect(this->useVbvmgVlm,SIGNAL(stateChanged(int)),this,SLOT(slot_hideShowWarning()));
+    QString tip=tr("Ce bouton a 3 etats:<br><b>Non coche:</b> La route ne sera pas simplifiee.<br><b>Partiellement coche:</b> La route sera simplifiee en mode minimum, c'est le meilleur mode.<br><b>Completement coche:</b> La route sera simplifiee au maximum. Ce mode peut degrader la qualite du routage.");
+    Simplifier->setToolTip(tip.replace(" ","&nbsp;"));
     Util::setFontDialog(this);
-
+    if(Settings::getSetting(fusionStyle).toInt()==1)
+    {
+        warning_text->setStyleSheet("color: #dc759b;");
+        useVbvmgVlm->setStyleSheet("color: yellow;");
+    }
+    else
+    {
+        warning_text->setStyleSheet("color: red;");
+        useVbvmgVlm->setStyleSheet("color: blue;");
+    }
     QMap<QWidget *,QFont> exceptions;
     QFont wfont=QApplication::font();
     wfont.setPointSizeF(8.0);
     exceptions.insert(warning_text,wfont);
     Util::setSpecificFont(exceptions);
-    qWarning()<<"warning size="<<warning_text->font().pointSizeF();
 
 
     inputTraceColor =new InputLineParams(route->getWidth(),route->getColor(),1.6,  QColor(Qt::red),this,0.1,5);
@@ -220,10 +232,10 @@ DialogRoute::DialogRoute(ROUTE *route, myCentralWidget *parent, bool createMode)
         min=route->getBoat()->getVacLen()/60;
         if(route->getBoat()->get_boatType()==BOAT_REAL)
         {
-            roadMapInterval->setValue(Settings::getSetting("roadMapInterval",5).toInt());
-            roadMapHDG->setValue(Settings::getSetting("roadMapHDG",0).toInt());
-            useInterval->setChecked(Settings::getSetting("roadMapUseInterval",1).toInt()==1);
-            if((Settings::getSetting("roadMapUseInterval",1).toInt()==1))
+            roadMapInterval->setValue(Settings::getSetting(roadMap_interval).toInt());
+            roadMapHDG->setValue(Settings::getSetting(roadMap_HDG).toInt());
+            useInterval->setChecked(Settings::getSetting(roadMap_useInterval).toInt()==1);
+            if((Settings::getSetting(roadMap_useInterval).toInt()==1))
             {
                 useInterval->setChecked(true);
                 useHDG->setChecked(false);
@@ -283,6 +295,10 @@ DialogRoute::DialogRoute(ROUTE *route, myCentralWidget *parent, bool createMode)
     if(route->getBoat()->getLockStatus())
         this->Envoyer->setDisabled(true);
 }
+void DialogRoute::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
+}
 void DialogRoute::slot_hideShowWarning()
 {
     this->warning_icon->setHidden(this->useVbvmgVlm->checkState()!=Qt::Unchecked);
@@ -333,16 +349,16 @@ void DialogRoute::slotInterval()
     if(useHDG->isChecked())
     {
         val=roadMapHDG->value();
-        Settings::setSetting("roadMapHDG",val);
+        Settings::setSetting(roadMap_HDG,val);
     }
     else
     {
         roadMapInterval->setValue(val);
-        Settings::setSetting("roadMapInterval",val);
+        Settings::setSetting(roadMap_interval,val);
     }
     roadMapHDG->setDisabled(useInterval->isChecked());
     roadMapInterval->setEnabled(useInterval->isChecked());
-    Settings::setSetting("roadMapUseInterval",useInterval->isChecked()?1:0);
+    Settings::setSetting(roadMap_useInterval,useInterval->isChecked()?1:0);
     rmModel->removeRows(0,rmModel->rowCount());
     double dist=0;
     double speedMoy=0;
@@ -371,7 +387,7 @@ void DialogRoute::slotInterval()
         {
             vlmPoint p(roadItems.at(1),roadItems.at(2));
             p.eta=roadItems.at(0);
-            if(parent->getTerre()->daylight(NULL,p))
+            if(parent->get_terrain()->daylight(NULL,p))
                 img.fill(QColor(238,241,125));
             else
                 img.fill(QColor(105,109,124));
@@ -403,7 +419,7 @@ void DialogRoute::slotInterval()
         }
         else
         {
-            if(i==0 || i==route->getRoadMap()->count()-1 || Util::myDiffAngle(lastHeading,roadItems.at(3))>=val)
+            if(i==0 || i==route->getRoadMap()->count()-1 || AngleUtil::myDiffAngle(lastHeading,roadItems.at(3))>=val)
             {
                 lastHeading=roadItems.at(3);
                 insertIt=true;
@@ -423,6 +439,7 @@ void DialogRoute::slotInterval()
                 roadPoint.append(new QStandardItem(QString().sprintf("%.2f",roadItems.at(7))+tr(" nds")));
                 roadPoint[2]->setData(roadItems.at(7),Qt::UserRole);
                 roadPoint[2]->setData(rgb,Qt::BackgroundRole);
+                roadPoint[2]->setData(QColor(Qt::black),Qt::ForegroundRole);
                 roadPoint.append(new QStandardItem(QString().sprintf("%.2f",roadItems.at(6))+tr("deg")));
                 roadPoint[3]->setData(roadItems.at(6),Qt::UserRole);
                 roadPoint.append(new QStandardItem(QString().sprintf("%.2f",qAbs(roadItems.at(8)))+tr("deg")));
@@ -558,9 +575,12 @@ void DialogRoute::slotInterval()
             for(int n=0;n<rmModel->columnCount();++n)
             {
                 if(n%2==0 && n!=2)
-                    roadPoint[n]->setData(QColor(240,240,240),Qt::BackgroundRole);
+                    roadPoint[n]->setData(this->palette().alternateBase().color(),Qt::BackgroundRole);
                 if(n==4)
+                {
                     roadPoint[n]->setData(c,Qt::BackgroundRole);
+                    roadPoint[n]->setData(QColor(Qt::black),Qt::ForegroundRole);
+                }
                 roadPoint[n]->setEditable(false);
                 if(n==0 || n==16 || n==19 || n==20 || roadItems.at(4)==-1 || roadPoint[n]->text()=="N/A")
                     roadPoint[n]->setTextAlignment(Qt::AlignCenter| Qt::AlignVCenter);
@@ -599,20 +619,6 @@ void DialogRoute::slotInterval()
         this->engineTime->setText(Util::formatElapsedTime(elapsed));
     }
     delete waitBox;
-    routeStats stats=route->getStats();
-    qWarning()<<"total time"<<Util::formatElapsedTime(stats.totalTime);
-    qWarning()<<"total time beating"<<Util::formatElapsedTime(stats.beatingTime);
-    qWarning()<<"total time largue"<<Util::formatElapsedTime(stats.largueTime);
-    qWarning()<<"total time downwind"<<Util::formatElapsedTime(stats.reachingTime);
-    qWarning()<<"total time at night"<<Util::formatElapsedTime(stats.nightTime);
-    qWarning()<<"total distance"<<stats.totalDistance;
-    qWarning()<<"average tws"<<stats.averageTWS;
-    qWarning()<<"max tws"<<stats.maxTWS;
-    qWarning()<<"min tws"<<stats.minTWS;
-    qWarning()<<"average bs"<<stats.averageBS;
-    qWarning()<<"max bs"<<stats.maxBS;
-    qWarning()<<"min bs"<<stats.minBS;
-    qWarning()<<"nb gybes/tacks"<<stats.nbTacksGybes;
 }
 void DialogRoute::drawTransformedLine( QPainter &pnt,
         double si, double co,int di, int dj, int i,int j, int k,int l)
@@ -744,8 +750,7 @@ void DialogRoute::drawTriangle(QPainter &pnt, bool south,
 
 void DialogRoute::done(int result)
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
+    Settings::saveGeometry(this);
     if(result == QDialog::Accepted || result==99)
     {
         if (!parent->freeRouteName((editName->text()).trimmed(),route))
@@ -1070,20 +1075,15 @@ void DialogRoute::fillPilotView(bool def)
 }
 void DialogRoute::slotExportCSV()
 {
-    QString routePath=Settings::getSetting("exportRouteCSVFolder","").toString();
+    QString routePath=Settings::getSetting(exportRouteCSVFolder).toString();
     QDir dirRoute(routePath);
     if(!dirRoute.exists())
     {
         routePath=Util::currentPath();
-        Settings::setSetting("exportRouteCSVFolder",routePath);
+        Settings::setSetting(exportRouteCSVFolder,routePath);
     }
-#ifdef __WIN_QTVLM
-    QString fileName = QFileDialog::getSaveFileName(this,
-                         tr("Exporter un tableau de marche"), routePath, "CSV  (*.csv)",0,QFileDialog::DontUseNativeDialog);
-#else
     QString fileName = QFileDialog::getSaveFileName(this,
                          tr("Exporter un tableau de marche"), routePath, "CSV  (*.csv)");
-#endif
     if(fileName.isEmpty() || fileName.isNull()) return;
     QFile::remove(fileName);
     QFile routeFile(fileName);
@@ -1094,7 +1094,7 @@ void DialogRoute::slotExportCSV()
              QString(QObject::tr("Impossible de creer le fichier %1")).arg(fileName));
         return;
     }
-    Settings::setSetting("exportRouteCSVFolder",info.absoluteDir().path());
+    Settings::setSetting(exportRouteCSVFolder,info.absoluteDir().path());
     QTextStream stream(&routeFile);
     QString line;
     for (int n=0;n<rmModel->columnCount();++n)

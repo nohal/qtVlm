@@ -22,15 +22,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Util.h"
 #include "DialogGribDate.h"
-
-DialogGribDate::DialogGribDate(QWidget * parent) : QDialog(parent)
+#include <QScroller>
+#include <mycentralwidget.h>
+DialogGribDate::DialogGribDate(myCentralWidget * parent) : QDialog(parent->getMainWindow())
 {
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     result=NULL;
     startTime=0;
     listGribDates.clear();
     dateParam->setTimeSpec(Qt::UTC);
+}
+void DialogGribDate::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 
 void DialogGribDate::showDialog(time_t current,std::set<time_t>  * listGrib,time_t * result)

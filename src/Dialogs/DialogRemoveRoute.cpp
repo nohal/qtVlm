@@ -31,11 +31,13 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "route.h"
 #include "settings.h"
 #include "Util.h"
-
+#include <QScroller>
 #include "DialogRemoveRoute.h"
 
 DialogRemoveRoute::DialogRemoveRoute(QWidget * parent,myCentralWidget * centralWidget): QDialog(parent) {
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(centralWidget,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     QMap<QWidget *,QFont> exceptions;
     QFont wfont=QApplication::font();
@@ -59,6 +61,10 @@ DialogRemoveRoute::DialogRemoveRoute(QWidget * parent,myCentralWidget * centralW
     }
 
     updateNbSelected();
+}
+void DialogRemoveRoute::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 
 void DialogRemoveRoute::updateNbSelected(void) {
@@ -94,8 +100,7 @@ void DialogRemoveRoute::slot_remove(void) {
                 centralWidget->myDeleteRoute(route,true);
             }
         }
-        Settings::setSetting(this->objectName()+".height",this->height());
-        Settings::setSetting(this->objectName()+".width",this->width());
+        Settings::saveGeometry(this);
         accept();
     }
 }

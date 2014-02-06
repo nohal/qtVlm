@@ -15,6 +15,8 @@ public:
     ~DialogPoiConnect();
     void done(int result);
 
+public slots:
+    void slot_screenResize();
 private:
     InputLineParams *inputLineColor;
     POI * poi;

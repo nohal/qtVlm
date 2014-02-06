@@ -54,6 +54,8 @@ Barrier::Barrier(MainWindow *mainWindow,BarrierSet * barrierSet) {
 
     popUpMenu = new QMenu();
     popUpMenu2 = new QMenu();
+    Util::setFontDialog(popUpMenu);
+    Util::setFontDialog(popUpMenu2);
 
     ac_insert = new QAction(tr("Insert a point"),popUpMenu);
     popUpMenu->addAction(ac_insert);
@@ -228,7 +230,7 @@ void Barrier::slot_insertPoint(void) {
     /* find which line we belong to */
     QPointF P1,P2;
 
-    double dist_min=10e6;
+    double dist_min=10e5;
     int index_min=-1;
     for(int i=0;i<points.count()-1;++i) {
         P1=points.at(i)->get_scenePosition();
@@ -369,6 +371,8 @@ BarrierPoint::BarrierPoint(MainWindow * mainWindow, Barrier *barrier, QColor col
 
     popUpMenu = new QMenu();
     popUpMenu2 = new QMenu();
+    Util::setFontDialog(popUpMenu);
+    Util::setFontDialog(popUpMenu2);
 
     ac_remove = new QAction(tr("Remove point"),popUpMenu);
     popUpMenu->addAction(ac_remove);

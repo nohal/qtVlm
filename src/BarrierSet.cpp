@@ -57,7 +57,9 @@ BarrierSet::~BarrierSet(void) {
         delete barrierList.at(i);
     }
     barrierList.clear();
-    disconnect(mainWindow->getMy_centralWidget(),SIGNAL(shBarSet(bool)),this,SLOT(slot_sh(bool)));
+    myCentralWidget * centralWidget=mainWindow->getMy_centralWidget();
+    disconnect(centralWidget,SIGNAL(shBarSet(bool)),this,SLOT(slot_sh(bool)));
+    centralWidget->rm_barrierSet(this);
 }
 
 bool BarrierSet::cross(QLineF line) {
@@ -101,6 +103,9 @@ void BarrierSet::cleanEmptyBarrier(Barrier * barrier, bool withMsgBox) {
 }
 
 void BarrierSet::slot_editBarrierSet(void) {
+    myCentralWidget * centralWidget=mainWindow->getMy_centralWidget();
+    if(centralWidget->get_barrierEditMode()!=BARRIER_EDIT_NO_EDIT)
+        centralWidget->escKey_barrier();
     DialogEditBarrier dialogEditBarrier(mainWindow);
     dialogEditBarrier.initDialog(this,mainWindow->getMy_centralWidget()->get_boatList());
     dialogEditBarrier.exec();
@@ -108,6 +113,9 @@ void BarrierSet::slot_editBarrierSet(void) {
 }
 
 void BarrierSet::slot_delBarrierSet(void) {
+    myCentralWidget * centralWidget=mainWindow->getMy_centralWidget();
+    if(centralWidget->get_barrierEditMode()!=BARRIER_EDIT_NO_EDIT)
+        centralWidget->escKey_barrier();    
     deleteLater();
 }
 
@@ -275,7 +283,7 @@ void BarrierSet::readBarriersFromDisk(MainWindow * mainWindow) {
             if(barrierSet->get_name().isEmpty() && barrierSet->get_barriers()->isEmpty()) {
                 delete barrierSet;
             }
-            else {
+            else { // remove duplicated barrierSet
                 if(barrierSetListContains(barrierSet->get_key())) {
                     discarded++;
                     delete barrierSet;
@@ -287,14 +295,23 @@ void BarrierSet::readBarriersFromDisk(MainWindow * mainWindow) {
         }
         node = node.nextSibling();
     }
-    qWarning() << "Discarding " << discarded << " barrierSet during load";
-    if(discarded>0)
+
+    if(discarded>0) {
+        qWarning() << "Discarding " << discarded << " barrierSet during load";
         BarrierSet::saveBarriersToDisk();
+    }
 }
 
 bool BarrierSet::barrierSetListContains(QString key) {
     for(int i=0;i<barrierSetList.count();++i)
         if(barrierSetList.at(i)->get_key()==key)
+            return true;
+    return false;
+}
+
+bool BarrierSet::hasShownBarrierSet(void) {
+    for(int i=0;i<barrierSetList.count();++i)
+        if(!barrierSetList.at(i)->get_isHidden())
             return true;
     return false;
 }

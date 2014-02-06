@@ -43,13 +43,14 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QDesktopWidget>
 #include "settings.h"
 #include "Terrain.h"
+#include <QScroller>
 
 
 //-------------------------------------------------------
 // ROUTAGE_Editor: Constructor for edit an existing ROUTAGE
 //-------------------------------------------------------
 DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent, POI *endPOI)
-    : QDialog(parent)
+    : QDialog(parent->getMainWindow())
 {
     QString m;
     this->routage=routage;
@@ -58,8 +59,10 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent, POI *endP
     if(endPOI)
         routage->setToPOI(endPOI);
     setupUi(this);
-    Util::setFontDialog(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    QScroller::grabGesture(this->scrollArea->viewport(),QScroller::LeftMouseButtonGesture);
     connect(this->Default,SIGNAL(clicked()),this,SLOT(slot_default()));
+    Util::setFontDialog(this);
     this->i_iso->setChecked(routage->getI_done());
     this->i_iso->setDisabled((!routage->isDone() || routage->getI_done()));
     this->isoRoute->setDisabled(!routage->isDone());
@@ -99,7 +102,7 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent, POI *endP
     this->minPres->setValue(routage->getMinPres());
     this->maxWaveHeight->setValue(routage->get_maxWaveHeight());
     if(!routage->isDone())
-        this->convRoute->setChecked(Settings::getSetting("autoConvertToRoute","0").toInt()==1);
+        this->convRoute->setChecked(Settings::getSetting(autoConvertToRoute).toInt()==1);
     if(routage->getFinalEta().isNull())
         this->groupBox_eta->setHidden(true);
     else
@@ -110,7 +113,7 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent, POI *endP
     int n=0;
     if(parent->getPlayer()->getType()!=BOAT_REAL)
     {
-        this->speedLossOnTack->setValue(Settings::getSetting("speedLossOnTackVlm","100").toInt());
+        this->speedLossOnTack->setValue(Settings::getSetting(speedLoss_On_TackVlm).toInt());
         if(parent->getBoats())
         {
             QListIterator<boatVLM*> i (*parent->getBoats());
@@ -131,7 +134,7 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent, POI *endP
     }
     else
     {
-        this->speedLossOnTack->setValue(Settings::getSetting("speedLossOnTackReal","100").toInt());
+        this->speedLossOnTack->setValue(Settings::getSetting(speedLoss_On_TackReal).toInt());
         editBoat->addItem(parent->getPlayer()->getName());
         editBoat->setEnabled(false);
     }
@@ -264,11 +267,17 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent, POI *endP
     this->multi_days->setValue(routage->get_multiDays());
     this->multi_hours->setValue(routage->get_multiHours());
     this->multi_min->setValue(routage->get_multiMin());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
 }
+void DialogRoutage::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
+}
+
+
 DialogRoutage::~DialogRoutage()
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
+    Settings::saveGeometry(this);
 }
 
 void DialogRoutage::slot_default()
@@ -305,6 +314,7 @@ void DialogRoutage::slot_default()
 //---------------------------------------
 void DialogRoutage::done(int result)
 {
+    Settings::saveGeometry(this);
     if(result == QDialog::Accepted)
     {
         if (!parent->freeRoutageName((editName->text()).trimmed(),routage))
@@ -457,7 +467,7 @@ void DialogRoutage::done(int result)
         routage->setShowIso(this->showIso->isChecked());
         routage->setUseRouteModule(this->useVac->isChecked());
         if(!routage->isDone())
-            Settings::setSetting("autoConvertToRoute",convRoute->isChecked()?1:0);
+            Settings::setSetting(autoConvertToRoute,convRoute->isChecked()?1:0);
         if(this->convRoute->isChecked() || this->multi_routage->isChecked())
         {
             if(!routage->isConverted())
@@ -509,10 +519,10 @@ void DialogRoutage::done(int result)
     {
 //        if(routage->getColorGrib())
 //            routage->setShowIso(false);
-        if(!routage->getColorGrib() && parent->getTerre()->getRoutageGrib()==routage)
-            parent->getTerre()->setRoutageGrib(NULL);
-        else if(routage->getColorGrib() && parent->getTerre()->getRoutageGrib()!=routage)
-            parent->getTerre()->setRoutageGrib(routage);
+        if(!routage->getColorGrib() && parent->get_terrain()->getRoutageGrib()==routage)
+            parent->get_terrain()->setRoutageGrib(NULL);
+        else if(routage->getColorGrib() && parent->get_terrain()->getRoutageGrib()!=routage)
+            parent->get_terrain()->setRoutageGrib(routage);
     }
     if(result == QDialog::Rejected)
     {

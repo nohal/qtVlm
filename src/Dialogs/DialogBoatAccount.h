@@ -71,7 +71,8 @@ class DialogBoatAccount : public QDialog, public Ui::boatAccount_dialog
         void slot_enableChanged(bool);
         void slot_browseSkin();
 
-    signals:
+        void slot_screenResize();
+signals:
         void accountListUpdated(void);
         void writeBoat(void);
         

@@ -22,14 +22,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define DATAMANAGER_H
 
 #include <set>
+#include <QObject>
 
 #include "dataDef.h"
 #include "class_list.h"
 
-class DataManager
-{
+class DataManager: public QObject
+{ Q_OBJECT
     public:
-        DataManager();
+        DataManager(myCentralWidget * centralWidget);
+        ~DataManager();
+
+        FCT_GET(myCentralWidget *,centralWidget)
 
         bool load_data(QString fileName,int gribType);
         void close_data(int gribType);
@@ -43,6 +47,8 @@ class DataManager
         Grib * get_grib(int dataType,int levelType, int levelValue);
 
         QMap<int, QList<int> *> *get_levelList(int dataType);
+        bool hasDataType(int dataType);
+        int get_firstDataType(void);
 
         std::set<time_t> * get_dateList(void) { return &dateList; }
 
@@ -77,10 +83,20 @@ class DataManager
 
         void set_isoBarsStep(double step);
         void set_isoTherms0Step(int step);
+        void update_isos(void);
 
 
         FCT_GET(double,isoBarsStep)
         FCT_GET(int,isoTherms0Step)
+
+        QMap<int,QStringList> * get_levelTypes(void) { return &levelTypes; }
+        QMap<int,QStringList> * get_dataTypes(void) { return &dataTypes; }
+        QMap<int,QStringList> * get_arrowTypesFst(void) { return &arrowTypesFst; }
+        QMap<int,QStringList> * get_arrowTypesSec(void) { return &arrowTypesSec; }
+
+        QString format_dataType(int data,int levelType,int levelValue);
+        QString format_fstArrow(int data,int levelType,int levelValue);
+        QString format_secArrow(int data,int levelType,int levelValue);
 
         void load_forcedParam();
 
@@ -92,8 +108,11 @@ class DataManager
 
         void print_firstRecord_bmap(void);
         void print_firstRecord_info(void);
+        Couple get_defaultLevel(int type);
 
     private:
+
+        myCentralWidget *centralWidget;
 
         Grib * grib;
         Grib * gribCurrent;
@@ -109,6 +128,16 @@ class DataManager
         void update_levelMap(void);
         void clear_levelMap(void);
         QMap<int,QMap<int, QList<int>*> *> levelMap;
+
+        QMap<int,QStringList> levelTypes;
+        QMap<int,QStringList> dataTypes;
+        QMap<int,QStringList> arrowTypesFst;
+        QMap<int,QStringList> arrowTypesSec;
+        void init_stringList(void);
+        QString format_gribData(QMap<int,QStringList> * map,int data,int levelType,int levelValue);
+
+        Couple * defaultLevel;
+        void init_defaultLevel(void);
 
         double isoBarsStep;
         int isoTherms0Step;

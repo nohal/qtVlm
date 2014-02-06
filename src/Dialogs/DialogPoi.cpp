@@ -38,7 +38,7 @@ class POI_Editor;
 #include "boatVLM.h"
 #include <QDesktopWidget>
 #include "settings.h"
-
+#include <QScroller>
 #define POI_EDT_LAT 1
 #define POI_EDT_LON 2
 
@@ -49,6 +49,8 @@ DialogPoi::DialogPoi(MainWindow * main,myCentralWidget * parent)
     : QDialog(parent)
 {
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
 //    int minSize=qMax(this->lat_sig->width(),this->lon_sig->width());
 //    lat_sig->setMinimumWidth(minSize);
@@ -64,9 +66,16 @@ DialogPoi::DialogPoi(MainWindow * main,myCentralWidget * parent)
     connect(this,SIGNAL(delPOI_list(POI*)),parent,SLOT(slot_delPOI_list(POI*)));
 
     connect(this,SIGNAL(doChgWP(double,double,double)),main,SLOT(slotChgWP(double,double,double)));
-    QString tunit = Settings::getSetting("unitsPosition", "").toString();
+    QString tunit = Settings::getSetting(unitsPosition).toString();
     QString unit = (tunit=="") ? "dddegmm'ss" : tunit;
     formatWithSeconds=unit=="dddegmm'ss";
+    navMode->addItem("VB-VMG");
+    navMode->addItem("B-VMG");
+    navMode->addItem("Ortho");
+}
+void DialogPoi::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 void DialogPoi::formatLatLon()
 {
@@ -102,7 +111,7 @@ void DialogPoi::initPOI(POI * poi,const bool &creationMode)
         setWindowTitle(tr("Marque : ")+poi->getName());
     }
     //this->setEnabled(true);
-    QString tunit = Settings::getSetting("unitsPosition", "").toString();
+    QString tunit = Settings::getSetting(unitsPosition).toString();
     QString unit = (tunit=="") ? "dddegmm'ss" : tunit;
     formatWithSeconds=unit=="dddegmm'ss";
     this->formatLatLon();
@@ -116,8 +125,11 @@ void DialogPoi::initPOI(POI * poi,const bool &creationMode)
     while(i.hasNext())
     {
         ROUTE * route=i.next();
-        if(Settings::getSetting("autoHideRoute",1).toInt()==1 && (route->getBoat()==NULL || !route->getBoat()->getIsSelected())) continue;
-        cb_routeList->addItem(route->getName());
+        if(Settings::getSetting(autoHideRoute).toInt()==1 && (route->getBoat()==NULL || !route->getBoat()->getIsSelected())) continue;
+        QPixmap iconI(20,10);
+        iconI.fill(route->getColor());
+        QIcon icon(iconI);
+        cb_routeList->addItem(icon,route->getName());
     }
     if(poi->getRoute()!=NULL)
         cb_routeList->setCurrentIndex(cb_routeList->findText(((ROUTE*) poi->getRoute())->getName()));
@@ -144,6 +156,7 @@ void DialogPoi::initPOI(POI * poi,const bool &creationMode)
         QDateTime tm = QDateTime::currentDateTime().toUTC();
         editTStamp->setDateTime(tm);
     }
+    navMode->setCurrentIndex(poi->getNavMode());
 
     chk_tstamp->setCheckState(poi->getUseTimeStamp()?Qt::Checked:Qt::Unchecked);
     editTStamp->setEnabled(poi->getUseTimeStamp());
@@ -166,8 +179,7 @@ void DialogPoi::initPOI(POI * poi,const bool &creationMode)
 void DialogPoi::done(int result)
 {
     this->setEnabled(false);
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
+    Settings::saveGeometry(this);
     if(result == QDialog::Accepted)
     {
         poi->setPartOfTwa(false);
@@ -189,6 +201,7 @@ void DialogPoi::done(int result)
         else
             poi->setWph(editWph->text().toDouble());
         poi->slot_updateProjection();
+        poi->setNavMode(navMode->currentIndex());
 
         if (modeCreation) {
             //poi->show();

@@ -24,36 +24,50 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogChooseBarrierSet.h"
 #include "Util.h"
 #include "settings.h"
+#include "boat.h"
+#include "MainWindow.h"
+#include <QScroller>
 
-DialogChooseBarrierSet::DialogChooseBarrierSet(QWidget * parent): QDialog(parent) {
+DialogChooseBarrierSet::DialogChooseBarrierSet(MainWindow * parent): QDialog(parent) {
+    mainWindow=parent;
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent->getMy_centralWidget(),SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
+}
+void DialogChooseBarrierSet::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 
 DialogChooseBarrierSet::~DialogChooseBarrierSet() {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
+    Settings::saveGeometry(this);
 }
 
-BarrierSet * DialogChooseBarrierSet::chooseBarrierSet(QWidget *parent) {
+BarrierSet * DialogChooseBarrierSet::chooseBarrierSet(MainWindow *parent) {
     /* no set => return NULL */
     if(::barrierSetList.isEmpty()) {
         QMessageBox::warning(parent,QObject::tr("Barrier set choice"),QObject::tr("No barrier set define, create one before doing this action"));
         return NULL;
     }
 
+    boat * curBoat = parent->getSelectedBoat();
+
     /* only one set => no dialog */
-    if(::barrierSetList.count() == 1) return ::barrierSetList.first();
+    if(::barrierSetList.count() == 1 && curBoat->has_barrierSet(::barrierSetList.first())) return ::barrierSetList.first();
 
     /* more than one set => use dialog to get dialog */
     DialogChooseBarrierSet dialogChooseBarrierSet(parent);
-    int res= dialogChooseBarrierSet.init_dialog();
-    if(res==0) return NULL;
-    if(res==1) {
+    int nbSetFound= dialogChooseBarrierSet.init_dialog();
+    if(nbSetFound==0) {
+        QMessageBox::warning(parent,QObject::tr("Barrier set choice"),QObject::tr("No barrier associate to current boat"));
+        return NULL;
+    }
+    if(nbSetFound==1) {
         // search first none hidden set
         for(int i=0;i<(::barrierSetList.count());++i) {
             BarrierSet * set = ::barrierSetList.at(i);
-            if(!set->get_isHidden())
+            if(!set->get_isHidden() && curBoat->has_barrierSet(set))
                 return set;
         }
     }
@@ -71,9 +85,10 @@ int DialogChooseBarrierSet::init_dialog(void) {
     int nbSet=0;
     cb_barrierSets->clear();
     qSort(::barrierSetList.begin(),::barrierSetList.end(),BarrierSet::myLessThan);
+    boat * curBoat=mainWindow->getSelectedBoat();
     for(int i=0;i<(::barrierSetList.count());++i) {
         BarrierSet * set = ::barrierSetList.at(i);
-        if(!set->get_isHidden()) {
+        if(!set->get_isHidden() && curBoat->has_barrierSet(set) ) {
             nbSet++;
             QVariant data = VPtr<BarrierSet>::asQVariant(set);
             cb_barrierSets->addItem(set->get_name(),data);
@@ -83,6 +98,7 @@ int DialogChooseBarrierSet::init_dialog(void) {
 }
 
 void DialogChooseBarrierSet::done(int result) {
+    Settings::saveGeometry(this);
     if(result == QDialog::Accepted) {
         choice=VPtr<BarrierSet>::asPtr(cb_barrierSets->itemData(cb_barrierSets->currentIndex()));
     }

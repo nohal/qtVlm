@@ -18,13 +18,14 @@ class DialogViewPolar : public QDialog, public Ui::DialogViewPolar
     Q_OBJECT
 
 public:
-    explicit DialogViewPolar(QWidget *parent = 0);
+    explicit DialogViewPolar(myCentralWidget *parent = 0);
     ~DialogViewPolar();
     void setBoat(boat * myboat);
     bool eventFilter(QObject *obj, QEvent *event);
 public slots:
     void drawIt();
     void reloadPolar();
+    void slot_screenResize();
 private:
     QPixmap image;
     QPen pen;
@@ -32,5 +33,6 @@ private:
     boat * myBoat;
     QPolygonF polarLine,polarGreen;
     QList<double> polarValues;
+    QString stringMaxSpeed;
 };
 #endif // DIALOGVIEWPOLAR_H

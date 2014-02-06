@@ -75,7 +75,7 @@ void opponent::init(QColor color,bool isQtBoat,QString idu,QString race, double 
     this->lastUpdate=0;
     this->updateRequired=true;
 
-    this->opp_trace=1;
+    this->oppTrace=1;
     this->labelHidden=parentWindow->get_shLab_st();
     connect(parentWindow, SIGNAL(shOpp(bool)),this,SLOT(slot_shOpp(bool)));
     connect(parentWindow, SIGNAL(shLab(bool)),this,SLOT(slot_shLab(bool)));
@@ -99,6 +99,7 @@ void opponent::init(QColor color,bool isQtBoat,QString idu,QString race, double 
     trace_drawing->setLineMode();
     connect(parentWindow,SIGNAL(startReplay(bool)),trace_drawing,SLOT(slot_startReplay(bool)));
     connect(parentWindow,SIGNAL(replay(int)),trace_drawing,SLOT(slot_replay(int)));
+    connect(parentWindow,SIGNAL(shTrace(bool)),this,SLOT(slot_shTrace(bool)));
     this->flag=QImage();
     this->drawFlag=false;
     this->pavillon=QString();
@@ -121,6 +122,7 @@ void opponent::init(QColor color,bool isQtBoat,QString idu,QString race, double 
     this->loch24h="";
     this->rank=0;
     updatePosition();
+    trace_drawing->setHidden(Settings::getSetting(hideTrace).toInt()==1);
 }
 
 opponent::~opponent(void)
@@ -158,7 +160,7 @@ void opponent::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget 
     if(name.isEmpty())
         return;
 
-    if(Settings::getSetting("showFlag",0,"showHideItem").toInt()==1)
+    if(Settings::getSetting(showFlag).toInt()==1)
     {
         if(flag.isNull())
         {
@@ -201,6 +203,9 @@ void opponent::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget 
             bgcolor=QColor(239,48,36,150);
         else
             bgcolor = QColor(255,255,255,150);
+        QPen p=pnt->pen();
+        p.setColor(Qt::black);
+        pnt->setPen(p);
         if(!drawFlag)
         {
             pnt->fillRect(9,0, width-10,height-1, QBrush(bgcolor));
@@ -257,7 +262,7 @@ void opponent::drawOnMagnifier(Projection * myProj,QPainter * pnt)
     if(name.isEmpty())
         return;
 
-    if(Settings::getSetting("showFlag",0,"showHideItem").toInt()==1)
+    if(Settings::getSetting(showFlag).toInt()==1)
     {
         if(flag.isNull())
         {
@@ -375,13 +380,14 @@ void opponent::drawTrace()
             }
         }
     }
-    if(opp_trace==1 && !parentWindow->get_shOpp_st())
+    if(oppTrace==1 && !parentWindow->get_shOpp_st() && Settings::getSetting(hideTrace).toInt()==0)
     {
         trace_drawing->slot_showMe();
+        trace_drawing->setHidden(false);
     }
     else
     {
-        trace_drawing->hide();
+        trace_drawing->setHidden(true);
     }
     if(!isReal)
         this->updateName();
@@ -561,9 +567,8 @@ void opponent::setIsQtBoat(bool status)
 
 void opponent::paramChanged()
 {
-    //myColor = QColor(Settings::getSetting("opp_color",QColor(Qt::green).name()).toString());
-    label_type = Settings::getSetting("opp_labelType",0).toInt();
-    opp_trace = Settings::getSetting("opp_trace","1").toInt();
+    label_type = Settings::getSetting(opp_labelType).toInt();
+    oppTrace = Settings::getSetting(opp_trace).toInt();
 
     updatePosition();
     updateName();
@@ -575,17 +580,29 @@ void opponent::slot_shOpp(bool isHidden) {
     if(isHidden) {
         hide();
         if(trace_drawing)
-            trace_drawing->hide();
+            trace_drawing->setHidden(true);
     }
     else {
         show();
         if(trace_drawing)
         {
-            trace_drawing->show();
             drawTrace();
-            trace_drawing->slot_showMe();
+            if(Settings::getSetting(hideTrace).toInt()==0)
+            {
+                trace_drawing->slot_showMe();
+                trace_drawing->setHidden(false);
+            }
+            else
+                trace_drawing->setHidden(true);
         }
     }
+}
+
+void opponent::slot_shTrace(bool b)
+{
+    trace_drawing->setHidden(b);
+    if(!b)
+        trace_drawing->slot_showMe();
 }
 
 /****************************************
@@ -646,6 +663,13 @@ QString opponentList::getRaceId()
     return opponent_list[0]->getRace();
 }
 
+opponent * opponentList::get_opponent(int idu) {
+    for(int i=0;i<opponent_list.count();++i)
+        if(opponent_list[i]->getIduser().toInt()==idu)
+            return opponent_list[i];
+    return NULL;
+}
+
 void opponentList::setBoatList(QString list_txt,QString race,int showWhat, bool force, bool showReal, QString filter)
 {
     //qWarning()<<"traceCache count="<<traceCache.count();
@@ -666,7 +690,7 @@ void opponentList::setBoatList(QString list_txt,QString race,int showWhat, bool 
             qWarning() << "getOpponents bad state in inet - setBoatList: " << hasInet() << " " << hasRequest();
             return;
         }
-        qWarning()<<"Cancelling previous request (setBoatList)";
+        qWarning()<<"Cancelling previous request (setBoatList): " << getCurrentRequest();
         this->inetAbort();
 //        for(int n=opponent_list.count()-1;n>=0;--n)
 //        {
@@ -714,7 +738,7 @@ void opponentList::clear(void)
 
 void opponentList::refreshData(void)
 {
-    //qWarning() << "refreshData";
+    qWarning() << "refreshData opponentList";
     if(!hasInet() || hasRequest())
     {
         if(!hasInet() || parent->getIsStartingUp())
@@ -810,7 +834,7 @@ void opponentList::getNxtOppData()
     clearCurrentRequest();
 
     time_t endtime=QDateTime::currentDateTime().toUTC().toTime_t();
-    time_t starttime=endtime-(Settings::getSetting("trace_length",12).toInt()*60*60);
+    time_t starttime=endtime-(Settings::getSetting(traceLength).toInt()*60*60);
     QString page;
     QString pref="V";
     if(opponent_list[currentOpponent-1]->getIsReal())
@@ -879,13 +903,9 @@ void opponentList::requestFinished (QByteArray res_byte)
     {
         case OPP_BOAT_REAL:
         {
-            QJson::Parser parser;
-            bool ok;
-
-            QVariantMap result = parser.parse (res_byte, &ok).toMap();
-            if (!ok) {
-                qWarning() << "Error parsing json data " << res_byte;
-                qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
+            QVariantMap result;
+            if (!inetClient::JSON_to_map(res_byte,&result)) {
+                return;
             }
             QVariantList vv=result["reals"].toList();
             QStringList idReals;
@@ -949,14 +969,9 @@ void opponentList::requestFinished (QByteArray res_byte)
         }
         case OPP_BOAT_DATA:
             {
-                QJson::Parser parser;
-                bool ok;
-
-                QVariantMap result = parser.parse (res_byte, &ok).toMap();
-                if (!ok) {
-                    qWarning() << "Error parsing json data " << res_byte;
-                    qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
-                }
+                QVariantMap result;
+                if (!inetClient::JSON_to_map(res_byte,&result))
+                    return;
 
                 if(checkWSResult(res_byte,"OppList_getOppData2",main))
                 {
@@ -1249,14 +1264,9 @@ void opponentList::requestFinished (QByteArray res_byte)
         case OPP_INFO_REAL:
         {
             //qWarning()<<"inside OPP_INFO_REAL";
-            QJson::Parser parser;
-            bool ok;
-
-            QVariantMap result=parser.parse (res_byte, &ok).toMap();
-            if (!ok) {
-                qWarning() << "Error parsing json data " << res_byte;
-                qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
-            }
+            QVariantMap result;
+            if (!inetClient::JSON_to_map(res_byte,&result))
+                return;
             QVariantMap real = result["profile"].toMap();
             opp->setRealData(real["shortname"].toString(),
                              real["boatname"].toString(),
@@ -1312,17 +1322,11 @@ QStringList opponentList::readData(QString in_data,int type)
 
 void opponentList::getTrace(QByteArray buff, QList<vlmPoint> * trace)
 {
-    QJson::Parser parser;
-    bool ok;
-
     /* clear current trace*/
     //trace->clear();
 
-    QVariantMap result = parser.parse (buff, &ok).toMap();
-    if (!ok) {
-        qWarning() << "Error parsing json data " << buff;
-        qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
-    }
+    QVariantMap result;
+    if (!inetClient::JSON_to_map(buff,&result)) return;
 
     if(checkWSResult(buff,"OppList_getTrack",main))
     {

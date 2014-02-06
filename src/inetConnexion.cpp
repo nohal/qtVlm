@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogInetProgess.h"
 #include "Util.h"
 #include "dataDef.h"
+#include "settings.h"
 
 #define REQUEST_GET  0
 #define REQUEST_POST 1
@@ -41,7 +42,7 @@ inetConnexion::inetConnexion(QWidget * main)
             this,SLOT(slot_authRequired(QNetworkReply*,QAuthenticator*)));
 
     slot_updateInet();
-    progressDialog=new DialogInetProgess(main);
+    progressDialog=NULL;
     hasProgress=false;
 }
 
@@ -50,6 +51,8 @@ inetConnexion::~inetConnexion(void)
     resetInet();
     if(inetManager)
         delete inetManager;
+    if(progressDialog)
+        delete progressDialog;
 }
 
 void inetConnexion::slot_updateInet(void)
@@ -91,6 +94,9 @@ void inetConnexion::doRequestGetProgress(inetClient* client,QString requestUrl,Q
     else
     {
         hasProgress=true;
+        if(progressDialog)
+            delete progressDialog;
+        progressDialog=new DialogInetProgess();
         progressDialog->showDialog(host+requestUrl);
         doRequest(REQUEST_GET,client,requestUrl,QString(),host,needAuth);
     }
@@ -107,16 +113,10 @@ void inetConnexion::doRequest(int type,inetClient* client,QString requestUrl,QSt
     QNetworkReply * currentReply;
 
     if(host.isEmpty())
-        host=Util::getHost();
+        host=inetConnexion::getHost();
     Util::paramProxy(inetManager,host);
 
     page = host+requestUrl;
-    if(type == REQUEST_POST)
-        page += "?" + data;
-#if 0
-    //if(page.contains("track"))
-        qWarning() << "Doing inet request: " << page ;
-#endif
     QNetworkRequest request;
     request.setUrl(QUrl(page));
     Util::addAgent(request);
@@ -126,23 +126,20 @@ void inetConnexion::doRequest(int type,inetClient* client,QString requestUrl,QSt
     if(needAuth)
     {         
         QString concatenated = client->getAuthLogin() + ":" + client->getAuthPass();
-        //qWarning() << "Adding auth data: " <<concatenated ;
         QByteArray data = concatenated.toLocal8Bit().toBase64();
         QString headerData = "Basic " + data;
         request.setRawHeader("Authorization", headerData.toLocal8Bit());
-        //qWarning() << "Adding auth data: " <<concatenated << " - " << headerData;
-//        if(inetManager->cookieJar())
-//            delete inetManager->cookieJar();
         inetManager->setCookieJar(new QNetworkCookieJar());
-        //inetManager->cookieJar()->setParent(0);
-
     }
 
     if(type==REQUEST_POST)
     {
-        //qWarning() << "Posting data: " << data;
-        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/octet-stream");
-        currentReply=inetManager->post(request,"");
+        QByteArray dataUtf8 = data.toUtf8();
+        QByteArray postDataSize = QByteArray::number(dataUtf8.size());
+
+        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+        request.setHeader(QNetworkRequest::ContentLengthHeader,postDataSize);
+        currentReply=inetManager->post(request,dataUtf8);
     }
     else
     {
@@ -192,8 +189,12 @@ void inetConnexion::slot_requestFinished(QNetworkReply * currentReply)
         {
             qWarning() << "Removing dwnld progress";
             currentClient->setHasProgress(false);
-            progressDialog->hide();
             disconnect(currentReply,SIGNAL(downloadProgress(qint64,qint64)),this,SLOT(slot_progess(qint64,qint64)));
+            if(progressDialog)
+            {
+                delete progressDialog;
+                progressDialog=NULL;
+            }
         }
 
         if (currentReply->error() != QNetworkReply::NoError) {
@@ -284,8 +285,38 @@ void inetConnexion::slot_progess(qint64 bytesReceived, qint64 bytesTotal )
         return;
     }
 
-    if(currentClient->getHasProgress()) {
+    if(currentClient->getHasProgress() && progressDialog) {
         progressDialog->updateProgress(bytesReceived,bytesTotal);
         //qWarning() << "Progress " << bytesReceived << "/" << bytesTotal;
     }
+}
+
+QString  url_name[NB_URL] = { "std","s10","s11"
+#ifdef __QTVLM_WITH_TEST
+                 , "testing"
+#endif
+                          };
+QString  url_str[NB_URL] = { "v-l-m.org", "s10.v-l-m.org","s11.v-l-m.org"
+#ifdef __QTVLM_WITH_TEST
+                 , "testing.v-l-m.org"
+#endif
+             };
+
+QString inetConnexion::getHost()
+{
+//#ifdef __QTVLM_WITH_TEST
+#if 1
+    QString host;
+    host="http://";
+    int num = Settings::getSetting(vlm_url).toInt();
+    if(num>=NB_URL)
+    {
+        qWarning() << "Updating wrong config for VLM url";
+        num=0;
+        Settings::setSetting(vlm_url,0);
+    }
+    return host+url_str[num];
+#else
+    return "http://v-l-m.org";
+#endif
 }

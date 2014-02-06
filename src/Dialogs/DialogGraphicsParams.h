@@ -51,6 +51,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QDoubleSpinBox>
 #include <QScrollArea>
 #endif
+#include "class_list.h"
 
 //-------------------------------------------------------------------------------
 class InputLineParams_testZone : public QWidget
@@ -144,14 +145,16 @@ class InputColor : public QWidget
 class DialogGraphicsParams : public QDialog
 { Q_OBJECT
     public:
-        DialogGraphicsParams();
+        DialogGraphicsParams(myCentralWidget * parent);
+        ~DialogGraphicsParams();
     
     public slots:
         void slotBtOK();
         void slotBtCancel();
     
-    
-    protected:
+
+        void slot_screenResize();
+protected:
         void resizeEvent ( QResizeEvent * event );
     private:
         QFrame *frameGui;
@@ -168,6 +171,7 @@ class DialogGraphicsParams : public QDialog
         InputLineParams *inputBoundariesLine;
         InputLineParams *inputRiversLine;
         InputLineParams *inputIsobarsLine;
+        InputLineParams *inputIsotherms0Line;
         InputLineParams *inputOpacity;
         InputLineParams *inputOpacityNuit;
         InputLineParams *inputEstimeLine;
@@ -175,6 +179,7 @@ class DialogGraphicsParams : public QDialog
         InputLineParams *inputGateLine;
         InputLineParams *inputRouteLine;
         InputLineParams *inputTraceLine;
+        InputLineParams *inputOrthoLine;
 
         QFrame * createFrameGui(QWidget *parent);
         QScrollArea *scroll;

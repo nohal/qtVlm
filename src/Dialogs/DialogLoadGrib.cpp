@@ -33,13 +33,18 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "settings.h"
 #include "Util.h"
 #include "LoadGribFile.h"
+#include "MainWindow.h"
+#include "mycentralwidget.h"
+#include <QScrollArea>
+#include <QScroller>
 
 
 
 //-------------------------------------------------------------------------------
-DialogLoadGrib::DialogLoadGrib() : QDialog()
+DialogLoadGrib::DialogLoadGrib(MainWindow *main) : QDialog(main)
 {
     loadgrib = new LoadGribFile();
+    this->setObjectName("zyGribDownloadNew");
     connect (loadgrib,SIGNAL(ungrayButtons()),this,SLOT(slotUngrayButtons()));
     connect (loadgrib,SIGNAL(clearSelection()),this,SIGNAL(clearSelection()));
     assert(loadgrib);
@@ -47,7 +52,6 @@ DialogLoadGrib::DialogLoadGrib() : QDialog()
     setWindowTitle(tr("Telechargement"));
     loadInProgress = false;
     QFrame * frameButtonsZone = createFrameButtonsZone(this);
-    Util::setFontDialog(frameButtonsZone);
     rain  = true;
     cloud = true;
     pressure = true;
@@ -119,14 +123,29 @@ DialogLoadGrib::DialogLoadGrib() : QDialog()
     connect(chkAltitude700, SIGNAL(stateChanged(int)), 	this,  SLOT(slotParameterUpdated()));
     connect(chkAltitude850, SIGNAL(stateChanged(int)), 	this,  SLOT(slotParameterUpdated()));
     connect(chkAltitudeAll, SIGNAL(stateChanged(int)), 	this,  SLOT(slotAltitudeAll()));
+    this->setParent(main);
+    this->resize(sbSouth->x()+sbSouth->width()+10,this->btOK->y()+this->btOK->height()+10);
+    QFrame * frame=new QFrame(this);
+    frame->setLayout(lay);
+    scrollarea=new QScrollArea(this);
+    scrollarea->setWidget(frame);
+    scrollarea->setLayout(new QVBoxLayout(this));
+    this->setLayout(new QVBoxLayout(this));
+    this->layout()->addWidget(scrollarea);
+    this->resize(scrollarea->size());
+    QScroller::grabGesture(scrollarea->viewport());
     Util::setFontDialog(this);
+
+}
+void DialogLoadGrib::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 
 //-------------------------------------------------------------------------------
 DialogLoadGrib::~DialogLoadGrib()
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
+    //Settings::saveGeometry(this);
     if (loadgrib != NULL)
         delete loadgrib;
 }
@@ -143,18 +162,18 @@ void DialogLoadGrib::slotGribMessage(QString msg)
 }
 
 //----------------------------------------------------
-void DialogLoadGrib::slotGribDataReceived(QByteArray *content, QString fileName)
+void DialogLoadGrib::slotGribDataReceived(QByteArray *content, QString file)
 {
-    QString gribPath=Settings::getSetting("edtGribFolder",appFolder.value("grib")).toString();
+    QString gribPath=Settings::getSetting(edtGribFolder).toString();
     QDir dirGrib(gribPath);
     if(!dirGrib.exists())
     {
         gribPath=appFolder.value("grib");
-        Settings::setSetting("askGribFolder",1);
-        Settings::setSetting("edtGribFolder",gribPath);
+        Settings::setSetting(askGribFolder,1);
+        Settings::setSetting(edtGribFolder,gribPath);
     }
-    fileName=gribPath+"/"+fileName;
-    if(Settings::getSetting("askGribFolder",1)==1)
+    fileName=gribPath+"/"+file;
+    if(Settings::getSetting(askGribFolder)==1)
     {
         fileName = QFileDialog::getSaveFileName(this,
                          tr("Sauvegarde du fichier GRIB"), fileName, "Grib (*.grb)");
@@ -271,31 +290,30 @@ void DialogLoadGrib::updateParameters()
     CAPEsfc      = chkCAPEsfc->isChecked();
     CINsfc      = chkCINsfc->isChecked();
 
-    Settings::setSetting("downloadGribResolution", cbResolution->currentIndex());
-    Settings::setSetting("downloadGribInterval",  cbInterval->currentIndex());
-    Settings::setSetting("downloadGribNbDays",  cbDays->currentIndex());
+    Settings::setSetting(downloadGribResolution, cbResolution->currentIndex());
+    Settings::setSetting(downloadGribInterval,  cbInterval->currentIndex());
+    Settings::setSetting(downloadGribNbDays,  cbDays->currentIndex());
 
-    Settings::setSetting("downloadWind",  wind);
-    Settings::setSetting("downloadPressure", pressure);
-    Settings::setSetting("downloadRain",  rain);
-    Settings::setSetting("downloadCloud", cloud);
-    Settings::setSetting("downloadTemp",  temp);
-    Settings::setSetting("downloadHumid", humid);
-    Settings::setSetting("downloadIsotherm0", isotherm0);
+    Settings::setSetting(downloadWind,  wind);
+    Settings::setSetting(downloadPressure, pressure);
+    Settings::setSetting(downloadRain,  rain);
+    Settings::setSetting(downloadCloud, cloud);
+    Settings::setSetting(downloadTemp,  temp);
+    Settings::setSetting(downloadHumid, humid);
+    Settings::setSetting(downloadIsotherm0,isotherm0);
+    Settings::setSetting(downloadTempPot,  tempPot);
+    Settings::setSetting(downloadTempMin,  tempMin);
+    Settings::setSetting(downloadTempMax,  tempMax);
+    Settings::setSetting(downloadSnowCateg, snowCateg);
+    Settings::setSetting(downloadFrzRainCateg, frzRainCateg);
+    Settings::setSetting(downloadCAPEsfc, CAPEsfc);
+    Settings::setSetting(downloadCINsfc, CINsfc);
 
-    Settings::setSetting("downloadTempPot",  tempPot);
-    Settings::setSetting("downloadTempMin",  tempMin);
-    Settings::setSetting("downloadTempMax",  tempMax);
-    Settings::setSetting("downloadSnowCateg", snowCateg);
-    Settings::setSetting("downloadFrzRainCateg", frzRainCateg);
-    Settings::setSetting("downloadCAPEsfc", CAPEsfc);
-    Settings::setSetting("downloadCINsfc", CINsfc);
-
-    Settings::setSetting("downloadAltitudeData200",  chkAltitude200->isChecked());
-    Settings::setSetting("downloadAltitudeData300",  chkAltitude300->isChecked());
-    Settings::setSetting("downloadAltitudeData500",  chkAltitude500->isChecked());
-    Settings::setSetting("downloadAltitudeData700",  chkAltitude700->isChecked());
-    Settings::setSetting("downloadAltitudeData850",  chkAltitude850->isChecked());
+    Settings::setSetting(downloadAltitudeData200,  chkAltitude200->isChecked());
+    Settings::setSetting(downloadAltitudeData300,  chkAltitude300->isChecked());
+    Settings::setSetting(downloadAltitudeData500,  chkAltitude500->isChecked());
+    Settings::setSetting(downloadAltitudeData700,  chkAltitude700->isChecked());
+    Settings::setSetting(downloadAltitudeData850,  chkAltitude850->isChecked());
 }
 
 //-------------------------------------------------------------------------------
@@ -386,6 +404,7 @@ void DialogLoadGrib::slotAltitudeAll ()
 void DialogLoadGrib::slotBtOK()
 {
     btCancel->setText(tr("Stop"));
+    Settings::saveGeometry(this);
 
     loadInProgress = true;
     btOK->setEnabled(false);
@@ -427,6 +446,7 @@ void DialogLoadGrib::slotBtCancel()
         slotParameterUpdated();
     }
     else {
+        Settings::saveGeometry(this);
         reject();
     }
 }
@@ -494,6 +514,8 @@ void DialogLoadGrib::setZone(double x0, double y0, double x1, double y1)
         sbEast->setValue(x1);
         sbEast->setSuffix(tr(" degE"));
     }
+    this->resize(sbSouth->x()+sbSouth->width()+10,this->btOK->y()+this->btOK->height()+10);
+    Util::setFontDialog(this);
     slotParameterUpdated();
 }
 
@@ -552,7 +574,7 @@ QFrame *DialogLoadGrib::createFrameButtonsZone(QWidget *parent)
     assert(cbResolution);
     cbResolution->addItems(QStringList()<< "0.5" << "1" << "2");
     cbResolution->setMinimumWidth (sizemin);
-        ind = Settings::getSetting("downloadGribResolution", 0).toInt();
+        ind = Settings::getSetting(downloadGribResolution).toInt();
         ind = Util::inRange(ind, 0, cbResolution->count()-1);
     cbResolution->setCurrentIndex(ind);
 
@@ -560,7 +582,7 @@ QFrame *DialogLoadGrib::createFrameButtonsZone(QWidget *parent)
     assert(cbInterval);
     cbInterval->addItems(QStringList()<< "3" << "6" << "12" << "24");
     cbInterval->setMinimumWidth (sizemin);
-        ind = Settings::getSetting("downloadGribInterval", 0).toInt();
+        ind = Settings::getSetting(downloadGribInterval).toInt();
         ind = Util::inRange(ind, 0, cbInterval->count()-1);
     cbInterval->setCurrentIndex(ind);
 
@@ -568,7 +590,7 @@ QFrame *DialogLoadGrib::createFrameButtonsZone(QWidget *parent)
     assert(cbDays);
     cbDays->addItems(QStringList()<< "1"<<"2"<<"3"<<"4"<<"5"<<"6"<<"7"<<"8");
     cbDays->setMinimumWidth (sizemin);
-        ind = Settings::getSetting("downloadGribNbDays", 7).toInt();
+        ind = Settings::getSetting(downloadGribNbDays).toInt();
         ind = Util::inRange(ind, 0, cbDays->count()-1);
     cbDays->setCurrentIndex(ind);
 
@@ -607,40 +629,40 @@ QFrame *DialogLoadGrib::createFrameButtonsZone(QWidget *parent)
 
 
     //--------------------------------------------------------------------------------
-    chkWind->setChecked    (Settings::getSetting("downloadWind", true).toBool());
-    chkPressure->setChecked(Settings::getSetting("downloadPressure", true).toBool());
-    chkRain->setChecked    (Settings::getSetting("downloadRain", true).toBool());
-    chkCloud->setChecked   (Settings::getSetting("downloadCloud", true).toBool());
-    chkTemp->setChecked    (Settings::getSetting("downloadTemp", true).toBool());
-    chkHumid->setChecked   (Settings::getSetting("downloadHumid", true).toBool());
-    chkIsotherm0->setChecked  (Settings::getSetting("downloadIsotherm0", true).toBool());
+    chkWind->setChecked    (Settings::getSetting(downloadWind).toBool());
+    chkPressure->setChecked(Settings::getSetting(downloadPressure).toBool());
+    chkRain->setChecked    (Settings::getSetting(downloadRain).toBool());
+    chkCloud->setChecked   (Settings::getSetting(downloadCloud).toBool());
+    chkTemp->setChecked    (Settings::getSetting(downloadTemp).toBool());
+    chkHumid->setChecked   (Settings::getSetting(downloadHumid).toBool());
+    chkIsotherm0->setChecked  (Settings::getSetting(downloadIsotherm0).toBool());
 
-    chkTempPot->setChecked    (Settings::getSetting("downloadTempPot", false).toBool());
+    chkTempPot->setChecked    (Settings::getSetting(downloadTempPot).toBool());
     chkTempPot->setChecked    (false);
 
-    chkTempMin->setChecked    (Settings::getSetting("downloadTempMin", false).toBool());
-    chkTempMax->setChecked    (Settings::getSetting("downloadTempMax", false).toBool());
-    chkSnowCateg->setChecked  (Settings::getSetting("downloadSnowCateg", true).toBool());
-    chkCAPEsfc->setChecked  (Settings::getSetting("downloadCAPEsfc", true).toBool());
-    chkCINsfc->setChecked  (Settings::getSetting("downloadCINsfc", true).toBool());
-    chkFrzRainCateg->setChecked  (Settings::getSetting("downloadFrzRainCateg", true).toBool());
+    chkTempMin->setChecked    (Settings::getSetting(downloadTempMin).toBool());
+    chkTempMax->setChecked    (Settings::getSetting(downloadTempMax).toBool());
+    chkSnowCateg->setChecked  (Settings::getSetting(downloadSnowCateg).toBool());
+    chkCAPEsfc->setChecked  (Settings::getSetting(downloadCAPEsfc).toBool());
+    chkCINsfc->setChecked  (Settings::getSetting(downloadCINsfc).toBool());
+    chkFrzRainCateg->setChecked  (Settings::getSetting(downloadFrzRainCateg).toBool());
 
         //----------------------------------------------------------------
     chkAltitude850  = new QCheckBox ("850 "+tr("hPa"));
     assert (chkAltitude850);
-    chkAltitude850->setChecked  (Settings::getSetting("downloadAltitudeData850", false).toBool());
+    chkAltitude850->setChecked  (Settings::getSetting(downloadAltitudeData850).toBool());
     chkAltitude700  = new QCheckBox ("700 "+tr("hPa"));
     assert (chkAltitude700);
-    chkAltitude700->setChecked  (Settings::getSetting("downloadAltitudeData700", false).toBool());
+    chkAltitude700->setChecked  (Settings::getSetting(downloadAltitudeData700).toBool());
     chkAltitude500  = new QCheckBox ("500 "+tr("hPa"));
     assert (chkAltitude500);
-    chkAltitude500->setChecked  (Settings::getSetting("downloadAltitudeData500", false).toBool());
+    chkAltitude500->setChecked  (Settings::getSetting(downloadAltitudeData500).toBool());
     chkAltitude300  = new QCheckBox ("300 "+tr("hPa"));
     assert (chkAltitude300);
-    chkAltitude300->setChecked  (Settings::getSetting("downloadAltitudeData300", false).toBool());
+    chkAltitude300->setChecked  (Settings::getSetting(downloadAltitudeData300).toBool());
     chkAltitude200  = new QCheckBox ("200 "+tr("hPa"));
     assert (chkAltitude200);
-    chkAltitude200->setChecked  (Settings::getSetting("downloadAltitudeData200", false).toBool());
+    chkAltitude200->setChecked  (Settings::getSetting(downloadAltitudeData200).toBool());
 
     chkAltitudeAll = new QCheckBox (tr("All"));
     assert (chkAltitudeAll);
@@ -794,7 +816,6 @@ QFrame *DialogLoadGrib::createFrameButtonsZone(QWidget *parent)
                 tlay->addWidget( btServerStatus );
                 tlay->addWidget( btCancel );
     lay->addWidget( ftmp);
-
     return frm;
 }
 //----------------------------------------------------------------------------

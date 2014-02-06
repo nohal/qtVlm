@@ -63,14 +63,16 @@ class GshhsPolyCell
          GshhsPolyCell(FILE *fpoly, int x0, int y0, Projection *proj, PolygonFileHeader *header);
         ~GshhsPolyCell();
 
-        void  drawMapPlain(QPainter &pnt, const double &dx,Projection *proj,
-                    const QColor &seaColor, const QColor &landColor );
+        void  drawMapPlain(QPainter &pnt, const double &dx, Projection *proj,
+                    const QColor &seaColorVal, const QColor &landColorVal );
 
         void  drawSeaBorderLines(QPainter &pnt, const double &dx, Projection *proj);
-        const QList<QLineF> * getCoasts() const {return & coasts;}
+        QList<QLineF> * getCoasts() {return & coasts;}
+        QRectF getBoundingRect() {return boundingRect;}
     private:
         int nbpoints;
         int x0cell, y0cell;
+        QRectF boundingRect;
 
         FILE *fpoly;
 
@@ -96,13 +98,13 @@ class GshhsPolyReader
         GshhsPolyReader(std::string path_);
         ~GshhsPolyReader();
 
-        void drawGshhsPolyMapPlain( QPainter &pnt, Projection *proj,
-                    const QColor &seaColor, const QColor &landColor );
+        void drawGshhsPolyMapPlain(QPainter &pnt, Projection *proj,
+                    const QColor &seaColorVal, const QColor &landColorVal );
 
         void drawGshhsPolyMapSeaBorders( QPainter &pnt, Projection *proj);
 
         void setQuality(const int &quality); // 5 levels: 0=low ... 4=full
-        bool crossing(const QLineF &traject, const QLineF &trajectWorld) const;
+        bool crossing(const QLineF &traject, const QLineF &trajectWorld, const bool &threaded=false) const;
         int currentQuality;
         void setProj(Projection * p){this->proj=p;}
         int  getPolyVersion();
@@ -123,7 +125,7 @@ class GshhsPolyReader
         QList<QLineF>coasts;
 };
 Q_DECLARE_TYPEINFO(GshhsPolyReader,Q_MOVABLE_TYPE);
-inline bool GshhsPolyReader::crossing(const QLineF &traject, const QLineF &trajectWorld) const
+inline bool GshhsPolyReader::crossing(const QLineF &traject, const QLineF &trajectWorld, const bool &threaded) const
 {
     if(proj==NULL) return false;
     if(!proj->isInBounderies(traject.p1().x(),traject.p1().y()) &&
@@ -137,8 +139,7 @@ inline bool GshhsPolyReader::crossing(const QLineF &traject, const QLineF &traje
     cymax = (int) ceil  (qMax(trajectWorld.p1().y(),trajectWorld.p2().y()));
     int cx, cxx, cy;
     GshhsPolyCell *cel;
-
-    for (cx=cxmin; cx<cxmax; cx++)
+    for (cx=cxmin; cx<cxmax; ++cx)
     {
         cxx = cx;
         while (cxx < 0)
@@ -146,29 +147,27 @@ inline bool GshhsPolyReader::crossing(const QLineF &traject, const QLineF &traje
         while (cxx >= 360)
             cxx -= 360;
 
-        for (cy=cymin; cy<cymax; cy++)
+        for (cy=cymin; cy<cymax; ++cy)
         {
             if(this->abortRequested) return false;
             if (cxx>=0 && cxx<=359 && cy>=-90 && cy<=89)
             {
                 if(this->abortRequested) return false;
-                if (allCells[cxx][cy+90] == NULL) continue;
                 cel = allCells[cxx][cy+90];
-                const QList<QLineF> *coasts=cel->getCoasts();
+                if (cel == NULL) continue;
+                QList<QLineF> *coasts=cel->getCoasts();
                 if (coasts->isEmpty()) continue;
-                for(int cs=0;cs<coasts->count();cs++)
+                if(coasts->size()>4 && !Util::lineIsCrossingRect(traject,cel->getBoundingRect()))
+                    continue;
+                for(int cs=0;cs<coasts->count();++cs)
                 {
-#if 1
-                    if(this->abortRequested)
-                    {
-                        return false;
-                    }
                     if (my_intersects(traject,coasts->at(cs)))
-#else
-                    QPointF dummy;
-                    if(coasts->at(cs).intersect(traject,&dummy)==QLineF::BoundedIntersection)
-#endif
+                    //if(coasts->at(cs).intersect(traject,NULL)==QLineF::BoundedIntersection)
+                    {
+                        if(!threaded && cs>20)
+                            coasts->move(cs,0);
                         return true;
+                    }
                 }
             }
         }

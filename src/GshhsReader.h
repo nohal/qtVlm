@@ -113,9 +113,9 @@ class GshhsReader
         
         
         void drawBackground( QPainter &pnt, Projection *proj,
-                QColor seaColor, QColor backgroundColor);
+                QColor seaColorVal, QColor backgroundColorVal);
         void drawContinents( QPainter &pnt, Projection *proj,
-                QColor seaColor, QColor landColor);
+                QColor seaColorVal, QColor landColorVal);
                 
         void drawSeaBorders( QPainter &pnt, Projection *proj);
         void drawBoundaries( QPainter &pnt, Projection *proj);
@@ -124,7 +124,7 @@ class GshhsReader
         bool gshhsFilesExists(int quality);
         int  getQuality()   {return quality;}
 
-        bool crossing(const QLineF &traject, const QLineF &trajectWorld) const;
+        bool crossing(const QLineF &traject, const QLineF &trajectWorld, const bool &threaded=false) const;
         void setProj(Projection * p){this->gshhsPoly_reader->setProj(p);}
         int  getPolyVersion();
         void clearCells(){this->gshhsPoly_reader->clearCells();}
@@ -213,9 +213,9 @@ inline int GshhsPolygon_WDB::readInt2() {
     }
     return ((int)tab[0]<<8)+((int)tab[1]);
 }
-inline bool GshhsReader::crossing(const QLineF &traject, const QLineF &trajectWorld) const
+inline bool GshhsReader::crossing(const QLineF &traject, const QLineF &trajectWorld, const bool &threaded) const
 {
-    return this->gshhsPoly_reader->crossing(traject, trajectWorld);
+    return this->gshhsPoly_reader->crossing(traject, trajectWorld, threaded);
 }
 
 

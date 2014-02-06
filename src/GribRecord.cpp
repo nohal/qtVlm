@@ -217,6 +217,7 @@ bool GribRecord::getValue_TWSA(double px, double py,double * a00,double * a01,do
 double GribRecord::getInterpolatedValue(double px, double py, bool numericalInterpolation) {
     double val;
     if (!ok || Di==0 || Dj==0) {
+        qWarning() << "[getInterpolatedValue] grib not ok or bad Di/Dj";
         return GRIB_NOTDEF;
     }
     if (!isPointInMap(px,py)) {
@@ -224,6 +225,7 @@ double GribRecord::getInterpolatedValue(double px, double py, bool numericalInte
         if (!isPointInMap(px,py)) {
             px -= 2*360.0;              // tour du monde a gauche ?
             if (!isPointInMap(px,py)) {
+                //qWarning() << "[getInterpolatedValue] point out of map";
                 return GRIB_NOTDEF;
             }
         }
@@ -263,6 +265,7 @@ double GribRecord::getInterpolatedValue(double px, double py, bool numericalInte
         nbval ++;
 
     if (nbval <3) {
+        //qWarning() << "[getInterpolatedValue] Not enough dataPoint around point";
         return GRIB_NOTDEF;
     }
 
@@ -338,6 +341,7 @@ double GribRecord::getInterpolatedValue(double px, double py, bool numericalInte
     }
     double k = kx + ky;
     if (k<0 || k>1) {
+        //qWarning() << "[getInterpolatedValue] k factor bad";
         val = GRIB_NOTDEF;
     }
     else if (k == 0) {

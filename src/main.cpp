@@ -35,8 +35,11 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Util.h"
 #include "MainWindow.h"
 #include "settings.h"
+#include "DialogLanguageSelection.h"
 
 QMap<QString,QString> appFolder;
+
+extern QSettings *fileSettings;
 
 #if 0 /*put 1 to force crash on assert, useful for debugging*/
 void crashingMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg){
@@ -68,13 +71,18 @@ int main(int argc, char *argv[])
 {
 #endif
     qWarning()<<"Starting-up";
-    int currentExitCode=0;
-    do{
+
     QApplication * app=new QApplication(argc, argv);
     qsrand(QTime::currentTime().msec());
     QString appExeFolder=QApplication::applicationDirPath();
-#ifdef __ANDROIDD__
+#ifdef __ANDROID__
     QDir::setCurrent("/storage/emulated/0/qtVlm");
+//    QFile testWrite;
+//    testWrite.setFileName("testWrite.txt");
+//    if(testWrite.open(QIODevice::WriteOnly | QIODevice::Text ))
+//        qWarning()<<"test write succesfull";
+//    else
+//        qWarning()<<"test write failed";
 #elif defined (__UNIX_QTVLM)
     QString curDir=QDir::currentPath();
     qWarning() << "currentPath returns: " << curDir << "applicationDirPath returns: " << appExeFolder;
@@ -122,6 +130,9 @@ int main(int argc, char *argv[])
     appFolder.insert("userFiles",dataDir+"/");
     appFolder.insert("icon",appExeFolder+"/icon/");
 
+    qWarning() << "[main]: appFoloder for polar: " << appFolder.value("polar");
+
+    QCoreApplication::addLibraryPath (appExeFolder+"/plugins");
     //qWarning() << appFolder;
 
     QList<QString> folderList=appFolder.values();
@@ -139,30 +150,47 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForTr(QTextCodec::codecForName("utf8"));
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("utf8"));
 #endif
+    fileSettings=NULL;
     Settings::initSettings();
-#ifndef __ANDROIDD__
-    if(Settings::getSetting("fusionStyle",0).toInt()==1)
-        app->setStyle(QStyleFactory::create("fusion"));
-#endif
-    double fontInc=Settings::getSetting("defaultFontSizeInc",0).toDouble();
-    QFont def(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
+//    if(Settings::getSetting(fusionStyle).toInt()==1)
+//    {
+//        qWarning()<<"setting up Black fusion style";
+//        app->setStyle(QStyleFactory::create("Fusion"));
+//        QPalette p;
+//        p = app->palette();
+//        p.setColor(QPalette::Window, QColor(53,53,53));
+//        p.setColor(QPalette::Button, QColor(53,53,53));
+//        p.setColor(QPalette::Highlight, QColor(142,45,197));
+//        p.setColor(QPalette::ButtonText, QColor(255,255,255));
+//        p.setColor(QPalette::WindowText, QColor(255,255,255));
+//        app->setPalette(p);
+//    }
+    double fontInc=Settings::getSetting(defaultFontSizeInc).toDouble();
+    if(Settings::getSetting(defaultFontName).toString()=="-1")
+        Settings::setSetting(defaultFontName,Settings::getSettingDefault(defaultFontName));
+    QFont def(Settings::getSetting(defaultFontName).toString());
     double fontSize=8.0+fontInc;
     def.setPointSizeF(fontSize);
     QApplication::setFont(def);
-    Settings::setSetting("applicationFontSize",fontSize);
-#ifdef __MAC_QTVLM
-    QString style=QString().sprintf("QPushButton { font: %.2fpx} QLabel { font: %.2fpx} QLineEdit { font: %.2fpx}  QCheckBox { font: %.2fpx} QGroupBox { font: %.2fpx} QComboBox { font: %.2fpx} QListWidget { font: %.2fpx} QRadioButton { font: %.2fpx} QTreeView { font: %.2fpx}",
-                                    fontSize,fontSize,fontSize,fontSize,fontSize,fontSize,fontSize,fontSize,fontSize);
-    qApp->setStyleSheet(style);
+    Settings::setSetting(applicationFontSize,fontSize);
+//#ifdef __MAC_QTVLM
+//    QString style=QString().sprintf("QPushButton { font: %.2fpx} QLabel { font: %.2fpx} QLineEdit { font: %.2fpx}  QCheckBox { font: %.2fpx} QGroupBox { font: %.2fpx} QComboBox { font: %.2fpx} QListWidget { font: %.2fpx} QRadioButton { font: %.2fpx} QTreeView { font: %.2fpx}",
+//                                    fontSize,fontSize,fontSize,fontSize,fontSize,fontSize,fontSize,fontSize,fontSize);
+//    qApp->setStyleSheet(style);
 
-#endif
+//#endif
+
     QTranslator translator;
     QTranslator translatorQt;
-    QString lang = Settings::getSetting("appLanguage", "none").toString();
-    if (lang == "none") {  // first call
-        qWarning() << "Setting default lang=fr";
-        lang = "fr";
-        Settings::setSetting("appLanguage", lang);
+    QString lang = Settings::getSetting(appLanguage).toString();
+
+    if(lang == "NO") {
+        DialogLanguageSelection selectLanguage;
+        if(selectLanguage.exec()==QDialog::Rejected) {
+            app->quit();
+            return 0;
+        }
+        lang = Settings::getSetting(appLanguage).toString();
     }
 
     if (lang == "fr") {
@@ -173,7 +201,7 @@ int main(int argc, char *argv[])
         app->installTranslator(&translatorQt);
         app->installTranslator(&translator);
     }
-    else if (lang == "en") {
+    else if (lang == "en" || lang == "NO") {
         qWarning() << "Loading en";
         QLocale::setDefault(QLocale("en_US"));
         translator.load( appFolder.value("tr")+"qtVlm_" + lang);
@@ -197,28 +225,20 @@ int main(int argc, char *argv[])
     }
     app->setQuitOnLastWindowClosed(true);
 
-    MainWindow win(800, 600);
+    MainWindow win;
     win.continueSetup();
-    if(win.getRestartNeeded())
-    {
-        app->quit();
-        continue;
-    }
+
     if(win.getFinishStart())
     {
         win.show();
 
         app->installTranslator(NULL);
 
-        currentExitCode= app->exec();
-        break;
+        return app->exec();
     }
     else
     {
         app->quit();
-        currentExitCode= 0;
-        break;
+        return 0;
     }
-    }while (true);
-    return currentExitCode;
 }

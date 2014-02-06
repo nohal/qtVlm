@@ -64,16 +64,12 @@ public:
 
     void setCitiesNamesLevel(int level);
     void setMenubarColorMapMode(int colorMapMode, bool withoutEvent=false);
-    void setIsobarsStep(int step);
-    void setIsotherms0Step(int step);
 
     void clearListeDates(void);
     void setSelectedBoatIndex(int index);
     void addMenuRoute(ROUTE * route);
     void addMenuRoutage(ROUTAGE * routage);
     QAction * addReleaseCompass();
-
-
 
     QMenu * createPopupBtRight(QWidget *parent);
 
@@ -148,6 +144,7 @@ public:
     QMenu   *mnRoute_import;
     QAction   *acRoute_import;
     QAction   *acRoute_import2;
+    QAction   *acRoute_import3;
     QMenu   *mnRoute_export;
     QAction   *acRoute_paste;
     QAction *acRoute_comparator;
@@ -156,105 +153,8 @@ public:
     QMenu   *mnRoutage_edit;
     QMenu   *mnRoutage_delete;
 
-    QMenu   *menuGroupColorMap;
-    ZeroOneActionGroup *acView_GroupColorMap;
-    QAction *acView_WindColors;
-    QAction *acView_CurrentColors;
-    QAction *acView_RainColors;
-    QAction *acView_CloudColors;
-    QAction *acView_HumidColors;
-    QAction *acView_TempColors;
-    QAction *acView_TempPotColors;
-    QAction *acView_DeltaDewpointColors;
-    QAction *acView_SnowCateg;
-    //QAction *acView_SnowDepth;
-    QAction *acView_FrzRainCateg;
-    QAction *acView_CAPEsfc;
-    QAction *acView_CINsfc;
-    QMenu   *menuGroupWaves;
-    //ZeroOneActionGroup *acView_GroupWaves;
-    QAction * acView_WavesSigHgtComb;
-    QAction * acView_WavesWnd;
-    QAction * acView_WavesSwl;
-    QAction * acView_WavesMax;
-    QAction * acView_WavesWhiteCap;
-    QAction * acView_WavesArrow;
+    QAction * acGrib_dialog;
 
-    QMap<int,QAction*> gribDataActionMap;
-
-    QAction *acView_Isobars;
-    QMenu   *menuIsobars;
-    QMenu   *menuIsobarsStep;
-    QActionGroup *acView_GroupIsobarsStep;
-        QAction *acView_IsobarsStep1;
-        QAction *acView_IsobarsStep2;
-        QAction *acView_IsobarsStep3;
-        QAction *acView_IsobarsStep4;
-        QAction *acView_IsobarsStep5;
-        QAction *acView_IsobarsStep6;
-        QAction *acView_IsobarsStep8;
-        QAction *acView_IsobarsStep10;
-    QAction *acView_IsobarsLabels;
-
-    QAction *acView_Isotherms0;
-    QMenu   *menuIsotherms0;
-    QMenu   *menuIsotherms0Step;
-    QActionGroup *acView_GroupIsotherms0Step;
-        QAction *acView_Isotherms0Step10;
-        QAction *acView_Isotherms0Step20;
-        QAction *acView_Isotherms0Step50;
-        QAction *acView_Isotherms0Step100;
-        QAction *acView_Isotherms0Step200;
-        QAction *acView_Isotherms0Step500;
-        QAction *acView_Isotherms0Step1000;
-    QAction *acView_Isotherms0Labels;
-
-    QAction *acView_PressureMinMax;
-    QAction *acView_TemperatureLabels;
-
-    QAction *acView_ColorMapSmooth;
-
-    QAction *acView_WindArrow;
-    QAction *acView_Barbules;
-
-    QMenu * menuAltitude;
-    ZeroOneActionGroup *acAlt_GroupAltitude;
-    QStringList levelTypes;
-    QStringList levelTypesUnit;
-
-    /*
-                QAction *acAlt_MSL;
-                QAction *acAlt_sigma995;
-                QAction *acAlt_GND;
-                QAction *acAlt_GND_1m;
-                QAction *acAlt_GND_2m;
-                QAction *acAlt_GND_3m;
-                QAction *acAlt_GND_10m;
-                QAction *acAlt_850hpa;
-                QAction *acAlt_700hpa;
-                QAction *acAlt_500hpa;
-                QAction *acAlt_300hpa;
-                QAction *acAlt_200hpa;
-                QAction *acAlt_Atmosphere;
-
-    ZeroOneActionGroup *acAlt_GroupGeopotLine;
-                QAction *acAlt_GeopotLine_850hpa;
-                QAction *acAlt_GeopotLine_700hpa;
-                QAction *acAlt_GeopotLine_500hpa;
-                QAction *acAlt_GeopotLine_300hpa;
-                QAction *acAlt_GeopotLine_200hpa;
-
-        QMenu *menuGeopotStep;
-    QActionGroup *acAlt_GroupGeopotStep;
-        QAction *acAlt_GeopotStep_1;
-        QAction *acAlt_GeopotStep_2;
-        QAction *acAlt_GeopotStep_5;
-        QAction *acAlt_GeopotStep_10;
-        QAction *acAlt_GeopotStep_20;
-        QAction *acAlt_GeopotStep_50;
-        QAction *acAlt_GeopotStep_100;
-    QAction *acAlt_GeopotLabels;
-*/
     QAction *acMap_Orthodromie;
     QAction *acMap_Rivers;
     QAction *acMap_CountriesBorders;
@@ -271,14 +171,7 @@ public:
         QAction *acMap_CitiesNames3;
         QAction *acMap_CitiesNames4;
 
-    QAction *acMap_Zoom_In;
-    QAction *acMap_Zoom_Out;
-    QAction *acMap_Zoom_Sel;
-    QAction *acMap_Zoom_All;
-    QAction *acMap_sel;
-
     QAction *acOptions_Proxy;
-    QAction *acOptions_Units;
     QAction *acOptions_GraphicsParams;
     QActionGroup *acOptions_GroupLanguage;
     QAction *acOptions_Lang_fr;
@@ -300,10 +193,12 @@ public:
      QAction *acOptions_SH_Por;
      QAction *acOptions_SH_Lab;
      QAction *acOptions_SH_barSet;
+     QAction *acOptions_SH_trace;
      QAction *acOptions_SH_Pol;
      QAction *acOptions_SH_Boa;
      QAction *acOptions_SH_Fla;
      QAction *acOptions_SH_Nig;
+     QAction *acOptions_SH_Scale;
      QAction *acOptions_SH_Tdb;
      QAction *acKeep;
      QAction *acReplay;
@@ -331,11 +226,10 @@ public:
 
     void setPlayerType(const int &type);
 public slots:
-    void slot_updateLockIcon(QIcon ic);
+    void slot_updateLockIcon(QString ic);
     void slot_setChangeStatus(bool status,bool pilototo,bool syncBtn);
     void slot_showViewMenu(void);
-    void slot_showBarrierMenu(void);
-    void slot_showAltitudeMenu(void);
+    void slot_showBarrierMenu(void);   
 
 
     //-------------------------------------

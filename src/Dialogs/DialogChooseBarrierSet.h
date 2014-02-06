@@ -31,17 +31,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class DialogChooseBarrierSet: public QDialog, public Ui::DialogChooseBarrierSet_ui {
     public:
-        DialogChooseBarrierSet(QWidget *parent);
+        DialogChooseBarrierSet(MainWindow *parent);
         ~DialogChooseBarrierSet();
 
-        static BarrierSet * chooseBarrierSet(QWidget *parent);
+        static BarrierSet * chooseBarrierSet(MainWindow *parent);
 
         FCT_GET(BarrierSet*,choice)
 
         void done(int result);
         int init_dialog(void);
 
-    private:
+public slots:
+        void slot_screenResize();
+private:
+        MainWindow * mainWindow;
         BarrierSet * choice;
 };
 

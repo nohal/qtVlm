@@ -29,35 +29,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <qextserialport.h>
 #include <nmea.h>
 
+#include "class_list.h"
+
 #include "boat.h"
 #include "vlmLine.h"
-#include "class_list.h"
 #include "mycentralwidget.h"
-#include <QListWidget>
+#include "GpsReceiver.h"
 
-class ReceiverThread : public QThread
-{ Q_OBJECT
-    public:
-        ReceiverThread(boatReal * parent);
-        ~ReceiverThread(void);
-        void run();
-
-        bool initPort(void);
-    public slots:
-        void copyClipBoard();
-
-    signals:
-        void decodeData(QByteArray data);
-        void updateBoat(nmeaINFO info);
-
-    private:
-        QextSerialPort * port;
-        boatReal *parent;
-        nmeaINFO info;
-        nmeaPARSER parser;
-        QListWidget * listNMEA;
-
-};
 
 class boatReal : public boat
 { Q_OBJECT
@@ -68,6 +46,8 @@ class boatReal : public boat
         void stopRead();
         void startRead();
         void unSelectBoat(bool needUpdate);
+
+        void restartGPS(void) { stopRead(); startRead(); }
 
         void updateAll(void);
 
@@ -86,17 +66,19 @@ class boatReal : public boat
         time_t getEta(){return eta;}
         void setWP(QPointF point,double w);
         void setWP(double lat, double lon, double wph);
-        nmeaINFO getInfo(void){return info;}
+        GpsData getInfo(void){return info;}
         void emitMoveBoat(){emit boatUpdated(this,false,false);}
         bool getDisplayNMEA(){return this->displayNMEA;}
         void setDisplayNMEA(bool b){this->displayNMEA=b;}
         bool getPause(){return pause;}
+        bool get_useSkin() const{return false;}
+        QString get_boardSkin() const{return QString();}
 
     public slots:
         void slot_selectBoat(void) { boat::slot_selectBoat(); }
         void slot_threadStartedOrFinished(void);
         void slot_chgPos(void);
-        void updateBoat(nmeaINFO info);
+        void updateBoat(GpsData info);
 
     signals:
 
@@ -106,9 +88,10 @@ class boatReal : public boat
 
     private:
         ReceiverThread * gpsReader;
+        int gpsReaderType;
         int cnt;
 
-        nmeaINFO info;
+        GpsData info;
 
         QString parseMask(int mask);
 

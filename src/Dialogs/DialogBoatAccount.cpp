@@ -36,15 +36,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "MainWindow.h"
 #include "Util.h"
 #include "settings.h"
+#include <QScroller>
 DialogBoatAccount::DialogBoatAccount(Projection * proj, MainWindow * main, myCentralWidget * parent,inetConnexion * inet) : QDialog(parent)
 {
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
-
     this->proj = proj;
     this->main=main;
     this->parent=parent;
     this->inet=inet;
+    if(Settings::getSetting(fusionStyle).toInt()==1)
+        enable_state->setStyleSheet("color: yellow;");
+    else
+        enable_state->setStyleSheet("color: red;");
 
     /* signal / slot init */
 
@@ -57,15 +63,15 @@ DialogBoatAccount::DialogBoatAccount(Projection * proj, MainWindow * main, myCen
 
 DialogBoatAccount::~DialogBoatAccount()
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
+    Settings::saveGeometry(this);
 }
+
 void DialogBoatAccount::slot_browseSkin()
 {
     QString skinPath=QFileInfo(boardSkin->text()).absolutePath();
     QString fileName = QFileDialog::getOpenFileName(this,
                          tr("Selectionner un skin tableau de bord VLM"), skinPath, "png (*.png)");
-     if(fileName!="")
+    if(fileName!="")
          boardSkin->setText(QFileInfo(fileName).absoluteFilePath());
 }
 
@@ -100,7 +106,10 @@ bool DialogBoatAccount::initList( QList<boatVLM*> * boat_list, Player * player)
             item = new QListWidgetItem(list_boatSit);
         if(boat->getStatus())
         {
-            item->setData(Qt::ForegroundRole,QColor(Qt::darkRed));
+            if(Settings::getSetting(fusionStyle).toInt()==1)
+                item->setData(Qt::ForegroundRole,QColor(Qt::yellow));
+            else
+                item->setData(Qt::ForegroundRole,QColor(Qt::darkRed));
         }
         setBoatItemName(item,boat);
         item->setData(ROLE_IDX,boat_idx);
@@ -151,6 +160,7 @@ bool DialogBoatAccount::initList( QList<boatVLM*> * boat_list, Player * player)
 
 void DialogBoatAccount::done(int result)
 {
+    Settings::saveGeometry(this);
     if(result == QDialog::Accepted)
     {
         /* validate last change for currentItem */
@@ -267,6 +277,10 @@ void DialogBoatAccount::setBoatItemName(QListWidgetItem * item,boatVLM * boat)
                 item->setText(boat->getBoatPseudo() + " " + tr("proprio")+": "+boat->getOwn()+" ("+boat->getRaceName()+")");
         }
     }
+}
+void DialogBoatAccount::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 
 void  DialogBoatAccount::slot_selectItem_boat(QListWidgetItem * item, QListWidgetItem * old)
@@ -400,9 +414,14 @@ void DialogBoatAccount::setItem(QListWidgetItem * item)
 void DialogBoatAccount::slot_enableChanged(bool b)
 {
     if(b)
-        this->currentItem->setData(Qt::ForegroundRole,QColor(Qt::darkRed));
+    {
+        if(Settings::getSetting(fusionStyle).toInt()==1)
+            this->currentItem->setData(Qt::ForegroundRole,QColor(Qt::yellow));
+        else
+            this->currentItem->setData(Qt::ForegroundRole,QColor(Qt::darkRed));
+    }
     else
-        this->currentItem->setData(Qt::ForegroundRole,QColor(Qt::black));
+        this->currentItem->setData(Qt::ForegroundRole,this->palette().text().color());
 }
 
 void  DialogBoatAccount::chkAlias_changed(int state)
@@ -484,7 +503,7 @@ boatSetup::boatSetup(boatVLM * boat)
     boardSkin=boat->get_boardSkin();
     if(boardSkin.isEmpty() || !(QFile(boardSkin).exists()))
     {
-        boardSkin=Settings::getSetting("defaultSkin",QFileInfo("img/skin_compas.png").absoluteFilePath()).toString();
+        boardSkin=Settings::getSetting(defaultSkin).toString();
         if(!QFile(boardSkin).exists())
             boardSkin=QFileInfo("img/skin_compas.png").absoluteFilePath();
     }

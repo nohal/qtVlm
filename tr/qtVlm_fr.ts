@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="fr_FR" sourcelanguage="fr_FR">
+<TS version="2.1" language="fr_FR" sourcelanguage="fr_FR">
 <context>
     <name>Barrier</name>
     <message>
@@ -111,247 +111,75 @@
     <name>BoardVlmNew</name>
     <message>
         <source>VLM Command Board</source>
-        <translation>Tableau de bord VLM</translation>
-    </message>
-    <message>
-        <source>Compas</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>BS</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>TWS</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>TWD</source>
-        <translation></translation>
+        <translation type="obsolete">Tableau de bord VLM</translation>
     </message>
     <message>
         <source>Details</source>
-        <translation>Détails</translation>
-    </message>
-    <message>
-        <source>Polaire</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>°</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>TWA</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>VMG</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>HDG</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>VBVMG</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>WP</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Pilototo</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>background-color: rgb(239, 243, 247);</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>VLM Sync</source>
-        <translation></translation>
+        <translation type="obsolete">Détails</translation>
     </message>
     <message>
         <source>Meilleurs angles au pres/portant:</source>
-        <translation>Meilleurs angles au près/portant:</translation>
+        <translation type="obsolete">Meilleurs angles au près/portant:</translation>
     </message>
     <message>
         <source>deg</source>
-        <translation>°</translation>
+        <translation type="obsolete">°</translation>
     </message>
     <message>
         <source>Pas de WP</source>
-        <translation>Pas de WP actif</translation>
-    </message>
-    <message>
-        <source>Pas de WP actif</source>
-        <translation></translation>
+        <translation type="obsolete">Pas de WP actif</translation>
     </message>
     <message>
         <source>WP defini dans VLM (pas de POI correspondant)</source>
-        <translation>WP défini dans VLM (pas de POI correspondant dans qtVLM)</translation>
-    </message>
-    <message>
-        <source>WP VLM</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>WP: </source>
-        <translation></translation>
+        <translation type="obsolete">WP défini dans VLM (pas de POI correspondant dans qtVLM)</translation>
     </message>
     <message>
         <source>WP defini dans VLM (</source>
-        <translation>WP défini dans VLM (</translation>
-    </message>
-    <message>
-        <source> dans qtVlm)</source>
-        <translation></translation>
+        <translation type="obsolete">WP défini dans VLM (</translation>
     </message>
     <message>
         <source>Le cap a suivre n&apos;est pas le meme</source>
-        <translation>Attention: le cap à suivre est différent</translation>
+        <translation type="obsolete">Attention: le cap à suivre est différent</translation>
     </message>
     <message>
         <source>WP defini dans VLM mais le mode de navigation n&apos;est pas coherent</source>
-        <translation>WP défini dans VLM mais le mode de navigation n&apos;est pas compatible</translation>
+        <translation type="obsolete">WP défini dans VLM mais le mode de navigation n&apos;est pas compatible</translation>
     </message>
     <message>
         <source>Annuler</source>
-        <translation>Annuler</translation>
-    </message>
-    <message>
-        <source>Bateau</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Position</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>BS:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>14.32kts</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>HDG:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>132.23d</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Moy:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Loch:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Ortho:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>DNM:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Angle:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>VMG:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>25.25kts</source>
-        <translation></translation>
+        <translation type="obsolete">Annuler</translation>
     </message>
     <message>
         <source>Wind</source>
-        <translation>Vent</translation>
-    </message>
-    <message>
-        <source>TWS:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>25.35kts</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>TWD:</source>
-        <translation></translation>
+        <translation type="obsolete">Vent</translation>
     </message>
     <message>
         <source>Pres:</source>
-        <translation>Près:</translation>
+        <translation type="obsolete">Près:</translation>
     </message>
     <message>
         <source>Port.:</source>
-        <translation>Portant:</translation>
+        <translation type="obsolete">Portant:</translation>
     </message>
     <message>
         <source>Race</source>
-        <translation>Course</translation>
-    </message>
-    <message>
-        <source>-&gt;</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Fasnet gate</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Dist:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>TextLabel</source>
-        <translation></translation>
+        <translation type="obsolete">Course</translation>
     </message>
     <message>
         <source>kts</source>
-        <translation>nds</translation>
-    </message>
-    <message>
-        <source>ORT</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>nm</source>
-        <translation></translation>
+        <translation type="obsolete">nds</translation>
     </message>
     <message>
         <source>pas de polaire chargee</source>
-        <translation>Pas de polaire chargée</translation>
-    </message>
-    <message>
-        <source>AWA</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>AWS</source>
-        <translation></translation>
+        <translation type="obsolete">Pas de polaire chargée</translation>
     </message>
     <message>
         <source>Confirmation a chaque ordre vers VLM</source>
-        <translation>Confirmation à chaque ordre vers VLM</translation>
-    </message>
-    <message>
-        <source>Confirmez-vous cet ordre?</source>
-        <translation></translation>
+        <translation type="obsolete">Confirmation à chaque ordre vers VLM</translation>
     </message>
     <message>
         <source> kts</source>
-        <translation> nds</translation>
+        <translation type="obsolete"> nds</translation>
     </message>
 </context>
 <context>
@@ -407,6 +235,201 @@
     <message>
         <source>Details</source>
         <translation type="obsolete">Détails</translation>
+    </message>
+</context>
+<context>
+    <name>DataManager</name>
+    <message>
+        <source>Aucun</source>
+        <translation>Aucun</translation>
+    </message>
+    <message>
+        <source>Carte du vent</source>
+        <translation>Carte du vent</translation>
+    </message>
+    <message>
+        <source>Carte du courant</source>
+        <translation>Carte du courant</translation>
+    </message>
+    <message>
+        <source>Couverture nuageuse</source>
+        <translation>Couverture nuageuse</translation>
+    </message>
+    <message>
+        <source>Carte de l&apos;humidite relative</source>
+        <translation type="obsolete">Carte de l&apos;humidité relative</translation>
+    </message>
+    <message>
+        <source>Carte de la temperature</source>
+        <translation type="obsolete">Carte de la température</translation>
+    </message>
+    <message>
+        <source>Carte de la temperature potentielle</source>
+        <translation type="obsolete">Carte de la température potentielle</translation>
+    </message>
+    <message>
+        <source>Point de rosee</source>
+        <translation>Point de rosée</translation>
+    </message>
+    <message>
+        <source>Neige (chute possible)</source>
+        <translation>Neige (chute possible)</translation>
+    </message>
+    <message>
+        <source>Pluie verglacante (chute possible)</source>
+        <translation>Pluie verglaçante (chute possible)</translation>
+    </message>
+    <message>
+        <source>CAPE (surface)</source>
+        <translation>CAPE (surface)</translation>
+    </message>
+    <message>
+        <source>CIN (surface)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Waves combined</source>
+        <translation>Vagues combinées</translation>
+    </message>
+    <message>
+        <source>Wind waves</source>
+        <translation>Vagues du vent</translation>
+    </message>
+    <message>
+        <source>Swell waves</source>
+        <translation>Vagues de la houle</translation>
+    </message>
+    <message>
+        <source>Max waves</source>
+        <translation>Vagues max</translation>
+    </message>
+    <message>
+        <source>White cap prob</source>
+        <translation>Probabilité de déferlantes</translation>
+    </message>
+    <message>
+        <source>Vent</source>
+        <translation>Vent</translation>
+    </message>
+    <message>
+        <source>Courant</source>
+        <translation>Courants</translation>
+    </message>
+    <message>
+        <source>Surface</source>
+        <translation>Surface</translation>
+    </message>
+    <message>
+        <source>Isotherm 0C</source>
+        <translation>Isotherme 0 C</translation>
+    </message>
+    <message>
+        <source>Isobaric</source>
+        <translation>Isobarique</translation>
+    </message>
+    <message>
+        <source>Mean Sea Level</source>
+        <translation>Niveau de la mer</translation>
+    </message>
+    <message>
+        <source>Above ground</source>
+        <translation>Au dessus du sol</translation>
+    </message>
+    <message>
+        <source>Sigma</source>
+        <translation>Sigma</translation>
+    </message>
+    <message>
+        <source>Entire atmosphere</source>
+        <translation>Atmosphère entière</translation>
+    </message>
+    <message>
+        <source>Ordered sequence</source>
+        <translation>Sequence ordonnée</translation>
+    </message>
+    <message>
+        <source>Couv nuage</source>
+        <translation>Couv nuage</translation>
+    </message>
+    <message>
+        <source>Precipitations</source>
+        <translation>Precipitations</translation>
+    </message>
+    <message>
+        <source>Precip</source>
+        <translation>Precip</translation>
+    </message>
+    <message>
+        <source>Humidite relative</source>
+        <translation>Humidité relative</translation>
+    </message>
+    <message>
+        <source>Humid rel</source>
+        <translation>Humid rel</translation>
+    </message>
+    <message>
+        <source>Temperature</source>
+        <translation>Température</translation>
+    </message>
+    <message>
+        <source>Temp</source>
+        <translation>Temp</translation>
+    </message>
+    <message>
+        <source>Temperature potentielle</source>
+        <translation>Température potentielle</translation>
+    </message>
+    <message>
+        <source>Temp pot</source>
+        <translation>Temp pot</translation>
+    </message>
+    <message>
+        <source>Pt rosee</source>
+        <translation>Pt rosée</translation>
+    </message>
+    <message>
+        <source>Neige</source>
+        <translation>Neige</translation>
+    </message>
+    <message>
+        <source>Pluie verg.</source>
+        <translation>Pluie verg.</translation>
+    </message>
+    <message>
+        <source>CAPE</source>
+        <translation>CAPE</translation>
+    </message>
+    <message>
+        <source>CIN</source>
+        <translation>CIN</translation>
+    </message>
+    <message>
+        <source>Wave comb</source>
+        <translation>Vague comb</translation>
+    </message>
+    <message>
+        <source>Wind wave</source>
+        <translation>Vague vent</translation>
+    </message>
+    <message>
+        <source>Swell wave</source>
+        <translation>Houle</translation>
+    </message>
+    <message>
+        <source>Max wave</source>
+        <translation>Vague max</translation>
+    </message>
+    <message>
+        <source>Whte cap</source>
+        <translation>Déferlante</translation>
+    </message>
+    <message>
+        <source>Primary waves</source>
+        <translation>Vagues primaires</translation>
+    </message>
+    <message>
+        <source>Secondary waves</source>
+        <translation>Vagues secondaires</translation>
     </message>
 </context>
 <context>
@@ -606,7 +629,7 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
     </message>
     <message>
         <source>Erreur de lecture json.</source>
-        <translation>Erreur de lecture json.</translation>
+        <translation type="obsolete">Erreur de lecture json.</translation>
     </message>
     <message>
         <source>Nom de route:</source>
@@ -627,13 +650,23 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
     <message>
         <source>Permet de telecharger manuellement une trace pour une course VLM.
 La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un numero de course valide, et permet de requérir une trace tronquée.</source>
-        <translation>Permet de telecharger manuellement une trace pour une course VLM.
+        <translation type="obsolete">Permet de telecharger manuellement une trace pour une course VLM.
 La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un numero de course valide, et permet de requérir une trace tronquée.</translation>
     </message>
     <message>
         <source>Numero de la course
  http://www.v-l-m.org/races.php?fulllist=1</source>
         <translation>Numéro de la course</translation>
+    </message>
+    <message>
+        <source>Fetch</source>
+        <translation>Téléchargement</translation>
+    </message>
+    <message>
+        <source>Permet de telecharger manuellement une trace pour une course VLM.
+La boÃŪte Ã  cocher trace partielle s&apos;active apres l&apos;entree d&apos;un numero de course valide, et permet de requÃĐrir une trace tronquÃĐe.</source>
+        <translation>Permet de telecharger manuellement une trace pour une course VLM.
+La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un numero de course valide, et permet d&apos;obtenir une trace tronquée.</translation>
     </message>
 </context>
 <context>
@@ -747,132 +780,100 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
         <source>Opacite des zones de nuit :</source>
         <translation>Opacité des zones de nuit :</translation>
     </message>
+    <message>
+        <source>Ortho selection :</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>DialogGribDrawing</name>
     <message>
-        <source>Aucun</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Carte du vent</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Carte du courant</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Couverture nuageuse</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Carte des preecipitations</source>
-        <translation>Carte des précipitations</translation>
+        <translation type="obsolete">Carte des précipitations</translation>
     </message>
     <message>
         <source>Carte de l&apos;humidite relative</source>
-        <translation>Carte de l&apos;humidité relative</translation>
+        <translation type="obsolete">Carte de l&apos;humidité relative</translation>
     </message>
     <message>
         <source>Carte de la temperature</source>
-        <translation>Carte de la température</translation>
+        <translation type="obsolete">Carte de la température</translation>
     </message>
     <message>
         <source>Carte de la temperature potentielle</source>
-        <translation>Carte de la température potentielle</translation>
+        <translation type="obsolete">Carte de la température potentielle</translation>
     </message>
     <message>
         <source>Point de rosee</source>
-        <translation>Point de rosée</translation>
+        <translation type="obsolete">Point de rosée</translation>
     </message>
     <message>
         <source>Ecart temperature-point de rosee</source>
-        <translation>Ecart température-point de rosée</translation>
-    </message>
-    <message>
-        <source>Neige (chute possible)</source>
-        <translation></translation>
+        <translation type="obsolete">Ecart température-point de rosée</translation>
     </message>
     <message>
         <source>Pluie verglacante (chute possible)</source>
-        <translation>Pluie verglaçante (chute possible)</translation>
+        <translation type="obsolete">Pluie verglaçante (chute possible)</translation>
     </message>
     <message>
         <source>CAPE (surface)</source>
-        <translation>CAPE (surface)</translation>
-    </message>
-    <message>
-        <source>CIN (surface)</source>
-        <translation></translation>
+        <translation type="obsolete">CAPE (surface)</translation>
     </message>
     <message>
         <source>Waves combined</source>
-        <translation>Vagues combinées</translation>
+        <translation type="obsolete">Vagues combinées</translation>
     </message>
     <message>
         <source>Wind waves</source>
-        <translation>Vagues du vent</translation>
+        <translation type="obsolete">Vagues du vent</translation>
     </message>
     <message>
         <source>Swell waves</source>
-        <translation>Vagues de la houle</translation>
+        <translation type="obsolete">Vagues de la houle</translation>
     </message>
     <message>
         <source>Max waves</source>
-        <translation>Vagues max</translation>
+        <translation type="obsolete">Vagues max</translation>
     </message>
     <message>
         <source>White cap prob</source>
-        <translation>Probabilité de déferlantes</translation>
-    </message>
-    <message>
-        <source>Vent</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Courant</source>
-        <translation></translation>
+        <translation type="obsolete">Probabilité de déferlantes</translation>
     </message>
     <message>
         <source>Primary waves</source>
-        <translation>Vagues primaires</translation>
+        <translation type="obsolete">Vagues primaires</translation>
     </message>
     <message>
         <source>Secondary waves</source>
-        <translation>Vagues secondaires</translation>
-    </message>
-    <message>
-        <source>Surface</source>
-        <translation></translation>
+        <translation type="obsolete">Vagues secondaires</translation>
     </message>
     <message>
         <source>Isotherm 0C</source>
-        <translation>Isotherme 0 C</translation>
+        <translation type="obsolete">Isotherme 0 C</translation>
     </message>
     <message>
         <source>Isobaric</source>
-        <translation>Isobarique</translation>
+        <translation type="obsolete">Isobarique</translation>
     </message>
     <message>
         <source>Mean Sea Level</source>
-        <translation>Pression au niveau de la mer</translation>
+        <translation type="obsolete">Pression au niveau de la mer</translation>
     </message>
     <message>
         <source>Above ground</source>
-        <translation>Au dessus du sol</translation>
-    </message>
-    <message>
-        <source>Sigma</source>
-        <translation></translation>
+        <translation type="obsolete">Au dessus du sol</translation>
     </message>
     <message>
         <source>Entire atmosphere</source>
-        <translation>Atmosphère entière</translation>
+        <translation type="obsolete">Atmosphère entière</translation>
     </message>
     <message>
         <source>Ordered sequence</source>
-        <translation>Sequence ordonnée</translation>
+        <translation type="obsolete">Sequence ordonnée</translation>
+    </message>
+    <message>
+        <source>Grib drawing</source>
+        <translation>Dessin grib</translation>
     </message>
 </context>
 <context>
@@ -890,10 +891,6 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
         <translation></translation>
     </message>
     <message>
-        <source>Température</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Dégradé de couleur</source>
         <translation></translation>
     </message>
@@ -907,10 +904,6 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
     </message>
     <message>
         <source>Flèche secondaire</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Isobar /Isotherme</source>
         <translation></translation>
     </message>
     <message>
@@ -962,10 +955,6 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
         <translation></translation>
     </message>
     <message>
-        <source>Min/Max</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Isotherme 0°C</source>
         <translation></translation>
     </message>
@@ -1001,6 +990,22 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
         <source>Fermer</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Color</source>
+        <translation>Couleur</translation>
+    </message>
+    <message>
+        <source>Label</source>
+        <translation>Valeur</translation>
+    </message>
+    <message>
+        <source>Isobar / Isotherme</source>
+        <translation>Isobar / Isotherme</translation>
+    </message>
+    <message>
+        <source>Min/Max Pression</source>
+        <translation>Pression min/max</translation>
+    </message>
 </context>
 <context>
     <name>DialogHorn</name>
@@ -1014,6 +1019,29 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
     </message>
     <message>
         <source>d/M/yyyy hh:mm:ss</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
+    <name>DialogLanguageSelection_ui</name>
+    <message>
+        <source>Language selection</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Français</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>English</source>
+        <translation>English</translation>
+    </message>
+    <message>
+        <source>Española</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>České</source>
         <translation></translation>
     </message>
 </context>
@@ -1357,6 +1385,22 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
         <source>Selectionner un skin tableau de bord VLM</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Classical VLM board</source>
+        <translation>Tableau de bord VLM classique</translation>
+    </message>
+    <message>
+        <source>dddegmm&apos;ss&quot;</source>
+        <translation>dd°mm&apos;ss&quot;</translation>
+    </message>
+    <message>
+        <source>dddegmm,mm&apos;</source>
+        <translation>dd°mm,mm&apos;</translation>
+    </message>
+    <message>
+        <source>dd,dddeg</source>
+        <translation>dd,dd°</translation>
+    </message>
 </context>
 <context>
     <name>DialogPilototo</name>
@@ -1413,6 +1457,14 @@ Continuer la sauvegarde?</source>
     <message>
         <source>Certains ordres ont des dates trop proches ou dans le passe</source>
         <translation>Certains ordres ont des dates trop proches ou dans le passé</translation>
+    </message>
+    <message>
+        <source>Confirmation a chaque ordre vers VLM</source>
+        <translation>Confirmation à chaque ordre vers VLM</translation>
+    </message>
+    <message>
+        <source>Confirmez-vous cet ordre?</source>
+        <translation>Confirmez-vous cet ordre?</translation>
     </message>
 </context>
 <context>
@@ -1628,6 +1680,14 @@ Etes-vous sur ?</source>
         <source>Vous devez selectionner un poi dans la liste</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Ortho</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Loxo</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>DialogProxy</name>
@@ -1684,6 +1744,10 @@ Etes-vous sur ?</source>
     <message>
         <source>&lt;Aucun&gt;</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Choisir un fichier</source>
+        <translation>Choisir un fichier</translation>
     </message>
 </context>
 <context>
@@ -1908,6 +1972,10 @@ Etes-vous sur ?</source>
         <source>m</source>
         <translation>m</translation>
     </message>
+    <message>
+        <source>Ce bouton a 3 etats:&lt;br&gt;&lt;b&gt;Non coche:&lt;/b&gt; La route ne sera pas simplifiee.&lt;br&gt;&lt;b&gt;Partiellement coche:&lt;/b&gt; La route sera simplifiee en mode minimum, c&apos;est le meilleur mode.&lt;br&gt;&lt;b&gt;Completement coche:&lt;/b&gt; La route sera simplifiee au maximum. Ce mode peut degrader la qualite du routage.</source>
+        <translation>Ce bouton a 3 états:&lt;br&gt;&lt;b&gt;Non coché:&lt;/b&gt; La route ne sera pas simplifiée.&lt;br&gt;&lt;b&gt;Partiellement coché:&lt;/b&gt; La route sera simplifiée en mode minimum, c&apos;est le meilleur mode.&lt;br&gt;&lt;b&gt;Complètement coché:&lt;/b&gt; La route sera simplifiée au maximum. Ce mode peut dégrader la qualité de la route.</translation>
+    </message>
 </context>
 <context>
     <name>DialogRouteComparator</name>
@@ -1978,76 +2046,28 @@ Etes-vous sur ?</source>
 <context>
     <name>DialogUnits</name>
     <message>
-        <source>Valider</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Annuler</source>
-        <translation>Annuler</translation>
-    </message>
-    <message>
-        <source>Vitesse du vent :</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Distances :</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>mille marin</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>km</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Longitudes :</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Auto</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Est positive</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Ouest positive</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Latitudes :</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Nord positive</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Sud positive</source>
-        <translation></translation>
+        <translation type="vanished">Annuler</translation>
     </message>
     <message>
         <source>Unites</source>
-        <translation>Unités</translation>
+        <translation type="vanished">Unités</translation>
     </message>
     <message>
         <source>Coordonnees :</source>
-        <translation>Coordonées:</translation>
+        <translation type="vanished">Coordonées:</translation>
     </message>
     <message>
         <source>dddegmm&apos;ss&quot;</source>
-        <translation>dd°mm&apos;ss&quot;</translation>
+        <translation type="vanished">dd°mm&apos;ss&quot;</translation>
     </message>
     <message>
         <source>dddegmm,mm&apos;</source>
-        <translation>dd°mm,mm&apos;</translation>
+        <translation type="vanished">dd°mm,mm&apos;</translation>
     </message>
     <message>
         <source>dd,dddeg</source>
-        <translation>dd,dd°</translation>
+        <translation type="vanished">dd,dd°</translation>
     </message>
 </context>
 <context>
@@ -2129,6 +2149,34 @@ Etes-vous sur ?</source>
     <message>
         <source>deg</source>
         <translation>°</translation>
+    </message>
+    <message>
+        <source>Max Speed:</source>
+        <translation>Vitesse max:</translation>
+    </message>
+    <message>
+        <source>kts</source>
+        <translation>nds</translation>
+    </message>
+    <message>
+        <source>at</source>
+        <translation>à</translation>
+    </message>
+    <message>
+        <source>Absolute max speed:</source>
+        <translation>Vitesse max absolue:</translation>
+    </message>
+    <message>
+        <source>TWS:</source>
+        <translation>TWS:</translation>
+    </message>
+    <message>
+        <source>TWA:</source>
+        <translation>TWA:</translation>
+    </message>
+    <message>
+        <source>BS:</source>
+        <translation>BS:</translation>
     </message>
 </context>
 <context>
@@ -2760,39 +2808,39 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Select several Grib files to combine</source>
-        <translation type="unfinished"></translation>
+        <translation>Sélectionner un ensemble de fchier grib à fusionner</translation>
     </message>
     <message>
         <source>GRIB file (*.grb *.grib *.grb2 *.grib2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Fichier Grib (*.grb *.grib *.grb2 *.grib2)</translation>
     </message>
     <message>
         <source>gribs to combine</source>
-        <translation type="unfinished"></translation>
+        <translation>gribs à fusionner</translation>
     </message>
     <message>
         <source>Grib combination</source>
-        <translation type="unfinished"></translation>
+        <translation>Fusion de grib</translation>
     </message>
     <message>
         <source>Filename of destination file</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom du fichier cible</translation>
     </message>
     <message>
         <source>files successfully combined</source>
-        <translation type="unfinished"></translation>
+        <translation>fichiers fusionnés avec succès</translation>
     </message>
     <message>
         <source>Open generated file ?</source>
-        <translation type="unfinished"></translation>
+        <translation>Ouverture du fichier généré?</translation>
     </message>
     <message>
         <source>Not enough file to combine</source>
-        <translation type="unfinished"></translation>
+        <translation>Pas assez de fichier à fusionner</translation>
     </message>
     <message>
         <source>Fichiers GRIB (*.grb *.grib *.grb.bz2 *.grib.bz2 *.grb.gz *.grib.gz *.grb2 *.grib2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Fichiers GRIB (*.grb *.grib *.grb.bz2 *.grib.bz2 *.grb.gz *.grib.gz *.grb2 *.grib2)</translation>
     </message>
 </context>
 <context>
@@ -2842,14 +2890,6 @@ Etes-vous sur ?</source>
         <translation>Téléchargement VLM</translation>
     </message>
     <message>
-        <source>Carte du vent</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Barbules</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Bateau</source>
         <translation></translation>
     </message>
@@ -2887,10 +2927,6 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Proxy Internet</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Ctrl+U</source>
         <translation></translation>
     </message>
     <message>
@@ -2998,112 +3034,8 @@ Etes-vous sur ?</source>
         <translation>Téléchargement</translation>
     </message>
     <message>
-        <source>Couverture nuageuse</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Neige (chute possible)</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>CAPE (surface)</source>
-        <translation>CAPE (surface)</translation>
-    </message>
-    <message>
-        <source>Ctrl+T</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Isobares</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Afficher les isobares</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Espacement (hPa)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>1</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Espacement des isobares</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>2</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>3</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>4</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>5</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>6</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>8</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>10</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Etiquettes des isobares</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Afficher les étiquettes des isobares</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Pression Mini(L) Maxi(H)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Afficher les points de pression mini et maxi</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Espacement (m)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>20</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>50</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>100</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>200</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>500</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>1000</source>
-        <translation></translation>
+        <translation type="obsolete">CAPE (surface)</translation>
     </message>
     <message>
         <source>Routes</source>
@@ -3158,44 +3090,32 @@ Etes-vous sur ?</source>
         <translation>Téléchargement SailDocs</translation>
     </message>
     <message>
-        <source>Type de carte</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Carte des preecipitations</source>
-        <translation>Carte des précipitations</translation>
+        <translation type="obsolete">Carte des précipitations</translation>
     </message>
     <message>
         <source>Carte de l&apos;humidite relative</source>
-        <translation>Carte de l&apos;humidité relative</translation>
+        <translation type="obsolete">Carte de l&apos;humidité relative</translation>
     </message>
     <message>
         <source>Carte de la temperature</source>
-        <translation>Carte de la température</translation>
+        <translation type="obsolete">Carte de la température</translation>
     </message>
     <message>
         <source>Carte de la temperature potentielle</source>
-        <translation>Carte de la température potentielle</translation>
+        <translation type="obsolete">Carte de la température potentielle</translation>
     </message>
     <message>
         <source>Ecart temperature-point de rosee</source>
-        <translation>Ecart température-point de rosée</translation>
+        <translation type="obsolete">Ecart température-point de rosée</translation>
     </message>
     <message>
         <source>Pluie verglacante (chute possible)</source>
-        <translation>Pluie verglaçante (chute possible)</translation>
-    </message>
-    <message>
-        <source>Altitude</source>
-        <translation></translation>
+        <translation type="obsolete">Pluie verglaçante (chute possible)</translation>
     </message>
     <message>
         <source>Sea level</source>
         <translation type="obsolete">Niveau de la mer</translation>
-    </message>
-    <message>
-        <source>Surface</source>
-        <translation></translation>
     </message>
     <message>
         <source>Atmosphere</source>
@@ -3223,43 +3143,43 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Degrades de couleurs</source>
-        <translation>Dégradé de couleurs</translation>
+        <translation type="obsolete">Dégradé de couleurs</translation>
     </message>
     <message>
         <source>Fleches du vent</source>
-        <translation>Flèches du vent</translation>
+        <translation type="obsolete">Flèches du vent</translation>
     </message>
     <message>
         <source>Afficher les fleches de direction du vent</source>
-        <translation>Afficher les flèches de direction du vent</translation>
+        <translation type="obsolete">Afficher les flèches de direction du vent</translation>
     </message>
     <message>
         <source>Afficher les barbules sur les fleches de vent</source>
-        <translation>Afficher les barbules sur les flèches du vent</translation>
+        <translation type="obsolete">Afficher les barbules sur les flèches du vent</translation>
     </message>
     <message>
         <source>Temperature</source>
-        <translation>Température</translation>
+        <translation type="obsolete">Température</translation>
     </message>
     <message>
         <source>Isothermes 0degC</source>
-        <translation>Isotherme 0°C</translation>
+        <translation type="obsolete">Isotherme 0°C</translation>
     </message>
     <message>
         <source>Afficher les isothermes 0degC</source>
-        <translation>Afficher les isothermes 0°C</translation>
+        <translation type="obsolete">Afficher les isothermes 0°C</translation>
     </message>
     <message>
         <source>Espacement des isothermes 0degC</source>
-        <translation>Espacement des isothermes 0°C</translation>
+        <translation type="obsolete">Espacement des isothermes 0°C</translation>
     </message>
     <message>
         <source>Etiquettes des isothermes 0degC</source>
-        <translation>Etiquettes des isothermes 0°C</translation>
+        <translation type="obsolete">Etiquettes des isothermes 0°C</translation>
     </message>
     <message>
         <source>Afficher les étiquettes des isothermes 0degC</source>
-        <translation>Afficher les étiquettes des isothermes 0°C</translation>
+        <translation type="obsolete">Afficher les étiquettes des isothermes 0°C</translation>
     </message>
     <message>
         <source>Parametres du/des bateaux</source>
@@ -3279,7 +3199,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Unites</source>
-        <translation>Unités</translation>
+        <translation type="vanished">Unités</translation>
     </message>
     <message>
         <source>Parametres graphiques</source>
@@ -3458,10 +3378,6 @@ Etes-vous sur ?</source>
         <translation>Čeština</translation>
     </message>
     <message>
-        <source>Carte du courant</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Ouvrir un GRIB Courants</source>
         <translation></translation>
     </message>
@@ -3634,10 +3550,6 @@ Etes-vous sur ?</source>
         <translation>Montrer les barrières</translation>
     </message>
     <message>
-        <source>CIN (surface)</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Supprimer des routes</source>
         <translation></translation>
     </message>
@@ -3655,31 +3567,31 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Waves</source>
-        <translation>Vagues</translation>
+        <translation type="obsolete">Vagues</translation>
     </message>
     <message>
         <source>Waves combined</source>
-        <translation>Vagues combinées</translation>
+        <translation type="obsolete">Vagues combinées</translation>
     </message>
     <message>
         <source>Wind waves</source>
-        <translation>Vagues du vent</translation>
+        <translation type="obsolete">Vagues du vent</translation>
     </message>
     <message>
         <source>Swell waves</source>
-        <translation>Vagues de la houle</translation>
+        <translation type="obsolete">Vagues de la houle</translation>
     </message>
     <message>
         <source>Max waves</source>
-        <translation>Vagues max</translation>
+        <translation type="obsolete">Vagues max</translation>
     </message>
     <message>
         <source>White cap prob</source>
-        <translation>Probabilité de déferlantes</translation>
+        <translation type="obsolete">Probabilité de déferlantes</translation>
     </message>
     <message>
         <source>Waves arrow</source>
-        <translation>Flèches de la mer</translation>
+        <translation type="obsolete">Flèches de la mer</translation>
     </message>
     <message>
         <source>Show arrox for wave direction</source>
@@ -3687,31 +3599,27 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Isotherm 0C</source>
-        <translation>Isotherme 0 C</translation>
+        <translation type="obsolete">Isotherme 0 C</translation>
     </message>
     <message>
         <source>Isobaric</source>
-        <translation>Isobarique</translation>
+        <translation type="obsolete">Isobarique</translation>
     </message>
     <message>
         <source>Mean Sea Level</source>
-        <translation>Pression au niveau de la mer</translation>
+        <translation type="obsolete">Pression au niveau de la mer</translation>
     </message>
     <message>
         <source>Above ground</source>
-        <translation>Au dessus du sol</translation>
-    </message>
-    <message>
-        <source>Sigma</source>
-        <translation></translation>
+        <translation type="obsolete">Au dessus du sol</translation>
     </message>
     <message>
         <source>Entire atmosphere</source>
-        <translation>Atmosphère entière</translation>
+        <translation type="obsolete">Atmosphère entière</translation>
     </message>
     <message>
         <source>Ordered sequence</source>
-        <translation>Sequence ordonnée</translation>
+        <translation type="obsolete">Sequence ordonnée</translation>
     </message>
     <message>
         <source>Informations sur le fichier</source>
@@ -3727,11 +3635,27 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Show arrow for wave direction</source>
-        <translation>Affiche les flèches de vagues</translation>
+        <translation type="obsolete">Affiche les flèches de vagues</translation>
     </message>
     <message>
         <source>Combine grib files</source>
-        <translation type="unfinished"></translation>
+        <translation>Combiner des fichiers grib</translation>
+    </message>
+    <message>
+        <source>Depuis le pilototo VLM</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Grib drawing config</source>
+        <translation>Configuration de l&apos;affichage du grib</translation>
+    </message>
+    <message>
+        <source>Montrer les traces</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Montrer l&apos;echelle</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -4035,6 +3959,22 @@ Etes-vous sur de vouloir supprimer</translation>
         <source>POI imported from GeoData</source>
         <translation>POIs importés de geoData</translation>
     </message>
+    <message>
+        <source>Ortho </source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>NM</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Loxo </source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Tracer un cerce orthodromique au bateau</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>POI_delete_ui</name>
@@ -4195,6 +4135,10 @@ Etes-vous sur de vouloir supprimer</translation>
     </message>
     <message>
         <source>&apos;&apos;</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Mode de navigation</source>
         <translation></translation>
     </message>
 </context>
@@ -4881,6 +4825,62 @@ height</source>
 waves height</source>
         <translation>Hauteur des vagues combinées</translation>
     </message>
+    <message>
+        <source>Importation impossible</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Le bateau est en mode cap fixe ou TWA.</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Le pilototo contient des ordres en mode cap fixe ou TWA.</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Pas de WP defini dans VLM</source>
+        <translation>Pas de WP défini dans VLM</translation>
+    </message>
+    <message>
+        <source>No barrier associate to current boat</source>
+        <translation>Pas de barrière associée au bateau</translation>
+    </message>
+    <message>
+        <source>oui</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>non</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Erreur</source>
+        <translation>Erreur</translation>
+    </message>
+    <message>
+        <source>Erreur de lecture json.</source>
+        <translation>Erreur de lecture json.</translation>
+    </message>
+    <message>
+        <source>Ecart 1er</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Lecture de polaire (</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source> kts</source>
+        <translation> nds</translation>
+    </message>
+    <message>
+        <source> oui</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source> non</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>ROUTAGE</name>
@@ -5012,6 +5012,10 @@ waves height</source>
         <source>Supprimer les autres routages</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Ce bouton a 3 etats:&lt;br&gt;&lt;b&gt;Non coche:&lt;/b&gt; La route ne sera pas simplifiee.&lt;br&gt;&lt;b&gt;Partiellement coche:&lt;/b&gt; La route sera simplifiee en mode minimum, c&apos;est le meilleur mode.&lt;br&gt;&lt;b&gt;Completement coche:&lt;/b&gt; La route sera simplifiee au maximum. Ce mode peut degrader la qualite du routage.</source>
+        <translation>Ce bouton a 3 états:&lt;br&gt;&lt;b&gt;Non coché:&lt;/b&gt; La route ne sera pas simplifiée.&lt;br&gt;&lt;b&gt;Partiellement coché:&lt;/b&gt; La route sera simplifiée en mode minimum, c&apos;est le meilleur mode.&lt;br&gt;&lt;b&gt;Complètement coché:&lt;/b&gt; La route sera simplifiée au maximum. Ce mode peut dégrader la qualité de la route.</translation>
+    </message>
 </context>
 <context>
     <name>ROUTAGE_Editor_ui</name>
@@ -5125,9 +5129,7 @@ waves height</source>
     </message>
     <message>
         <source> min</source>
-        <extracomment>min
-----------
-min</extracomment>
+        <extracomment>min</extracomment>
         <translation></translation>
     </message>
     <message>
@@ -5137,13 +5139,7 @@ min</extracomment>
     </message>
     <message>
         <source> nds</source>
-        <extracomment>nds
-----------
-nds
-----------
-nds
-----------
-nds</extracomment>
+        <extracomment>nds</extracomment>
         <translation></translation>
     </message>
     <message>
@@ -5636,27 +5632,19 @@ sans simplifier</translation>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#ff0000;&quot;&gt;This route is not in BVMG-VLM mode so pilots orders timestamps and even route&apos;s way and trajectory might not be the same. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="vanished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#ff0000;&quot;&gt;Cette route n&apos;est pas en mode VBVMG-VLM mode. Les horodatages des ordres du pilototo et même la trajectoire de la route peuvent être différents. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
+    <message>
+        <source>This route is not in BVMG-VLM mode so pilots orders timestamps and even route&apos;s way and trajectory might not be the same. </source>
+        <translation>Cette route n&apos;est pas en mode VBVMG-VLM mode. Les horodatages des ordres du pilototo et même la trajectoire de la route peuvent être différents.</translation>
+    </message>
 </context>
 <context>
     <name>ReceiverThread</name>
-    <message>
-        <source>Activation du GPS</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Impossible d&apos;ouvrir le port </source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Erreur: </source>
-        <translation></translation>
-    </message>
     <message>
         <source>Copier</source>
         <translation></translation>
@@ -5686,6 +5674,21 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>SerialReceiverThread</name>
+    <message>
+        <source>Activation du GPS</source>
+        <translation>Activation du GPS</translation>
+    </message>
+    <message>
+        <source>Impossible d&apos;ouvrir le port </source>
+        <translation>Impossible d&apos;ouvrir le port </translation>
+    </message>
+    <message>
+        <source>Erreur: </source>
+        <translation>Erreur: </translation>
+    </message>
+</context>
+<context>
     <name>Settings</name>
     <message>
         <source>Ouverture des param�tres</source>
@@ -5695,6 +5698,14 @@ p, li { white-space: pre-wrap; }
         <source>Il existe des parametres locaux, les importer dans qtvlm.ini?</source>
         <translation type="obsolete">Il existe des paramètres locaux, les importer?</translation>
     </message>
+    <message>
+        <source>Setting file version</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wrong setting file version, previous one has been saved in qtVlm.ini.sav, new one created</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>StatusBar</name>
@@ -5703,16 +5714,8 @@ p, li { white-space: pre-wrap; }
         <translation>°</translation>
     </message>
     <message>
-        <source> Vent</source>
-        <translation></translation>
-    </message>
-    <message>
         <source> kts</source>
-        <translation>nds</translation>
-    </message>
-    <message>
-        <source> Courant</source>
-        <translation></translation>
+        <translation type="obsolete">nds</translation>
     </message>
     <message>
         <source>Selection: </source>
@@ -5728,14 +5731,38 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Derniere synchro</source>
-        <translation>Dernière synchro</translation>
+        <translation type="vanished">Dernière synchro</translation>
     </message>
     <message>
         <source>dd-MM-yyyy, HH:mm:ss</source>
         <translation></translation>
     </message>
     <message>
-        <source>Prochaine vac dans</source>
+        <source>No WP</source>
+        <translation>Pas de WP</translation>
+    </message>
+    <message>
+        <source>j</source>
+        <translation>j</translation>
+    </message>
+    <message>
+        <source>h</source>
+        <translation>h</translation>
+    </message>
+    <message>
+        <source>m</source>
+        <translation>m</translation>
+    </message>
+    <message>
+        <source>s</source>
+        <translation type="vanished">s</translation>
+    </message>
+    <message>
+        <source> Arrivee WP</source>
+        <translation type="vanished">Arrivée WP</translation>
+    </message>
+    <message>
+        <source> ETA WP</source>
         <translation></translation>
     </message>
 </context>
@@ -5790,7 +5817,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>ETA</source>
-        <translation>ETA</translation>
+        <translation type="vanished">ETA</translation>
     </message>
     <message>
         <source>Telechargement zyGrib</source>
@@ -5838,11 +5865,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>15 m</source>
-        <translation></translation>
+        <translation>15 mn</translation>
     </message>
     <message>
         <source>30 m</source>
-        <translation></translation>
+        <translation>30 mn</translation>
     </message>
     <message>
         <source>1 h</source>
@@ -5914,31 +5941,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>No WP</source>
-        <translation>Pas de WP</translation>
+        <translation type="vanished">Pas de WP</translation>
     </message>
     <message>
         <source>j</source>
-        <translation>j</translation>
+        <translation type="vanished">j</translation>
     </message>
     <message>
         <source>h</source>
-        <translation>h</translation>
+        <translation type="vanished">h</translation>
     </message>
     <message>
         <source>m</source>
-        <translation>m</translation>
+        <translation type="vanished">m</translation>
     </message>
     <message>
         <source>s</source>
-        <translation>s</translation>
+        <translation type="vanished">s</translation>
     </message>
     <message>
         <source> Arrivee WP</source>
-        <translation>Arrivée WP</translation>
-    </message>
-    <message>
-        <source>dd-MM-yyyy, HH:mm:ss</source>
-        <translation></translation>
+        <translation type="vanished">Arrivée WP</translation>
     </message>
     <message>
         <source>Hold to select download method</source>
@@ -5955,6 +5978,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Add Barrier</source>
         <translation>Ajouter une barrière</translation>
+    </message>
+    <message>
+        <source>5 m</source>
+        <translation>5 mn</translation>
+    </message>
+    <message>
+        <source>Grib drawing config</source>
+        <translation>Configuration d&apos;affichage du grib</translation>
     </message>
 </context>
 <context>
@@ -6336,24 +6367,40 @@ p, li { white-space: pre-wrap; }
         <translation>Redémarrage de qtVlm nécessaire</translation>
     </message>
     <message>
-        <source>Style Fusion</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Skin par defaut</source>
         <translation>Skin par défaut</translation>
-    </message>
-    <message>
-        <source>Tableau de bord VLM classique</source>
-        <translation></translation>
     </message>
     <message>
         <source>Supprimer automatiquement les gribs de plus de 3 jours</source>
         <translation></translation>
     </message>
     <message>
-        <source>Ombre sur le nouveau tableau de board</source>
+        <source>Reset dialogs position and size</source>
+        <translation>Réinitialiser les positions et tailles de fenêtres</translation>
+    </message>
+    <message>
+        <source>Touch screens management</source>
+        <translation>Gestion des écrans tactiles</translation>
+    </message>
+    <message>
+        <source>Enable gestures recognition</source>
+        <translation>Autoriser la détection des gestes</translation>
+    </message>
+    <message>
+        <source>Ombre</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Style Fusion (necessite de relancer qtvlm)</source>
+        <translation>Style Fusion (nécessite de relancer qtVlm)</translation>
+    </message>
+    <message>
+        <source>Tableau de board</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Coordonnees</source>
+        <translation>Coordonées</translation>
     </message>
 </context>
 <context>
@@ -6787,6 +6834,18 @@ p, li { white-space: pre-wrap; }
         <source>Afficher le compas</source>
         <translation></translation>
     </message>
+    <message>
+        <source>format</source>
+        <translation>format</translation>
+    </message>
+    <message>
+        <source>Derniere synchro</source>
+        <translation>Dernière synchro</translation>
+    </message>
+    <message>
+        <source>dd-MM-yyyy, HH:mm:ss</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>boardVLM_ui</name>
@@ -6832,10 +6891,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Score</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>?</source>
         <translation></translation>
     </message>
     <message>
@@ -7155,14 +7210,6 @@ p, li { white-space: pre-wrap; }
         <translation>(pas de polaire chargée)</translation>
     </message>
     <message>
-        <source> (format CSV)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source> (format POL)</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Passer au moins une fois au Sud de cette ligne&lt;br&gt;</source>
         <translation></translation>
     </message>
@@ -7301,6 +7348,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Instruction pour </source>
         <translation></translation>
+    </message>
+    <message>
+        <source>format</source>
+        <translation>format</translation>
     </message>
 </context>
 <context>
@@ -7449,7 +7500,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name </source>
-        <translation>Nom: </translation>
+        <translation type="obsolete">Nom: </translation>
     </message>
     <message>
         <source>Projection: </source>
@@ -7470,6 +7521,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Error while loading</source>
         <translation>Erreur au chargement de </translation>
+    </message>
+    <message>
+        <source>Name:</source>
+        <translation type="obsolete">Nom:</translation>
+    </message>
+    <message>
+        <source>Name: </source>
+        <translation>Nom: </translation>
     </message>
 </context>
 <context>
@@ -8233,6 +8292,14 @@ Please select another point or press esc to exit barrier creation mode</source>
         <source>Show grib info after grib loading</source>
         <translation>Afficher les infos grib après le chargement du grib</translation>
     </message>
+    <message>
+        <source>pilototo</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>PIL_</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>opponent</name>
@@ -8537,23 +8604,15 @@ Please select another point or press esc to exit barrier creation mode</source>
     </message>
     <message>
         <source>Francais</source>
-        <translation>Français</translation>
+        <translation type="vanished">Français</translation>
     </message>
     <message>
         <source>English</source>
-        <translation>English</translation>
+        <translation type="vanished">English</translation>
     </message>
     <message>
         <source>Czech</source>
-        <translation>Čeština</translation>
-    </message>
-    <message>
-        <source>Language/Langage/Idioma</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Spanish</source>
-        <translation></translation>
+        <translation type="vanished">Čeština</translation>
     </message>
 </context>
 <context>
@@ -8679,10 +8738,6 @@ Please select another point or press esc to exit barrier creation mode</source>
     <name>realBoatConfig</name>
     <message>
         <source>Paramétrage du bateau</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Port serie</source>
         <translation></translation>
     </message>
     <message>
@@ -8832,6 +8887,30 @@ Please select another point or press esc to exit barrier creation mode</source>
     <message>
         <source>Vitesse au moteur</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Acces aux données GPS</source>
+        <translation>Accès aux données GPS</translation>
+    </message>
+    <message>
+        <source>Mode série</source>
+        <translation>Mode série</translation>
+    </message>
+    <message>
+        <source>Utiliser un fichier</source>
+        <translation>Utiliser un fichier</translation>
+    </message>
+    <message>
+        <source>Fichier...</source>
+        <translation>Fichier...</translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation>FileName</translation>
+    </message>
+    <message>
+        <source>Utiliser GPSd</source>
+        <translation>Utiliser GPSd</translation>
     </message>
 </context>
 <context>

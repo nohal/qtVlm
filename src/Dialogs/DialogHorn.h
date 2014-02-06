@@ -12,6 +12,8 @@ public:
     DialogHorn(myCentralWidget *parent);
     ~DialogHorn();
 
+public slots:
+    void slot_screenResize();
 protected:
 private:
     myCentralWidget *parent;

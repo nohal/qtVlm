@@ -31,10 +31,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Player.h"
 #include "boatVLM.h"
 #include "StatusBar.h"
+#include "settings.h"
 
 board::board(MainWindow * mainWin, inetConnexion * inet)
 {
     playerType = BOAT_NOBOAT;
+    this->setFontDialog(this);
 
     StatusBar * statusBar=mainWin->get_statusBar();
 
@@ -243,3 +245,28 @@ bool board::currentBoardIsVisibe()
     else
         return false;
 }
+void board::setFontDialog(QObject * o)
+{
+
+    QFont myFont(Settings::getSetting(defaultFontName).toString());
+    if(o->isWidgetType())
+    {
+        QWidget * widget=qobject_cast<QWidget*> (o);
+        myFont.setPointSizeF(Settings::getSetting(applicationFontSize).toDouble());
+        myFont.setStyle(widget->font().style());
+        myFont.setBold(widget->font().bold());
+        myFont.setItalic(widget->font().italic());
+        widget->setFont(myFont);
+        widget->setLocale(QLocale::system());
+    }
+    foreach(QObject * object,o->children())
+    {
+        board::setFontDialog(object); /*recursion*/
+    }
+}
+void board::setFontDialog(QWidget * o)
+{
+    QObject * object=qobject_cast<QObject*>(o);
+    board::setFontDialog(object);
+}
+

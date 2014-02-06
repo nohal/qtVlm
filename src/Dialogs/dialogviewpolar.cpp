@@ -5,11 +5,14 @@
 //#include <QEvent>
 #include "Util.h"
 #include "settings.h"
-
-DialogViewPolar::DialogViewPolar(QWidget *parent) :
-    QDialog(parent)
+#include "mycentralwidget.h"
+#include <QScroller>
+DialogViewPolar::DialogViewPolar(myCentralWidget *parent) :
+    QDialog(parent->getMainWindow())
 {
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     QMap<QWidget *,QFont> exceptions;
     QFont wfont=QApplication::font();
@@ -21,7 +24,7 @@ DialogViewPolar::DialogViewPolar(QWidget *parent) :
     image=QPixmap(this->imageContainer->size());
     image.fill(Qt::red);
     pnt.begin(&image);
-    QFont myFont(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
+    QFont myFont(Settings::getSetting(defaultFontName).toString());
     myFont.setPointSizeF(8.0);
     pnt.setFont(myFont);
     pnt.setRenderHint(QPainter::Antialiasing);
@@ -32,6 +35,10 @@ DialogViewPolar::DialogViewPolar(QWidget *parent) :
     connect(this->closeButton,SIGNAL(clicked()),this,SLOT(close()));
     this->doubleSpinBox->installEventFilter(this);
 }
+void DialogViewPolar::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
+}
 
 bool DialogViewPolar::eventFilter(QObject *obj, QEvent *event)
 {
@@ -40,17 +47,28 @@ bool DialogViewPolar::eventFilter(QObject *obj, QEvent *event)
         if(event->type()==QEvent::KeyPress)
         {
             QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+#ifdef __QTVLM_SHIFT_INC_MOD
             if(keyEvent->key()==Qt::Key_Shift)
                 doubleSpinBox->setSingleStep(0.1);
             else if(keyEvent->key()==Qt::Key_Control)
                 doubleSpinBox->setSingleStep(10.0);
             else if(keyEvent->key()==Qt::Key_Alt)
                 doubleSpinBox->setSingleStep(0.01);
+#else
+            if(keyEvent->key()==Qt::Key_Control)
+                doubleSpinBox->setSingleStep(0.1);
+            else if(keyEvent->key()==Qt::Key_Alt)
+                doubleSpinBox->setSingleStep(0.01);
+#endif
         }
         else if (event->type()==QEvent::KeyRelease)
         {
             QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
-            if(keyEvent->key()==Qt::Key_Shift || keyEvent->key()==Qt::Key_Control || keyEvent->key()==Qt::Key_Alt)
+            if(
+#ifdef __QTVLM_SHIFT_INC_MOD
+                    keyEvent->key()==Qt::Key_Shift ||
+#endif
+                    keyEvent->key()==Qt::Key_Control || keyEvent->key()==Qt::Key_Alt)
                 doubleSpinBox->setSingleStep(1.0);
         }
         if(event->type()==QEvent::Wheel)
@@ -59,7 +77,7 @@ bool DialogViewPolar::eventFilter(QObject *obj, QEvent *event)
               so to get 10 you need to put 1...*/
             QWheelEvent *wheelEvent = static_cast<QWheelEvent*>(event);
             if(wheelEvent->modifiers()==Qt::ControlModifier)
-                doubleSpinBox->setSingleStep(1);
+                doubleSpinBox->setSingleStep(0.01);
         }
         return false;
     }
@@ -67,7 +85,7 @@ bool DialogViewPolar::eventFilter(QObject *obj, QEvent *event)
     if(event->type()==QEvent::MouseButtonRelease)
     {
         imageContainer->setPixmap(image);
-        info->clear();
+        info->setText(stringMaxSpeed);
         return true;
     }
     if(event->type()!=QEvent::MouseMove)
@@ -115,8 +133,7 @@ void DialogViewPolar::setBoat(boat *myboat)
 
 DialogViewPolar::~DialogViewPolar()
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
+    Settings::saveGeometry(this);
 }
 void DialogViewPolar::reloadPolar()
 {
@@ -130,6 +147,8 @@ void DialogViewPolar::drawIt()
     if(!polar) return;
     image.fill(Qt::white);
     double maxSpeed=-1;
+    double maxSpeedTwa=0;
+    double maxSpeedKts=0;
     if(this->allSpeed->isChecked())
         maxSpeed=polar->getMaxSpeed();
     pen.setBrush(Qt::red);
@@ -173,8 +192,13 @@ void DialogViewPolar::drawIt()
         {
             double speed=polar->getSpeed(ws,angle,false);
             polarValues.append(speed);
-            if(speed>maxSpeed && !this->allSpeed->isChecked()) maxSpeed=speed;
+            if(speed>maxSpeed && !this->allSpeed->isChecked())
+            {
+                maxSpeed=speed;
+                maxSpeedTwa=angle;
+            }
         }
+        maxSpeedKts=maxSpeed;
         maxSpeed=ceil(maxSpeed);
         for (int angle=0;angle<=180;++angle)
         {
@@ -228,4 +252,15 @@ void DialogViewPolar::drawIt()
         pnt.drawText(line.p2(),s);
     }
     this->imageContainer->setPixmap(image);
+    double Pbs,Ptwa,Ptws;
+    polar->getMaxSpeedData(&Pbs,&Ptws,&Ptwa);
+    stringMaxSpeed.clear();
+    if(!this->allSpeed->isChecked())
+        stringMaxSpeed="<qt>"+tr("Max Speed:")+QString().sprintf("<br>%.2f ",maxSpeedKts)+tr("kts")+
+                      " "+tr("at")+" "+QString().sprintf("%.2f",maxSpeedTwa)+tr("deg")+"<br><br>";
+    stringMaxSpeed +=tr("Absolute max speed:")+"<table>"
+                   "<tr><td>"+tr("TWS:")+"</td><td>"+QString().sprintf("%.2f ",Ptws)+tr("kts")+"</td></tr>"+
+                   "<tr><td>"+tr("TWA:")+"</td><td>"+QString().sprintf("%.2f",Ptwa)+tr("deg")+"</td></tr>"+
+                   "<tr><td>"+tr("BS:")+"</td><td>"+QString().sprintf("%.2f ",Pbs)+tr("kts")+"</td></tr>";
+    info->setText(stringMaxSpeed);
 }

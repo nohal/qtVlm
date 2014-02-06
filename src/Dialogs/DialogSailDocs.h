@@ -26,13 +26,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDialog>
 #endif
 #include "ui_sailDocs.h"
+#include "class_list.h"
 
 
 class DialogSailDocs : public QDialog, public Ui::SailDocs
 {
     public:
-        DialogSailDocs(QString param,QWidget * parent=NULL);
+        DialogSailDocs(QString param, myCentralWidget *parent=NULL);
         ~DialogSailDocs();
+public slots:
+        void slot_screenResize();
 };
 
 #endif // SAILDOCS_H

@@ -33,6 +33,7 @@ class vlmPoint
         double lonProj;
         double latProj;
         bool   isBroken;
+        bool   isBroken2;
         double  x;
         double  y;
         double  capVmg;

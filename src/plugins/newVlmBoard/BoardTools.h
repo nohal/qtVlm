@@ -20,18 +20,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef BOARDTOOLS_H
 #define BOARDTOOLS_H
-
+#include "MainWindowInterface.h"
 #include <QWidget>
 class VlmCompass: public QWidget
 { Q_OBJECT
     public:
         VlmCompass(QWidget * parent=0);
         void draw(QPainter * painter);
-        void setValues(const double &heading, const double &windDir, const double &windSpeed, const double &WPdir, const double &gateDir, const double &newHeading);
+        void setValues(const double &heading, const double &windDir, const double &windSpeed, const double &WPdir, const double &gateDir, const double &newHeading, const double &newGateVmg);
 
         void loadSkin(const QString &SkinName="");
         void setRotation(const double r);
         double getRotation() const {return rotation;}
+        void setMain(MainWindowInterface *m){this->main=m;}
 protected:
         void paintEvent(QPaintEvent * event);
 
@@ -40,11 +41,13 @@ protected:
         QPixmap img_boat;
         QPixmap img_arrow_wp;
         QPixmap img_arrow_gate;
+        QPixmap img_arrow_gateVmg;
         QPixmap img_arrow_wind;
         int w,h;
-        double heading,windDir,windSpeed,WPdir,newHeading,gateDir;
+        double heading,windDir,windSpeed,WPdir,newHeading,gateDir,gateVmg;
         double rotation;
         QColor windSpeed_toColor(void);
+        MainWindowInterface *main;
 
 };
 

@@ -39,6 +39,13 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QDesktopServices>
 #include <QDesktopWidget>
 #include <QClipboard>
+#include <QResource>
+
+#ifdef QT_V5
+#include <QUiLoader>
+#else
+#include <QtUiTools/QUiLoader>
+#endif
 
 #include <iostream>
 #include <fstream>
@@ -64,7 +71,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Progress.h"
 #include "StatusBar.h"
 #include "BarrierSet.h"
-#include "BoardVlmNew.h"
+#include "BoardInterface.h"
 #include "Board.h"
 #include "BoardVLM.h"
 #include "BoardReal.h"
@@ -83,7 +90,10 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "dialogviewpolar.h"
 #include "DialogEditBarrier.h"
 #include "DialogRouteComparator.h"
-
+#include "DialogWp.h"
+#include <QStyleFactory>
+//#include <QtQuick/QQuickView>
+//#include <QPluginLoader>
 int INTERPOLATION_DEFAULT=INTERPOLATION_HYBRID;
 
 
@@ -119,9 +129,10 @@ void MainWindow::connectSignals()
     connect(mb->acFile_Load_SAILSDOC_GRIB, SIGNAL(triggered()), my_centralWidget, SLOT(slotLoadSailsDocGrib()));
     connect(mb->acFile_Info_GRIB_main, SIGNAL(triggered()), my_centralWidget, SLOT(slot_fileInfo_GRIB_main()));
     connect(mb->acFile_Info_GRIB_current, SIGNAL(triggered()), my_centralWidget, SLOT(slot_fileInfo_GRIB_current()));
+    connect(mb->acGrib_dialog, SIGNAL(triggered()), my_centralWidget, SLOT(slot_gribDialog()));
     connect(mb->acFile_Quit, SIGNAL(triggered()), this, SLOT(slotFile_Quit()));
-    connect(mb->acFile_Lock, SIGNAL(triggered()), this, SLOT(slotFile_Lock()));
-    connect(this,SIGNAL(updateLockIcon(QIcon)),mb,SLOT(slot_updateLockIcon(QIcon)));
+    connect(mb->acFile_Lock, SIGNAL(triggered()), this, SLOT(slotFile_Lock()));    
+    connect(this,SIGNAL(updateLockIcon(QString)),mb,SLOT(slot_updateLockIcon(QString)));
     connect(mb->acFile_QuitNoSave, SIGNAL(triggered()), this, SLOT(slotFile_QuitNoSave()));
     connect(mb->acCombineGrib, SIGNAL(triggered()), this, SLOT(slotCombineGrib()));
 
@@ -130,9 +141,6 @@ void MainWindow::connectSignals()
     connect(mb->acFax_Close, SIGNAL(triggered()), my_centralWidget, SLOT(slotFax_close()));
     connect(mb->acImg_Open, SIGNAL(triggered()), my_centralWidget, SLOT(slotImg_open()));
     connect(mb->acImg_Close, SIGNAL(triggered()), my_centralWidget, SLOT(slotImg_close()));
-
-    connect(mb->acView_WindArrow, SIGNAL(triggered(bool)),
-            this,  SLOT(slotWindArrows(bool)));
 
     //-------------------------------------------------------
 
@@ -201,14 +209,12 @@ void MainWindow::connectSignals()
     //-------------------------------------
     // Autres signaux
     //-------------------------------------
-    connect(loadVLM_grib, SIGNAL(signalGribFileReceived(QString)),
-            this,  SLOT(slot_gribFileReceived(QString)));
 
     connect(this,SIGNAL(setChangeStatus(bool,bool,bool)),mb,SLOT(slot_setChangeStatus(bool,bool,bool)));
 }
 void MainWindow::slot_execDialogProxy()
 {
-    dialogProxy = new DialogProxy();
+    dialogProxy = new DialogProxy(my_centralWidget);
     connect(dialogProxy, SIGNAL(proxyUpdated()), this, SLOT(slotInetUpdated()));
     dialogProxy->exec();
     delete dialogProxy;
@@ -219,19 +225,390 @@ void MainWindow::slot_execDialogProxy()
 //----------------------------------------------------
 void MainWindow::slot_gribFileReceived(QString fileName)
 {
-    bool zoom =  (Settings::getSetting("gribZoomOnLoad",0).toInt()==1);
+    bool zoom =  (Settings::getSetting(gribZoomOnLoad).toInt()==1);
     openGribFile(fileName, zoom);
     if(my_centralWidget) my_centralWidget->fileInfo_GRIB(DataManager::GRIB_GRIB);
     updateTitle();
 }
 
 //=============================================================
-MainWindow::MainWindow(int w, int h, QWidget *parent)
-    : QMainWindow(parent)
+MainWindow::MainWindow(QWidget *parent)
 {
-    restartNeeded=false;
+    this->setParent(parent);
     setWindowIcon (QIcon (appFolder.value("icon")+"qtVlm_48x48.png"));
     noSave=false;
+    originalPalette=QApplication::palette();
+    qWarning()<<QStyleFactory::keys();
+#ifdef QT_V5
+#ifdef __ANDROID__
+    QStyle * android=QStyleFactory::create("Android");
+    qApp->setStyle(android);
+#if 0
+    QPalette p=qApp->palette();
+    p.setColor(QPalette::Window, QColor(53,53,53));
+    p.setColor(QPalette::Button, QColor(53,53,53));
+    p.setColor(QPalette::Base, QColor(53,53,53));
+    p.setColor(QPalette::Highlight, QColor(142,45,197));
+    p.setColor(QPalette::ButtonText, QColor(234,221,21));
+    p.setColor(QPalette::WindowText, QColor(255,255,255));
+    p.setColor(QPalette::Text, QColor(255,255,255));
+    p.setColor(QPalette::AlternateBase,QColor(100,100,100));
+    QBrush brush = p.window();
+    brush.setColor(brush.color().light(300));
+    QColor dis=brush.color();
+    p.setColor(QPalette::Disabled, QPalette::Text, dis); // color menu item base
+    p.setColor(QPalette::Disabled, QPalette::Light, QColor(53,53,53));
+    p.setColor(QPalette::Disabled, QPalette::WindowText, dis);
+    qApp->setPalette(p);
+    QString myColor1="#323232"; // dark grey
+    QString myColor2="#5a5712"; // yellow dark
+    QString myColor3="#6b0b86"; // violet legerement fonce
+    QString myColor4="#b1b1b1"; // grey
+    QString myColor5="#ebe300"; // yellow light
+    QString myColor6="#d7d017"; // yellow
+    QString myColor7="#ffffff"; // white
+    QString customStyle=""
+            "QProgressBar{"
+                "text-align: center;}"
+
+            "QProgressBar::chunk{"
+                "background-color: myColor6;}"
+
+            "QWidget:item:hover{"
+                "background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 myColor6, stop: 0.7 myColor2, stop: 1 myColor6);"
+                "color: myColor7;}"
+
+            "QRadioButton::indicator:checked, QRadioButton::indicator:unchecked{"
+                "color: myColor4;"
+                "background-color: myColor1;"
+                "border: solid myColor4;}"
+
+            "QRadioButton::indicator:checked{"
+                "background-color: qradialgradient("
+                    "cx: 0.5, cy: 0.5,"
+                    "fx: 0.5, fy: 0.5,"
+                    "radius: 1.0,"
+                    "stop: 0.25 myColor6,"
+                    "stop: 0.3 myColor1);}"
+
+            "QCheckBox::indicator, QGroupBox::indicator, QTreeView::indicator{"
+                "color: myColor4;"
+                "background-color: myColor1;"
+                "border: solid myColor4;}"
+
+            "QCheckBox::indicator:indeterminate, QGroupBox::indicator:indeterminate, QTreeView::indicator:indeterminate{"
+                "color: myColor4;"
+                "background-color:  myColor6;"
+                "border: solid myColor4;}"
+
+
+            "QRadioButton::indicator:hover, QCheckBox::indicator:hover, QGroupBox::indicator:hover, QTreeView::indicator:hover{"
+                "border: solid myColor6;}"
+
+
+            "QCheckBox::indicator:disabled, QGroupBox::indicator:disabled, QRadioButton::indicator:disabled,  QTreeView::indicator:disabled{"
+                "border: solid #444;}"
+
+    "QTabBar::tab {"
+        "color: myColor4;"
+        "border: solid #444;"
+        "border-bottom-style: none;"
+        "background-color: myColor1;}"
+
+    "QTabWidget::pane {"
+        "border: solid #444;}"
+
+    "QTabBar::tab:!selected{"
+        "color: myColor4;"
+        "border-bottom-style: solid;"
+        "background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:1 #212121, stop:.4 #343434);}"
+
+    "QTabBar::tab:selected{"
+        "color: myColor6;}"
+
+    "QTabBar::tab:!selected:hover{"
+        "background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:1 #212121, stop:0.4 #343434, stop:0.2 #343434, stop:0.1 myColor6);}"
+
+
+            "QScrollBar:horizontal {"
+                 "border: solid #222222;"
+                 "background: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0.0 #121212, stop: 0.2 #282828, stop: 1 #484848);}"
+
+            "QScrollBar::handle:horizontal{"
+                  "background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 myColor5, stop: 0.5 myColor2, stop: 1 myColor5);}"
+
+            "QScrollBar::add-line:horizontal {"
+                  "border: solid #1b1b19;"
+                  "background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 myColor5, stop: 1 myColor2);"
+                  "subcontrol-position: right;"
+                  "subcontrol-origin: margin;}"
+
+            "QScrollBar::sub-line:horizontal {"
+                  "border: solid #1b1b19;"
+                  "background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 myColor5, stop: 1 myColor2);"
+                  "subcontrol-position: left;"
+                  "subcontrol-origin: margin;}"
+
+            "QScrollBar::right-arrow:horizontal, QScrollBar::left-arrow:horizontal{"
+                  "border: solid black;"
+                  "background: white;}"
+
+            "QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal{"
+                  "background: none;}"
+
+            "QScrollBar:vertical{"
+                  "background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0, stop: 0.0 #121212, stop: 0.2 #282828, stop: 1 #484848);"
+                  "border: solid #222222;}"
+
+            "QScrollBar::handle:vertical{"
+                  "background: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 myColor5, stop: 0.5 myColor2, stop: 1 myColor5);}"
+
+            "QScrollBar::add-line:vertical{"
+                  "border: solid #1b1b19;"
+                  "background: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 myColor5, stop: 1 myColor2);"
+                  "subcontrol-position: bottom;"
+                  "subcontrol-origin: margin;}"
+
+            "QScrollBar::sub-line:vertical{"
+                  "border: solid #1b1b19;"
+                  "background: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 myColor2, stop: 1 myColor5);"
+                  "subcontrol-position: top;"
+                  "subcontrol-origin: margin;}"
+
+            "QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical{"
+                  "border: solid black;"
+                  "background: white;}"
+
+
+            "QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical{"
+                  "background: none;}";
+
+    customStyle.replace("myColor1",myColor1);
+    customStyle.replace("myColor2",myColor2);
+    customStyle.replace("myColor3",myColor3);
+    customStyle.replace("myColor4",myColor4);
+    customStyle.replace("myColor5",myColor5);
+    customStyle.replace("myColor6",myColor6);
+    customStyle.replace("myColor7",myColor7);
+    qApp->setStyleSheet(customStyle);
+#endif
+#else
+    if(Settings::getSetting(fusionStyle).toInt()==1)
+    {
+        qWarning()<<"setting up Black fusion style";
+        QStyle * fusion=QStyleFactory::create("Fusion");
+        qApp->setStyle(fusion);
+        QPalette p=qApp->palette();
+        p.setColor(QPalette::Window, QColor(53,53,53));
+        p.setColor(QPalette::Button, QColor(53,53,53));
+        p.setColor(QPalette::Disabled, QPalette::Button, QColor(83,83,83));
+        p.setColor(QPalette::Base, QColor(53,53,53));
+        p.setColor(QPalette::Highlight, QColor(142,45,197));
+        p.setColor(QPalette::ButtonText, QColor(234,221,21));
+        p.setColor(QPalette::Disabled, QPalette::ButtonText, QColor(247,251,141));
+        p.setColor(QPalette::WindowText, QColor(255,255,255));
+        p.setColor(QPalette::Text, QColor(255,255,255));
+        p.setColor(QPalette::AlternateBase,QColor(100,100,100));
+        QBrush brush = p.window();
+        brush.setColor(brush.color().light(300));
+        QColor dis=brush.color();
+        p.setColor(QPalette::Disabled, QPalette::Text, dis); // color menu item base
+        p.setColor(QPalette::Disabled, QPalette::Light, QColor(53,53,53));
+        p.setColor(QPalette::Disabled, QPalette::WindowText, dis);
+        QString myColor1="#323232"; // dark grey
+        //QString myColor2="#d7801a"; // orange dark
+        QString myColor2="#5a5712"; // yellow dark
+        //QString myColor3="#ca0619"; // red with a touch of orange
+        QString myColor3="#6b0b86"; // violet legerement fonce
+        QString myColor4="#b1b1b1"; // grey
+        //QString myColor5="#ffa02f"; // orange light
+        QString myColor5="#ebe300"; // yellow light
+        //QString myColor6="#ffaa00"; // orange
+        QString myColor6="#d7d017"; // yellow
+        QString myColor7="#ffffff"; // white
+        QString customStyle=""
+                "QProgressBar{"
+                    "border: 2px solid grey;"
+                    "border-radius: 5px;"
+                    "text-align: center;}"
+
+                "QProgressBar::chunk{"
+                    "background-color: myColor6;"
+                    "width: 2.15px;"
+                    "margin: 0.5px;}"
+
+                "QWidget:item:hover{"
+                    "background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 myColor6, stop: 0.7 myColor2, stop: 1 myColor6);"
+                    "color: myColor7;}"
+
+                "QRadioButton::indicator:checked, QRadioButton::indicator:unchecked{"
+                    "color: myColor4;"
+                    "background-color: myColor1;"
+                    "border: 2px solid myColor4;"
+                    "border-radius: 6px;}"
+
+                "QRadioButton::indicator:checked{"
+                    "background-color: qradialgradient("
+                        "cx: 0.5, cy: 0.5,"
+                        "fx: 0.5, fy: 0.5,"
+                        "radius: 1.0,"
+                        "stop: 0.25 myColor6,"
+                        "stop: 0.3 myColor1);}"
+
+                "QCheckBox::indicator, QGroupBox::indicator, QTreeView::indicator{"
+                    "color: myColor4;"
+                    "background-color: myColor1;"
+                    "border: 2px solid myColor4;"
+                    "width: 9px;"
+                    "height: 9px;}"
+
+                "QCheckBox::indicator:indeterminate, QGroupBox::indicator:indeterminate, QTreeView::indicator:indeterminate{"
+                    "color: myColor4;"
+                    "background-color:  myColor6;"
+                    "border: 2px solid myColor4;"
+                    "width: 9px;"
+                    "height: 9px;}"
+
+                "QRadioButton::indicator{"
+                    "border-radius: 6px;}"
+
+                "QRadioButton::indicator:hover, QCheckBox::indicator:hover, QGroupBox::indicator:hover, QTreeView::indicator:hover{"
+                    "border: 2px solid myColor6;}"
+
+                "QCheckBox::indicator:checked, QGroupBox::indicator:checked, QTreeView::indicator:checked{"
+                    "image:url(img/o_checkbox.png);}"
+
+                "QCheckBox::indicator:disabled, QGroupBox::indicator:disabled, QRadioButton::indicator:disabled,  QTreeView::indicator:disabled{"
+                    "border: 1px solid #444;}"
+
+        "QTabBar::tab {"
+            "color: myColor4;"
+            "border: 1px solid #444;"
+            "border-bottom-style: none;"
+            "background-color: myColor1;"
+            "padding-left: 10px;"
+            "padding-right: 10px;"
+            "padding-top: 3px;"
+            "padding-bottom: 2px;"
+            "margin-right: -1px;}"
+
+        "QTabWidget::pane {"
+            "border: 1px solid #444;"
+            "top: 1px;}"
+
+        "QTabBar::tab:last{"
+            "margin-right: 0; /* the last selected tab has nothing to overlap with on the right */"
+            "border-top-right-radius: 3px;}"
+
+        "QTabBar::tab:first:!selected{"
+            "margin-left: 0px; /* the last selected tab has nothing to overlap with on the right */"
+            "border-top-left-radius: 3px;}"
+
+        "QTabBar::tab:!selected{"
+            "color: myColor4;"
+            "border-bottom-style: solid;"
+            "margin-top: 3px;"
+            "background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:1 #212121, stop:.4 #343434);}"
+
+        "QTabBar::tab:selected{"
+            "color: myColor6;"
+            "border-top-left-radius: 3px;"
+            "border-top-right-radius: 3px;"
+            "margin-bottom: 0px;}"
+
+        "QTabBar::tab:!selected:hover{"
+            "/*border-top: 2px solid myColor6;"
+            "padding-bottom: 3px;*/"
+            "border-top-left-radius: 3px;"
+            "border-top-right-radius: 3px;"
+            "background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:1 #212121, stop:0.4 #343434, stop:0.2 #343434, stop:0.1 myColor6);}"
+
+
+                "QScrollBar:horizontal {"
+                     "border: 1px solid #222222;"
+                     "background: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0.0 #121212, stop: 0.2 #282828, stop: 1 #484848);"
+                     "height: 14px;"
+                     "margin: 0px 16px 0 16px;}"
+
+                "QScrollBar::handle:horizontal{"
+                      "background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 myColor5, stop: 0.5 myColor2, stop: 1 myColor5);"
+                      "min-height: 20px;"
+                      "border-radius: 2px;}"
+
+                "QScrollBar::add-line:horizontal {"
+                      "border: 1px solid #1b1b19;"
+                      "border-radius: 2px;"
+                      "background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 myColor5, stop: 1 myColor2);"
+                      "width: 14px;"
+                      "subcontrol-position: right;"
+                      "subcontrol-origin: margin;}"
+
+                "QScrollBar::sub-line:horizontal {"
+                      "border: 1px solid #1b1b19;"
+                      "border-radius: 2px;"
+                      "background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 myColor5, stop: 1 myColor2);"
+                      "width: 14px;"
+                      "subcontrol-position: left;"
+                      "subcontrol-origin: margin;}"
+
+                "QScrollBar::right-arrow:horizontal, QScrollBar::left-arrow:horizontal{"
+                      "border: 1px solid black;"
+                      "width: 1px;"
+                      "height: 1px;"
+                      "background: white;}"
+
+                "QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal{"
+                      "background: none;}"
+
+                "QScrollBar:vertical{"
+                      "background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0, stop: 0.0 #121212, stop: 0.2 #282828, stop: 1 #484848);"
+                      "width: 14px;"
+                      "margin: 16px 0 16px 0;"
+                      "border: 1px solid #222222;}"
+
+                "QScrollBar::handle:vertical{"
+                      "background: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 myColor5, stop: 0.5 myColor2, stop: 1 myColor5);"
+                      "min-height: 20px;"
+                      "border-radius: 2px;}"
+
+                "QScrollBar::add-line:vertical{"
+                      "border: 1px solid #1b1b19;"
+                      "border-radius: 2px;"
+                      "background: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 myColor5, stop: 1 myColor2);"
+                      "height: 14px;"
+                      "subcontrol-position: bottom;"
+                      "subcontrol-origin: margin;}"
+
+                "QScrollBar::sub-line:vertical{"
+                      "border: 1px solid #1b1b19;"
+                      "border-radius: 2px;"
+                      "background: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 myColor2, stop: 1 myColor5);"
+                      "height: 14px;"
+                      "subcontrol-position: top;"
+                      "subcontrol-origin: margin;}"
+
+                "QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical{"
+                      "border: 1px solid black;"
+                      "width: 1px;"
+                      "height: 1px;"
+                      "background: white;}"
+
+
+                "QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical{"
+                      "background: none;}";
+
+        customStyle.replace("myColor1",myColor1);
+        customStyle.replace("myColor2",myColor2);
+        customStyle.replace("myColor3",myColor3);
+        customStyle.replace("myColor4",myColor4);
+        customStyle.replace("myColor5",myColor5);
+        customStyle.replace("myColor6",myColor6);
+        customStyle.replace("myColor7",myColor7);
+        qApp->setPalette(p);
+        qApp->setStyleSheet(customStyle);
+    }
+#endif
+#endif
     isStartingUp=true;
     finishStart=true;
     nBoat=0;
@@ -240,9 +617,9 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     updateTitle();
     selectedBoat = NULL;
 
-    INTERPOLATION_DEFAULT=Settings::getSetting("defaultInterpolation",INTERPOLATION_HYBRID).toInt();
+    INTERPOLATION_DEFAULT=Settings::getSetting(defaultInterpolation).toInt();
 
-    qWarning() <<  "Starting qtVlm - " << Version::getCompleteName();
+    qWarning() <<  "Starting qtVlm - " << Version::getCompleteName()+" "+QString().setNum(sizeof(int*)*8)+" bits ";
 
     /* timer de gestion des VAC */
     timer = new QTimer(this);
@@ -250,18 +627,18 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
     nxtVac_cnt=0;
     connect(timer,SIGNAL(timeout()),this, SLOT(updateNxtVac()));
 
-    prcx = Settings::getSetting("projectionCX", 0.0).toDouble();
-    prcy = Settings::getSetting("projectionCY", 0.0).toDouble();
+    prcx = Settings::getSetting(projectionCX).toDouble();
+    prcy = Settings::getSetting(projectionCY).toDouble();
     proj = new Projection (width(), height(),prcx,prcy);
     connect(proj,SIGNAL(newZoom(double)),this,SLOT(slotNewZoom(double)));
 
-    scale = Settings::getSetting("projectionScale", 0.5).toDouble();
+    scale = Settings::getSetting(projectionScale).toDouble();
     proj->setScale(scale);
     QDesktopWidget * desktopWidget = QApplication::desktop ();
     QRect screenRect = desktopWidget->screenGeometry(desktopWidget->primaryScreen());
-    if(Settings::getSetting("saveMainWindowGeometry","1").toInt())
+    if(Settings::getSetting(saveMainWindowGeometry).toInt())
     {
-        QSize savedSize = Settings::getSetting("mainWindowSize", QSize(w,h)).toSize();
+        QSize savedSize = Settings::getSetting(mainWindowSize).toSize();
 
         if(savedSize.height()>screenRect.height() || savedSize.width() > screenRect.width())
         {
@@ -270,121 +647,19 @@ MainWindow::MainWindow(int w, int h, QWidget *parent)
         }
         else
         {
-            resize( Settings::getSetting("mainWindowSize", QSize(w,h)).toSize() );
-            move  ( Settings::getSetting("mainWindowPos", QPoint()).toPoint() );
-            if(Settings::getSetting("mainWindowMaximized","0").toInt()==1)
+            resize( Settings::getSetting(mainWindowSize).toSize() );
+            move  ( Settings::getSetting(mainWindowPos).toPoint() );
+            if(Settings::getSetting(mainWindowMaximized).toInt()==1)
                 showMaximized();
         }
     }
     else
         showMaximized ();
     QString ver="qtVlm "+QString().setNum(sizeof(int*)*8)+" bits "+Version::getVersion();
-#ifdef __UNIX_QTVLM
-    ver+=" (UNIX)";
-#endif
-#ifdef __WIN_QTVLM
-    QString OS_versionName;
-    int windowsVersion=QSysInfo::windowsVersion();
-    switch(windowsVersion)
-    {
-        case QSysInfo::WV_32s:
-            OS_versionName="Windows 3.1 with Win 32s";
-            break;
-        case QSysInfo::WV_95:
-            OS_versionName="Windows 95";
-            break;
-        case QSysInfo::WV_98:
-            OS_versionName="Windows 98";
-            break;
-        case QSysInfo::WV_Me:
-            OS_versionName="Windows Me";
-            break;
-        case QSysInfo::WV_NT:
-            OS_versionName="Windows NT";
-            break;
-        case QSysInfo::WV_2000:
-            OS_versionName="Windows 2000";
-            break;
-        case QSysInfo::WV_XP:
-            OS_versionName="Windows XP";
-            break;
-        case QSysInfo::WV_2003:
-            OS_versionName="Windows Server 2003";
-            break;
-        case QSysInfo::WV_VISTA:
-            OS_versionName="Windows VISTA";
-            break;
-        case QSysInfo::WV_WINDOWS7:
-            OS_versionName="Windows 7";
-            break;
-        case QSysInfo::WV_WINDOWS8:
-            OS_versionName="Windows 8";
-            break;
-        case QSysInfo::WV_CE:
-            OS_versionName="Windows CE";
-            break;
-        case QSysInfo::WV_CENET:
-            OS_versionName="Windows CE .NET";
-            break;
-        case QSysInfo::WV_CE_5:
-            OS_versionName="Windows CE 5.x";
-            break;
-        case QSysInfo::WV_CE_6:
-            OS_versionName="Windows CE 6.x";
-            break;
-        default:
-            OS_versionName="Unknown Windows version";
-            break;
-    }
-    qWarning()<<"windows version:"<<OS_versionName;
-    ver+=" ("+OS_versionName+")";
-#endif
-#ifdef __MAC_QTVLM
-    QString OS_versionName;
-    int windowsVersion=QSysInfo::macVersion();
-    switch(windowsVersion)
-    {
-        case QSysInfo::MV_9:
-            OS_versionName="Mac OS 9 (unsupported)";
-            break;
-        case QSysInfo::MV_10_0:
-            OS_versionName="Mac OS X 10.0-CHEETAH (unsupported)";
-            break;
-        case QSysInfo::MV_10_1:
-            OS_versionName="Mac OS X 10.1-PUMA (unsupported)";
-            break;
-        case QSysInfo::MV_10_2:
-            OS_versionName="Mac OS X 10.2-JAGUAR (unsupported)";
-            break;
-        case QSysInfo::MV_10_3:
-            OS_versionName="Mac OS X 10.3-PANTHER (unsupported)";
-            break;
-        case QSysInfo::MV_10_4:
-            OS_versionName="Mac OS X 10.4-TIGER (unsupported)";
-            break;
-        case QSysInfo::MV_10_5:
-            OS_versionName="Mac OS X 10.5-LEOPARD (unsupported)";
-            break;
-        case QSysInfo::MV_10_6:
-            OS_versionName="Mac OS X 10.6-SNOWLEOPARD";
-            break;
-        case QSysInfo::MV_10_7:
-            OS_versionName="Mac OS X 10.7-LION";
-            break;
-        case QSysInfo::MV_10_8:
-            OS_versionName="Mac OS X 10.8-MONTAINLION";
-            break;
-        case QSysInfo::MV_10_9:
-            OS_versionName="Mac OS X 10.9-MAVERICKS";
-            break;
-        default:
-            OS_versionName="Unknown Macintosh version";
-            break;
-    }
-    qWarning()<<"mac version:"<<OS_versionName;
-    ver+=" ("+OS_versionName+")";
-#endif
-    Settings::setSetting("qtVlm_version",ver);
+
+    ver+=get_OSVersion();
+
+    Settings::setSetting(qtVlm_version,ver);
 }
 void MainWindow::continueSetup()
 {
@@ -392,6 +667,10 @@ void MainWindow::continueSetup()
     this->activateWindow();
 
     progress=new Progress(this);
+    progress->move(this->window()->frameGeometry().topLeft() +
+        this->window()->rect().center() -
+        progress->rect().center());
+
 
     QFile testWrite;
     testWrite.setFileName("testWrite.txt");
@@ -451,11 +730,11 @@ void MainWindow::continueSetup()
     selPOI_instruction=NULL;
     isSelectingWP=false;
     myBoard=NULL;
-    newBoard=NULL;
+    boardPlugin=NULL;
     loadBoard();
 
     /* restore state */
-    restoreState(Settings::getSetting("savedState","").toByteArray());
+    restoreState(Settings::getSetting(savedState).toByteArray());
     toolBar->load_settings();
 
 
@@ -469,7 +748,6 @@ void MainWindow::continueSetup()
 
     pilototo = new DialogPilototo(this,my_centralWidget,my_centralWidget->getInet());
 
-    loadVLM_grib = new DialogVlmGrib(this,my_centralWidget,my_centralWidget->getInet());
 
     connectSignals();
 
@@ -570,24 +848,147 @@ void MainWindow::continueSetup()
     Util::setFontDialog(menuBar);
 }
 
+QString MainWindow::get_OSVersion(void) {
+    QString ver="";
+#ifdef __UNIX_QTVLM
+    ver=" (UNIX)";
+#ifdef __ANDROID__
+    ver=" (ANDROID)";
+#endif
+#endif
+#ifdef __WIN_QTVLM
+    QString OS_versionName;
+    int windowsVersion=QSysInfo::windowsVersion();
+    switch(windowsVersion)
+    {
+        case QSysInfo::WV_32s:
+            OS_versionName="Windows 3.1 with Win 32s";
+            break;
+        case QSysInfo::WV_95:
+            OS_versionName="Windows 95";
+            break;
+        case QSysInfo::WV_98:
+            OS_versionName="Windows 98";
+            break;
+        case QSysInfo::WV_Me:
+            OS_versionName="Windows Me";
+            break;
+        case QSysInfo::WV_NT:
+            OS_versionName="Windows NT";
+            break;
+        case QSysInfo::WV_2000:
+            OS_versionName="Windows 2000";
+            break;
+        case QSysInfo::WV_XP:
+            OS_versionName="Windows XP";
+            break;
+        case QSysInfo::WV_2003:
+            OS_versionName="Windows Server 2003";
+            break;
+        case QSysInfo::WV_VISTA:
+            OS_versionName="Windows VISTA";
+            break;
+        case QSysInfo::WV_WINDOWS7:
+            OS_versionName="Windows 7";
+            break;
+        case QSysInfo::WV_WINDOWS8:
+            OS_versionName="Windows 8";
+            break;
+        case QSysInfo::WV_CE:
+            OS_versionName="Windows CE";
+            break;
+        case QSysInfo::WV_CENET:
+            OS_versionName="Windows CE .NET";
+            break;
+        case QSysInfo::WV_CE_5:
+            OS_versionName="Windows CE 5.x";
+            break;
+        case QSysInfo::WV_CE_6:
+            OS_versionName="Windows CE 6.x";
+            break;
+        default:
+            OS_versionName="Unknown Windows version";
+            break;
+    }
+    qWarning()<<"windows version:"<<OS_versionName;
+    ver=" ("+OS_versionName+")";
+#endif
+#ifdef __MAC_QTVLM
+    QString OS_versionName;
+    int windowsVersion=QSysInfo::macVersion();
+    switch(windowsVersion)
+    {
+        case QSysInfo::MV_9:
+            OS_versionName="Mac OS 9 (unsupported)";
+            break;
+        case QSysInfo::MV_10_0:
+            OS_versionName="Mac OS X 10.0-CHEETAH (unsupported)";
+            break;
+        case QSysInfo::MV_10_1:
+            OS_versionName="Mac OS X 10.1-PUMA (unsupported)";
+            break;
+        case QSysInfo::MV_10_2:
+            OS_versionName="Mac OS X 10.2-JAGUAR (unsupported)";
+            break;
+        case QSysInfo::MV_10_3:
+            OS_versionName="Mac OS X 10.3-PANTHER (unsupported)";
+            break;
+        case QSysInfo::MV_10_4:
+            OS_versionName="Mac OS X 10.4-TIGER (unsupported)";
+            break;
+        case QSysInfo::MV_10_5:
+            OS_versionName="Mac OS X 10.5-LEOPARD (unsupported)";
+            break;
+        case QSysInfo::MV_10_6:
+            OS_versionName="Mac OS X 10.6-SNOWLEOPARD";
+            break;
+        case QSysInfo::MV_10_7:
+            OS_versionName="Mac OS X 10.7-LION";
+            break;
+        case QSysInfo::MV_10_8:
+            OS_versionName="Mac OS X 10.8-MONTAINLION";
+            break;
+        case QSysInfo::MV_10_9:
+            OS_versionName="Mac OS X 10.9-MAVERICKS";
+            break;
+        default:
+            OS_versionName="Unknown Macintosh version";
+            break;
+    }
+    qWarning()<<"mac version:"<<OS_versionName;
+    ver=" ("+OS_versionName+")";
+#endif
+    return ver;
+}
 
 void MainWindow::loadBoard()
 {
     qWarning()<<"loading board";
     use_old_board=true;
-    if(my_centralWidget->getPlayer() && my_centralWidget->getPlayer()->getType()==BOAT_VLM && Settings::getSetting("classicalVlmBoard",0).toInt()==0)
+    if(my_centralWidget->getPlayer() && my_centralWidget->getPlayer()->getType()==BOAT_VLM && Settings::getSetting(vlmBoardType).toString()!="0")
         use_old_board=false;
     if(use_old_board && myBoard)
     {
         myBoard->playerChanged(my_centralWidget->getPlayer());
         return;
     }
-    if(!use_old_board && newBoard) return;
-    if(newBoard)delete newBoard;
+    if(!use_old_board && boardPlugin) return;
+    if(boardPlugin)
+    {
+        // if(pluginLoader!=NULL)
+        // {
+        //     pluginLoader->unload();
+        //     delete pluginLoader;
+        //     pluginLoader=NULL;
+        // }
+        // else
+            delete boardPlugin;
+        boardPlugin=NULL;
+    }
     if(myBoard){
         delete myBoard;
     }
-    newBoard=NULL;
+    boardPlugin=NULL;
     myBoard=NULL;
     if(use_old_board)
     {
@@ -615,12 +1016,37 @@ void MainWindow::loadBoard()
     }
     else
     {
-        newBoard = new BoardVlmNew(this);
+        QFile       uiFile (Settings::getSetting(vlmBoardType).toString());
+        // Load the associated resources if they exist
+        QFileInfo   uiFileInfo (uiFile);
+        QString     rccFileName = uiFileInfo.dir().filePath (uiFileInfo.completeBaseName() + ".rcc");
+        if (!QResource::registerResource (rccFileName))
+           qWarning() << "Could not load resources associated with the board" << rccFileName;
+        // Load the .ui file
+        uiFile.open (QFile::ReadOnly);
+        QUiLoader   loader;
+        QWidget* w = loader.load (&uiFile, NULL);
+        boardPlugin = qobject_cast<BoardInterface*> (w);
+        uiFile.close();
+        if (boardPlugin != NULL) {
+           boardPlugin->initBoard(this);
+        } else {
+           if (w != NULL) delete w;
+           qWarning() << "Error loading board definition"
+                      << Settings::getSetting(vlmBoardType).toString();
+#ifdef QT_V5
+           qWarning() << loader.errorString();
+#endif
+           Settings::setSetting(vlmBoardType,"0");
+           loadBoard();
+        }
     }
-    Settings::setSetting("showDashBoard",1);
     this->showDashBoard();
 }
-
+QColor MainWindow::getWindColorStatic(const double &v, const bool &smooth)
+{
+    return MapDataDrawer::getWindColorStatic(v,smooth);
+}
 //-----------------------------------------------
 void MainWindow::listAllChildren(QObject * ptr,int depth=0)
 {
@@ -650,33 +1076,31 @@ MainWindow::~MainWindow()
     //qWarning()<<"mainwindow destructor";
     my_centralWidget->setAboutToQuit();
     if(noSave) return;
-    if(Settings::getSetting("saveMainWindowGeometry","1").toInt())
+    if(Settings::getSetting(saveMainWindowGeometry).toInt())
     {
-        //qWarning() << "Saving window geometry: " << size() << " " << pos();
-        Settings::setSetting("mainWindowSize", size());
-        Settings::setSetting("mainWindowPos", pos());
-        Settings::setSetting("mainWindowMaximized",this->isMaximized()?"1":"0");
+        Settings::setSetting(mainWindowSize, size());
+        Settings::setSetting(mainWindowPos, pos());
+        Settings::setSetting(mainWindowMaximized,this->isMaximized()?"1":"0");
     }
 
     toolBar->save_settings();
-    //board->save_settings();
-    Settings::setSetting("savedState",saveState());
-    //qWarning() << "saving state: " <<  Settings::getSetting("savedState","").toByteArray();
+    Settings::setSetting(savedState,saveState());
+    //qWarning() << "State saved: " <<  Settings::getSetting(savedState).toByteArray();
 
-    Settings::setSetting("projectionCX", proj->getCX());
-    Settings::setSetting("projectionCY", proj->getCY());
-    Settings::setSetting("projectionScale",  proj->getScale());
-    //Settings::setSetting("gribFileName",  gribFileName);
-    //Settings::setSetting("gribFileNameCurrent",  gribFileNameCurrent);
-    //Settings::setSetting("gribFilePath",  gribFilePath);
+    Settings::setSetting(projectionCX, proj->getCX());
+    Settings::setSetting(projectionCY, proj->getCY());
+    Settings::setSetting(projectionScale, proj->getScale());
+
     /*freeze all routes*/
     if(selectedBoat) /* save the zoom factor */
         selectedBoat->setZoom(proj->getScale());
+    delete toolBar;
 }
 
 QMenu * MainWindow::createPopupMenu(void) {
 
     QMenu * menu = new QMenu;
+    Util::setFontDialog(menu);
     int entry=0;
 
     if(use_old_board)
@@ -732,14 +1156,14 @@ void MainWindow::closeProgress(void)
             double yS=proj->getYmin();
             double yN=proj->getYmax();
             my_centralWidget->zoomOnGrib(DataManager::GRIB_GRIB);
-            QPixmap * imgAll = new QPixmap(my_centralWidget->getTerre()->getSize());
+            QPixmap * imgAll = new QPixmap(my_centralWidget->get_terrain()->getSize());
             imgAll->fill(Qt::transparent);
             QPainter pnt(imgAll);
             pnt.setRenderHint(QPainter::Antialiasing, true);
             pnt.setRenderHint(QPainter::SmoothPixmapTransform, true);
             QTime calibration;
             calibration.start();
-            mapDataDrawer->draw_WIND_Color_OLD(pnt,proj,true,true,true);
+            mapDataDrawer->drawTest_mono(pnt,proj);
             int cal2=calibration.elapsed();
             pnt.end();
             //imgAll->save("calib1.jpg");
@@ -748,7 +1172,7 @@ void MainWindow::closeProgress(void)
             pnt.setRenderHint(QPainter::Antialiasing, true);
             pnt.setRenderHint(QPainter::SmoothPixmapTransform, true);
             calibration.start();
-            mapDataDrawer->draw_WIND_Color(pnt,proj,true,true,true);
+            mapDataDrawer->drawTest_multi(pnt,proj);
             int cal1=calibration.elapsed();
             pnt.end();
             //imgAll->save("calib2.jpg");
@@ -756,8 +1180,8 @@ void MainWindow::closeProgress(void)
             proj->zoomOnZone(xW,yN, xE,yS);
             proj->blockSignals(false);
             qWarning()<<"result of benchmark: multiThread="<<cal1<<"monoThread="<<cal2;
-            Settings::setSetting("gribBench1",cal1);
-            Settings::setSetting("gribBench2",cal2);
+            Settings::setSetting(gribBench1,cal1);
+            Settings::setSetting(gribBench2,cal2);
 
             /** **/
             dataManager->close_data(DataManager::GRIB_GRIB);
@@ -766,67 +1190,72 @@ void MainWindow::closeProgress(void)
     }
     else
     {
-        Settings::setSetting("gribBench1",10);
-        Settings::setSetting("gribBench2",0);
+        Settings::setSetting(gribBench1,10);
+        Settings::setSetting(gribBench2,0);
     }
     progress->newStep(90,tr("Opening grib"));
-    gribFilePath = Settings::getSetting("gribFilePath", appFolder.value("grib")).toString();
+    gribFilePath = Settings::getSetting(gribFile_Path).toString();
     if(gribFilePath.isEmpty())
         gribFilePath = appFolder.value("grib");
-    QString fname = Settings::getSetting("gribFileName", "").toString();
-    int curMode = my_centralWidget->getTerre()->getColorMapMode();
+    QString fname = Settings::getSetting(grib_FileName).toString();
     if (fname != "" && QFile::exists(fname))
     {
         openGribFile(fname, false);
         gribFileName=fname;
     }
-    fname = Settings::getSetting("gribFileNameCurrent", "").toString();
+    fname = Settings::getSetting(gribCurrent_FileName).toString();
     if (fname != "" && QFile::exists(fname))
     {
         openGribFile(fname, false,true);
         gribFileNameCurrent=fname;
     }
     slot_updateGribMono();
-    my_centralWidget->getTerre()->setColorMapMode(curMode);
-    my_centralWidget->updateGribMenu();
     progress->close();\
-    if(!Settings::getSetting("LastKap","").toString().isEmpty())
+    if(!Settings::getSetting(LastKap).toString().isEmpty())
     {
         progress->newStep(95,tr("Opening kap"));
-        my_centralWidget->imgKap_open(Settings::getSetting("LastKap","").toString());
+        my_centralWidget->imgKap_open(Settings::getSetting(LastKap).toString());
     }
+//    QPluginLoader plugin("pluginExamplePlugin");
+//    plugin.load();
+//    if(!plugin.isLoaded())
+//        qWarning()<<"error loading plugin"<<plugin.errorString();
+//    else
+//    {
+//        PluginExampleInterface * myPlugin=qobject_cast<PluginExampleInterface *>(plugin.instance());
+//        myPlugin->initPluginExample(this);
+//    }
     delete progress;
     progress=NULL;
-    if(restartNeeded)
-        this->my_centralWidget->setAboutToQuit();
-    else if(selectedBoat)
+
+    if(selectedBoat)
     {
         selectedBoat->cleanBarrierList();
         if(selectedBoat->get_boatType()==BOAT_REAL)
         {                        
             proj->setScaleAndCenterInMap(selectedBoat->getZoom(),selectedBoat->getLon(),selectedBoat->getLat());
-            if(Settings::getSetting("polarEfficiency",100).toInt()!=100)
+            if(Settings::getSetting(polar_efficiency).toInt()!=100)
             {
                 selectedBoat->reloadPolar(true);
                 emit boatHasUpdated(selectedBoat);
             }
             QDateTime dtm =QDateTime::fromTime_t(((boatReal*)selectedBoat)->getEta()).toUTC();
             if(!dtm.isValid() || ((boatReal*)selectedBoat)->getEta()<=0)
-                toolBar->clear_eta();
+                statusBar->clear_eta();
             else
-                toolBar->update_eta(dtm);
+                statusBar->update_eta(dtm);
         }
         else
         {
             updatePilototo_Btn((boatVLM*)selectedBoat);
             this->slotUpdateOpponent();
             nxtVac_cnt=((boatVLM*)selectedBoat)->getNextVac();
-            statusBar->drawVacInfo();
+            emit drawVacInfo();
             QDateTime dtm =QDateTime::fromString(((boatVLM*)selectedBoat)->getETA(),"yyyy-MM-ddTHH:mm:ssZ");
             if(!dtm.isValid())
-                toolBar->clear_eta();
+                statusBar->clear_eta();
             else
-                toolBar->update_eta(dtm);
+                statusBar->update_eta(dtm);
             timer->start(1000);
         }
         if(use_old_board)
@@ -837,7 +1266,12 @@ void MainWindow::closeProgress(void)
     }
     statusBar->show();
     menuBar->show();
-#ifdef __ANDROIDD__
+    this->showDashBoard();
+//    QQuickView *qml = new QQuickView;
+//    qml->setSource(QUrl::fromLocalFile("src/qml_ui.qml"));
+//    qml->show();
+
+#ifdef __ANDROID__
     menuBar->setNativeMenuBar(true);
     menuBar->hide();
 #endif
@@ -876,18 +1310,18 @@ void MainWindow::openGribFile(QString fileName, bool zoom, bool current)
 
     if (!badFile && !badCurrent)
     {
-        slot_updateGribMono();
+        slot_updateGribMono();        
         slotDateGribChanged_now();
 
         if(!current)
         {
-            Settings::setSetting("gribFileName",  fileName);
-            Settings::setSetting("gribFilePath",  gribFilePath);
+            Settings::setSetting(grib_FileName,  fileName);
+            Settings::setSetting(gribFile_Path,  gribFilePath);
         }
         else
         {
-            Settings::setSetting("gribFileNameCurrent",  fileName);
-            Settings::setSetting("gribFilePath",  gribFilePath);
+            Settings::setSetting(gribCurrent_FileName,  fileName);
+            Settings::setSetting(gribFile_Path,  gribFilePath);
         }
     }
     else if (!badCurrent)
@@ -1028,7 +1462,7 @@ void MainWindow::slotOptions_Language()
     QAction *act = mb->acOptions_GroupLanguage->checkedAction();
     if (act == mb->acOptions_Lang_fr) {
         lang = "fr";
-        Settings::setSetting("appLanguage", lang);
+        Settings::setSetting(appLanguage, lang);
         QMessageBox::information (this,
             QString("Changement de langue"),
             QString("Langue : Français\n\n")
@@ -1038,7 +1472,7 @@ void MainWindow::slotOptions_Language()
     }
     else if (act == mb->acOptions_Lang_en) {
         lang = "en";
-        Settings::setSetting("appLanguage", lang);
+        Settings::setSetting(appLanguage, lang);
         QMessageBox::information (this,
             QString("Application Language"),
             QString("Language : English\n\n")
@@ -1047,7 +1481,7 @@ void MainWindow::slotOptions_Language()
     }
     else if (act == mb->acOptions_Lang_cz) {
         lang = "cz";
-        Settings::setSetting("appLanguage", lang);
+        Settings::setSetting(appLanguage, lang);
         QMessageBox::information (this,
             QString("Application Language"),
             QString("Language : Czech\n\n")
@@ -1056,7 +1490,7 @@ void MainWindow::slotOptions_Language()
     }
     else if (act == mb->acOptions_Lang_es) {
         lang = "es";
-        Settings::setSetting("appLanguage", lang);
+        Settings::setSetting(appLanguage, lang);
         QMessageBox::information (this,
             QString("Application Language"),
             QString("Language : Spanish\n\n")
@@ -1102,11 +1536,11 @@ void MainWindow::slotFile_Lock(bool readOnly)
     if(!readOnly)
         selectedBoat->setLockStatus(!selectedBoat->getLockStatus());
 
-    QIcon ic;
+    QString ic;
     if(selectedBoat->getLockStatus())
-        ic=QIcon(appFolder.value("img")+"lock.png");
+        ic=QString(appFolder.value("img")+"lock.png");
     else
-        ic=QIcon(appFolder.value("img")+"unlock.png");
+        ic=QString(appFolder.value("img")+"unlock.png");
 
     emit updateLockIcon(ic);
 }
@@ -1134,10 +1568,9 @@ void MainWindow::slotCombineGrib() {
     if(!dirGrib.exists())
     {
         gribFilePath=appFolder.value("grib");
-        Settings::setSetting("askGribFolder",1);
-        Settings::setSetting("edtGribFolder",gribFilePath);
+        Settings::setSetting(askGribFolder,1);
+        Settings::setSetting(edtGribFolder,gribFilePath);
     }
-
     QStringList files = QFileDialog::getOpenFileNames(
                 this,
                 tr("Select several Grib files to combine"),
@@ -1149,7 +1582,7 @@ void MainWindow::slotCombineGrib() {
         QMessageBox::information(this,tr("Grib combination"),str,QMessageBox::Ok);
         /* select output file */
         QString filename = QFileDialog::getSaveFileName(this,
-                                                        tr("Filename of destination file"), "", tr("GRIB file (*.grb *.grib *.grb2 *.grib2)"));
+                           tr("Filename of destination file"), "", tr("GRIB file (*.grb *.grib *.grb2 *.grib2)"));
         if (filename != "") {
             ofstream fdest;
             fdest.open(filename.toUtf8().constData(),ios::out | ios::trunc | ios::binary);
@@ -1178,7 +1611,7 @@ void MainWindow::slotCombineGrib() {
             fdest.close();
             str=QString().setNum(added) +" " + tr("files successfully combined")+"\n"+tr("Open generated file ?");
             if(QMessageBox::question(this,tr("Grib combination"),str)==QMessageBox::Yes) {
-                bool zoom =  (Settings::getSetting("gribZoomOnLoad",0).toInt()==1);
+                bool zoom =  (Settings::getSetting(gribZoomOnLoad).toInt()==1);
                 openGribFile(filename, zoom);
                 if(my_centralWidget) my_centralWidget->fileInfo_GRIB(DataManager::GRIB_GRIB);
             }
@@ -1200,8 +1633,8 @@ void MainWindow::slotFile_Open()
     if(!dirGrib.exists())
     {
         gribFilePath=appFolder.value("grib");
-        Settings::setSetting("askGribFolder",1);
-        Settings::setSetting("edtGribFolder",gribFilePath);
+        Settings::setSetting(askGribFolder,1);
+        Settings::setSetting(edtGribFolder,gribFilePath);
     }
     QString fileName = QFileDialog::getOpenFileName(this,
                          tr("Choisir un fichier GRIB"),
@@ -1212,8 +1645,9 @@ void MainWindow::slotFile_Open()
     {
         QFileInfo finfo(fileName);
         gribFilePath = finfo.absolutePath();
-        bool zoom =  (Settings::getSetting("gribZoomOnLoad",0).toInt()==1);
+        bool zoom =  (Settings::getSetting(gribZoomOnLoad).toInt()==1);
         openGribFile(fileName, zoom);
+        //my_centralWidget->get_terrain()->update_mapDataAndLevel();
         if(my_centralWidget) my_centralWidget->fileInfo_GRIB(DataManager::GRIB_GRIB);
     }
     updateTitle();
@@ -1221,7 +1655,8 @@ void MainWindow::slotFile_Open()
 void MainWindow::slotFile_Reopen()
 {
    if(!my_centralWidget->get_dataManager()->get_grib(DataManager::GRIB_GRIB)) return;
-   openGribFile (my_centralWidget->get_dataManager()->get_grib(DataManager::GRIB_GRIB)->get_fileName(), (Settings::getSetting("gribZoomOnLoad",0).toInt() == 1));
+   openGribFile (my_centralWidget->get_dataManager()->get_grib(DataManager::GRIB_GRIB)->get_fileName(), (Settings::getSetting(gribZoomOnLoad).toInt() == 1));
+   //my_centralWidget->get_terrain()->update_mapDataAndLevel();
    updateTitle();
 }
 void MainWindow::slotFile_Open_Current()
@@ -1233,20 +1668,20 @@ void MainWindow::slotFile_Open_Current()
     if(!dirGrib.exists())
     {
         gribFilePath=appFolder.value("grib");
-        Settings::setSetting("askGribFolder",1);
-        Settings::setSetting("edtGribFolder",gribFilePath);
+        Settings::setSetting(askGribFolder,1);
+        Settings::setSetting(edtGribFolder,gribFilePath);
     }
     QString fileName = QFileDialog::getOpenFileName(this,
                          tr("Choisir un fichier GRIB"),
                          gribFilePath,
                          filter);
-
     if (fileName != "")
     {
         QFileInfo finfo(fileName);
         gribFilePath = finfo.absolutePath();
-        bool zoom =  (Settings::getSetting("gribZoomOnLoad",0).toInt()==1);
+        bool zoom =  (Settings::getSetting(gribZoomOnLoad).toInt()==1);
         openGribFile(fileName, zoom, true);
+        //my_centralWidget->get_terrain()->update_mapDataAndLevel();
         if(my_centralWidget) my_centralWidget->fileInfo_GRIB(DataManager::GRIB_CURRENT);
     }
     updateTitle();
@@ -1257,6 +1692,7 @@ void MainWindow::slotFile_Close_Current() {
     my_centralWidget->closeGribFileCurrent();
     toolBar->update_gribBtn();
     updateTitle();
+    my_centralWidget->get_terrain()->update_mapDataAndLevel();
     my_centralWidget->emitUpdateRoute(NULL);
 }
 //-------------------------------------------------
@@ -1266,13 +1702,14 @@ void MainWindow::slotFile_Close()
     my_centralWidget->closeGribFile();
     toolBar->update_gribBtn();
     updateTitle();
+    my_centralWidget->get_terrain()->update_mapDataAndLevel();
     my_centralWidget->emitUpdateRoute(NULL);
 }
 
 //========================================================================
 void MainWindow::slotDateStepChanged(int step)
 {
-    Settings::setSetting("gribDateStep",step);
+    Settings::setSetting(gribDateStep,step);
     updatePrevNext();
 }
 
@@ -1345,12 +1782,6 @@ void MainWindow::slotSetGribDate(time_t tps) {
     }
 }
 
-void MainWindow::slotWindArrows(bool b)
-{
-    // pas de barbules sans fleches
-    menuBar->acView_Barbules->setEnabled(b);
-}
-
 //-------------------------------------------------
 
 //-------------------------------------------------
@@ -1371,12 +1802,12 @@ int MainWindow::get_selectedBoatVacLen()
 }
 void MainWindow::showDashBoard()
 {
-    bool shTdb=Settings::getSetting("showDashBoard",1).toInt()==1;
+    bool shTdb=Settings::getSetting(show_DashBoard).toInt()==1;
     if(use_old_board)
         menuBar->acOptions_SH_Tdb->setVisible(false);
     else
     {
-        newBoard->setVisible(shTdb);
+        boardPlugin->setVisible(shTdb);
         menuBar->acOptions_SH_Tdb->setVisible(true);
         menuBar->acOptions_SH_Tdb->setChecked(shTdb);
     }
@@ -1460,7 +1891,7 @@ void MainWindow::updateNxtVac(void)
                 myBoard->outdatedVLM();
         }
     }
-    statusBar->drawVacInfo();
+    emit drawVacInfo();
 }
 
 QList<POI*> * MainWindow::getPois()
@@ -1470,8 +1901,12 @@ QList<POI*> * MainWindow::getPois()
 
 void MainWindow::slotShowContextualMenu(QGraphicsSceneContextMenuEvent * e)
 {
-    mouseClicX = e->scenePos().x();
-    mouseClicY = e->scenePos().y();
+    showContextualMenu(e->scenePos().x(),e->scenePos().y());
+}
+void MainWindow::showContextualMenu(const int &xPos,const int &yPos)
+{
+    mouseClicX = xPos;
+    mouseClicY = yPos;
     int compassMode = my_centralWidget->getCompassMode(mouseClicX,mouseClicY);
     my_centralWidget->set_cursorPositionOnPopup(QPoint(mouseClicX,mouseClicY));
 
@@ -1713,10 +2148,12 @@ void MainWindow::slotInetUpdated(void)
 }
 void MainWindow::slot_positScale()
 {
-    Settings::setSetting("scalePosX",this->mouseClicX);
-    Settings::setSetting("scalePosY",this->mouseClicY);
-    my_centralWidget->getTerre()->setScalePos(this->mouseClicX,this->mouseClicY);
-    my_centralWidget->getTerre()->redrawGrib();
+    qWarning() << "[slot_positScale()]";
+    Settings::setSetting(scalePosX,this->mouseClicX);
+    Settings::setSetting(scalePosY,this->mouseClicY);
+    my_centralWidget->get_terrain()->setScalePos(this->mouseClicX,this->mouseClicY);
+    my_centralWidget->get_terrain()->redrawGrib();
+    qWarning() << "[slot_positScale()] done";
 }
 
 void MainWindow::slot_centerMap()
@@ -1735,13 +2172,13 @@ void MainWindow::slotCompassLineForced(double a, double b)
 }
 void MainWindow::slotCompassCenterBoat(void)
 {
-    Settings::setSetting("compassCenterBoat", menuBar->ac_compassCenterBoat->isChecked()?"1":"0");
+    Settings::setSetting(compassCenterBoat, menuBar->ac_compassCenterBoat->isChecked()?1:0);
     emit showCompassCenterBoat();
 }
 void MainWindow::slotCompassCenterWp(void)
 {
     menuBar->ac_compassCenterBoat->setChecked(false);
-    Settings::setSetting("compassCenterBoat", "0");
+    Settings::setSetting(compassCenterBoat, 0);
     emit showCompassCenterWp();
 }
 
@@ -1796,14 +2233,14 @@ void MainWindow::VLM_Sync_sync(void)
     if(!my_centralWidget->getBoats())
     {
         qWarning() << "CRITICAL: VLM_Sync_sync - empty boatList";
-        closeProgress();;
+        closeProgress();
         return ;
     }
 
     QList<boatVLM*> listBoats = *my_centralWidget->getBoats();
     if(listBoats.isEmpty())
     {
-        closeProgress();;
+        closeProgress();
         return;
     }
     toolBar->boatList->setEnabled(false);
@@ -1825,7 +2262,7 @@ void MainWindow::VLM_Sync_sync(void)
     }
     else
     {
-        int lastBoatSelected=Settings::getSetting("LastBoatSelected","-10").toInt();
+        int lastBoatSelected=Settings::getSetting(LastBoatSelected).toInt();
         if(lastBoatSelected!=-10)
         {
             bool found=false;
@@ -1844,7 +2281,7 @@ void MainWindow::VLM_Sync_sync(void)
             if(!found)
             {
                 lastBoatSelected=-10;
-                Settings::setSetting("LastBoatSelected","-10");
+                Settings::setSetting(LastBoatSelected,lastBoatSelected);
             }
         }
         if(lastBoatSelected==-10)
@@ -1854,7 +2291,7 @@ void MainWindow::VLM_Sync_sync(void)
                 if(listBoats.at(nBoat)->getStatus())
                 {
                     listBoats.at(nBoat)->slot_selectBoat();
-                    Settings::setSetting("LastBoatSelected",listBoats.at(nBoat)->getId());
+                    Settings::setSetting(LastBoatSelected,listBoats.at(nBoat)->getId());
                     break;
                 }
             }
@@ -1862,7 +2299,7 @@ void MainWindow::VLM_Sync_sync(void)
         toolBar->boatList->setEnabled(true);
         closeProgress();
         isStartingUp=false;
-        if(Settings::getSetting("centerOnBoatChange","1").toInt()==1)
+        if(Settings::getSetting(centerOnBoatChange).toInt()==1)
             this->slot_centerSelectedBoat();
         my_centralWidget->emitUpdateRoute(NULL);
         updateTitle();
@@ -1941,28 +2378,28 @@ void MainWindow::slotBoatUpdated(boat * upBoat,bool newRace,bool doingSync)
                 //qWarning() << "Not first synch - doingSync="<< doingSync;
                 if(doingSync)
                 {
-                    if(Settings::getSetting("centerOnSynch",0).toInt()==1)
+                    if(Settings::getSetting(centerOnSynch).toInt()==1)
                         proj->setCenterInMap(boat->getLon(),boat->getLat());
                 }
                 else
                 {
-                    if(Settings::getSetting("centerOnBoatChange",1).toInt()==1)
+                    if(Settings::getSetting(centerOnBoatChange).toInt()==1)
                         proj->setScaleAndCenterInMap(boat->getZoom(),boat->getLon(),boat->getLat());
                 }
             }
 
             /* updating Vac info */
             nxtVac_cnt=boat->getNextVac();
-            statusBar->drawVacInfo();
+            emit drawVacInfo();
             timer->start(1000);
 
 
             /* Updating ETA */            
             QDateTime dtm =QDateTime::fromString(boat->getETA(),"yyyy-MM-ddTHH:mm:ssZ");
             if(!dtm.isValid())
-                toolBar->clear_eta();
+                statusBar->clear_eta();
             else
-                toolBar->update_eta(dtm);
+                statusBar->update_eta(dtm);
 
             /* change data displayed in all pilototo buttons or menu entry: (nb of instructions passed / tot nb) */
             updatePilototo_Btn(boat);
@@ -1994,14 +2431,14 @@ void MainWindow::slotBoatUpdated(boat * upBoat,bool newRace,bool doingSync)
         /* Updating ETA */
         boatReal *boat=(boatReal *) upBoat;
         if((boat->getWPLat()==0 && boat->getWPLon()==0) ||boat->getEta()==-1)
-            toolBar->clear_eta();
+            statusBar->clear_eta();
         else
         {
             QDateTime dtm =QDateTime::fromTime_t(boat->getEta()).toUTC();
             if(!dtm.isValid() || boat->getEta()<=0)
-                toolBar->clear_eta();
+                statusBar->clear_eta();
             else
-                toolBar->update_eta(dtm);
+                statusBar->update_eta(dtm);
         }
         emit boatHasUpdated(upBoat);
         //emit WPChanged(upBoat->getWPLat(),upBoat->getWPLon());
@@ -2023,6 +2460,7 @@ void MainWindow::slotSelectBoat(boat* newSelect)
         emit boatSelected(selectedBoat);
         selectedBoat->slot_selectBoat();
         selectedBoat->setZoom(proj->getScale());
+        emit updateRoute(selectedBoat);
         return;
     }
 
@@ -2107,11 +2545,12 @@ void MainWindow::slotChgBoat(int num)
         {
             if(cnt==num)
             {
-                Settings::setSetting("LastBoatSelected", acc->getId());
+                Settings::setSetting(LastBoatSelected, acc->getId());
                 acc->slot_selectBoat();
-                /* sync lunched, update grib date */
-                //slotDateGribChanged_now();
+                /* sync launched, update grib date */
+                emit WPChanged(0,0);
                 emit selectedBoatChanged();
+                emit updateRoute(acc);
                 for(int i=0;i<my_centralWidget->getRaces().size();++i)
                 {
                     if(my_centralWidget->getRaces()[i]->idrace == acc->getRaceId())
@@ -2198,6 +2637,7 @@ bool MainWindow::get_selPOI_instruction()
 
 void MainWindow::slot_POIselected(POI* poi)
 {
+    qWarning()<<"main slot_Poiselected with"<<isSelectingWP;
     if(selPOI_instruction)
     {
         DialogPilototoInstruction * tmp=selPOI_instruction;
@@ -2273,7 +2713,7 @@ void MainWindow::slotpastePOI()
     if(!Util::getWPClipboard(&name,&lat,&lon,&wph,&tstamp))
         return;
 
-    emit addPOI(name,POI_TYPE_POI,lat,lon,wph,tstamp,tstamp!=-1, selectedBoat);
+    emit addPOI(name,POI_TYPE_POI,lat,lon,wph,tstamp,tstamp!=-1);
 }
 
 void MainWindow::slotBoatLockStatusChanged(boat* boat,bool status)
@@ -2312,7 +2752,7 @@ bool MainWindow::getBoatLockStatus(void)
 void MainWindow::slotShowPolar()
 {
     if(!selectedBoat) return;
-    DialogViewPolar *dvp=new DialogViewPolar(this);
+    DialogViewPolar *dvp=new DialogViewPolar(this->my_centralWidget);
     dvp->setBoat(selectedBoat);
     dvp->exec();
     if(dvp)
@@ -2525,82 +2965,105 @@ void MainWindow::releasePolar(QString fname)
 
 void MainWindow::slotLoadVLMGrib(void)
 {
+    loadVLM_grib = new DialogVlmGrib(this,my_centralWidget,my_centralWidget->getInet());
+    connect(loadVLM_grib, SIGNAL(signalGribFileReceived(QString)),
+            this,  SLOT(slot_gribFileReceived(QString)));
     loadVLM_grib->showDialog();
 }
 
 /*************************************/
 #ifdef __QTVLM_WITH_TEST
 
-#include "libgps.h"
-#include "gps.h"
-
+#include <QDomDocument>
 
 void MainWindow::slotVLM_Test(void)
 {
-    struct gps_data_t gps_data;
-    memset(&gps_data,0,sizeof(struct gps_data_t));
-
-    if(gps_open("localhost", DEFAULT_GPSD_PORT,&gps_data)==-1) {
-        qWarning() << "Error opening gpsd connection";
-        return;
+    QFile file("polar.xml");
+    file.open(QIODevice::ReadOnly | QIODevice::Text);
+    QString  errorStr;
+    int errorLine;
+    int errorColumn;
+    QDomDocument doc;
+    if(!doc.setContent(&file,true,&errorStr,&errorLine,&errorColumn))
+    {
+        QMessageBox::warning(0,QObject::tr("Lecture de polaire ("),
+                             QString("Erreur ligne %1, colonne %2:\n%3")
+                             .arg(errorLine)
+                             .arg(errorColumn)
+                             .arg(errorStr));
+        return ;
     }
 
-    gps_stream(&gps_data,WATCH_ENABLE|WATCH_JSON,NULL);
+    QDomElement root = doc.documentElement();
 
-    for (;;) {
-        if (!gps_waiting(&gps_data,500))
-            continue;
+    qWarning() << "Root: " << root.tagName();
+    qWarning() << "Name: " << root.firstChild().toText().data().simplified();
 
-        if (gps_read(&gps_data) == -1) {
-            qWarning() << "Read error.\n";
-            break ;
-        } else {
-            qWarning() << "Sat visible: " << gps_data.satellites_visible;
-            qWarning() << "Fix: " << gps_data.fix.mode;
-            qWarning() << "Pos: " << gps_data.fix.latitude << "," << gps_data.fix.longitude;
+    QDomNode subNode= root.firstChild().nextSibling();
+    QMap <int,QMap<int,double>> dataMap;
+
+    while(!subNode.isNull())
+    {
+        qWarning() << i;
+        if(subNode.toElement().tagName() == "PolarCurve") {
+            QDomNode polarCurve=subNode.firstChild();
+            int curveIndex=0;
+            bool hasCurveIndex=false;
+            QMap<int,double> curveMap;
+            while(!polarCurve.isNull())
+            {
+                if(polarCurve.toElement().tagName()=="PolarCurveIndex") {
+                    curveIndex=polarCurve.toElement().attribute("value").toInt(&hasCurveIndex);
+                }
+                if(polarCurve.toElement().tagName()=="PolarItem") {
+                    QDomNode polarItem=polarCurve.firstChild();
+                    int angle;
+                    bool hasAngle=true;
+                    double val;
+                    bool hasVal=false;
+                    while(!polarItem.isNull()) {
+                        if(polarItem.toElement().tagName()=="Angle") {
+                            angle=polarItem.toElement().attribute("value").toInt(&hasAngle);
+                        }
+                        if(polarItem.toElement().tagName()=="Value") {
+                            val=polarItem.toElement().attribute("value").toInt(&hasVal);
+                        }
+                        polarItem=polarItem.nextSibling();
+                    }
+                    if(hasAngle && hasVal) {
+                        curveMap.insert(angle,val);
+                    }
+                }
+                polarCurve = polarCurve.nextSibling();
+            }
+            if(hasCurveIndex) {
+                dataMap.insert(curveIndex,curveMap);
+            }
         }
+        subNode = subNode.nextSibling();
     }
-    gps_stream(&gps_data,WATCH_DISABLE,NULL);
-    gps_close(&gps_data);
+
+    if(!dataMap.isEmpty()) {
+
+    }
+
 }
 #else
 void MainWindow::slotVLM_Test(void)
 {
+
 }
 #endif
 void MainWindow::slotGribInterpolation(void)
 {
-#ifdef __QTVLM_WITH_TEST
-    if(my_centralWidget->getGrib())
-    {
-        gribValidation_dialog->setMode(this->my_centralWidget->getGrib()->getInterpolationMode());
-        gribValidation_dialog->show();
-    }
-#endif
+//#ifdef __QTVLM_WITH_TEST
+//    if(my_centralWidget->getGrib())
+//    {
+//        gribValidation_dialog->setMode(this->my_centralWidget->getGrib()->getInterpolationMode());
+//        gribValidation_dialog->show();
+//    }
+//#endif
 }
-
-/*
-void MainWindow::slot_estimeParamChanged(int valeur)
-{
-    int valeur;
-    switch(Settings::getSetting("estimeType","0").toInt())
-    {
-        case 0:
-            valeur=Settings::getSetting("estimeTime", valeur);
-            param->estimeVal_time->setValue(valeur);
-            break;
-        case 1:
-            valeur=Settings::getSetting("estimeVac", valeur);
-            param->estimeVal_vac->setValue(valeur);
-            break;
-        case 2:
-            valeur=Settings::getSetting("estimeLen", valeur);
-            param->estimeVal_dist->setValue(valeur);
-    }
-    emit paramVLMChanged();
-}
-
-*/
 
 void MainWindow::slot_updateGribMono()
 {
@@ -2610,16 +3073,16 @@ void MainWindow::slot_updateGribMono()
 #ifdef __WIN_QTVLM
         if (QSysInfo::windowsVersion()==QSysInfo::WV_XP)
         {
-            my_centralWidget->get_mapDataDrawer()->set_gribMonoCpu(true);
+            my_centralWidget->get_mapDataDrawer()->set_grib_monoCpu(true);
             return;
         }
 #endif
         bool gribMulti=false;
-        if(Settings::getSetting("gribDrawingMethod",0).toInt()==0)
-            gribMulti=Settings::getSetting("gribBench1",-1).toInt()<Settings::getSetting("gribBench2",-1).toInt();
+        if(Settings::getSetting(gribDrawingMethod).toInt()==0)
+            gribMulti=Settings::getSetting(gribBench1).toInt()<Settings::getSetting(gribBench2).toInt();
         else
-            gribMulti=Settings::getSetting("gribDrawingMethod",0).toInt()==2;
-        my_centralWidget->get_mapDataDrawer()->set_gribMonoCpu(!gribMulti);
+            gribMulti=Settings::getSetting(gribDrawingMethod).toInt()==2;
+        my_centralWidget->get_mapDataDrawer()->set_grib_monoCpu(!gribMulti);
     }
 
 }
@@ -2642,7 +3105,7 @@ void MainWindow::slot_showPOI_input(POI* poi, const bool &fromMenu)
         else
             proj->screen2map(mouseClicX,mouseClicY, &lon, &lat);
         poi=new POI(tr("POI"), POI_TYPE_POI,lat, lon, proj, this,
-                    my_centralWidget, -1,-1,false, this->selectedBoat);
+                    my_centralWidget, -1,-1,false);
     }
     DialogPoi dp(this,my_centralWidget);
     dp.initPOI(poi,creationMode);
@@ -2660,6 +3123,9 @@ void MainWindow::slot_POI_input() {
  ***************************************************************/
 
 void MainWindow::slot_newBarrierSet() {
+    if(my_centralWidget->get_barrierEditMode()!=BARRIER_EDIT_NO_EDIT)
+        my_centralWidget->escKey_barrier();
+
     BarrierSet * barrierSet = new BarrierSet(this);
     barrierSet->set_name(tr("New set"));
 
@@ -2673,7 +3139,7 @@ void MainWindow::slot_newBarrierSet() {
     dialogEditBarrier.initDialog(barrierSet,my_centralWidget->get_boatList());
 
     if(dialogEditBarrier.exec() == QDialog::Rejected) {
-        if(selectedBoat) selectedBoat->rm_barrierSet(barrierSet);
+        //if(selectedBoat) selectedBoat->rm_barrierSet(barrierSet); not needed as remove is done in barrierSet destructor
         delete barrierSet;
     }
     else {
@@ -2696,4 +3162,56 @@ void MainWindow::slot_barrierAddMenu(void) {
         my_centralWidget->slot_addBarrier();
     else
         my_centralWidget->escKey_barrier();
+}
+
+QVariant MainWindow::getSettingApp(const int &key) const
+{
+    return Settings::getSetting(key);
+}
+
+void MainWindow::setting_saveGeometry(QWidget * obj) {
+    Settings::saveGeometry(obj);
+}
+
+bool MainWindow::getWPClipboard(QString * str,double * lat,double * lon, double * wph, int * tStamp) {
+    return Util::getWPClipboard(str,lat,lon,wph,tStamp);
+}
+
+void MainWindow::setWPClipboard(double lat,double lon, double wph) {
+    Util::setWPClipboard(lat,lon,wph);
+}
+
+QString MainWindow::pos2String(const int &type,const double &value) {
+    return Util::pos2String(type,value);
+}
+
+QString MainWindow::formatLongitude(const double &x) {
+    return Util::formatLongitude(x);
+}
+
+QString MainWindow::formatLatitude(const double &y) {
+    return Util::formatLatitude(y);
+}
+
+QString MainWindow::get_folder(QString str) const {
+    return appFolder.value(str);
+}
+
+QPalette MainWindow::getOriginalPalette() const
+{
+    return originalPalette;
+}
+
+void MainWindow::setFontDialog(QWidget * o) {
+    Util::setFontDialog(o);
+}
+void MainWindow::manageWPDialog(BoatInterface * myBoat, QObject * boardPlugin)
+{
+    if(!myBoat) return;
+    DialogWp * wpDialog = new DialogWp(this->my_centralWidget);
+    wpDialog->setLocked(!myBoat->getLockStatus());
+    connect(wpDialog,SIGNAL(selectPOI()),boardPlugin,SLOT(slot_selectWP_POI()));
+    connect(this,SIGNAL(editWP_POI(POI*)),wpDialog,SLOT(slot_selectPOI(POI*)));
+    connect(wpDialog,SIGNAL(finished(int)),wpDialog,SLOT(deleteLater()));
+    wpDialog->show_WPdialog((boat*)myBoat);
 }

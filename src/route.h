@@ -206,7 +206,6 @@ public slots:
         bool superFrozen;
         bool detectCoasts;
         bool busy;
-        double A180(double hdg);
         time_t eta;
         time_t start;
         bool has_eta;

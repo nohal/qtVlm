@@ -20,8 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QTextStream>
 #include <QDebug>
-#include <parser.h>
-#include <serializer.h>
 
 #include "Util.h"
 #include "boat.h"
@@ -34,7 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogPilototo.h"
 #include "DialogPilototoParam.h"
 #include "settings.h"
-#include "BoardVlmNew.h"
+#include <QScroller>
 
 DialogPilototo::DialogPilototo(MainWindow *main,myCentralWidget * parent,inetConnexion * inet):QDialog(parent), inetClient(inet)
 {
@@ -43,6 +41,8 @@ DialogPilototo::DialogPilototo(MainWindow *main,myCentralWidget * parent,inetCon
     navModeToDo=false;
     this->move(250,100);
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     QMap<QWidget *,QFont> exceptions;
     QFont wfont=QApplication::font();
@@ -51,7 +51,7 @@ DialogPilototo::DialogPilototo(MainWindow *main,myCentralWidget * parent,inetCon
     Util::setSpecificFont(exceptions);
     selectPOI_mode=1;
 
-    instructionEditor = new DialogPilototoParam(this);
+    instructionEditor = new DialogPilototoParam(parent);
     connect(instructionEditor,SIGNAL(doSelectPOI(DialogPilototoInstruction *,int)),
             this,SLOT(doSelectPOI(DialogPilototoInstruction *,int)));
     connect(this,SIGNAL(selectPOI(DialogPilototoInstruction *)),
@@ -69,9 +69,9 @@ DialogPilototo::DialogPilototo(MainWindow *main,myCentralWidget * parent,inetCon
     drawList.clear();
     delList.clear();
 
-    layout()->setSizeConstraint(QLayout::SetFixedSize);
+    //layout()->setSizeConstraint(QLayout::SetFixedSize);
     frameLayout = new QVBoxLayout(frame);
-    frameLayout->setSizeConstraint(QLayout::SetFixedSize);
+    //frameLayout->setSizeConstraint(QLayout::SetFixedSize);
 
 
 
@@ -85,6 +85,10 @@ DialogPilototo::DialogPilototo(MainWindow *main,myCentralWidget * parent,inetCon
     currentList=NULL;
     this->updateBoat=false;
 
+}
+void DialogPilototo::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 
 void DialogPilototo::updateDrawList(void)
@@ -187,6 +191,7 @@ void DialogPilototo::editInstructions(void)
 void DialogPilototo::editInstructionsPOI(DialogPilototoInstruction * instruction,POI * poi)
 {
     show();
+    slot_screenResize();
     if(selectPOI_mode==1)
     {
         if(poi)
@@ -298,69 +303,68 @@ void DialogPilototo::slot_boatUpdated(boat * pvBoat)
     updateTime();
 
     updateDrawList();
+    slot_screenResize();
     exec();
 }
 
 void DialogPilototo::done(int result)
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
+    Settings::saveGeometry(this);
     if(result==QDialog::Accepted)
     {
-	/* checking if there is un validated instructions */
-	bool hasUnValidated =false;
-    for(int i=0;i<instructions_list.count();++i)
-	{
-	    if(instructions_list[i]->getHasChanged())
-	    {
-		hasUnValidated=true;
-		break;
-	    }
-	}
+        /* checking if there is un validated instructions */
+        bool hasUnValidated =false;
+        for(int i=0;i<instructions_list.count();++i)
+        {
+            if(instructions_list[i]->getHasChanged())
+            {
+                hasUnValidated=true;
+                break;
+            }
+        }
 
-	if(hasUnValidated)
-	{
-	    int rep = QMessageBox::question (this,
-            tr("Instructions non Validees"),
-            tr("Il reste des instructions non validees. Elles ne seront pas envoyees a VLM\nContinuer la sauvegarde?"),
-	    QMessageBox::Yes | QMessageBox::No);
-	    if (rep == QMessageBox::No)
-		return;
-	}
-    if(!BoardVlmNew::confirmChange()) return;
-	/* creating list of pilototo.php requests*/
+        if(hasUnValidated)
+        {
+            int rep = QMessageBox::question (this,
+                                             tr("Instructions non Validees"),
+                                             tr("Il reste des instructions non validees. Elles ne seront pas envoyees a VLM\nContinuer la sauvegarde?"),
+                                             QMessageBox::Yes | QMessageBox::No);
+            if (rep == QMessageBox::No)
+                return;
+        }
+        if(!confirmChange()) return;
+        /* creating list of pilototo.php requests*/
         QList<struct instruction*> * instructions = new QList<struct instruction*>;
-        QJson::Serializer serializer;
         struct instruction * instr_ptr;
-	/* processing del */
-    for(int i=0;i<delList.count();++i)
+        /* processing del */
+        for(int i=0;i<delList.count();++i)
         {
             QVariantMap cur_instruction;
             cur_instruction.insert("taskid",delList[i]);
             cur_instruction.insert("idu",myBoat->getBoatId().toInt());
             instr_ptr=new struct instruction();
             instr_ptr->script=PILOT_DEL;
-            instr_ptr->param=serializer.serialize(cur_instruction);
+            inetClient::map_to_JSON(cur_instruction,&instr_ptr->param);
             instructions->append(instr_ptr);
         }
-	/* processing others */
-    for(int i=0;i<instructions_list.count();++i)
-	{
+        /* processing others */
+        for(int i=0;i<instructions_list.count();++i)
+        {
             DialogPilototoInstruction * instr=instructions_list[i];
             if(instr->getTstamp()<(int)QDateTime::currentDateTime().toUTC().toTime_t()) continue;
-	    if(!instr->getHasChanged())
-	    { /* only processing activated and validated instructions */
+            if(!instr->getHasChanged())
+            { /* only processing activated and validated instructions */
                 QVariantMap cur_instruction;
                 QVariantMap pip;
                 int type;
                 int mode=instr->getMode()+1;
                 cur_instruction.insert("idu",myBoat->getBoatId().toInt());
-		if(instr->getRef()!=-1) /* updating */
+                if(instr->getRef()!=-1) /* updating */
                 {
                     type=PILOT_UPD;
                     cur_instruction.insert("taskid",instr->getRef());
                 }
-		else /* adding */
+                else /* adding */
                 {
                     type=PILOT_ADD;
                 }
@@ -385,11 +389,11 @@ void DialogPilototo::done(int result)
                 }
                 instr_ptr=new struct instruction();
                 instr_ptr->script=type;
-                instr_ptr->param=serializer.serialize(cur_instruction);
+                inetClient::map_to_JSON(cur_instruction,&instr_ptr->param);
                 instructions->append(instr_ptr);
-	    }
-	}
-	/* ready to send */
+            }
+        }
+        /* ready to send */
         currentList=instructions;
 
         for(int i=0;i<currentList->count();++i)
@@ -399,7 +403,7 @@ void DialogPilototo::done(int result)
     }
 
     while (!instructions_list.isEmpty())
-	delete instructions_list.takeFirst();
+        delete instructions_list.takeFirst();
 
     QDialog::done(result);
 }
@@ -426,6 +430,58 @@ void DialogPilototo::sendPilototo(void)
         /* ask for an update of boat data*/
         delete currentList;
         currentList=NULL;
+
+        if(this->myBoat && this->updateBoat && (this->currentList==NULL || this->currentList->isEmpty()))
+        {
+    #if 1
+            if(poiToWp!=NULL && navModeToDo)
+            {
+                clearCurrentRequest();
+                if(poiToWp->getNavMode()==0 && this->myBoat->getPilotType()!=5) //VBVMG
+                {
+                    QString url="/ws/boatsetup/pilot_set.php";
+                    QString data="parms={ \"idu\" : "+QString().setNum(myBoat->getId())+
+                            ", \"pim\" : 5}&select_idu="+
+                            QString().setNum(myBoat->getId());
+                    qWarning()<<"route sends"<<url<<data;
+                    navModeToDo=false;
+                    inetPost(999,"/ws/boatsetup/pilot_set.php",
+                             "parms={ \"idu\" : "+QString().setNum(myBoat->getId())+
+                             ", \"pim\" : 5}&select_idu="+
+                             QString().setNum(myBoat->getId()),true);
+                    return;
+                }
+                else if(poiToWp->getNavMode()==1 && this->myBoat->getPilotType()!=4) //VMG
+                {
+                    navModeToDo=false;
+                    inetPost(999,"/ws/boatsetup/pilot_set.php",
+                             "parms={ \"idu\" : "+QString().setNum(myBoat->getId())+
+                             ", \"pim\" : 4}&select_idu="+
+                             QString().setNum(myBoat->getId()),true);
+                    return;
+                }
+                else if(poiToWp->getNavMode()==2 && this->myBoat->getPilotType()!=3) //ORTHO
+                {
+                    navModeToDo=false;
+                    inetPost(999,"/ws/boatsetup/pilot_set.php",
+                             "parms={ \"idu\" : "+QString().setNum(myBoat->getId())+
+                             ", \"pim\" : 3}&select_idu="+
+                             QString().setNum(myBoat->getId()),true);
+                    return;
+                }
+            }
+    #endif
+            navModeToDo=false;
+            this->updateBoat=false;
+            if(poiToWp!=NULL)
+            {
+                poiToWp->slot_setWP();
+                poiToWp=NULL;
+                return;
+            }
+        }
+
+
         myBoat->slot_getData(true);
     }
     else
@@ -445,10 +501,10 @@ void DialogPilototo::requestFinished (QByteArray res)
 {
     switch(getCurrentRequest())
     {
-	case VLM_REQUEST_LOGIN:
+        case VLM_REQUEST_LOGIN:
             qWarning() << "Error pilototo: getting res for LOGIN!!!";
             break;
-	case VLM_DO_REQUEST:
+        case VLM_DO_REQUEST:
             {
                 if(checkWSResult(res,"Pilototo",parent,lastOrder))
                     sendPilototo();
@@ -459,59 +515,17 @@ void DialogPilototo::requestFinished (QByteArray res)
                     currentList=NULL;
                 }
             }
-	    break;
-    case 999:
-    {
-
-    }
-    }
-    if(this->myBoat && this->updateBoat && (this->currentList==NULL || this->currentList->isEmpty()))
-    {
-#if 1
-        if(poiToWp!=NULL && navModeToDo)
-        {
-            if(poiToWp->getNavMode()==0 && this->myBoat->getPilotType()!=5) //VBVMG
+            break;
+        case 999:
+            navModeToDo=false;
+            this->updateBoat=false;
+            if(poiToWp!=NULL)
             {
-                QString url="/ws/boatsetup/pilot_set.php";
-                QString data="parms={ \"idu\" : "+QString().setNum(myBoat->getId())+
-                        ", \"pim\" : 5}&select_idu="+
-                        QString().setNum(myBoat->getId());
-                qWarning()<<"route sends"<<url<<data;
-                navModeToDo=false;
-                inetPost(999,"/ws/boatsetup/pilot_set.php",
-                         "parms={ \"idu\" : "+QString().setNum(myBoat->getId())+
-                         ", \"pim\" : 5}&select_idu="+
-                         QString().setNum(myBoat->getId()),true);
-                return;
+                poiToWp->slot_setWP();
+                poiToWp=NULL;
             }
-            else if(poiToWp->getNavMode()==1 && this->myBoat->getPilotType()!=4) //VMG
-            {
-                navModeToDo=false;
-                inetPost(999,"/ws/boatsetup/pilot_set.php",
-                         "parms={ \"idu\" : "+QString().setNum(myBoat->getId())+
-                         ", \"pim\" : 4}&select_idu="+
-                         QString().setNum(myBoat->getId()),true);
-                return;
-            }
-            else if(poiToWp->getNavMode()==2 && this->myBoat->getPilotType()!=3) //ORTHO
-            {
-                navModeToDo=false;
-                inetPost(999,"/ws/boatsetup/pilot_set.php",
-                         "parms={ \"idu\" : "+QString().setNum(myBoat->getId())+
-                         ", \"pim\" : 3}&select_idu="+
-                         QString().setNum(myBoat->getId()),true);
-                return;
-            }
-        }
-#endif
-        navModeToDo=false;
-        this->updateBoat=false;
-        if(poiToWp!=NULL)
-        {
-            poiToWp->slot_setWP();
-            poiToWp=NULL;
-        }
-    }
+            break;
+    }    
 }
 
 QString DialogPilototo::getAuthLogin(bool * ok=NULL)
@@ -591,9 +605,8 @@ void DialogPilototo::setInstructions(boat * pvBoat, QList<POI *> pois)
             }
         }
     }
-    if(!BoardVlmNew::confirmChange()) return;
+    if(!confirmChange()) return;
     QList<struct instruction*> * instructions = new QList<struct instruction*>;
-    QJson::Serializer serializer;
     struct instruction * instr_ptr;
     QStringList plist = my_boat->getPilototo();
     for(int n=0;n<plist.count();++n)
@@ -605,7 +618,7 @@ void DialogPilototo::setInstructions(boat * pvBoat, QList<POI *> pois)
         cur_instruction.insert("idu",myBoat->getBoatId().toInt());
         instr_ptr=new struct instruction();
         instr_ptr->script=PILOT_DEL;
-        instr_ptr->param=serializer.serialize(cur_instruction);
+        inetClient::map_to_JSON(cur_instruction,&instr_ptr->param);
         instructions->append(instr_ptr);
     }
     for(int n=1;n<pois.count();++n)
@@ -630,7 +643,7 @@ void DialogPilototo::setInstructions(boat * pvBoat, QList<POI *> pois)
             pip.insert("targetandhdg",QString().sprintf("%.2f",poi->getPiloteWph()));
         cur_instruction.insert("pip",pip);
         cur_instruction.insert("idu",myBoat->getBoatId().toInt());
-        instr_ptr->param=serializer.serialize(cur_instruction);
+        inetClient::map_to_JSON(cur_instruction,&instr_ptr->param);
         instructions->append(instr_ptr);
         poi->setPiloteDate(-1);
         poi->setPiloteWph(-1);
@@ -648,6 +661,15 @@ void DialogPilototo::setInstructions(boat * pvBoat, QList<POI *> pois)
     currentList=instructions;
     this->updateBoat=true;
     sendPilototo();
+}
+bool DialogPilototo::confirmChange()
+{
+    if(Settings::getSetting(askConfirmation).toInt()==0)
+        return true;
+
+    return QMessageBox::question(0,tr("Confirmation a chaque ordre vers VLM"),
+                                 tr("Confirmez-vous cet ordre?"),QMessageBox::Yes|QMessageBox::No,
+                             QMessageBox::Yes)==QMessageBox::Yes;
 }
 
 void DialogPilototo::updateNbInstruction(void)
@@ -678,17 +700,18 @@ void DialogPilototo::instructionUpdated(void)
 * widget + data structure
 ******************************/
 
-DialogPilototoInstruction::DialogPilototoInstruction(QWidget * main,QWidget * parent) : QWidget(parent)
+DialogPilototoInstruction::DialogPilototoInstruction(DialogPilototo * dialogPilototo,QWidget * parent) : QWidget(parent)
 {
     setupUi(this);
+    this->dialogPilototo=dialogPilototo;
     pipPalette=parent->palette();
     connect(this,SIGNAL(doEditInstruction(DialogPilototoInstruction*)),
-                ((DialogPilototo*)main)->instructionEditor,SLOT(editInstruction(DialogPilototoInstruction*)));
+                dialogPilototo->instructionEditor,SLOT(editInstruction(DialogPilototoInstruction*)));
     connect(this,SIGNAL(doDelInstruction(DialogPilototoInstruction*)),
-                main,SLOT(delInstruction(DialogPilototoInstruction *)));
+                dialogPilototo,SLOT(delInstruction(DialogPilototoInstruction *)));
     connect(this,SIGNAL(instructionUpdated()),
-                main,SLOT(instructionUpdated()));
-    connect(this,SIGNAL(selectPOI(DialogPilototoInstruction*,int)),main,SLOT(doSelectPOI(DialogPilototoInstruction*,int)));
+                dialogPilototo,SLOT(instructionUpdated()));
+    connect(this,SIGNAL(selectPOI(DialogPilototoInstruction*,int)),dialogPilototo,SLOT(doSelectPOI(DialogPilototoInstruction*,int)));
 
     mode_sel->addItem(tr("Cap constant (1)"));
     mode_sel->addItem(tr("Angle du vent (2)"));
@@ -705,6 +728,7 @@ DialogPilototoInstruction::DialogPilototoInstruction(QWidget * main,QWidget * pa
 
 
     updateHasChanged(true); /*instruction is not saved when created*/
+
     initVal();
 }
 
@@ -960,6 +984,14 @@ void DialogPilototoInstruction::updateText(bool updateAll)
             break;
     }
     final_txt=modeTxt+" = "+param;
+
+    /* trying to find existing POI */
+    if(mode==2 || mode==3 || mode==4) {
+        POI * poi=dialogPilototo->get_parent()->get_POIatPos(lat_scr,lon_scr);
+        if(poi)
+            final_txt+=" => " + poi->getName();
+    }
+
     if(updateAll)
     {
         instructionText->setMinimumWidth( fmt.width(param_txt)+20 );

@@ -36,16 +36,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogChooseMultipleBarrierSet.h"
 #include "BarrierSet.h"
 #include "Projection.h"
-
+#include <QGestureEvent>
+#ifndef QT_V5
+#include <QTapAndHoldGesture>
+#endif
 boat::boat(QString      pseudo, bool activated,
            Projection * proj,MainWindow * main,myCentralWidget * parent):
-   QGraphicsWidget(),
    boatType (BOAT_NOBOAT),
    prevVac (0),
    nextVac (0),
    minSpeedForEngine (0),
    speedWithEngine (4)
 {
+    this->setParent(parent);
     this->mainWindow=main;
     this->parent=parent;
 
@@ -109,14 +112,18 @@ boat::boat(QString      pseudo, bool activated,
     this->country="";
     this->drawFlag=false;
     this->flag=QImage();
+    flagBad=false;
     updateBoatData();
     this->activated=activated;
     hide();
     this->WPLine->setParent(this);
+    QPen penLine2(QColor(Qt::black),1,Qt::DotLine);
+    penLine2.setWidthF(1.2);
+    WPLine->setLinePen(penLine2);
     estimeTimer->stop();
     estimeLine->slot_showMe();
     estimeLine->setHidden(false);
-    WPLine->hide();
+    WPLine->hideSegment();
     this->stopAndGo="0";
 
     /*if(activated)
@@ -132,6 +139,14 @@ boat::boat(QString      pseudo, bool activated,
 
 
     connect(this,SIGNAL(releasePolar(QString)),main,SLOT(releasePolar(QString)));
+#ifdef __ANDROID__
+    if(Settings::getSetting(enable_Gesture).toString()=="1")
+    {
+        this->setAcceptTouchEvents(true);
+        this->grabGesture(Qt::TapAndHoldGesture);
+    }
+#endif
+    connect(parent,SIGNAL(shTrace(bool)),this,SLOT(slot_shTrace(bool)));
 }
 
 boat::~boat()
@@ -159,6 +174,7 @@ boat::~boat()
 void boat::createPopUpMenu(void)
 {
     popup = new QMenu(parent);
+    Util::setFontDialog(popup);
     connect(this->popup,SIGNAL(aboutToShow()),parent,SLOT(slot_resetGestures()));
     connect(this->popup,SIGNAL(aboutToHide()),parent,SLOT(slot_resetGestures()));
 
@@ -194,19 +210,19 @@ void boat::createPopUpMenu(void)
 
 void boat::slot_paramChanged()
 {
-    myColor = QColor(Settings::getSetting("qtBoat_color",QColor(Qt::blue).name()).toString());
-    selColor = QColor(Settings::getSetting("qtBoat_sel_color",QColor(Qt::red).name()).toString());
-    estime_type=Settings::getSetting("estimeType",0).toInt();
+    myColor = QColor(Settings::getSetting(qtBoatColor).toString());
+    selColor = QColor(Settings::getSetting(qtBoatSelColor).toString());
+    estime_type=Settings::getSetting(estimeType).toInt();
     switch(estime_type)
     {
         case 0: /* time */
-            estime_param = Settings::getSetting("estimeTime",60).toInt();
+            estime_param = Settings::getSetting(estimeTime).toInt();
             break;
         case 1: /* nb vac */
-            estime_param = Settings::getSetting("estimeVac",10).toInt();
+            estime_param = Settings::getSetting(estimeVac).toInt();
             break;
         default: /* dist */
-            estime_param = Settings::getSetting("estimeLen",100).toInt();
+            estime_param = Settings::getSetting(estimeLen).toInt();
             break;
     }
     this->updateBoatString();
@@ -229,9 +245,12 @@ void boat::slot_selectBoat()
         return;
     }
     selected = true;
-    trace_drawing->show();
-    WPLine->show();
+    if(Settings::getSetting(hideTrace).toInt()==0)
+        trace_drawing->setHidden(false);
+    else
+        trace_drawing->setHidden(true);
     drawEstime();
+    updatePosition(false);
     if(boatType==BOAT_REAL) return;
     updateTraceColor();
     cleanBarrierList();
@@ -241,7 +260,7 @@ void boat::slot_selectBoat()
 void boat::unSelectBoat(bool needUpdate)
 {
     selected = false;
-    WPLine->hide();
+    WPLine->hideSegment();
     if(needUpdate)
     {
         drawEstime();
@@ -291,7 +310,7 @@ void boat::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
     pnt->setFont(QApplication::font());
     if(!labelHidden)
     {
-        if(Settings::getSetting("showFlag",0,"showHideItem").toInt()==1 && this->get_boatType()==BOAT_VLM)
+        if(Settings::getSetting(showFlag).toInt()==1 && this->get_boatType()==BOAT_VLM && !flagBad)
         {
             if(flag.isNull())
             {
@@ -301,8 +320,10 @@ void boat::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
                     drawFlag=true;
                     prepareGeometryChange();
                 }
-                else
+                else { // can't load flag => get it
+                    ((boatVLM*)(this))->get_flag();
                     drawFlag=false;
+                }
             }
             else
             {
@@ -376,12 +397,18 @@ void boat::updateTraceColor(void)
         trace_drawing->setPointMode(myColor);
     }
     trace_drawing->setNbVacPerHour(3600/getVacLen());
-    trace_drawing->slot_showMe();
+    if(Settings::getSetting(hideTrace).toInt()==0)
+    {
+        trace_drawing->slot_showMe();
+        trace_drawing->setHidden(false);
+    }
+    else
+        trace_drawing->setHidden(true);
 }
 
 void boat::drawEstime(void)
 {
-    bool getStartEstimeSpeedFromGrib = Settings::getSetting("startSpeedEstime", 1).toInt()==1;
+    bool getStartEstimeSpeedFromGrib = Settings::getSetting(startSpeedEstime).toInt()==1;
     DataManager * dataManager = parent->get_dataManager();
     if( getStartEstimeSpeedFromGrib && dataManager && dataManager->isOk() && this->getPolarData())
     {
@@ -414,7 +441,7 @@ void boat::drawEstime(void)
             double cap=getHeading();
             if(current_speed>0)
             {
-                QPointF p=Util::calculateSumVect(cap,newSpeed,Util::A360(current_angle+180.0),current_speed);
+                QPointF p=Util::calculateSumVect(cap,newSpeed,AngleUtil::A360(current_angle+180.0),current_speed);
                 newSpeed=p.x(); //in this case newSpeed is SOG
                 cap=p.y(); //in this case cap is COG
             }
@@ -429,15 +456,12 @@ void boat::drawEstime(double myHeading, double mySpeed)
 {
 
     estimeLine->deleteAll();
-    WPLine->hideSegment();
     /*should we draw something?*/
     if(isUpdating() || !getStatus())
         return;
     estimeLine->setHidden(false);
-    QPen penLine1(QColor(Settings::getSetting("estimeLineColor", QColor(Qt::darkMagenta)).value<QColor>()),1,Qt::SolidLine);
-    penLine1.setWidthF(Settings::getSetting("estimeLineWidth", 1.6).toDouble());
-    QPen penLine2(QColor(Qt::black),1,Qt::DotLine);
-    penLine2.setWidthF(1.2);
+    QPen penLine1(QColor(Settings::getSetting(estimeLineColor).value<QColor>()),1,Qt::SolidLine);
+    penLine1.setWidthF(Settings::getSetting(estimeLineWidth).toDouble());
 
     /* draw estime */
     if(getIsSelected() || getForceEstime())
@@ -468,7 +492,7 @@ void boat::drawEstime(double myHeading, double mySpeed)
         }
 
 
-        Util::getCoordFromDistanceAngle(lat,lon,estime,myHeading,&tmp_lat,&tmp_lon);
+        Util::getCoordFromDistanceLoxo(lat,lon,estime,myHeading,&tmp_lat,&tmp_lon);
         time_t estime_time=0;
         DataManager * dataManager=parent->get_dataManager();
         if(mySpeed>0.001 && dataManager && dataManager->isOk())
@@ -525,12 +549,12 @@ void boat::drawEstime(double myHeading, double mySpeed)
         estimeLine->slot_showMe();
         //estimeLine->initSegment(i1,j1,i2,j2);
         /* draw ortho to wp */
-        if(WP.x() != 0 && WP.y() != 0)
-        {
-            WPLine->setLinePen(penLine2);
-            proj->map2screenDouble(WP.x(),WP.y(),&I2,&J2);
-            WPLine->initSegment(I1,J1,I2,J2);
-        }
+//        if(WP.x() != 0 && WP.y() != 0)
+//        {
+//            WPLine->setLinePen(penLine2);
+//            qWarning()<<"iniSegment(2)";
+//            WPLine->initSegment(lon,lat,WP.x(),WP.y());
+//        }
         this->updateHint();
     }
 }
@@ -586,7 +610,9 @@ void boat::slotCompassLine()
 QPainterPath boat::shape() const
 {
     QPainterPath path;
-    path.addRect(0,0,width,height);
+    QRect R(0,0,width*4,height*4);
+    R.moveCenter(QPoint(width/2,height/2));
+    path.addRect(R);
     return path;
 }
 
@@ -613,7 +639,7 @@ void boat::updateBoatData()
     }
     updateBoatString();
     reloadPolar();
-    updatePosition();
+    updatePosition(false);
     updateHint();
 }
 void boat::drawOnMagnifier(Projection * mProj, QPainter * pnt)
@@ -628,7 +654,7 @@ void boat::drawOnMagnifier(Projection * mProj, QPainter * pnt)
     pnt->setFont(QApplication::font());
     if(!labelHidden)
     {
-        if(Settings::getSetting("showFlag",0,"showHideItem").toInt()==1 && this->get_boatType()==BOAT_VLM)
+        if(Settings::getSetting(showFlag).toInt()==1 && this->get_boatType()==BOAT_VLM)
         {
             if(flag.isNull())
             {
@@ -698,7 +724,7 @@ void boat::drawOnMagnifier(Projection * mProj, QPainter * pnt)
     //drawEstime();
 }
 
-void boat::updatePosition(void)
+void boat::updatePosition(const bool &fromZoom)
 {
     double I1,J1;
     proj->map2screenDouble(lon,lat,&I1,&J1);
@@ -706,12 +732,18 @@ void boat::updatePosition(void)
     boat_i=qRound(I1)-3;
     boat_j=qRound(J1)-(height/2);
     setPos(boat_i, boat_j);
-    drawEstime();
-    if(selected && WP.x() != 0 && WP.y() != 0)
+    //qWarning()<<"updatePosition with"<<fromZoom<<selected<<WP.x()<<WP.y();
+    if(!fromZoom)
     {
-        double I2,J2;
-        proj->map2screenDouble(WP.x(),WP.y(),&I2,&J2);
-        WPLine->initSegment(I1,J1,I2,J2);
+        drawEstime();
+        if(selected && WP.x() != 0 && WP.y() != 0)
+        {
+            WPLine->showSegment();
+            //qWarning()<<"iniSegment(1)";
+            WPLine->initSegment(lon,lat,WP.x(),WP.y());
+        }
+        else
+            WPLine->hideSegment();
     }
 }
 
@@ -735,7 +767,7 @@ void boat::setWP(QPointF ,double ) {
 void boat::slot_projectionUpdated()
 {
     if(activated)
-        updatePosition();
+        updatePosition(true);
 }
 
 void boat::setStatus(bool activated)
@@ -757,14 +789,17 @@ void boat::setStatus(bool activated)
 
      if(!activated)
      {
-        WPLine->hide();
+        WPLine->hideSegment();
         estimeTimer->stop();
         estimeLine->setHidden(true);;
         if(boatType==BOAT_REAL)
             this->stopRead();
      }
      else
+     {
          estimeLine->setHidden(false);
+         WPLine->showSegment();
+     }
 }
 
 void boat::playerDeActivated(void)
@@ -774,8 +809,8 @@ void boat::playerDeActivated(void)
         this->unSelectBoat(false);
     this->hide();
     setVisible(false);
-    trace_drawing->hide();
-    WPLine->hide();
+    trace_drawing->setHidden(true);
+    WPLine->hideSegment();
     estimeTimer->stop();
     estimeLine->setHidden(true);;
     if(boatType==BOAT_REAL)
@@ -950,11 +985,15 @@ bool boat::cross(QLineF line) {
 //    }
 //}
 
-void boat::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
+void boat::contextMenuEvent(QGraphicsSceneContextMenuEvent * )
+{
+    this->showContextualMenu(QCursor::pos().x(),QCursor::pos().y());
+}
+void boat::showContextualMenu(const int &xPos, const int &yPos)
 {
     bool onlyLineOff = false;
 
-    switch(parent->getCompassMode(e->scenePos().x(),e->scenePos().y()))
+    switch(parent->getCompassMode(this->x(),this->y()))
     {
         case 0:
             /* not showing menu line, default text*/
@@ -989,13 +1028,35 @@ void boat::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
         ac_select->setEnabled(!mainWindow->get_selPOI_instruction());
         ac_estime->setEnabled(!selected);
     }
-
-
-
-    popup->exec(QCursor::pos());
+    popup->exec(QPoint(xPos,yPos));
+}
+bool boat::event(QEvent *event)
+{
+    if (event->type() == QEvent::Gesture)
+    {
+        QGestureEvent * gestureEvent=static_cast<QGestureEvent*>(event);
+        if (QGesture *pg=gestureEvent->gesture(Qt::TapAndHoldGesture))
+        {
+            qWarning()<<"TapAndHoldGesture detected in boat";
+            QTapAndHoldGesture *p=static_cast<QTapAndHoldGesture*>(pg);
+            event->accept();
+            if(p->state()==Qt::GestureFinished)
+            {
+                this->showContextualMenu(p->position().x(),p->position().y());
+                return true;
+            }
+        }
+    }
+    return QGraphicsWidget::event(event);
 }
 QList<vlmLine*> boat::getGates()
 {
     QList<vlmLine*> empty;
     return empty;
+}
+void boat::slot_shTrace(const bool &b)
+{
+    this->trace_drawing->setHidden(b);
+    if(!b)
+        trace_drawing->slot_showMe();
 }

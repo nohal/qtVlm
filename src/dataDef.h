@@ -28,9 +28,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QMap>
 
 //#define __QTVLM_WITH_TEST
-
+//#define __QTVLM_SHIFT_INC_MOD
+#ifndef QTVLM_PLUGIN
 extern QMap<QString,QString> appFolder;
-
+#endif
 /* usefull template to store pointer in userData field of widgets */
 #include <QVariant>
 template <class T> class VPtr
@@ -124,6 +125,7 @@ FCT_GET_CST(TYPE,VARNAME)
 #define VLM_REQUEST_FLEET   9
 #define VLM_REQUEST_POLAR 10
 #define VLM_REQUEST_SENDPILOT 11
+#define VLM_REQUEST_FLAG 12
 
 /* VLM CMD type */
 #define VLM_PILOT_HEADING     0
@@ -182,6 +184,9 @@ struct boatParam {
     double longitude;
     double latitude;
     QString dnm;
+    double distNextMark;
+    QString nextMark;
+    QString ecartMark;
 };
 Q_DECLARE_TYPEINFO(boatParam,Q_PRIMITIVE_TYPE);
 
@@ -315,6 +320,27 @@ enum {
     DATA_LV_ORDERED_SEQUENCE_DATA,
     DATA_LV_MAX
 };
+
+class Couple {
+
+    public:
+        Couple(void)        { init(DATA_NOTDEF,0);  }
+        Couple(int a,int b) { init(a,b); }
+        int a;
+        int b;
+
+        void init(int a,int b) { this->a=a; this->b=b; }
+
+       // QDataStream & operator<<(QDataStream & stream, const Couple & couple);
+};
+
+inline bool operator<(const Couple &c1, const Couple &c2) {
+    if(c1.a == c2.a)
+        return c1.b < c2.b;
+    else
+        return c1.a < c2.a;
+}
+
 
 #ifndef M_PI
 #define M_E        2.71828182845904523536

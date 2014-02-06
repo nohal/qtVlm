@@ -29,16 +29,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDialog>
 #endif
 #include "ui_dialog_gribDate.h"
-
+#include "class_list.h"
 class DialogGribDate : public QDialog, public Ui::dialog_gribDate_ui
 {
     Q_OBJECT
     public:
-        DialogGribDate(QWidget * parent = 0);
+        DialogGribDate(myCentralWidget * parent);
         void done(int res);
         void showDialog(time_t current,std::set<time_t>  * listGribDates,time_t * result);
 
-    public slots:
+        void slot_screenResize();
+public slots:
         void listChanged(int index);
         void paramChanged(QDateTime date);
 

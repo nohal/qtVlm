@@ -3,11 +3,13 @@
 #include <QMessageBox>
 #include "Util.h"
 #include "settings.h"
-
+#include <QScroller>
 DialogPoiConnect::DialogPoiConnect(POI * poi,myCentralWidget *parent) :
     QDialog(parent)
 {
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     this->poi=poi;
     this->parent=parent;
@@ -18,22 +20,27 @@ DialogPoiConnect::DialogPoiConnect(POI * poi,myCentralWidget *parent) :
     for(int m=0;m<poiList.count();m++)
     {
         POI * p = poiList.at(m);
-        if(p!=poi && p->getRoute()==NULL && (p->getConnectedPoi()==NULL || p->getConnectedPoi()==poi))
+        if(p!=poi && (p->getRoute()==NULL || p->getRoute()==poi->getRoute()) && (p->getConnectedPoi()==NULL || p->getConnectedPoi()==poi))
         {
             this->comboPoi->addItem(p->getName(),m);
             if(p->getConnectedPoi()==poi)
                 this->comboPoi->setCurrentIndex(comboPoi->count()-1);
         }
     }
+    ortho->setChecked(poi->get_drawLineOrtho());
+}
+void DialogPoiConnect::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 
 DialogPoiConnect::~DialogPoiConnect()
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
+    Settings::saveGeometry(this);
 }
 void DialogPoiConnect::done(int result)
 {
+    Settings::saveGeometry(this);
     if(this->checkBox->isChecked())
     {
         if(poi->getConnectedPoi()!=NULL)
@@ -61,6 +68,8 @@ void DialogPoiConnect::done(int result)
         poi->setLineColor(inputLineColor->getLineColor());
         poi->getConnectedPoi()->setLineWidth(inputLineColor->getLineWidth());
         poi->getConnectedPoi()->setLineColor(inputLineColor->getLineColor());
+        poi->set_drawLineOrtho(ortho->isChecked());
+        poi->getConnectedPoi()->set_drawLineOrtho(ortho->isChecked());
     }
     QDialog::done(result);
 }

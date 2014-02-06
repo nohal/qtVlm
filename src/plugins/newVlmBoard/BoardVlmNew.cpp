@@ -23,26 +23,57 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QStyleFactory>
 #include <QGraphicsDropShadowEffect>
 #include <QFile>
+#include <QFileInfo>
 
 #include "BoardVlmNew.h"
 #include "ui_BoardVlmNew.h"
 #include "POI.h"
-#include "DialogWp.h"
-#include "Polar.h"
-#include "settings.h"
+#include "PolarInterface.h"
 #include "vlmLine.h"
-#include "boatVLM.h"
+#include "BoatInterface.h"
 #include "MapDataDrawer.h"
-#include "Util.h"
+#include "settings_def.h"
+#include "AngleUtil.h"
+#include <QTranslator>
+#include <QDebug>
+#include <QStyleFactory>
+#include <QLCDNumber>
 
-BoardVlmNew::BoardVlmNew(MainWindow *main)
-    : QDialog(main)
+BoardVlmNew::BoardVlmNew (QWidget* parent): BoardInterface (parent)
+{
+    translator=NULL;
+}
+
+void BoardVlmNew::initBoard(MainWindowInterface *main)
 
 {
-    this->setParent(main);
-    this->setupUi(this);
-    tryMoving=false;
+    qWarning()<<"start of init board for"<<this->getName();
     this->main=main;
+    connect(main,SIGNAL(drawVacInfo()),this,SLOT(drawVacInfo()));
+    this->setParent(main);
+    if(translator==NULL)
+    {
+        translator=new QTranslator(this);
+        QString lang = main->getSettingApp(appLanguage).toString();
+        if(lang=="none") lang="fr";
+        translator->load( QString("pluginNewBoardVlm_") + lang,"tr");
+        QApplication::installTranslator(translator);
+        qWarning()<<"loading"<<lang<<"in plugin";
+    }
+    //this->setStyle(QStyleFactory::create("Windows"));
+    this->setupUi(this);
+    this->setFontDialog(this);
+    this->windAngle->setMain(main);
+#ifdef __MAC_QTVLM
+    if(main->getSettingApp(fusionStyle).toInt()!=1) /*only if not in fusion mode*/
+    {
+        int offsetX=1;
+        int offsetY=2;
+        dial->move(dial->x()+offsetX,dial->y()+offsetY);
+    }
+#endif
+    windAngle->loadSkin();
+    tryMoving=false;
     setWindowFlags(Qt::FramelessWindowHint|Qt::WindowStaysOnTopHint);
     this->setModal(false);
     this->move(1,qRound((main->height()-this->height())/2.0));
@@ -76,12 +107,9 @@ BoardVlmNew::BoardVlmNew(MainWindow *main)
     connect(this->btn_clearPilototo,SIGNAL(clicked()),this,SLOT(slot_clearPilototo()));
     connect(btn_pilototo,SIGNAL(clicked()),main,SLOT(slotPilototo()));
     connect(btn_clearWP,SIGNAL(clicked()),this,SLOT(slot_clearWP()));
-    connect(main,SIGNAL(selectPOI(bool)),this,SLOT(slot_selectPOI(bool)));
     connect(main,SIGNAL(wpChanged()),this,SLOT(slot_updateBtnWP()));
     connect(main,SIGNAL(paramVLMChanged()),this,SLOT(slot_reloadSkin()));
-    connect(main,SIGNAL(updateLockIcon(QIcon)),this,SLOT(slot_lock()));
-    wpDialog = new DialogWp();
-    connect(wpDialog,SIGNAL(selectPOI()),this,SLOT(slot_selectWP_POI()));
+    connect(main,SIGNAL(updateLockIcon(QString)),this,SLOT(slot_lock()));
     connect(main,SIGNAL(editWP_POI(POI*)),this,SLOT(slot_selectPOI(POI*)));
     connect(tabWidget,SIGNAL(currentChanged(int)),this,SLOT(slot_tabChanged(int)));
     connect(btn_wp,SIGNAL(clicked()),this,SLOT(slot_editWP()));
@@ -115,18 +143,76 @@ BoardVlmNew::BoardVlmNew(MainWindow *main)
     lab_polar->installEventFilter(this);
     lab_polarData->clear();
     QString tabStyle;
+    QPalette palette=main->getOriginalPalette();
+    if(main->getSettingApp(fusionStyle).toInt()==1)
+    {
+    tabWidget->setPalette(palette);
+    }
+    tabWidget->setStyleSheet("");
     tabStyle+="QTabWidget::pane { border: 0; } ";
     tabStyle+="QTabWidget::tab-bar {alignment: left;}";
     tabStyle+="QTabWidget { background: transparent; } ";
-    tabStyle+="QTabBar::tab { font-size: 8.5;border: 0px solid #000000;border-bottom-right-radius: 8px;border-top-right-radius: 8px;padding: 2px;margin-left: 4px;margin-right: 4px;margin-bottom:3px;}";
-    tabStyle+="QTabBar::tab:selected { background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #CC9900, stop: 0.8 #FFE085);margin-left:0;}";
-    tabStyle+="QTabBar::tab:!selected { background: #C2C7CB;margin-right: 4px;}";
+    tabStyle+="QTabBar::tab { font-size: 8.5;color: #000000;border: 0px solid #000000;border-bottom-right-radius: 8px;border-top-right-radius: 8px;padding: 2px;padding-top: 2px;padding-bottom: 2px;margin-left: 4px;margin-right: 4px;margin-bottom:3px;}";
+    tabStyle+="QTabBar::tab:selected { background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #CC9900, stop: 0.8 #FFE085);margin-left:0;;padding: 2px;padding-top: 2px;padding-bottom:2px;}";
+    tabStyle+="QTabBar::tab:!selected { background: #C2C7CB;margin-right: 4px;;padding: 2px;padding-top: 2px;padding-bottom:2px;margin-top:0px;}";
     tabWidget->setStyleSheet(tabStyle);
+    lab_BS->setStyleSheet("QLabel {color: #000000;}");
+    lab_TWS->setStyleSheet("QLabel {color: #000000;}");
+    lab_TWD->setStyleSheet("QLabel {color: #000000;}");
+    if(main->getSettingApp(fusionStyle).toInt()==1)
+    {
+        this->rd_HDG->setPalette(palette);
+        this->rd_ORTHO->setPalette(palette);
+        this->rd_TWA->setPalette(palette);
+        this->rd_VBVMG->setPalette(palette);
+        this->rd_VMG->setPalette(palette);
+        QString myColor1="#818181";
+        QString myColor4="#ffffff"; // white
+        QString myColor6="#090c98"; // blue
+        QString stylerd=""
+                "QRadioButton::indicator:checked, QRadioButton::indicator:unchecked{"
+                    "color: myColor4;"
+                    "background-color: myColor4;"
+                    "border: 2px solid myColor1;"
+                    "border-radius: 6px;}"
+
+                "QRadioButton::indicator:checked{"
+                    "background-color: qradialgradient("
+                        "cx: 0.5, cy: 0.5,"
+                        "fx: 0.5, fy: 0.5,"
+                        "radius: 1.0,"
+                        "stop: 0 myColor6,"
+                        "stop: 0.5 myColor4,"
+                        "stop: 1 myColor1);}"
+
+                "QRadioButton::indicator{"
+                    "border-radius: 6px;}"
+
+                "QRadioButton::indicator:hover{"
+                    "border: 2px solid myColor6;}"
+
+                "QRadioButton::indicator:disabled{"
+                    "border: 1px solid #444;}";
+        stylerd.replace("myColor1",myColor1);
+        stylerd.replace("myColor4",myColor4);
+        stylerd.replace("myColor6",myColor6);
+        this->rd_HDG->setStyleSheet(stylerd);
+        this->rd_ORTHO->setStyleSheet(stylerd);
+        this->rd_TWA->setStyleSheet(stylerd);
+        this->rd_VBVMG->setStyleSheet(stylerd);
+        this->rd_VMG->setStyleSheet(stylerd);
+        palette.setColor(QPalette::Light,QColor(Qt::white));
+        palette.setColor(QPalette::Dark,QColor(Qt::black));
+        this->lcd_BS->setPalette(palette);
+        this->lcd_TWD->setPalette(palette);
+        this->lcd_TWS->setPalette(palette);
+    }
+    //spin_HDG->setStyleSheet("QDoubleSpinBox::up-arrow {background-color: rgb(100, 100, 100);}");
     this->lab_backTab1->installEventFilter(this);
     this->lab_backTab2->installEventFilter(this);
     this->lab_backTab3->installEventFilter(this);
     this->lab_back->installEventFilter(this);
-    if(Settings::getSetting("newBoardShadow",1).toInt()==1)
+    if(main->getSettingApp(newBoard_Shadow).toInt()==1)
     {
         QGraphicsDropShadowEffect *shadow=new QGraphicsDropShadowEffect(this);
         this->setGraphicsEffect(shadow);
@@ -153,33 +239,36 @@ BoardVlmNew::BoardVlmNew(MainWindow *main)
     vibStates.append(-1);
     vibStates.append(0);
     flipBS=false;
-    this->setFontDialog(this);
+    qWarning()<<"end of init board for"<<this->getName();
+}
+QString BoardVlmNew::getName()
+{
+
+    return "Nouveau tableau de bord VLM par Maitai";
 }
 BoardVlmNew::~BoardVlmNew()
 {
-    delete wpDialog;
+    if(translator)
+        QApplication::removeTranslator(translator);
 }
 void BoardVlmNew::setFontDialog(QObject * o)
 {
 
-    QFont myFont(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
     if(o->isWidgetType())
     {
         QWidget * widget=qobject_cast<QWidget*> (o);
+        widget->setPalette(QPalette());
+        widget->setLocale(QLocale::system());
+        widget->setPalette(main->getOriginalPalette());
+        QFont myFont=widget->font();
         if(widget==lab_VBVMG || widget==lab_VMG || widget==lab_HDG || widget==lab_TWA || widget==lab_ORTHO)
             myFont.setPointSizeF(8.0);
         else
             myFont.setPointSizeF(9.0);
-        myFont.setStyle(widget->font().style());
-        myFont.setBold(widget->font().bold());
-        myFont.setItalic(widget->font().italic());
         widget->setFont(myFont);
-        widget->setLocale(QLocale::system());
     }
     foreach(QObject * object,o->children())
-    {
         this->setFontDialog(object); /*recursion*/
-    }
 }
 
 void BoardVlmNew::slot_tabChanged(int tabNb)
@@ -200,7 +289,7 @@ void BoardVlmNew::slot_tabChanged(int tabNb)
 
 void BoardVlmNew::slot_reloadSkin()
 {
-    if(Settings::getSetting("newBoardShadow",1).toInt()==1)
+    if(main->getSettingApp(newBoard_Shadow).toInt()==1)
     {
         QGraphicsDropShadowEffect *shadow=new QGraphicsDropShadowEffect(this);
         this->setGraphicsEffect(shadow);
@@ -208,7 +297,7 @@ void BoardVlmNew::slot_reloadSkin()
     else
         this->setGraphicsEffect(NULL);
     QPixmap skin;
-    QString skinName=Settings::getSetting("defaultSkin",QFileInfo("img/skin_compas.png").absoluteFilePath()).toString();
+    QString skinName=main->getSettingApp(defaultSkin).toString();
     if(!QFile(skinName).exists())
         skinName=QFileInfo("img/skin_compas.png").absoluteFilePath();
     if(myBoat && myBoat->get_useSkin())
@@ -249,17 +338,24 @@ void BoardVlmNew::slot_flipAngle()
 void BoardVlmNew::slot_TWAChanged()
 {
     if(!myBoat) return;
+    double twa=spin_TWA->value();
+    spin_TWA->blockSignals(true);
+    if(twa>180.0)
+        spin_TWA->setValue(twa-360.0);
+    else if(twa<-180.0)
+        spin_TWA->setValue(twa+360.0);
+    spin_TWA->blockSignals(false);
     if(blocking) return;
     blocking=true;
     currentRB=this->lab_TWA;
-    if(myBoat->getPolarData())
+    if(myBoat->getPolarDataInterface())
     {
-        double twa=qAbs(qRound(spin_TWA->value()*10.0));
-        if(twa<qRound(myBoat->getPolarData()->getBvmgUp(myBoat->getWindSpeed())*10.0) ||
-           twa>qRound(myBoat->getPolarData()->getBvmgDown(myBoat->getWindSpeed())*10.0))
+        twa=qAbs(qRound(spin_TWA->value()*10.0));
+        if(twa<qRound(myBoat->getPolarDataInterface()->getBvmgUp(myBoat->getWindSpeed())*10.0) ||
+           twa>qRound(myBoat->getPolarDataInterface()->getBvmgDown(myBoat->getWindSpeed())*10.0))
             spin_TWA->setStyleSheet("QDoubleSpinBox {color: red;} QDoubleSpinBox QWidget {color:black;}");
-        else if(twa==qRound(myBoat->getPolarData()->getBvmgUp(myBoat->getWindSpeed())*10.0) ||
-           twa==qRound(myBoat->getPolarData()->getBvmgDown(myBoat->getWindSpeed())*10.0))
+        else if(twa==qRound(myBoat->getPolarDataInterface()->getBvmgUp(myBoat->getWindSpeed())*10.0) ||
+           twa==qRound(myBoat->getPolarDataInterface()->getBvmgDown(myBoat->getWindSpeed())*10.0))
             spin_TWA->setStyleSheet("QDoubleSpinBox {color: green;} QDoubleSpinBox QWidget {color:black;}");
         else
             spin_TWA->setStyleSheet(spin_HDG->styleSheet());
@@ -268,48 +364,69 @@ void BoardVlmNew::slot_TWAChanged()
     if(heading<0) heading+=360;
     else if(heading>360) heading-=360;
     this->spin_HDG->setValue(heading);
-    this->windAngle->setValues(myBoat->getHeading(),myBoat->getWindDir(),myBoat->getWindSpeed(),myBoat->getWPdir(),myBoat->getClosest().capArrival,heading);
+    double vmg=-1;
+    if(myBoat->getPolarDataInterface())
+    {
+        myBoat->getPolarDataInterface()->bvmgWind((myBoat->getClosest().capArrival-myBoat->getWindDir()),myBoat->getWindSpeed(),&vmg);
+        vmg+=myBoat->getWindDir();
+        while (vmg>=360.0) vmg-=360.0;
+        while (vmg<0.0) vmg+=360.0;
+    }
+    this->windAngle->setValues(myBoat->getHeading(),myBoat->getWindDir(),myBoat->getWindSpeed(),myBoat->getWPdir(),myBoat->getClosest().capArrival,heading,vmg);
     if(!timer->isActive())
         timer->start();
     /* update estime */
     double newSpeed=myBoat->getSpeed();
-    if(myBoat->getPolarData())
-        newSpeed=myBoat->getPolarData()->getSpeed(myBoat->getWindSpeed(),qAbs(spin_TWA->value()));
+    if(myBoat->getPolarDataInterface())
+        newSpeed=myBoat->getPolarDataInterface()->getSpeed(myBoat->getWindSpeed(),qAbs(spin_TWA->value()));
     myBoat->drawEstime(spin_HDG->value(),newSpeed);
     blocking=false;
 }
 void BoardVlmNew::slot_HDGChanged()
 {
     if(!myBoat) return;
+    double heading=spin_HDG->value();
+    spin_HDG->blockSignals(true);
+    if(heading>360)
+        spin_HDG->setValue(heading-360);
+    spin_HDG->blockSignals(false);
     if(blocking) return;
     blocking=true;
     currentRB=this->lab_HDG;
     spin_HDG->blockSignals(true);
     spin_TWA->blockSignals(true);
-    double heading=spin_HDG->value();
-    double angle=Util::A180(heading-myBoat->getWindDir());
+    heading=spin_HDG->value();
+    double angle=AngleUtil::A180(heading-myBoat->getWindDir());
     this->spin_TWA->setValue(angle);
-    if(myBoat->getPolarData())
+    if(myBoat->getPolarDataInterface())
     {
         double twa=qAbs(qRound(spin_TWA->value()*10.0));
-        if(twa<qRound(myBoat->getPolarData()->getBvmgUp(myBoat->getWindSpeed())*10.0) ||
-           twa>qRound(myBoat->getPolarData()->getBvmgDown(myBoat->getWindSpeed())*10.0))
+        if(twa<qRound(myBoat->getPolarDataInterface()->getBvmgUp(myBoat->getWindSpeed())*10.0) ||
+           twa>qRound(myBoat->getPolarDataInterface()->getBvmgDown(myBoat->getWindSpeed())*10.0))
             spin_TWA->setStyleSheet("QDoubleSpinBox {color: red;} QDoubleSpinBox QWidget {color:black;}");
-        else if(twa==qRound(myBoat->getPolarData()->getBvmgUp(myBoat->getWindSpeed())*10.0) ||
-           twa==qRound(myBoat->getPolarData()->getBvmgDown(myBoat->getWindSpeed())*10.0))
+        else if(twa==qRound(myBoat->getPolarDataInterface()->getBvmgUp(myBoat->getWindSpeed())*10.0) ||
+           twa==qRound(myBoat->getPolarDataInterface()->getBvmgDown(myBoat->getWindSpeed())*10.0))
             spin_TWA->setStyleSheet("QDoubleSpinBox {color: green;} QDoubleSpinBox QWidget {color:black;}");
         else
             spin_TWA->setStyleSheet(spin_HDG->styleSheet());
     }
-    this->windAngle->setValues(myBoat->getHeading(),myBoat->getWindDir(),myBoat->getWindSpeed(),myBoat->getWPdir(),myBoat->getClosest().capArrival,heading);
+    double vmg=-1;
+    if(myBoat->getPolarDataInterface())
+    {
+        myBoat->getPolarDataInterface()->bvmgWind((myBoat->getClosest().capArrival-myBoat->getWindDir()),myBoat->getWindSpeed(),&vmg);
+        vmg+=myBoat->getWindDir();
+        while (vmg>=360.0) vmg-=360.0;
+        while (vmg<0.0) vmg+=360.0;
+    }
+    this->windAngle->setValues(myBoat->getHeading(),myBoat->getWindDir(),myBoat->getWindSpeed(),myBoat->getWPdir(),myBoat->getClosest().capArrival,heading,vmg);
     spin_HDG->blockSignals(false);
     spin_TWA->blockSignals(false);
     if(!timer->isActive())
         timer->start();
     /* update estime */
     double newSpeed=myBoat->getSpeed();
-    if(myBoat->getPolarData())
-        newSpeed=myBoat->getPolarData()->getSpeed(myBoat->getWindSpeed(),qAbs(spin_TWA->value()));
+    if(myBoat->getPolarDataInterface())
+        newSpeed=myBoat->getPolarDataInterface()->getSpeed(myBoat->getWindSpeed(),qAbs(spin_TWA->value()));
     myBoat->drawEstime(spin_HDG->value(),newSpeed);
     blocking=false;
 }
@@ -327,7 +444,6 @@ void BoardVlmNew::slot_lock()
     this->rd_VMG->setDisabled(lock);
     this->dial->setDisabled(lock);
     this->btn_angleFlip->setDisabled(lock);
-    wpDialog->setLocked(!lock);
     this->btn_clearPilototo->setDisabled(lock);
     this->btn_clearWP->setDisabled(lock);
 }
@@ -415,32 +531,34 @@ void BoardVlmNew::slot_updateData()
     vibration->stop();
     windAngle->setRotation(0.0);
     nbVib=0;
-    if(!main->getSelectedBoat() || main->getSelectedBoat()->get_boatType()!=BOAT_VLM)
+    if(!main->get_selectedBoatInterface() || main->get_selectedBoatInterface()->get_boatType()!=BOAT_VLM)
     {
         myBoat=NULL;
         return;
     }
-    myBoat=(boatVLM*)main->getSelectedBoat();
+    myBoat=main->get_selectedBoatInterface();
     if(!myBoat) return;
     slot_lock();
     this->blockSignals(true);
     this->blocking=true;
     updateLcds();
     QPointF position=myBoat->getPosition();
-    det_POS->setText(Util::formatLatitude(position.y())+"-"+Util::formatLongitude(position.x()));
+    det_POS->setText(main->formatLatitude(position.y())+"-"+main->formatLongitude(position.x()));
     if(qRound(myBoat->getDnm())<100)
         det_DNM->setText(QString().sprintf("%.2f",myBoat->getDnm())+tr("nm"));
     else
         det_DNM->setText(QString().sprintf("%d",qRound(myBoat->getDnm()))+tr("nm"));
     det_ORT->setText(QString().sprintf("%.2f",myBoat->getOrtho())+tr("deg"));
     det_VMG->setText(QString().sprintf("%.2f",myBoat->getVmg())+tr("kts"));
-    det_ANGLE->setText(QString().sprintf("%.2f",myBoat->getWPangle())+tr("deg"));
+    double WPAngle=myBoat->getWPangle();
+    if(WPAngle>180.0) WPAngle-=360.0;
+    det_ANGLE->setText(QString().sprintf("%.2f",WPAngle)+tr("deg"));
     det_TWS->setText(QString().sprintf("%.2f",myBoat->getWindSpeed())+tr("kts"));
     det_TWD->setText(QString().sprintf("%.2f",myBoat->getWindDir())+tr("deg"));
-    if(myBoat->getPolarData())
+    if(myBoat->getPolarDataInterface())
     {
-        det_UPWind->setText(QString().sprintf("%.2f",myBoat->getPolarData()->getBvmgUp(myBoat->getWindSpeed()))+tr("deg"));
-        det_DwWind->setText(QString().sprintf("%.2f",myBoat->getPolarData()->getBvmgDown(myBoat->getWindSpeed()))+tr("deg"));
+        det_UPWind->setText(QString().sprintf("%.2f",myBoat->getPolarDataInterface()->getBvmgUp(myBoat->getWindSpeed()))+tr("deg"));
+        det_DwWind->setText(QString().sprintf("%.2f",myBoat->getPolarDataInterface()->getBvmgDown(myBoat->getWindSpeed()))+tr("deg"));
     }
     if(qRound(myBoat->getLoch())<100)
         det_LOCH->setText(QString().sprintf("%.2f",myBoat->getLoch())+tr("nm"));
@@ -449,31 +567,40 @@ void BoardVlmNew::slot_updateData()
     this->det_BS->setText(QString().sprintf("%.2f",myBoat->getSpeed())+tr("kts"));
     this->det_HDG->setText(QString().sprintf("%.2f",myBoat->getHeading())+tr("deg"));
     this->det_AVG->setText(QString().sprintf("%.2f",myBoat->getAvg())+tr("kts"));
-    this->lab_RANK->setText(myBoat->getName()+" "+myBoat->getScore()+" ("+QString().sprintf("%d",myBoat->getRank())+")");
+    this->lab_RANK->setText(myBoat->getBoatName()+" "+myBoat->getScore()+" ("+QString().sprintf("%d",myBoat->getRank())+")");
     this->det_boatBox->setTitle(lab_RANK->text());
     this->det_raceBox->setTitle(myBoat->getRaceName());
     this->det_GATE_ORT->setText(QString().sprintf("%.2f",myBoat->getClosest().capArrival)+tr("deg"));
+    double vmg=0;
+    if(myBoat->getPolarDataInterface())
+    {
+        myBoat->getPolarDataInterface()->bvmgWind((myBoat->getClosest().capArrival-myBoat->getWindDir()),myBoat->getWindSpeed(),&vmg);
+        vmg+=myBoat->getWindDir();
+        while (vmg>=360.0) vmg-=360.0;
+        while (vmg<0.0) vmg+=360.0;
+    }
+    this->det_GATE_VMG->setText(QString().sprintf("%.2f",vmg)+tr("deg"));
     if(qRound(myBoat->getClosest().distArrival)<100)
         this->det_GATE_DIST->setText(QString().sprintf("%.2f",myBoat->getClosest().distArrival)+tr("nm"));
     else
         this->det_GATE_DIST->setText(QString().sprintf("%d",qRound(myBoat->getClosest().distArrival))+tr("nm"));
     if(!myBoat->getGates().isEmpty())
-        this->det_GATE->setText(myBoat->getGates().at(myBoat->getNWP()-1)->getDesc());
+        this->det_GATE->setText("->"+myBoat->getGates().at(myBoat->getNWP()-1)->getDesc());
     this->spin_HDG->setValue(myBoat->getHeading());
     this->spin_TWA->setValue(computeAngle());
-    if(myBoat->getPolarData())
+    if(myBoat->getPolarDataInterface())
     {
         double twa=qAbs(qRound(spin_TWA->value()*10.0));
-        if(twa<qRound(myBoat->getPolarData()->getBvmgUp(myBoat->getWindSpeed())*10.0) ||
-           twa>qRound(myBoat->getPolarData()->getBvmgDown(myBoat->getWindSpeed())*10.0))
+        if(twa<qRound(myBoat->getPolarDataInterface()->getBvmgUp(myBoat->getWindSpeed())*10.0) ||
+           twa>qRound(myBoat->getPolarDataInterface()->getBvmgDown(myBoat->getWindSpeed())*10.0))
             spin_TWA->setStyleSheet("QDoubleSpinBox {color: red;} QDoubleSpinBox QWidget {color:black;}");
-        else if(twa==qRound(myBoat->getPolarData()->getBvmgUp(myBoat->getWindSpeed())*10.0) ||
-           twa==qRound(myBoat->getPolarData()->getBvmgDown(myBoat->getWindSpeed())*10.0))
+        else if(twa==qRound(myBoat->getPolarDataInterface()->getBvmgUp(myBoat->getWindSpeed())*10.0) ||
+           twa==qRound(myBoat->getPolarDataInterface()->getBvmgDown(myBoat->getWindSpeed())*10.0))
             spin_TWA->setStyleSheet("QDoubleSpinBox {color: green;} QDoubleSpinBox QWidget {color:black;}");
         else
             spin_TWA->setStyleSheet(spin_HDG->styleSheet());
-        QString tipTWA=tr("Meilleurs angles au pres/portant:")+" "+QString().sprintf("%.2f",myBoat->getPolarData()->getBvmgUp(myBoat->getWindSpeed()))+tr("deg")+"/"
-                +QString().sprintf("%.2f",myBoat->getPolarData()->getBvmgDown(myBoat->getWindSpeed()))+tr("deg");
+        QString tipTWA=tr("Meilleurs angles au pres/portant:")+" "+QString().sprintf("%.2f",myBoat->getPolarDataInterface()->getBvmgUp(myBoat->getWindSpeed()))+tr("deg")+"/"
+                +QString().sprintf("%.2f",myBoat->getPolarDataInterface()->getBvmgDown(myBoat->getWindSpeed()))+tr("deg");
         spin_TWA->setToolTip("<p style='white-space:pre'>"+tipTWA+"</p>");
     }
     this->lab_TWA->setStyleSheet(defaultStyleSheet.toUtf8());
@@ -509,13 +636,21 @@ void BoardVlmNew::slot_updateData()
         this->lab_VBVMG->setStyleSheet(QString::fromUtf8("background-color: rgb(28, 205, 28);"));
         break;
     }
-    this->windAngle->setValues(myBoat->getHeading(),myBoat->getWindDir(),myBoat->getWindSpeed(),myBoat->getWPdir(),myBoat->getClosest().capArrival,-1);
+    vmg=-1;
+    if(myBoat->getPolarDataInterface())
+    {
+        myBoat->getPolarDataInterface()->bvmgWind((myBoat->getClosest().capArrival-myBoat->getWindDir()),myBoat->getWindSpeed(),&vmg);
+        vmg+=myBoat->getWindDir();
+        while (vmg>=360.0) vmg-=360.0;
+        while (vmg<0.0) vmg+=360.0;
+    }
+    this->windAngle->setValues(myBoat->getHeading(),myBoat->getWindDir(),myBoat->getWindSpeed(),myBoat->getWPdir(),myBoat->getClosest().capArrival,-1,vmg);
     update_btnPilototo();
     slot_updateBtnWP();
     this->blockSignals(false);
     spin_PolarTWS->setValue(myBoat->getWindSpeed());
     this->blocking=false;
-    set_style(this->btn_sync,QColor(255,255,127));
+    set_style(this->btn_sync,QColor(20,255,20));
     if(!vibration->isActive())
         vibration->start(80);
 }
@@ -535,7 +670,7 @@ void BoardVlmNew::slot_drawPolar()
 {
     lab_polarData->clear();
     polarImg.fill(Qt::transparent);
-    Polar * polar=myBoat->getPolarData();
+    PolarInterface * polar=myBoat->getPolarDataInterface();
     if(!polar)
     {
         lab_polarName->setText(tr("pas de polaire chargee"));
@@ -544,11 +679,13 @@ void BoardVlmNew::slot_drawPolar()
     }
     lab_polarName->setText(polar->getName());
     polarPnt.begin(&polarImg);
-    QFont myFont(Settings::getSetting("defaultFontName",QApplication::font().family()).toString());
+    QFont myFont(main->getSettingApp(defaultFontName).toString());
     myFont.setPointSizeF(8.0);
     polarPnt.setFont(myFont);
     polarPnt.setRenderHint(QPainter::Antialiasing);
     double maxSpeed=-1;
+    double maxSpeedKts=maxSpeed;
+    double maxSpeedTwa=0;
 //    if(this->allSpeed->isChecked())
 //        maxSpeed=polar->getMaxSpeed();
     QPen pen;
@@ -589,8 +726,13 @@ void BoardVlmNew::slot_drawPolar()
         {
             double speed=polar->getSpeed(ws,angle,false);
             polarValues.append(speed);
-            if(speed>maxSpeed /*&& !this->allSpeed->isChecked()*/) maxSpeed=speed;
+            if(speed>maxSpeed )
+            {
+                maxSpeed=speed;
+                maxSpeedTwa=angle;
+            }
         }
+        maxSpeedKts=maxSpeed;
         maxSpeed=ceil(maxSpeed);
         for (int angle=0;angle<=180;++angle)
         {
@@ -648,7 +790,7 @@ void BoardVlmNew::slot_drawPolar()
         s=s.sprintf("%d",angle);
         polarPnt.drawText(line.p2(),s);
     }
-    pen.setColor(MapDataDrawer::getWindColorStatic(myBoat->getWindSpeed(),Settings::getSetting("colorMapSmooth", true).toBool()));
+    pen.setColor(main->getWindColorStatic(myBoat->getWindSpeed(),main->getSettingApp(colorMapSmoothSet).toBool()));
     pen.setWidthF(2.0);
     polarPnt.setPen(pen);
     QLineF line(center,QPointF(polarImg.width(),polarImg.height()/2.0));
@@ -657,10 +799,20 @@ void BoardVlmNew::slot_drawPolar()
     polarPnt.drawLine(line);
     polarPnt.end();
     this->lab_polar->setPixmap(polarImg);
+    double Pbs,Ptwa,Ptws;
+    polar->getMaxSpeedData(&Pbs,&Ptws,&Ptwa);
+    stringMaxSpeed=tr("Max Speed:")+QString().sprintf("<br>%.2f ",maxSpeedKts)+tr("kts")+
+                      " "+tr("at")+"<br>"+QString().sprintf("%.2f",maxSpeedTwa)+tr("deg")+"<br><br>"+
+                   tr("Absolute<br>max speed:")+"<br>"+
+                   tr("TWS:")+"<br>"+QString().sprintf("%.2f ",Ptws)+tr("kts")+"<br>"+
+                   tr("TWA:")+"<br>"+QString().sprintf("%.2f",Ptwa)+tr("deg")+"<br>"+
+                   tr("BS:")+"<br>"+QString().sprintf("%.2f ",Pbs)+tr("kts");
+    lab_polarData->setText(stringMaxSpeed);
 }
 void BoardVlmNew::slot_outDatedVlmData()
 {
-    set_style(this->btn_sync,QColor(255,191,21));
+    if (!(btn_sync->styleSheet()).contains(QColor(255, 0, 0).name())) //if red stays red
+        set_style(this->btn_sync,QColor(255,191,21));
 }
 void BoardVlmNew::updateLcds()
 {
@@ -674,11 +826,17 @@ void BoardVlmNew::updateLcds()
     s.sprintf("%.2f",(double)qRound(myBoat->getWindDir()*100.0)/100.0);
     lcd_TWD->setDigitCount(s.count());
     this->lcd_TWD->display(s);
-    QColor color=MapDataDrawer::getWindColorStatic(myBoat->getWindSpeed(),Settings::getSetting("colorMapSmooth", true).toBool());
+    QColor color=main->getWindColorStatic(myBoat->getWindSpeed(),main->getSettingApp(colorMapSmoothSet).toBool());
     this->lcd_TWS->setStyleSheet((QString().sprintf("background-color: rgb(%d, %d, %d);",color.red(),color.green(),color.blue())));
     color=Qt::white;
     this->lcd_TWD->setStyleSheet((QString().sprintf("background-color: rgba(%d, %d, %d,%d);",color.red(),color.green(),color.blue(),180)));
     this->lcd_BS->setStyleSheet((QString().sprintf("background-color: rgba(%d, %d, %d, %d);",color.red(),color.green(),color.blue(),180)));
+    QPalette palette=main->getOriginalPalette();
+    palette.setColor(QPalette::Light,QColor(Qt::white));
+    palette.setColor(QPalette::Dark,QColor(Qt::black));
+    this->lcd_BS->setPalette(palette);
+    this->lcd_TWS->setPalette(palette);
+    this->lcd_TWD->setPalette(palette);
 }
 void BoardVlmNew::slot_timerElapsed()
 {
@@ -690,9 +848,9 @@ void BoardVlmNew::slot_timerElapsed()
     flipBS=!flipBS;
     double speed=myBoat->getSpeed();
     QColor color=Qt::white;
-    if(myBoat && flipBS && myBoat->getPolarData())
+    if(myBoat && flipBS && myBoat->getPolarDataInterface())
     {
-        speed=myBoat->getPolarData()->getSpeed(myBoat->getWindSpeed(),qAbs(spin_TWA->value()));
+        speed=myBoat->getPolarDataInterface()->getSpeed(myBoat->getWindSpeed(),qAbs(spin_TWA->value()));
         color=Qt::green;
         color=color.lighter();
     }
@@ -701,6 +859,10 @@ void BoardVlmNew::slot_timerElapsed()
     lcd_BS->setDigitCount(s.count());
     this->lcd_BS->display(s);
     this->lcd_BS->setStyleSheet((QString().sprintf("background-color: rgba(%d, %d, %d, %d);",color.red(),color.green(),color.blue(),180)));
+    QPalette palette=main->getOriginalPalette();
+    palette.setColor(QPalette::Light,QColor(Qt::white));
+    palette.setColor(QPalette::Dark,QColor(Qt::black));
+    this->lcd_BS->setPalette(palette);
 }
 void BoardVlmNew::timerStop()
 {
@@ -793,7 +955,7 @@ void BoardVlmNew::slot_editWP()
     if(main->get_selPOI_instruction())
         main->slot_POIselected(NULL);
     else
-        wpDialog->show_WPdialog(myBoat);
+        main->manageWPDialog(myBoat,this);
 }
 
 void BoardVlmNew::slot_updateBtnWP(void)
@@ -817,14 +979,14 @@ void BoardVlmNew::slot_updateBtnWP(void)
         if(WPLat==0)
             wpPos+="0 N";
         else
-            wpPos+=Util::pos2String(TYPE_LAT,WPLat);
+            wpPos+=main->pos2String(TYPE_LAT,WPLat);
 
         wpPos+=", ";
 
         if(WPLon==0)
             wpPos+="0 E";
         else
-            wpPos+=Util::pos2String(TYPE_LON,WPLon);
+            wpPos+=main->pos2String(TYPE_LON,WPLon);
 
         if(WPHd!=-1)
         {
@@ -883,14 +1045,14 @@ void BoardVlmNew::slot_updateBtnWP(void)
 //        if(WPLat==0)
 //            str+="0 N";
 //        else
-//            str+=Util::pos2String(TYPE_LAT,WPLat);
+//            str+=main->pos2String(TYPE_LAT,WPLat);
 
 //        str+=", ";
 
 //        if(WPLon==0)
 //            str+="0 E";
 //        else
-//            str+=Util::pos2String(TYPE_LON,WPLon);
+//            str+=main->pos2String(TYPE_LON,WPLon);
 
 //        if(WPHd!=-1)
 //        {
@@ -909,7 +1071,6 @@ void BoardVlmNew::slot_clearWP()
 }
 void BoardVlmNew::slot_selectPOI(bool doSelect)
 {
-    //qWarning()<<"inside slot_selectPOI with"<<doSelect;
     if(doSelect)
     {
         btn_pilototo->setText(tr("Annuler"));
@@ -922,25 +1083,19 @@ void BoardVlmNew::slot_selectPOI(bool doSelect)
         update_btnPilototo();
         this->set_enabled(true);
     }
-    //qWarning()<<"exit slot_selectPOI with"<<doSelect;
 }
-void BoardVlmNew::slot_selectPOI(POI * poi)
+void BoardVlmNew::slot_selectPOI(POI *)
 {
-    //qWarning()<<"inside slot_selectPOI";
     this->set_enabled(true);
     slot_updateBtnWP();
-    wpDialog->show_WPdialog(poi, myBoat);
-    //qWarning()<<"exit slot_selectPOI";
 }
 void BoardVlmNew::slot_selectWP_POI()
 {
-    //qWarning()<<"inside slot_selectWP_POI";
     btn_wp->setText(tr("Annuler"));
     set_style(btn_wp,QColor(151,179,210));/*blue*/
     this->set_enabled(false);
     btn_wp->setEnabled(true);
     main->slotSelectWP_POI();
-    //qWarning()<<"exit slot_selectWP_POI";
 }
 void BoardVlmNew::set_enabled(const bool &b)
 {
@@ -966,7 +1121,7 @@ bool BoardVlmNew::eventFilter(QObject *obj, QEvent *event)
         if(event->type()==QEvent::MouseButtonRelease)
         {
             lab_polar->setPixmap(polarImg);
-            lab_polarData->clear();
+            lab_polarData->setText(stringMaxSpeed);
             return true;
         }
         if(event->type()!=QEvent::MouseMove || polarLine.isEmpty())
@@ -1047,17 +1202,28 @@ bool BoardVlmNew::eventFilter(QObject *obj, QEvent *event)
     if(event->type()==QEvent::KeyPress)
     {
         QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+#ifdef __QTVLM_SHIFT_INC_MOD
         if(keyEvent->key()==Qt::Key_Shift)
             spinBox->setSingleStep(0.1);
         else if(keyEvent->key()==Qt::Key_Control)
             spinBox->setSingleStep(10.0);
         else if(keyEvent->key()==Qt::Key_Alt)
             spinBox->setSingleStep(0.01);
+#else
+        if(keyEvent->key()==Qt::Key_Control)
+            spinBox->setSingleStep(0.1);
+        else if(keyEvent->key()==Qt::Key_Alt)
+            spinBox->setSingleStep(0.01);
+#endif
     }
     else if (event->type()==QEvent::KeyRelease)
     {
         QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
-        if(keyEvent->key()==Qt::Key_Shift || keyEvent->key()==Qt::Key_Control || keyEvent->key()==Qt::Key_Alt)
+        if(
+#ifdef __QTVLM_SHIFT_INC_MOD
+                keyEvent->key()==Qt::Key_Shift ||
+#endif
+            keyEvent->key()==Qt::Key_Control || keyEvent->key()==Qt::Key_Alt)
             spinBox->setSingleStep(1.0);
     }
     if(event->type()==QEvent::Wheel)
@@ -1066,18 +1232,27 @@ bool BoardVlmNew::eventFilter(QObject *obj, QEvent *event)
           so to get 10 you need to put 1...*/
         QWheelEvent *wheelEvent = static_cast<QWheelEvent*>(event);
         if(wheelEvent->modifiers()==Qt::ControlModifier)
-            spinBox->setSingleStep(1);
+            spinBox->setSingleStep(0.01);
     }
     return false;
 }
 bool BoardVlmNew::confirmChange()
 {
-    if(Settings::getSetting("askConfirmation","0").toInt()==0)
+    if(main->getSettingApp(askConfirmation).toInt()==0)
         return true;
 
     return QMessageBox::question(0,tr("Confirmation a chaque ordre vers VLM"),
                                  tr("Confirmez-vous cet ordre?"),QMessageBox::Yes|QMessageBox::No,
                              QMessageBox::Yes)==QMessageBox::Yes;
+}
+void BoardVlmNew::drawVacInfo(void)
+{
+    if(!myBoat) return;
+    QDateTime lastVac_date;
+    lastVac_date.setTimeSpec(Qt::UTC);
+    lastVac_date.setTime_t(myBoat->getPrevVac());
+    btn_sync->setToolTip(tr("Derniere synchro") + ": " + lastVac_date.toString(tr("dd-MM-yyyy, HH:mm:ss")));
+    btn_sync->setText("Sync: "+QString().setNum(main->get_nxtVac_cnt()) + "s");
 }
 /*********************/
 /* VLM20 windAngle   */
@@ -1086,7 +1261,6 @@ bool BoardVlmNew::confirmChange()
 VlmCompass::VlmCompass(QWidget * parent):QWidget(parent)
 {
     setFixedSize(200,200);
-    loadSkin();
     WPdir = -1;
     newHeading=-1;
     rotation=0;
@@ -1097,7 +1271,7 @@ void VlmCompass::loadSkin(const QString &SkinName)
     QString skinName=SkinName;
     if(skinName.isEmpty())
     {
-        skinName=Settings::getSetting("defaultSkin",QFileInfo("img/skin_compas.png").absoluteFilePath()).toString();
+        skinName=main->getSettingApp(defaultSkin).toString();
         if(!QFile(skinName).exists())
             skinName=QFileInfo("img/skin_compas.png").absoluteFilePath();
     }
@@ -1120,6 +1294,11 @@ void VlmCompass::loadSkin(const QString &SkinName)
     img_arrow_wp.fill(Qt::transparent);
     pnt.begin(&img_arrow_wp);
     pnt.drawPixmap(0,0,skin,300,300,200,200);
+    pnt.end();
+    img_arrow_gateVmg=QPixmap(200,200);
+    img_arrow_gateVmg.fill(Qt::transparent);
+    pnt.begin(&img_arrow_gateVmg);
+    pnt.drawPixmap(0,0,skin,800,300,200,200);
     pnt.end();
     img_arrow_gate=QPixmap(200,200);
     img_arrow_gate.fill(Qt::transparent);
@@ -1184,6 +1363,14 @@ void VlmCompass::draw(QPainter * painter)
     painter->rotate(gateDir);
     painter->drawPixmap(-100,-100,img_arrow_gate);
     painter->restore();
+    if(gateVmg!=-1)
+    {
+        painter->save();
+        painter->translate(100,100);
+        painter->rotate(gateVmg);
+        painter->drawPixmap(-100,-100,img_arrow_gateVmg);
+        painter->restore();
+    }
     QPixmap tempWind=img_arrow_wind;
     QPainter pnt(&tempWind);
     pnt.setRenderHint(QPainter::Antialiasing,true);
@@ -1199,10 +1386,11 @@ void VlmCompass::draw(QPainter * painter)
 
 QColor VlmCompass::windSpeed_toColor()
 {
-    return MapDataDrawer::getWindColorStatic(windSpeed,Settings::getSetting("colorMapSmooth", true).toBool());
+    if(!main) return QColor(Qt::black);
+    return main->getWindColorStatic(windSpeed,main->getSettingApp(colorMapSmoothSet).toBool());
 }
 
-void VlmCompass::setValues(const double &heading, const double &windDir, const double &windSpeed, const double &WPdir, const double &gateDir, const double &newHeading)
+void VlmCompass::setValues(const double &heading, const double &windDir, const double &windSpeed, const double &WPdir, const double &gateDir, const double &newHeading, const double &newGateVmg)
 {
     //qWarning() << "windAngle set: heading=" << heading << " windDir=" << windDir << " windSpeed=" << windSpeed << " WPdir=" << WPdir << " " << newHeading;
     this->heading=heading;
@@ -1211,5 +1399,6 @@ void VlmCompass::setValues(const double &heading, const double &windDir, const d
     this->WPdir=WPdir;
     this->newHeading=newHeading;
     this->gateDir=gateDir;
+    this->gateVmg=newGateVmg;
     update();
 }

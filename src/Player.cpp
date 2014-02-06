@@ -106,7 +106,7 @@ void Player::doRequest(int requestCmd)
     {
         if(hasRequest() )
         {
-            qWarning() << "Request already running for player" << login;
+            qWarning() << "[Player] Request already running for player" << login << " (cur=" << getCurrentRequest() << "new=" << requestCmd << ")";
             return;
         }
         else
@@ -132,17 +132,12 @@ void Player::doRequest(int requestCmd)
     }
 }
 
-void Player::requestFinished (QByteArray res_byte)
-{
-    QJson::Parser parser;
-    bool ok;
+void Player::requestFinished (QByteArray res_byte) {
 
     //qWarning() << "Res=" << res_byte;
 
-    QVariantMap result = parser.parse (res_byte, &ok).toMap();
-    if (!ok) {
-        qWarning() << "Error parsing json data " << res_byte;
-        qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
+    QVariantMap result;
+    if (!inetClient::JSON_to_map(res_byte,&result)) {
         updating=false;
         emit playerUpdated(false,this);
         return;
@@ -228,10 +223,11 @@ void Player::saveBoatsLog()
 {
     if(type==BOAT_REAL && realBoat)
         return;
-    QString fileName="./";
-    fileName.append(QString::number(player_id));
-    fileName.append(appFolder.value("userFiles")+"BoatsLog.dat");
+    QString fileName="";
+    fileName.append(appFolder.value("userFiles"));
+    fileName.append(QString::number(player_id)+"BoatsLog.dat");
     QFile file( fileName );
+    //qWarning() << "appFolder(userFiles) "<< appFolder.value("userFiles") << " Filename: " <<fileName;
     if( !file.open( QIODevice::WriteOnly ) )
       return;
     QDataStream stream( &file );
@@ -244,9 +240,9 @@ void Player::loadBoatsLog()
     if(type==BOAT_REAL && realBoat)
         return;
     boatsLog.clear();
-    QString fileName="./";
-    fileName.append(QString::number(player_id));
-    fileName.append(appFolder.value("userFiles")+"BoatsLog.dat");
+    QString fileName="";
+    fileName.append(appFolder.value("userFiles"));
+    fileName.append(QString::number(player_id)+"BoatsLog.dat");
     QFile file( fileName );
     if( !file.open( QIODevice::ReadOnly ) )
       return;

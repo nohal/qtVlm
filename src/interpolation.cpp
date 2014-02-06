@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <complex>
 #include "dataDef.h"
 #ifdef __QTVLM_WITH_TEST
-extern int nbWarning;
+//extern int nbWarning;
 #endif
 using namespace std;
 typedef complex<double> dcmplx;
@@ -635,6 +635,7 @@ void interpolation::get_wind_info_latlong_hybrid_compute(double longitude,  doub
 
     double ratioLat,ratioLon;
 #ifdef __QTVLM_WITH_TEST
+#if 0
     double ratioLonDebug,ratioLatDebug;
     d_long = longitude; /* is there a +180 drift? see grib */
     if (d_long < 0) {
@@ -647,6 +648,7 @@ void interpolation::get_wind_info_latlong_hybrid_compute(double longitude,  doub
     d_lat = (d_lat-gridOriginLat)/lat_step;
     ratioLatDebug=d_lat - floor(d_lat);
     ratioLonDebug=d_long - floor(d_long);
+#endif
 #endif
     int i0 = (int) floor ((longitude-gridOriginLon)/lon_step);
     int j0 = (int) floor ((latitude-gridOriginLat)/lat_step);
@@ -681,24 +683,24 @@ void interpolation::get_wind_info_latlong_hybrid_compute(double longitude,  doub
         qWarning("P3: u3= %f, v3= %f",u3,v3);
     }
 #ifdef __QTVLM_WITH_TEST
-    if(qAbs(ratioLonDebug-ratioLon)>10e-10 || qAbs(ratioLatDebug-ratioLat)>10e-10)
-    {
-        ++nbWarning;
-        if(nbWarning<100)
-        {
-            qWarning("DIFFERENCE in RATIOS!! rLonD=%.7f rLon=%.7f rLatD=%.7f rLat=%.7f",ratioLonDebug,ratioLon,ratioLatDebug,ratioLat);
-            qWarning("rLonD=%d rLon=%d rLatD=%d rLat=%d",qRound(ratioLonDebug*10e7),qRound(ratioLon*10e7),qRound(ratioLatDebug*10e7),qRound(ratioLat*10e7));
-            qWarning()<<qAbs(ratioLon-ratioLonDebug)<<qAbs(ratioLat-ratioLatDebug);
-            qWarning("Donnee IN (step=%fx%f)",lat_step,lon_step);
-            qWarning("Lat= %f (=> %f ), Lon= %f (=> %f )",latitude,d_lat,longitude,d_long);
-            qWarning("grid : Lat= %f, Lon= %f",gridOriginLat,gridOriginLon);
-            qWarning("ratios : Lat= %f, Lon= %f",ratioLat,ratioLon);
-            qWarning("i0= %d, j0= %d",i0,j0);
-        }
-        else if(nbWarning==100)
-            qWarning()<<"stopping qWarning() messages concerning ratios";
+//    if(qAbs(ratioLonDebug-ratioLon)>10e-10 || qAbs(ratioLatDebug-ratioLat)>10e-10)
+//    {
+//        ++nbWarning;
+//        if(nbWarning<100)
+//        {
+//            qWarning("DIFFERENCE in RATIOS!! rLonD=%.7f rLon=%.7f rLatD=%.7f rLat=%.7f",ratioLonDebug,ratioLon,ratioLatDebug,ratioLat);
+//            qWarning("rLonD=%d rLon=%d rLatD=%d rLat=%d",qRound(ratioLonDebug*10e7),qRound(ratioLon*10e7),qRound(ratioLatDebug*10e7),qRound(ratioLat*10e7));
+//            qWarning()<<qAbs(ratioLon-ratioLonDebug)<<qAbs(ratioLat-ratioLatDebug);
+//            qWarning("Donnee IN (step=%fx%f)",lat_step,lon_step);
+//            qWarning("Lat= %f (=> %f ), Lon= %f (=> %f )",latitude,d_lat,longitude,d_long);
+//            qWarning("grid : Lat= %f, Lon= %f",gridOriginLat,gridOriginLon);
+//            qWarning("ratios : Lat= %f, Lon= %f",ratioLat,ratioLon);
+//            qWarning("i0= %d, j0= %d",i0,j0);
+//        }
+//        else if(nbWarning==100)
+//            qWarning()<<"stopping qWarning() messages concerning ratios";
 
-    }
+//    }
 #endif
     /*
       simple bilinear interpolation, we might factor the cos(lat) in

@@ -21,6 +21,7 @@ public:
 
 public slots:
     void slot_updateData(void);
+    void slot_screenResize();
 private:
     Ui::DialogVlmLog *ui;
     QList<QVariantMap> boatLog;

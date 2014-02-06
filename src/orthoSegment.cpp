@@ -27,102 +27,76 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 orthoSegment::orthoSegment(Projection * proj, QGraphicsScene * myScene,int z_level,bool roundedEnd) : QGraphicsWidget()
 {
-    xa=xb=ya=yb=0;
-    size=1;
+    lon1=lon2=lat1=lat2=0;
     this->proj=proj;
     this->roundedEnd=roundedEnd;
     myScene->addItem(this);
     this->setZValue(z_level);
     this->alsoDrawLoxo=false;
     isOrtho=true;
-    setFocusPolicy(Qt::NoFocus);
+    myLine = new vlmLine(proj,myScene,z_level);
+    myLine->setRoundedEnd(roundedEnd);
+    myLine->setParent(this);
     hide();
-    connect(this->proj,SIGNAL(projectionUpdated()),this,SLOT(projUpdated()));
+    myLine->setHidden(true);
+}
+orthoSegment::~orthoSegment()
+{
+    delete myLine;
+}
+void orthoSegment::initSegment(const double &lon1, const double &lat1, const double &lon2, const double &lat2)
+{
+    this->lon1=lon1;
+    this->lat1=lat1;
+    this->lon2=lon2;
+    this->lat2=lat2;
+    if(lon1==lon2 && lat1==lat2)
+    {
+        hide();
+        myLine->setHidden(true);
+    }
+    else
+    {
+        calculatePoly();
+        show();
+        myLine->setHidden(false);
+    }
 }
 
-QRectF orthoSegment::boundingRect() const
+void orthoSegment::moveSegment(const double &lon2, const double &lat2)
 {
-    return QRectF(0,0,4*size,4*size);
+    this->lon2=lon2;
+    this->lat2=lat2;
+    calculatePoly();
 }
 
-void orthoSegment::initSegment(double xa,double ya,double xb, double yb)
-{
-    this->xa=xa;
-    this->ya=ya;
-    this->xb=xb;
-    this->yb=yb;
-    show();
-    updateSizeAndPosition();    
-    setFocusPolicy(Qt::NoFocus);
-    if(xa==xb && ya==yb) hide();
-}
-
-void orthoSegment::moveSegment(double x,double y)
-{
-    this->xb=x;
-    this->yb=y;
-    updateSizeAndPosition();
-    update();
-}
-
-void orthoSegment::updateSizeAndPosition(void)
-{
-    prepareGeometryChange();
-    size=qMax(qAbs(xa-xb),qAbs(ya-yb));
-    setPos(xa-size,ya-size);
-}
 
 void orthoSegment::hideSegment(void)
 {
     hide();
+    myLine->setHidden(true);
+}
+void orthoSegment::showSegment(void)
+{
+    show();
+    myLine->setHidden(false);
 }
 
-void orthoSegment::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
-{
-    pnt->setPen(linePen);
-    pnt->setRenderHint(QPainter::Antialiasing);
-    if(!isOrtho)
-    {        
-        pnt->drawLine(xa-x(),ya-y(),xb-x(),yb-y());
-    }
-    else
-    {
-        draw_orthoSegment(pnt,xa,ya,xb,yb);
-    }
-    if(alsoDrawLoxo && isOrtho)
-        pnt->drawLine(xa-x(),ya-y(),xb-x(),yb-y());
-    if(roundedEnd)
-    {
-        double w=linePen.widthF();
-        linePen.setWidthF(w*3);
-        pnt->setPen(linePen);
-        pnt->drawPoint(xb-x(),yb-y());
-        linePen.setWidthF(w);
-        pnt->setPen(linePen);
-    }
-}
 
-void orthoSegment::draw_orthoSegment(QPainter * pnt,double i0,double j0, double i1, double j1, int recurs)
+void orthoSegment::draw_orthoSegment(const double &longitude1, const double &latitude1, const double longitude2, const double latitude2, const int &recurs)
 {
-    if (recurs > 10) // this is bugging under win :100)
+    if (recurs > 10 || myLine->getPoints()->size()>10000)
     {
-        //qWarning() << "Stop recursing";
+        myLine->addVlmPoint(vlmPoint(longitude1,latitude1));
+        myLine->addVlmPoint(vlmPoint(longitude2,latitude2));
         return;
     }
-
-    if (abs(i0-i1) > 10)
+    if (Util::getOrthoDistance(latitude1,longitude1,latitude2,longitude2) > 5.0)
     {
-        double xm, ym,x0,y0,x1,y1;
-        int im,jm;
-        Orthodromie *ortho;
+        double xm, ym;
 
-        proj->screen2map(i0, j0,&x0,&y0);
-        proj->screen2map(i1, j1,&x1,&y1);
-
-        ortho = new Orthodromie(x0, y0, x1, y1);
-        ortho->getMidPoint(&xm, &ym);
-        delete ortho;
-        ortho = NULL;
+        Orthodromie ortho(longitude1,latitude1,longitude2,latitude2);
+        ortho.getMidPoint(&xm, &ym);
 
         xm *= 180.0/M_PI;
         ym *= 180.0/M_PI;
@@ -130,12 +104,33 @@ void orthoSegment::draw_orthoSegment(QPainter * pnt,double i0,double j0, double 
             ym -= 180;
         while (ym < -90)
             ym += 180;
-        proj->map2screen(xm, ym, &im, &jm);
-        draw_orthoSegment(pnt, i0,j0, im,jm, recurs+1);
-        draw_orthoSegment(pnt, im,jm, i1,j1, recurs+1);
+        draw_orthoSegment(longitude1,latitude1, xm,ym, recurs+1);
+        draw_orthoSegment(xm,ym, longitude2,latitude2, recurs+1);
     }
-    else {
-        pnt->drawLine(i0-x(),j0-y(), i1-x(),j1-y());
+    else
+    {
+        myLine->addVlmPoint(vlmPoint(longitude1,latitude1));
+        myLine->addVlmPoint(vlmPoint(longitude2,latitude2));
     }
-
 }
+void orthoSegment::calculatePoly()
+{
+    myLine->deleteAll();
+    if(!isOrtho)
+    {
+        myLine->addVlmPoint(vlmPoint(lon1,lat1));
+        myLine->addVlmPoint(vlmPoint(lon2,lat2));
+    }
+    else
+    {
+        draw_orthoSegment(lon1,lat1,lon2,lat2,0);
+    }
+    if(alsoDrawLoxo && isOrtho)
+    {
+        myLine->addVlmPoint(vlmPoint(lon1,lat1));
+        myLine->addVlmPoint(vlmPoint(lon2,lat2));
+    }
+    myLine->slot_showMe();
+    //qWarning()<<"line has "<<myLine->getPoints()->size()<<"points";
+}
+

@@ -43,7 +43,8 @@ class DialogRemovePoi: public QDialog, public Ui::DialogRemovePoi_ui
         void slot_remove(void);
         void slot_itemSelectionChange(void);
 
-    private:
+        void slot_screenResize();
+private:
         myCentralWidget * centralWidget;
         QList<POI*> poiList;
 

@@ -38,7 +38,8 @@ class DialogFinePosit : public QDialog, public Ui::finePosit_ui
 
     public slots:
 
-    signals:
+        void slot_screenResize();
+signals:
 
     private:
         POI   *poi;

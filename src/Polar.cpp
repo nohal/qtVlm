@@ -25,6 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDebug>
 #include <QDateTime>
 #include <QProgressDialog>
+#include <QDomDocument>
+
 #include "MainWindow.h"
 #include "Polar.h"
 #include "dataDef.h"
@@ -32,6 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Orthodromie.h"
 #include "settings.h"
 #include "boat.h"
+#include "AngleUtil.h"
 
 Polar::Polar(MainWindow * mainWindow)
 {
@@ -78,20 +81,20 @@ Polar::Polar(QString fname,MainWindow * mainWindow)
 
 void Polar::setPolarName(QString fname)
 {
-    isCsv=true;
+    fileType=POLAR_NONE;
     loaded=false;
     clearPolar();
     if(this->mainWindow->getSelectedBoat() && this->mainWindow->getSelectedBoat()->get_boatType()==BOAT_REAL)
-        coeffPolar=Settings::getSetting("polarEfficiency",100).toInt()/100.0;
+        coeffPolar=Settings::getSetting(polar_efficiency).toInt()/100.0;
     else
         coeffPolar=1.0;
 
-    //qWarning() << "Opening polar" << fname<<"with coeff"<<coeffPolar;
+    //qWarning() << "Opening polar" << fname<<"with coeff"<<coeffPolar << " appfolder: " << appFolder.value("polar");
 
     name=fname;
-    QString nameF = appFolder.value("polar")+fname+".csv";
-    QFile file(nameF);
-    if (fname.endsWith(".csv",Qt::CaseInsensitive) || fname.endsWith(".pol",Qt::CaseInsensitive))
+    QString nameF;
+    QFile file;
+    if (fname.endsWith(".csv",Qt::CaseInsensitive) || fname.endsWith(".pol",Qt::CaseInsensitive) || fname.endsWith(".xml",Qt::CaseInsensitive))
     {
         nameF=appFolder.value("polar")+fname;
         file.setFileName(nameF);
@@ -102,97 +105,56 @@ void Polar::setPolarName(QString fname)
             return;
         }
 
-        isCsv=fname.endsWith("csv",Qt::CaseInsensitive);
+        if(fname.endsWith("csv",Qt::CaseInsensitive))
+            fileType=POLAR_CSV;
+        else if(fname.endsWith("pol",Qt::CaseInsensitive))
+            fileType=POLAR_POL;
+        else if(fname.endsWith("xml",Qt::CaseInsensitive))
+            fileType=POLAR_XML;
     }
     else
     {
+        //qWarning() << "Base dir " << appFolder.value("polar");
+        nameF=appFolder.value("polar")+fname+".csv";
+        file.setFileName(nameF);
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text ))
         {
-            isCsv=false;
             nameF = appFolder.value("polar")+fname+".pol";
             file.setFileName(nameF);
             if (!file.open(QIODevice::ReadOnly | QIODevice::Text ))
             {
-                 QMessageBox::warning(0,QObject::tr("Lecture de polaire"),
-                     QString(QObject::tr("Impossible d'ouvrir le fichier %1 (ni en .csv ni en .pol)")).arg(name));
-                 return;
-            }
-        }
-    }
-    QTextStream stream(&file);
-    QString line;
-    QStringList list;
-    /* read first line to see line length */
-    line=stream.readLine();
-    line.remove("\"");
-    if(line.isNull())
-    {
-        QMessageBox::warning(0,QObject::tr("Lecture de polaire"),
-             QString(QObject::tr("Fichier %1 vide")).arg(fname));
-        file.close();
-        return;
-    }
-    if(isCsv)
-        list = line.split(';');
-    else
-        list = line.split('\t');
-    if(list[0].toUpper() != "TWA\\TWS" && list[0].toUpper() != "TWA/TWS" && list[0].toUpper() != "TWA")
-    {
-        QMessageBox::warning(0,QObject::tr("Lecture de polaire"),
-             QString(QObject::tr("Fichier %1 invalide (doit commencer par TWA\\TWS et non '%2')"))
-                        .arg(fname)
-                        .arg(list[0]));
-        file.close();
-        return;
-    }
-    int i;
-    for(i=1;i<list.count();++i)
-    {
-        if(!tws.isEmpty() && list[i].toDouble()<=tws.last()) break;
-        tws.append(list[i].toDouble());
-    }
-    bool missingTws0=false;
-    if(tws.first()!=0.0)
-    {
-        missingTws0=true;
-    }
-    bool firstTWA=true;
-    while(true)
-    {
-        line=stream.readLine();
-        if(line.isNull()) break;
-        line.remove("\"");
-        if (isCsv)
-            list = line.split(";");
-        else
-            list = line.split("\t");
-        if(firstTWA)
-        {
-            firstTWA=false;
-            if(list.first().toDouble()!=0.0)
-            {
-                for(int t=0;t<tws.count();++t)
+                nameF = appFolder.value("polar")+fname+".xml";
+                file.setFileName(nameF);
+                if (!file.open(QIODevice::ReadOnly | QIODevice::Text ))
                 {
-                    polar_data.append(0);
+                    QMessageBox::warning(0,QObject::tr("Lecture de polaire"),
+                        QString(QObject::tr("Impossible d'ouvrir le fichier %1 (ni en .csv ni en .pol)")).arg(name));
+                    return;
                 }
-                if(missingTws0)
-                    polar_data.append(0);
-                twa.append(0.0);
+                else
+                    fileType=POLAR_XML;
             }
+            else
+                fileType=POLAR_POL;
         }
-        twa.append(list[0].toDouble());
-        if(missingTws0)
-            polar_data.append(0);
-        for(i=1;i<list.count();++i)
-        {
-            if(i>tws.count()) break;
-            polar_data.append(list[i].toDouble()*this->coeffPolar);
-        }
-        while(i<=tws.count())
-            polar_data.append(0);
+        else
+            fileType=POLAR_CSV;
     }
-    if(missingTws0)
-        tws.prepend(0.0);
+
+    switch(fileType) {
+        case POLAR_CSV:
+        case POLAR_POL:
+            loadPolar_csvPol(&file,fileType,nameF);
+            file.close();
+            break;
+        case POLAR_XML:
+            loadPolar_xml(&file,fileType,nameF);
+            file.close();
+            break;
+        default:
+            return;
+    }
+
 #if 0
     qWarning()<<"polar data for"<<nameF;
     QString debug="xxx.x ";
@@ -219,7 +181,7 @@ void Polar::setPolarName(QString fname)
     double ws=0.0;
     double wa=0.0;
     double bvmg,bvmg_d,bvmg_u,wa_u,wa_d,wa_limit;
-    maxSpeed=0.0;
+    maxSpeed=-1.0;
     do
     {
         wa_u=0.0;
@@ -229,7 +191,12 @@ void Polar::setPolarName(QString fname)
         do
         {
             speed=myGetSpeed(ws,wa,true);
-            if(speed>maxSpeed) maxSpeed=speed;
+            if(speed>maxSpeed)
+            {
+                maxSpeed=speed;
+                maxSpeedTwa=wa;
+                maxSpeedTws=ws;
+            }
             bvmg=speed*cos(degToRad(wa));
             if(bvmg_u<bvmg) //bvmg is positive here
             {
@@ -252,7 +219,12 @@ void Polar::setPolarName(QString fname)
         do
         {
             speed=myGetSpeed(ws,wa,true);
-            if(speed>maxSpeed) maxSpeed=speed;
+            if(speed>maxSpeed)
+            {
+                maxSpeed=speed;
+                maxSpeedTwa=wa;
+                maxSpeedTws=ws;
+            }
             bvmg=speed*cos(degToRad(wa));
             if(bvmg_u<bvmg)
             {
@@ -270,7 +242,12 @@ void Polar::setPolarName(QString fname)
         do
         {
             speed=myGetSpeed(ws,wa,true);
-            if(speed>maxSpeed) maxSpeed=speed;
+            if(speed>maxSpeed)
+            {
+                maxSpeed=speed;
+                maxSpeedTwa=wa;
+                maxSpeedTws=ws;
+            }
             bvmg=speed*cos(degToRad(wa));
             if(bvmg_d>bvmg)
             {
@@ -284,6 +261,7 @@ void Polar::setPolarName(QString fname)
         wa=0.0;
         ws=ws+.1;
     }while(ws<60.1);
+
     loaded=true;
     QFileInfo fi(file.fileName());
     QString nameFVmg = appFolder.value("polar")+fi.baseName()+".vmg";
@@ -327,7 +305,7 @@ void Polar::setPolarName(QString fname)
         for (int twa=0;twa<1801;twa++)
         {
             bvmgWind((double) twa/10.0,(double) tws/10.0,&vmg);
-            ssVmg.sprintf("%.4d",qRound(A360(vmg)*10.0));
+            ssVmg.sprintf("%.4d",qRound(AngleUtil::A360(vmg)*10.0));
             sVmg<<ssVmg;
         }
     }
@@ -336,6 +314,12 @@ void Polar::setPolarName(QString fname)
         qWarning()<<"fileVMG could not be re-opened!";
     progress->close();
     delete progress;
+}
+void Polar::getMaxSpeedData(double *bs, double *tws, double *twa) const
+{
+    *bs=maxSpeed;
+    *tws=maxSpeedTws;
+    *twa=maxSpeedTwa;
 }
 
 void Polar::printPolar(void)
@@ -347,6 +331,272 @@ void Polar::printPolar(void)
 //            str+=(QString().setNum((polar_data[j])[i])+"\t");
 //        qWarning()<< str;
 //    }
+}
+
+void Polar::loadPolar_csvPol(QFile *file,int fileType,QString fname) {
+    QTextStream stream(file);
+    QString line;
+    QStringList list;
+    /* read first line to see line length */
+    line=stream.readLine();
+    line.remove("\"");
+    if(line.isNull())
+    {
+        QMessageBox::warning(0,QObject::tr("Lecture de polaire"),
+             QString(QObject::tr("Fichier %1 vide")).arg(fname));
+        return;
+    }
+    if(fileType==POLAR_CSV)
+        list = line.split(';');
+    else if(fileType==POLAR_POL)
+        list = line.split('\t');
+    else
+        return;
+
+    if(list[0].toUpper() != "TWA\\TWS" && list[0].toUpper() != "TWA/TWS" && list[0].toUpper() != "TWA")
+    {
+        QMessageBox::warning(0,QObject::tr("Lecture de polaire"),
+             QString(QObject::tr("Fichier %1 invalide (doit commencer par TWA\\TWS et non '%2')"))
+                        .arg(fname)
+                        .arg(list[0]));
+        return;
+    }
+    int i;
+    for(i=1;i<list.count();++i) // saving first line = all TWS data
+    {
+        if(!tws.isEmpty() && list[i].toDouble()<=tws.last()) break;
+        tws.append(list[i].toDouble());
+    }
+    bool missingTws0=false;
+    if(tws.first()!=0.0)
+    { // is first TWS set to 0
+        missingTws0=true;
+    }
+    bool firstTWA=true;
+    while(true)
+    {
+        line=stream.readLine(); // read a line
+        if(line.isNull()) break;
+        line.remove("\"");
+        /* split according to file type */
+        if (fileType==POLAR_CSV)
+            list = line.split(";");
+        else
+            list = line.split("\t");
+        if(firstTWA) // this is the first twa line => if not for twa=0, add a dummy line filled with 0
+        {
+            firstTWA=false;
+            if(list.first().toDouble()!=0.0)
+            {
+                for(int t=0;t<tws.count();++t)
+                {
+                    polar_data.append(0);
+                }
+                if(missingTws0) // add a 0 for tws=0 if missing in tws
+                    polar_data.append(0);
+                twa.append(0.0);
+            }
+        }
+        twa.append(list[0].toDouble()); // save TWA value
+        if(missingTws0)
+            polar_data.append(0); // add 0 if TWS=0 is missing in tws line
+        for(i=1;i<list.count();++i)
+        {
+            if(i>tws.count()) break; // safe test in case we have more data that the number of tws in the first line
+            polar_data.append(list[i].toDouble()*this->coeffPolar); // use coeffPolar param (qtvlm setting)
+        }
+        while(i<=tws.count()) // if missing data at the end, complete with 0
+            polar_data.append(0);
+    }
+    if(missingTws0)
+        tws.prepend(0.0);
+}
+
+void Polar::loadPolar_xml(QFile * file,int /*fileType*/,QString /*fname*/) {
+    QString  errorStr;
+    int errorLine;
+    int errorColumn;
+    QDomDocument doc;
+    if(!doc.setContent(file,true,&errorStr,&errorLine,&errorColumn))
+    {
+        QMessageBox::warning(0,QObject::tr("Lecture de polaire ("),
+                             QString("Erreur ligne %1, colonne %2:\n%3")
+                             .arg(errorLine)
+                             .arg(errorColumn)
+                             .arg(errorStr));
+        return ;
+    }
+
+    QDomElement root = doc.documentElement();
+
+    //qWarning() << "Root: " << root.tagName();
+    qWarning() << "Polar Name: " << root.firstChild().toText().data().simplified();
+
+    QDomNode subNode= root.firstChild().nextSibling();
+    // first find polar dim + TWS and TWA value
+
+    twa.clear();
+    tws.clear();
+
+    bool twaRead=false;
+
+    while(!subNode.isNull())
+    {
+        if(subNode.toElement().tagName() == "PolarCurve") {
+            QDomNode polarCurve=subNode.firstChild();
+            bool hasCurveIndex=false;
+            while(!polarCurve.isNull())
+            {
+                if(!hasCurveIndex && polarCurve.toElement().tagName()=="PolarCurveIndex") {
+                    tws.append(polarCurve.toElement().attribute("value").toInt(&hasCurveIndex));
+                }
+
+                if(twaRead)
+                    break;
+
+                if(hasCurveIndex && polarCurve.toElement().tagName()=="PolarItem") {
+                    QDomNode polarItem=polarCurve.firstChild();
+
+                    while(!polarItem.isNull()) {
+                        if(polarItem.toElement().tagName()=="Angle") {
+                            twa.append(polarItem.toElement().attribute("value").toInt());
+                        }
+
+                        polarItem=polarItem.nextSibling();
+                    }
+                }
+                polarCurve = polarCurve.nextSibling();
+            }
+            if(hasCurveIndex)
+                twaRead=true;
+        }
+        subNode = subNode.nextSibling();
+    }
+
+    //qWarning() << "Found " << tws.count() << " tws, " << twa.count() << " twa";
+
+    if(tws.count()==0 || twa.count()==0)
+        return;
+
+    double* ary = new double[tws.count()*twa.count()];
+
+    // now read polar data
+
+    subNode= root.firstChild().nextSibling();
+
+    while(!subNode.isNull())
+    {
+        if(subNode.toElement().tagName() == "PolarCurve") {
+            QDomNode polarCurve=subNode.firstChild();
+            int idx_tws=0;
+            bool hasCurveIndex=false;
+            while(!polarCurve.isNull())
+            {
+                if(!hasCurveIndex && polarCurve.toElement().tagName()=="PolarCurveIndex") {
+                    int curveIndex=polarCurve.toElement().attribute("value").toInt(&hasCurveIndex);
+                    if(hasCurveIndex) {
+                        idx_tws=tws.indexOf(curveIndex);
+                        if(idx_tws==-1)
+                            hasCurveIndex=false;
+                    }
+                }
+
+                if(hasCurveIndex && polarCurve.toElement().tagName()=="PolarItem") {
+                    QDomNode polarItem=polarCurve.firstChild();
+                    int idx_twa;
+                    bool hasAngle=true;
+                    double val;
+                    bool hasVal=false;
+                    while(!polarItem.isNull()) {
+                        if(polarItem.toElement().tagName()=="Angle") {
+                            int angle=polarItem.toElement().attribute("value").toInt(&hasAngle);
+                            if(hasAngle) {
+                                idx_twa=twa.indexOf(angle);
+                                if(idx_twa==-1)
+                                    hasAngle=false;
+                            }
+                        }
+                        if(polarItem.toElement().tagName()=="Value") {
+                            val=polarItem.toElement().attribute("value").toDouble(&hasVal);
+                        }
+                        polarItem=polarItem.nextSibling();
+                    }
+                    if(hasAngle && hasVal) {
+                        ary[idx_tws+idx_twa*tws.count()]=val;
+                    }
+                }
+                polarCurve = polarCurve.nextSibling();
+            }
+        }
+        subNode = subNode.nextSibling();
+    }
+
+    // Copy array to QList, adding needed 0 if TWA/TWS 0,0 absent
+
+
+
+    polar_data.clear();
+    bool hasZeroTwa=true;
+    bool hasZeroTws=true;
+    // first step : create TWS list + append 0 if needed
+
+    if(tws.first()!=0) {
+        hasZeroTws=false;
+    }
+
+    // second check if we have TWA=0 value
+    if( twa.first() != 0) {
+        hasZeroTwa=false;
+        // create twa=0 line
+        if(!hasZeroTws)
+            polar_data.append(0);
+        for(int i=0;i<tws.count();++i)
+            polar_data.append(0);
+    }
+
+    for(int i=0;i<twa.count();++i) {
+        if(!hasZeroTws)
+            polar_data.append(0);
+        for(int j=0;j<tws.count();++j)
+            polar_data.append(ary[j+i*tws.count()]);
+    }
+
+    if(!hasZeroTws)
+        tws.prepend(0);
+
+    if(!hasZeroTwa)
+        twa.prepend(0);
+
+    delete[] ary;
+/*
+    QString str="   ";
+    for(int i=0;i<tws.count();++i)
+        str += QString().setNum(tws.at(i)) + " ";
+    qWarning() << str;
+    for(int i=0;i<twa.count(); ++i) {
+        str= QString().setNum(twa.at(i));
+        str +=" ";
+        for(int j=0;j<tws.count();++j) {
+            str += QString().setNum(polar_data[j+i*tws.count()])+" ";
+        }
+        qWarning() << str;
+
+    }
+    */
+}
+
+QString Polar::get_fileTypeStr(void) {
+    switch(fileType) {
+        case POLAR_CSV:
+            return "csv";
+        case POLAR_POL:
+            return "pol";
+        case POLAR_XML:
+            return "xml";
+        default:
+            return "none";
+    }
+
 }
 
 double Polar::getBvmgUp(double windSpeed, bool engine)
@@ -595,7 +845,7 @@ void Polar::myBvmgWind(double w_angle, double w_speed, double *wangle)
     for (i=0; i<imax; i++)
     {
         t_heading = w_angle + degToRad(((double)i));
-        speed = this->getSpeed(w_speed, A180(radToDeg(t_heading)));
+        speed = this->getSpeed(w_speed, AngleUtil::A180(radToDeg(t_heading)));
 
         if (speed < 0.0)
         {
@@ -615,7 +865,7 @@ void Polar::myBvmgWind(double w_angle, double w_speed, double *wangle)
     for (i=0; i<imax; i++)
     {
         t_heading = w_angle - degToRad(((double)i));
-        speed = this->getSpeed(w_speed,  A180(radToDeg(t_heading)));
+        speed = this->getSpeed(w_speed,  AngleUtil::A180(radToDeg(t_heading)));
         if (speed < 0.0)
         {
           continue;
@@ -634,24 +884,6 @@ void Polar::myBvmgWind(double w_angle, double w_speed, double *wangle)
           break;
         }
     }
-}
-
-double Polar::A180(double angle)
-{
-    if(qAbs(angle)>180)
-    {
-        if(angle<0)
-            angle=360+angle;
-        else
-            angle=angle-360;
-    }
-    return angle;
-}
-double Polar::A360(double hdg)
-{
-    if(hdg>=360) hdg=hdg-360;
-    if(hdg<0) hdg=hdg+360;
-    return hdg;
 }
 
 /********************/
@@ -779,13 +1011,9 @@ void polarList::get_polarList(void)
 
 void polarList::requestFinished(QByteArray res)
 {
-    QJson::Parser parser;
-    bool ok;
-
-    QList<QVariant> result = parser.parse (res, &ok).toList();
-    if (!ok) {
-        qWarning() << "Error parsing json data " << res;
-        qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
+    QList<QVariant> result;
+    if (!inetClient::JSON_to_list(res,&result)) {
+        return;
     }
 
     qWarning() << "Polar list: " ;

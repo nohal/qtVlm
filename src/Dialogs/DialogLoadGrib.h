@@ -49,6 +49,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #endif
 #include "LoadGribFile.h"
 #include <QTime>
+#include <QScrollArea>
 
 //#define HAS_TEMP
 
@@ -57,7 +58,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 class DialogLoadGrib : public QDialog
 { Q_OBJECT
     public:
-        DialogLoadGrib();
+        DialogLoadGrib(MainWindow * main);
         ~DialogLoadGrib();
 
         void setZone(double x0, double y0, double x1, double y1);
@@ -66,7 +67,7 @@ class DialogLoadGrib : public QDialog
         void slotBtOK();
         void slotBtCancel();
         void slotServerStatus();
-        void slotGribDataReceived(QByteArray *content, QString fileName);
+        void slotGribDataReceived(QByteArray *content, QString file);
         void slotGribFileError(QString error);
         void slotGribMessage(QString msg);
         void slotGribStartLoadData();
@@ -74,8 +75,8 @@ class DialogLoadGrib : public QDialog
         void slotAltitudeAll();
         void slotUngrayButtons();
         void slotProgress(qint64,qint64);
-
-    signals:
+        void slot_screenResize();
+signals:
         void signalGribFileReceived(QString fileName);
         void clearSelection();
 
@@ -133,8 +134,8 @@ class DialogLoadGrib : public QDialog
 
         void    updateParameters();
         void    addSeparator (QLayout *layout, char orientation);	// 'H' or 'V'
-
-
+        QString fileName;
+        QScrollArea * scrollarea;
 };
 
 

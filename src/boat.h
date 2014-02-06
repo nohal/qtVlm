@@ -29,8 +29,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "mycentralwidget.h"
 
 #include "class_list.h"
-
-class boat: public QGraphicsWidget
+#include "BoatInterface.h"
+class boat: public BoatInterface
 { Q_OBJECT
     public:
         boat(QString pseudo, bool activated,
@@ -77,6 +77,7 @@ class boat: public QGraphicsWidget
         int getNWP(void)                {    return nWP; }
         QString getPolarName(void)      {    return polarName; }
         Polar * getPolarData(void)      {    return polarData; }
+        PolarInterface * getPolarDataInterface(){return (PolarInterface *)polarData;}
         bool getLockStatus(void)        {    return changeLocked;}
         bool getForceEstime(void)       {    return forceEstime; }
         int getEstimeType(void)         {    return estime_type; }
@@ -119,6 +120,7 @@ class boat: public QGraphicsWidget
 
         /*** Barrier ***/
         QList<BarrierSet *>* get_barrierSets(void) { return &barrierSets; }
+        bool has_barrierSet(BarrierSet * ptr) {return barrierSets.contains(ptr); }
         QList<QString> * get_barrierKeys(void) {return &barrierKeys; }
         void add_barrierSet(BarrierSet* set);
         void rm_barrierSet(BarrierSet* set);
@@ -130,6 +132,7 @@ class boat: public QGraphicsWidget
         void cleanBarrierList(void);
         bool cross(QLineF line);
 
+        void showContextualMenu(const int &xPos, const int &yPos);
 public slots:
         void slot_projectionUpdated();
         void slot_paramChanged();
@@ -149,7 +152,8 @@ public slots:
 
         void slot_centerOnBoat();
 
-    signals:
+        void slot_shTrace(const bool &b);
+signals:
         void boatSelected(boat*);
         void boatUpdated(boat*,bool,bool);
         void boatLockStatusChanged(boat*,bool);
@@ -160,10 +164,10 @@ public slots:
         void getTrace(QByteArray,QList<vlmPoint> *);
         void showMessage(QString,int);
 
-    protected:
+protected:
         void contextMenuEvent(QGraphicsSceneContextMenuEvent * event);
         void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
-
+        bool event(QEvent * event);
         /* DATA */
         int boatType;
 
@@ -224,7 +228,7 @@ public slots:
         myCentralWidget * parent;
         MainWindow * mainWindow;
 
-        void updatePosition(void);
+        void updatePosition(const bool &fromZoom);
 
         bool forceEstime;
 
@@ -247,6 +251,7 @@ public slots:
         virtual void myCreatePopUpMenu(void)   {  }
         QString country;
         QImage flag;
+        bool flagBad;
         bool drawFlag;
         QString own;
         QTimer * estimeTimer;

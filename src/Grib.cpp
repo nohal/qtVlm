@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <cassert>
 #include <QDebug>
 #include <QVector>
+#include <QMap>
 
 #include "Grib.h"
 #include "Util.h"
@@ -33,12 +34,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "IsoLine.h"
 #include "settings.h"
 #include "DataManager.h"
+#include "mycentralwidget.h"
+#include "Terrain.h"
 
 #include "GribV1.h"
 #include "GribV2.h"
 #include "GribV1Record.h"
 #include "GribV2Record.h"
-#include <QMap>
+
 
 #include "interpolation.h"
 
@@ -56,7 +59,8 @@ Grib::Grib(DataManager * dataManager) {
 Grib::~Grib() {
     if(ok)
         clean_all_vectors();
-    Util::cleanListPointers(listIsobars);
+
+    clean_isoBars();
     Util::cleanListPointers(listIsotherms0);
 }
 
@@ -88,7 +92,7 @@ QString Grib::get_info(void) {
     info += tr("Taille : %1 octets") .arg(get_fileSize())+"\n";
     info += "\n";
 
-    int nbData=mapGribRecords.size();
+    int nbData=(int)(mapGribRecords.size());
     if(hasData(DATA_WIND_VX,DATA_LV_ABOV_GND,10)) nbData--;
     if(hasData(DATA_CURRENT_VX,DATA_LV_MSL,0)) nbData--;
     if(hasData(DATA_WAVES_WND_DIR,DATA_LV_GND_SURF,0)) nbData-=2;
@@ -257,7 +261,7 @@ void Grib::createDewPointData(void) {
                 GribRecord *recModel = getGribRecord(DATA_TEMP,DATA_LV_ABOV_GND,2,date);
                 if (recModel != NULL) {
                     // Crée un GribRecord avec les dewpoints calcules
-                    GribRecord *recDewpoint;
+                    GribRecord *recDewpoint=NULL;
                     if(version == 1) {
                         GribV1Record * rec=(GribV1Record *)recModel;
                         recDewpoint = new GribV1Record(*rec);
@@ -455,19 +459,32 @@ bool Grib::getInterpolatedValue_1D(int dataType,int levelType,int levelValue,
 
 bool Grib::interpolateValue_1D(double d_long, double d_lat, time_t now,time_t tPrev,time_t tNxt,
                                     GribRecord * recPrev,GribRecord * recNxt,double * res) {
-    if(!res) return false;
+    if(!res || !recPrev) {
+        qWarning() << "[interpolateValue_1D] NULL pointer for res or prec record";
+        return false;
+    }
     *res=0;
     double v = recPrev->getInterpolatedValue(d_long, d_lat, MUST_INTERPOLATE_VALUE);
     double v_2;
-    if(v != GRIB_NOTDEF && tPrev!=tNxt)
-    {
-        v_2=recNxt->getInterpolatedValue(d_long, d_lat, MUST_INTERPOLATE_VALUE);
-        if(v_2 != GRIB_NOTDEF) {
-            *res= v+((v_2-v)/((double)(tNxt-tPrev)))*((double)(now-tPrev));
+    if(v != GRIB_NOTDEF) {
+        if(tPrev!=tNxt)
+        {
+            if(!recNxt) {
+                qWarning() << "[interpolateValue_1D] NULL pointer for nxt record";
+                return false;
+            }
+            v_2=recNxt->getInterpolatedValue(d_long, d_lat, MUST_INTERPOLATE_VALUE);
+            if(v_2 != GRIB_NOTDEF) {
+                *res= v+((v_2-v)/((double)(tNxt-tPrev)))*((double)(now-tPrev));
+                return true;
+            }
+            else
+                return false;
+        }
+        else {
+            *res=v;
             return true;
         }
-        else
-            return false;
     }
     else
         return false;
@@ -508,8 +525,10 @@ bool Grib::interpolateValue_2D(double d_long, double d_lat, time_t now, time_t t
     double gribStep_t1_lat=1,gribStep_t2_lat=1;
 
     /*sanity check */
-    if(!u || !v || !recU1 || !recV1)
+    if(!u || !v || !recU1 || !recV1) {
+        qWarning() << "[interpolateValue_2D] Missing pointer";
         return false;
+    }
 
 
     gridOriginLat_1=recV1->get_latMin();
@@ -519,10 +538,17 @@ bool Grib::interpolateValue_2D(double d_long, double d_lat, time_t now, time_t t
     gribStep_t1_lon=recU1->get_Di()==0?1:recU1->get_Di();
     gribStep_t1_lat=recU1->get_Dj()==0?1:recU1->get_Dj();
 
-    if(!recU1->getValue_TWSA(d_long,d_lat,&(wData_prev.u0),&(wData_prev.u1),&(wData_prev.u2),&(wData_prev.u3),debug))
+    if(!recU1->getValue_TWSA(d_long,d_lat,&(wData_prev.u0),&(wData_prev.u1),&(wData_prev.u2),&(wData_prev.u3),debug)) {
+        //qWarning() << "[interpolateValue_2D] getValue_TWSA - recU1 KO";
         return false;
-    if(!recV1->getValue_TWSA(d_long,d_lat,&(wData_prev.v0),&(wData_prev.v1),&(wData_prev.v2),&(wData_prev.v3),debug))
+    }
+    if(!recV1->getValue_TWSA(d_long,d_lat,&(wData_prev.v0),&(wData_prev.v1),&(wData_prev.v2),&(wData_prev.v3),debug)) {
+        //qWarning() << "[interpolateValue_2D] getValue_TWSA - recV1 KO";
         return false;
+    }
+
+    gridOriginLat_2=gridOriginLat_1;
+    gridOriginLon_2=gridOriginLon_1;
 
     if(recU2 && recV2) {
         hasNxt=true;
@@ -532,10 +558,14 @@ bool Grib::interpolateValue_2D(double d_long, double d_lat, time_t now, time_t t
         gribStep_t2_lon=recU2->get_Di()==0?1:recU2->get_Di();
         gribStep_t2_lat=recU2->get_Dj()==0?1:recU2->get_Dj();
 
-        if(!recU2->getValue_TWSA(d_long,d_lat,&(wData_nxt.u0),(&wData_nxt.u1),&(wData_nxt.u2),&(wData_nxt.u3),debug))
+        if(!recU2->getValue_TWSA(d_long,d_lat,&(wData_nxt.u0),(&wData_nxt.u1),&(wData_nxt.u2),&(wData_nxt.u3),debug)) {
+            //qWarning() << "[interpolateValue_2D] getValue_TWSA - recU2 KO";
             return false;
-        if(!recV2->getValue_TWSA(d_long,d_lat,&(wData_nxt.v0),(&wData_nxt.v1),&(wData_nxt.v2),&(wData_nxt.v3),debug))
+        }
+        if(!recV2->getValue_TWSA(d_long,d_lat,&(wData_nxt.v0),(&wData_nxt.v1),&(wData_nxt.v2),&(wData_nxt.v3),debug)) {
+            //qWarning() << "[interpolateValue_2D] getValue_TWSA - recV2 KO";
             return false;
+        }
     }
     gribStep_t1_lon=qAbs(gribStep_t1_lon);
     gribStep_t2_lon=qAbs(gribStep_t2_lon);
@@ -567,7 +597,7 @@ bool Grib::interpolateValue_2D(double d_long, double d_lat, time_t now, time_t t
                                                         u,v,gridOriginLat_1,gridOriginLon_1,gridOriginLat_2,gridOriginLon_2,UV,debug);
             break;
          default:
-            if(debug)
+            //if(debug)
                 qWarning() << "NO interpolation defined";
             return false;
      }
@@ -581,8 +611,21 @@ bool Grib::interpolateValue_2D(double d_long, double d_lat, time_t now, time_t t
  *************************************************/
 
 void Grib::init_isos(time_t t) {
-    init_isoBars(t);
-    init_isoTherms0(t);
+    Terrain * terrain = dataManager->get_centralWidget()->get_terrain();
+    if(terrain && terrain->get_showIsobars())
+        init_isoBars(t);
+    if(terrain && terrain->get_showIsotherms0())
+        init_isoTherms0(t);
+}
+
+void Grib::clean_isoBars(void) {
+    // clean map
+    QMapIterator<Couple,std::list<IsoLine *> * > it(listIsobarsMap);
+    while(it.hasNext()) {
+        it.next();
+        Util::cleanListPointers(*it.value());
+        delete it.value();
+    }
 }
 
 void Grib::init_isoBars(time_t t) {
@@ -591,19 +634,36 @@ void Grib::init_isoBars(time_t t) {
 
     int step=dataManager->get_isoBarsStep();
 
-    Util::cleanListPointers(listIsobars);
+    clean_isoBars();
 
-    GribRecord *rec_prev,*rec_nxt;
-    time_t tPrev,tNxt;
-    if(get_recordsAndTime_1D(DATA_PRESSURE,DATA_LV_MSL,0,t,
-                                 &tPrev,&tNxt,&rec_prev,&rec_nxt))
-    {
-        Util::cleanListPointers(listIsobars);
-        IsoLine *iso;
-        for (double press=840; press<1120; press += step)
-        {
-                iso = new IsoLine(press*100, t, tPrev,tNxt, rec_prev,rec_nxt);
-                listIsobars.push_back(iso);
+    // get all levels
+    QMap<int,QList<int>*> * levelList = dataManager->get_levelList(DATA_PRESSURE);
+
+    if(levelList) {
+        QMapIterator<int,QList<int>*> j(*levelList);
+        while (j.hasNext()) {
+            j.next();
+            QList<int>* lst = j.value();
+            if(!lst) continue;
+
+            for(int i=0;i<lst->count();++i) {
+
+                GribRecord *rec_prev,*rec_nxt;
+                time_t tPrev,tNxt;
+                std::list<IsoLine *> * listIsobars= new std::list<IsoLine *>();
+                if(get_recordsAndTime_1D(DATA_PRESSURE,j.key(),lst->at(i),t,
+                                         &tPrev,&tNxt,&rec_prev,&rec_nxt))
+                {
+                    IsoLine *iso;
+                    for (double press=840; press<1120; press += step)
+                    {
+                        iso = new IsoLine(press*100, t, tPrev,tNxt, rec_prev,rec_nxt);
+                        listIsobars->push_back(iso);
+                    }
+                    // insert list in Qmap structure
+                    listIsobarsMap.insert(Couple(j.key(),lst->at(i)),listIsobars);
+                }
+            }
         }
     }
 }
@@ -629,6 +689,13 @@ void Grib::init_isoTherms0(time_t t) {
                 listIsotherms0.push_back(iso);
         }
     }
+}
+
+std::list<IsoLine *> * Grib::get_isobars(int levelType,int levelValue) {
+    Couple c(levelType,levelValue);
+    if(listIsobarsMap.contains(c))
+        return listIsobarsMap.value(c);
+    return NULL;
 }
 
 

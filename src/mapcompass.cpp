@@ -93,7 +93,7 @@ mapCompass::~mapCompass()
 }
 void mapCompass::slot_paramChanged(void)
 {
-    if(!(Settings::getSetting("showCompass",0).toInt()==1) && !(Settings::getSetting("showPolar",0).toInt()==1))
+    if(!(Settings::getSetting(showCompass).toInt()==1) && !(Settings::getSetting(showPolar).toInt()==1))
        hide();
     else
        show();
@@ -113,7 +113,7 @@ QRectF mapCompass::boundingRect() const
 QPainterPath mapCompass::shape() const
 {
     QPainterPath path;
-    if((Settings::getSetting("compassCenterBoat","0")=="1") || centralWidget->getCompassFollow()!=NULL)
+    if((Settings::getSetting(compassCenterBoat).toInt()==1) || centralWidget->getCompassFollow()!=NULL)
         path.addEllipse(QRectF(size/10,size/10,size/10,size/10));
     else
         path.addEllipse(QRectF(size/4,size/4,size/2,size/2));
@@ -154,7 +154,7 @@ void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
 
     pnt->drawLine(-(CROSS_SIZE/2),0,(CROSS_SIZE/2),0);
     pnt->drawLine(0,-(CROSS_SIZE/2),0,(CROSS_SIZE/2));
-    if(Settings::getSetting("showCompass",0).toInt()==1)
+    if(Settings::getSetting(showCompass).toInt()==1)
     {
         /* external compass : direction */
 
@@ -284,9 +284,9 @@ void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
     /* draw Polar */
     polarModeVac=false;
     bool polarModeTime=false;
-    if(bvmg_up!=-1 && Settings::getSetting("showPolar",0).toInt()==1)
+    if(bvmg_up!=-1 && Settings::getSetting(showPolar).toInt()==1)
     {
-        if(Settings::getSetting("showCompass",0).toInt()==0)
+        if(Settings::getSetting(showCompass).toInt()==0)
         {
             DataManager * dataManager=centralWidget->get_dataManager();
             if(dataManager) {
@@ -302,17 +302,17 @@ void  mapCompass::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidg
         }
         poly.resize(361);
         double polVac=0;
-        if(Settings::getSetting("scalePolar",0).toInt()==2)
+        if(Settings::getSetting(scalePolar).toInt()==2)
         {
             polarModeVac=true;
-            if(Settings::getSetting("estimeType",0).toInt()==0)
+            if(Settings::getSetting(estimeType).toInt()==0)
             {
-                polVac=Settings::getSetting("estimeTime",60).toInt();
+                polVac=Settings::getSetting(estimeTime).toInt();
                 polarModeTime=true;
             }
-            else if(Settings::getSetting("estimeType",0).toInt()==1)
+            else if(Settings::getSetting(estimeType).toInt()==1)
             {
-                polVac=Settings::getSetting("estimeVac",12).toInt();
+                polVac=Settings::getSetting(estimeVac).toInt();
             }
             else
                 polarModeVac=false;
@@ -444,7 +444,7 @@ void  mapCompass::mousePressEvent(QGraphicsSceneMouseEvent * e)
 {
     if (e->button() == Qt::LeftButton)
     {
-        if(!drawCompassLine && !(Settings::getSetting("compassCenterBoat","0")=="1") && centralWidget->getCompassFollow()==NULL)
+        if(!drawCompassLine && !(Settings::getSetting(compassCenterBoat).toInt()==1) && centralWidget->getCompassFollow()==NULL)
         {
             isMoving=true;
             mouseEvt=false;
@@ -474,9 +474,9 @@ void mapCompass::slot_shCom()
         shCom=true;
     }
     else
-        shCom=!(Settings::getSetting("showCompass",0).toInt()==1);
-    Settings::setSetting("showCompass",shCom?1:0);
-    if(!shCom && !Settings::getSetting("showPolar",0).toInt()==1)
+        shCom=!(Settings::getSetting(showCompass).toInt()==1);
+    Settings::setSetting(showCompass,shCom?1:0);
+    if(!shCom && !Settings::getSetting(showPolar).toInt()==1)
         hide();
     else
     {
@@ -503,10 +503,10 @@ void mapCompass::slot_shPol()
         shPol=true;
     }
     else
-        shPol=!(Settings::getSetting("showPolar",0).toInt()==1);
+        shPol=!(Settings::getSetting(showPolar).toInt()==1);
 
-    Settings::setSetting("showPolar",shPol?1:0);
-    if(!shPol && !Settings::getSetting("showCompass",0).toInt()==1)
+    Settings::setSetting(showPolar,shPol?1:0);
+    if(!shPol && !Settings::getSetting(showCompass).toInt()==1)
         hide();
     else
     {
@@ -539,7 +539,7 @@ void mapCompass::slot_projectionUpdated()
 }
 void mapCompass::slot_compassCenterBoat()
 {
-    if(Settings::getSetting("compassCenterBoat","0")=="0") return;
+    if(Settings::getSetting(compassCenterBoat).toInt()==0) return;
     centralWidget->slot_releaseCompassFollow();
     double lat,lon;
     main->get_selectedBoatPos(&lat,&lon);
@@ -605,8 +605,9 @@ bool mapCompass::tryMoving(int x, int y)
         // show heading and wind angle label
         compassLine->show();
         updateCompassLineLabels(x, y);
-
-        compassLine->moveSegment(x,y);
+        double X,Y;
+        proj->screen2mapDouble(x,y,&X,&Y);
+        compassLine->moveSegment(X,Y);
         return true;
     }
 
@@ -638,9 +639,7 @@ void mapCompass::updateCompassLineLabels(int x, int y)
 {
     double pos_angle,pos_wind_angle,pos_distance;
     double xa,xb,ya,yb;
-    double XX,YY;
-    compassLine->getStartPoint(&XX,&YY);
-    proj->screen2map(XX,YY,&xa,&ya);
+    compassLine->getStartPoint(&xa,&ya);
     proj->screen2map(x,y,&xb,&yb);
     Orthodromie orth(xa,ya,xb,yb);
     pos_angle=orth.getAzimutDeg();
@@ -666,8 +665,6 @@ void mapCompass::updateCompassLineLabels(int x, int y)
         double loxo_dist=orth.getLoxoDistance();
         loxo_angle=qRound(loxo_angle*100.0)/100.0;
         Util::getCoordFromDistanceLoxo(ya,xa,loxo_dist,loxo_angle,&yb,&xb);
-        double X,Y;
-        proj->map2screenDouble(xb,yb,&X,&Y);
         orth.setEndPoint(xb,yb);
         pos_angle=orth.getAzimutDeg();
         pos_distance=orth.getDistance();
@@ -676,19 +673,22 @@ void mapCompass::updateCompassLineLabels(int x, int y)
             compassLine->setOrthoMode(false);
         else
             compassLine->setOrthoMode(true);
-        compassLine->initSegment(XX,YY,qRound(X),qRound(Y));
+        compassLine->initSegment(xa,ya,xb,yb);
         hdg_label->setDefaultTextColor(Qt::darkRed);
         QString meters;
         if(loxo_dist*1852<=.1)
             meters=QString().sprintf("<br>%.2f ",loxo_dist*185200)+tr("Centimetres");
         else if(loxo_dist*1852<=1000)
             meters=QString().sprintf("<br>%.2f ",loxo_dist*1852)+tr("Metres");
+        double XX,YY,X,Y;
+        proj->map2screenDouble(xa,ya,&XX,&YY);
+        proj->map2screenDouble(xb,yb,&X,&Y);
         if(map && map->crossing(QLineF(XX,YY,X,Y),QLineF(xa,ya,xb,yb)))
         {
             if(main->getSelectedBoat() && main->getSelectedBoat()->get_boatType()!=BOAT_VLM)
             {
-                double cap1=Util::A360(pos_angle-main->getSelectedBoat()->getDeclinaison());
-                double cap2=Util::A360(loxo_angle-main->getSelectedBoat()->getDeclinaison());
+                double cap1=AngleUtil::A360(pos_angle-main->getSelectedBoat()->getDeclinaison());
+                double cap2=AngleUtil::A360(loxo_angle-main->getSelectedBoat()->getDeclinaison());
                 hdg_label->setHtml(QString().sprintf("<b><big>Ortho->Hdg: %.2f%c (Mag: %.2f%c) Dist: %.2f NM",pos_angle,176,cap1,176,pos_distance)+"<br>"+
                        QString().sprintf("<b><big>Loxo-->Hdg: %.2f%c (Mag: %.2f%c) Dist: %.2f NM",loxo_angle,176,cap2,176,loxo_dist)+meters+"<br>"+
                        "<font color=\"#FF0000\">"+tr("Collision avec les terres detectee")+"</font>");
@@ -704,8 +704,8 @@ void mapCompass::updateCompassLineLabels(int x, int y)
         {
             if(main->getSelectedBoat() && main->getSelectedBoat()->get_boatType()!=BOAT_VLM)
             {
-                double cap1=Util::A360(pos_angle-main->getSelectedBoat()->getDeclinaison());
-                double cap2=Util::A360(loxo_angle-main->getSelectedBoat()->getDeclinaison());
+                double cap1=AngleUtil::A360(pos_angle-main->getSelectedBoat()->getDeclinaison());
+                double cap2=AngleUtil::A360(loxo_angle-main->getSelectedBoat()->getDeclinaison());
                 hdg_label->setHtml(QString().sprintf("<b><big>Ortho->Hdg: %.2f%c (Mag: %.2f%c) Dist: %.2f NM",pos_angle,176,cap1,176,pos_distance)+"<br>"+
                        QString().sprintf("<b><big>Loxo-->Hdg: %.2f%c (Mag: %.2f%c) Dist: %.2f NM",loxo_angle,176,cap2,176,loxo_dist)+meters);
             }
@@ -840,12 +840,18 @@ void mapCompass::slot_compassLine(double click_x, double click_y)
         {
             updateCompassLineLabels(click_x,click_y);
             compassLine->setAlsoDrawLoxo(true);
-            compassLine->initSegment(click_x, click_y, click_x+10,click_y);
+            double X1,Y1,X2,Y2;
+            proj->screen2mapDouble(click_x,click_y,&X1,&Y1);
+            proj->screen2mapDouble(click_x+10,click_y,&X2,&Y2);
+            compassLine->initSegment(X1,Y1,X2,Y2);
         }
         else
         {
             updateCompassLineLabels(click_x+10,click_y);
-            compassLine->initSegment(this->x()+size/2,this->y()+size/2, click_x,click_y);
+            double X1,Y1,X2,Y2;
+            proj->screen2mapDouble(this->x()+size/2,this->y()+size/2,&X1,&Y1);
+            proj->screen2mapDouble(click_x,click_y,&X2,&Y2);
+            compassLine->initSegment(X1,Y1,X2,Y2);
             compassLine->setAlsoDrawLoxo(false);
         }
     }

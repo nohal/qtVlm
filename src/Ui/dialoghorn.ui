@@ -6,55 +6,86 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>290</width>
-    <height>59</height>
+    <width>298</width>
+    <height>144</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Parametres de la corne de brume</string>
   </property>
-  <layout class="QFormLayout" name="formLayout">
-   <item row="0" column="0">
-    <widget class="QCheckBox" name="activated">
-     <property name="text">
-      <string>Activer l'alarme a</string>
+  <layout class="QHBoxLayout" name="horizontalLayout_2">
+   <item>
+    <widget class="QScrollArea" name="scrollArea">
+     <property name="widgetResizable">
+      <bool>true</bool>
      </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QDateTimeEdit" name="date">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-     <property name="dateTime">
-      <datetime>
-       <hour>21</hour>
-       <minute>0</minute>
-       <second>0</second>
-       <year>1999</year>
-       <month>12</month>
-       <day>30</day>
-      </datetime>
-     </property>
-     <property name="displayFormat">
-      <string>d/M/yyyy hh:mm:ss</string>
-     </property>
-     <property name="timeSpec">
-      <enum>Qt::UTC</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0" colspan="2">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
+     <widget class="QWidget" name="scrollAreaWidgetContents_2">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>278</width>
+        <height>124</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QFrame" name="frame">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QCheckBox" name="activated">
+            <property name="text">
+             <string>Activer l'alarme a</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDateTimeEdit" name="date">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+            <property name="dateTime">
+             <datetime>
+              <hour>20</hour>
+              <minute>0</minute>
+              <second>0</second>
+              <year>1999</year>
+              <month>12</month>
+              <day>30</day>
+             </datetime>
+            </property>
+            <property name="displayFormat">
+             <string>d/M/yyyy hh:mm:ss</string>
+            </property>
+            <property name="timeSpec">
+             <enum>Qt::UTC</enum>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QDialogButtonBox" name="buttonBox">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="standardButtons">
+          <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>

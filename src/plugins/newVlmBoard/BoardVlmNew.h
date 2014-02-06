@@ -27,17 +27,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "class_list.h"
 #include "BoardTools.h"
 #include "ui_BoardVlmNew.h"
-#include "MainWindow.h"
+#include "MainWindowInterface.h"
+#include "BoardInterface.h"
+#include "dataDef.h"
 
-class BoardVlmNew : public QDialog, public Ui::BoardVlmNew
+class Q_DECL_EXPORT BoardVlmNew : public BoardInterface, public Ui::BoardVlmNew
 {
     Q_OBJECT
-    
+    //Q_PLUGIN_METADATA(IID "qtVlm.plugins.boardInterface/1.1")
+    Q_INTERFACES(BoardInterface)
+
 public:
-    explicit BoardVlmNew(MainWindow *main);
+    BoardVlmNew (QWidget* parent = 0);
+    void initBoard(MainWindowInterface *main);
+    QString getName();
     ~BoardVlmNew();
-    static bool confirmChange();
+public slots:
+    void drawVacInfo();
 private slots:
+    void slot_updateBtnWP();
+    void slot_vibrate();
     void slot_vlmSync();
     void slot_updateData();
     void slot_wpChanged();
@@ -54,19 +63,16 @@ private slots:
     void slot_clearWP();
     void slot_drawPolar();
     void slot_tabChanged(int tabNb);
-protected:
-    bool eventFilter(QObject *obj, QEvent *event);
-public slots:
-    void slot_vibrate();
-    void slot_updateBtnWP();
     void slot_selectPOI(bool doSelect);
     void slot_selectPOI(POI *poi);
     void slot_selectWP_POI();
     void slot_lock();
     void slot_reloadSkin();
+protected:
+    bool eventFilter(QObject *obj, QEvent *event);
 private:
-    MainWindow * main;
-    boatVLM * myBoat;
+    MainWindowInterface * main;
+    BoatInterface * myBoat;
     void updateLcds();
     QString defaultStyleSheet;
     QTimer * timer;
@@ -75,7 +81,6 @@ private:
     QLabel * currentRB;
     void timerStop();
     bool blocking;
-    DialogWp * wpDialog;
     double computeAngle();
     void update_btnPilototo();
     void set_style(QPushButton * button, QColor color=QColor(230,230,230), QColor color2=Qt::white);
@@ -91,6 +96,9 @@ private:
     QList<int>vibStates;
     bool flipBS;
     void setFontDialog(QObject *o);
+    bool confirmChange();
+    QTranslator * translator;
+    QString stringMaxSpeed;
 };
 
 #endif // BOARDVLMNEW_H

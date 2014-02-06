@@ -7,13 +7,15 @@
 #include <QFileDialog>
 #include <QDebug>
 #include "Util.h"
-
+#include <QScroller>
 dialogFaxMeteo::dialogFaxMeteo(faxMeteo * fax, myCentralWidget *parent)
     : QDialog(parent)
 {
     this->fax=fax;
     fax->savePreset();
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     this->presetNb=fax->getPresetNb();
     this->previousPresetNb=presetNb;
@@ -44,11 +46,14 @@ dialogFaxMeteo::dialogFaxMeteo(faxMeteo * fax, myCentralWidget *parent)
     connect(this->preset7,SIGNAL(clicked()),this,SLOT(slotPreset7()));
     connect(this->preset8,SIGNAL(clicked()),this,SLOT(slotPreset8()));
 }
+void dialogFaxMeteo::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
+}
 
 dialogFaxMeteo::~dialogFaxMeteo()
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
+    Settings::saveGeometry(this);
 }
 void dialogFaxMeteo::slotPreset1()
 {
@@ -116,6 +121,7 @@ void dialogFaxMeteo::loadPreset()
 
 void dialogFaxMeteo::done(int result)
 {
+    Settings::saveGeometry(this);
     if(result == QDialog::Accepted)
     {
         fax->setImgFileName(this->FileName->text());
@@ -142,13 +148,13 @@ void dialogFaxMeteo::browseFile()
     QString filter;
     filter =  tr("Fichiers Fax (*.png *.jpg *.tiff *.gif *.bmp)")
             + tr(";;Autres fichiers (*)");
-    QString faxPath=Settings::getSetting("faxPath",".").toString();
+    QString faxPath=Settings::getSetting(faxPathFolder).toString();
     if(faxPath==".") faxPath=Util::currentPath();
     QDir dirFax(faxPath);
     if(!dirFax.exists())
     {
         faxPath=Util::currentPath();
-        Settings::setSetting("faxPath",faxPath);
+        Settings::setSetting(faxPathFolder,faxPath);
     }
     QString fileName = QFileDialog::getOpenFileName(this,
                          tr("Choisir un fichier FAX METEO"),
@@ -160,6 +166,6 @@ void dialogFaxMeteo::browseFile()
         QFileInfo finfo(fileName);
         faxPath = finfo.absolutePath();
         this->FileName->setText(fileName);
-        Settings::setSetting("faxPath",faxPath);
+        Settings::setSetting(faxPathFolder,faxPath);
     }
 }

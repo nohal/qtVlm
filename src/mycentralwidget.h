@@ -34,7 +34,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "class_list.h"
 #include "dataDef.h"
 
-#include "DialogUnits.h"
 #include "DialogGraphicsParams.h"
 #include "selectionWidget.h"
 #include "MainWindow.h"
@@ -49,11 +48,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define Z_VALUE_LOADIMG    0.4
 #define Z_VALUE_FAXMETEO   0.5
 #define Z_VALUE_ROUTAGE    1
+#define Z_VALUE_BOATCIRCLE 1.2
 #define Z_VALUE_OPP        2
 #define Z_VALUE_GATE       3
 #define Z_VALUE_NEXT_GATE  3.5
 #define Z_VALUE_ESTIME     4
 #define Z_VALUE_ROUTE      5
+#define Z_VALUE_LINE_POI   6
 #define Z_VALUE_POI        7
 #define Z_VALUE_BOAT       10
 #define Z_VALUE_COMPASS    11
@@ -128,6 +129,7 @@ class myCentralWidget : public QWidget
         QList<raceData*> & getRaces() { return this->race_list; }
         QList<POI*> & getPois() { return this->poi_list; }
         QList<POI*> * getPoisList() { return & this->poi_list; }
+        POI * get_POIatPos(double lat,double lon);
         GshhsReader * get_gshhsReader(void) { return gshhsReader; }
         opponentList * getOppList() { return opponents; }
         inetConnexion * getInet(void) { return inetManager; }
@@ -144,6 +146,7 @@ class myCentralWidget : public QWidget
         MainWindow * getMainWindow(void) { return mainW; }
         MyView * getView() const {return this->view;}
         void removeRoute();
+        FCT_GET(MenuBar *,menuBar)
 
         FCT_SETGET(ToolBar*,toolBar)
         FCT_SETGET_CST(bool, noSave)
@@ -151,6 +154,7 @@ class myCentralWidget : public QWidget
         /*** Barrier ***/
         FCT_GET(int,barrierEditMode)
         void escKey_barrier(void);
+        void rm_barrierSet(BarrierSet * barrierSet);
 
         void insert_barrierPointAfterPoint(BarrierPoint * point);
         FCT_SETGET(QPoint,cursorPositionOnPopup)
@@ -223,7 +227,7 @@ class myCentralWidget : public QWidget
         /*races*/
         void drawNSZ(int i);
         void removeOpponent(QString oppId, QString raceId);
-        Terrain * getTerre(){return terre;}
+        FCT_GET(Terrain *,terrain)
         time_t getNextVac();
         void setPilototo(QList<POI*> poiList);
         void treatRoute(ROUTE* route);
@@ -254,7 +258,7 @@ public slots :
         void slot_magnify();
 
         /* POI */
-        POI * slot_addPOI(QString name,int type,double lat,double lon, double wph,int timestamp,bool useTimeStamp, boat *boat);
+        POI * slot_addPOI(QString name, const int &type, const double &lat, const double &lon, const double &wph, const int &timestamp, const bool &useTimeStamp);
         void slot_addPOI_list(POI * poi);
         void slot_delPOI_list(POI * poi);
         void slot_POISave(void);
@@ -282,12 +286,15 @@ public slots :
         void slot_shPor(bool);
         void slot_shFla(bool);
         void slot_shNig(bool);
+        void slot_shScale(bool);
         void slot_shBarSet(bool);
+        void slot_shTrace(bool);
 
         /*Routes */
         void slot_addRouteFromMenu();
         void slot_importRouteFromMenu(bool ortho=false);
         void slot_importRouteFromMenu2();
+        void slot_importRouteFromVlm();
         void slot_editRoute(ROUTE * route,bool createMode=false);
         void slot_twaLine();
         void slot_releaseCompassFollow(){this->compassRoute=NULL;}
@@ -324,6 +331,7 @@ public slots :
         void slot_fileInfo_GRIB_main(void);
         void slot_fileInfo_GRIB_current(void);
         void slotLoadSailsDocGrib(void);
+        void slot_gribDialog(void);
         void slotFax_open();
         void slotFax_close();
         void slotImg_open();
@@ -342,9 +350,6 @@ public slots :
         /* Menu */
         void slot_map_CitiesNames();
         void slot_clearSelection(void);
-        void slotIsobarsStep();
-        void slotIsotherms0Step();
-        void slot_setColorMapMode(QAction*);
         void slot_editHorn();
         void slot_playHorn();
         void slot_startReplay();
@@ -355,12 +360,14 @@ public slots :
         void slot_resetGestures();
 
         void slot_shTdb(bool);
+        void slot_graphicParams();
 signals:
         /* drawing */
         void redrawAll(void);
         void redrawGrib(void);
         void startReplay(bool);
         void replay(int);
+        void geometryChanged();
 
         /* POI */
         void writePOIData(QList<ROUTE*> &,QList<POI*> &,QString);
@@ -394,6 +401,7 @@ signals:
         void shPol(bool);
         void shLab(bool);
         void shBarSet(bool);
+        void shTrace(bool);
         void shFla();
 
 
@@ -412,7 +420,7 @@ signals:
         ToolBar    *toolBar;
 
         /* item child */
-        Terrain * terre;        
+        Terrain * terrain;
         mapCompass * compass;
         selectionWidget * selection;
         opponentList * opponents;
@@ -420,7 +428,8 @@ signals:
 
         /* Grib */
         MapDataDrawer * mapDataDrawer;
-        DataManager * dataManager;
+        DataManager * dataManager;        
+        bool get_gribZone(double * x0,double * y0,double * x1,double * y1);
 
         /* other child */        
         GshhsReader *gshhsReader;
@@ -432,18 +441,16 @@ signals:
         MyView * view;
 
         /* Dialogs */
-        DialogGribDate * gribDateDialog;
         DialogBoatAccount * boatAcc;
         DialogPlayerAccount * playerAcc;
         DialogRace * raceDialog;
         DialogLoadGrib  * dialogLoadGrib;
-        DialogUnits     dialogUnits;
-        DialogGraphicsParams  dialogGraphicsParams;
         DialogRealBoatConfig * realBoatConfig;
         DialogVlmLog * vlmLogViewer;
         DialogDownloadTracks * vlmTrackRetriever;
+        DialogGribDrawing * dialogGribDrawing;
 
-        /* Lists, POI*/
+        /* Lists, Boat, POI, Route, routage, player; ///*/
         QList<POI*> poi_list;
         QList<ROUTE*> route_list;
         QList<ROUTAGE*> routage_list;
@@ -476,6 +483,7 @@ signals:
         bool shOpp_st;
         bool shPor_st;
         bool shBarSet_st;
+        bool shTrace_st;
 
         void do_shLab(bool val);
         void do_shPoi(bool val);
@@ -483,6 +491,7 @@ signals:
         void do_shOpp(bool val);
         void do_shPor(bool val);
         void do_shBarSet(bool val);
+        void do_shTrace(bool val);
 
         QSound  *horn;
         bool    hornActivated;

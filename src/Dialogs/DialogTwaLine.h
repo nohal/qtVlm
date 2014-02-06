@@ -23,7 +23,6 @@ private:
     QList<POI*> list;
     boat * myBoat;
     void traceIt();
-    double A360(double hdg);
     MainWindow * main;
     QPen pen;
     QPoint position;
@@ -35,6 +34,7 @@ public slots:
     void slotTwa3(bool b);
     void slotTwa4(bool b);
     void slotTwa5(bool b);
+    void slot_screenResize();
 private slots:
     void on_spinBox_5_valueChanged(int );
     void on_doubleSpinBox_5_valueChanged(double );

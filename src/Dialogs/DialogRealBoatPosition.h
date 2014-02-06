@@ -27,13 +27,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class DialogRealBoatPosition: public QDialog, public Ui::realBoatPos
 { Q_OBJECT
     public:
-        DialogRealBoatPosition(QWidget * parent);
+        DialogRealBoatPosition(myCentralWidget *parent);
         void showDialog(boatReal * boat);
         void done(int result);
     public slots:
         void latLonChg(double);
         void latLonSignChg(int i);
-    private:
+        void slot_screenResize();
+private:
         boatReal * currentBoat;
         void formatLatLon();
         bool formatWithSeconds;

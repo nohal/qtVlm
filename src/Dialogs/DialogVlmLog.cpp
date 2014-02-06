@@ -7,13 +7,15 @@
 #include "ui_DialogVlmLog.h"
 #include "Util.h"
 #include "settings.h"
-
+#include <QScroller>
 
 DialogVlmLog::DialogVlmLog(myCentralWidget *parent) :
     QDialog(parent),
     ui(new Ui::DialogVlmLog)
 {
     ui->setupUi(this);
+    QScroller::grabGesture(this->ui->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     // for some reason QTableView::setFont crashed.
 //    QMap<QWidget *,QFont> exceptions;
@@ -26,16 +28,20 @@ DialogVlmLog::DialogVlmLog(myCentralWidget *parent) :
     this->setModal(false);
     this->setWindowTitle(tr("Historique VLM"));
 }
+void DialogVlmLog::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
+}
 void DialogVlmLog::done(int result)
 {
+    Settings::saveGeometry(this);
     QDialog::done(result);
     this->deleteLater();
 }
 
 DialogVlmLog::~DialogVlmLog()
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
+    Settings::saveGeometry(this);
     if(ui)
         delete ui;
     //qWarning()<<"delete DialogVlmLog finished";
@@ -150,14 +156,9 @@ void DialogVlmLog::slot_updateData(void)
 
 void DialogVlmLog::on_saveLogButton_clicked()
 {
-    QString logsPath=Settings::getSetting("logsFolder","").toString();
-#ifdef __WIN_QTVLM
-    QString fileName = QFileDialog::getSaveFileName(this,
-                         tr("Sauvegarde Logs"), logsPath, "LogsDump (*.txt)",0,QFileDialog::DontUseNativeDialog);
-#else
+    QString logsPath=Settings::getSetting(logsFolder).toString();
     QString fileName = QFileDialog::getSaveFileName(this,
                          tr("Sauvegarde Logs"), logsPath, "LogsDump (*.txt)");
-#endif
     if(fileName.isEmpty() || fileName.isNull()) return;
     QFile::remove(fileName);
     QFile screenshotFile(fileName);
@@ -173,6 +174,6 @@ void DialogVlmLog::on_saveLogButton_clicked()
              QString(QObject::tr("Impossible de creer le fichier %1")).arg(fileName));
         return;
     }
-    Settings::setSetting("logsFolder",info.absoluteDir().path());
+    Settings::setSetting(logsFolder,info.absoluteDir().path());
     vlmBoat->exportBoatInfoLog(fileName);
 }

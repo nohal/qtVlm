@@ -82,7 +82,9 @@ bool GribV2::loadFile(QString fileName) {
     int m_sec_grecConst=0;
     int m_sec_endLoop=0;
 
+#ifdef PRINT_WARNING
     qWarning() << "GV2 loading " << fileName;
+#endif
 
     g2int lskip=0,lgrib=0,iseek=0;
     unsigned char *cgrib; // msg buffer
@@ -108,7 +110,8 @@ bool GribV2::loadFile(QString fileName) {
 
     /* clean data structure + iso lines */
     clean_all_vectors();
-    Util::cleanListPointers(listIsobars);
+
+    clean_isoBars();
     Util::cleanListPointers(listIsotherms0);
 
     for(;;) {
@@ -154,9 +157,6 @@ bool GribV2::loadFile(QString fileName) {
             continue;
         }
 
-        /* loop on th fields => 1 field = 1 GribRecord */
-        //qWarning() << "nb fields=" << numfields << ", nb locals=" << numlocal;
-
         for(int i=0;i<numfields;++i) {
             tLoad.start();
             ierr=g2_getfld(cgrib,i+1,GRB2_UNPACK,GRB2_EXPAND,&gfld);
@@ -180,7 +180,7 @@ bool GribV2::loadFile(QString fileName) {
     }
 
     if(fptr) fclose(fptr);
-
+#ifdef PRINT_WARNING
     qWarning() << "GRIBV2 load finished";
     qWarning() << "NB key: " << mapGribRecords.size();
     qWarning() << "List:";
@@ -197,7 +197,7 @@ bool GribV2::loadFile(QString fileName) {
     qWarning() << "\t call getFld: " << m_sec_g2_getfld;
     qWarning() << "\t const GribRecordV2: " << m_sec_grecConst;
     qWarning() << "\t End loop: " << m_sec_endLoop;
-
+#endif
     createDewPointData();
 
     ok=true;

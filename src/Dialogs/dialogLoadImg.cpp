@@ -9,6 +9,7 @@
 #include "Util.h"
 #include <QMessageBox>
 #include "bsb.h"
+#include <QScroller>
 
 dialogLoadImg::dialogLoadImg(loadImg * carte, myCentralWidget *parent)
     : QDialog(parent)
@@ -16,6 +17,8 @@ dialogLoadImg::dialogLoadImg(loadImg * carte, myCentralWidget *parent)
     this->carte=carte;
     this->parent=parent;
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     this->alpha->setMaximum(100);
     this->gribAlpha->setMaximum(100);
@@ -36,6 +39,10 @@ dialogLoadImg::dialogLoadImg(loadImg * carte, myCentralWidget *parent)
     connect(timerResize,SIGNAL(timeout()),this,SLOT(showSnapshot()));
 //    showSnapshot();
 }
+void dialogLoadImg::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
+}
 void dialogLoadImg::resizeEvent(QResizeEvent *)
 {
     timerResize->start();
@@ -54,7 +61,7 @@ void dialogLoadImg::showSnapshot()
         if(OK!=0)
         {
             snapShot->setPixmap(myCarte->getSnapshot(snapShot->size()));
-            kapInfo->setText(tr("Name ")+myCarte->getBsb()->name);
+            kapInfo->setText(tr("Name: ")+myCarte->getBsb()->name);
             kapInfo->append(tr("Projection: ")+myCarte->getBsb()->projection);
             if(myCarte->getBsb()->num_wpxs==0 || myCarte->getBsb()->num_wpys==0)
                 kapInfo->append(tr("No polynomials found in kap file, using internal solution"));
@@ -80,11 +87,11 @@ void dialogLoadImg::showSnapshot()
 }
 dialogLoadImg::~dialogLoadImg()
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
+    Settings::saveGeometry(this);
 }
 void dialogLoadImg::done(int result)
 {
+    Settings::saveGeometry(this);
     if(result == QDialog::Accepted || result==3)
     {
         carte->setParams(this->alpha->value()/100.0,
@@ -98,10 +105,10 @@ void dialogLoadImg::done(int result)
             msgBox.setText(tr("Fichier Kap invalide"));
             msgBox.setIcon(QMessageBox::Critical);
             msgBox.exec();
-            Settings::setSetting("LastKap",QString());
+            Settings::setSetting(LastKap,QString());
             return;
         }
-        Settings::setSetting("LastKap",this->FileName->text());
+        Settings::setSetting(LastKap,this->FileName->text());
         if(result==3)
         {
             carte->nominalZoom();
@@ -124,25 +131,24 @@ void dialogLoadImg::browseFile()
 {
     QString filter;
     filter =  tr("Fichiers kap (*.kap *.KAP)");
-    QString cartePath=Settings::getSetting("cartePath",".").toString();
+    QString cartePath=Settings::getSetting(kapMapPath).toString();
     if(cartePath==".") cartePath=Util::currentPath();
     QDir dircarte(cartePath);
     if(!dircarte.exists())
     {
         cartePath=Util::currentPath();
-        Settings::setSetting("cartePath",cartePath);
+        Settings::setSetting(kapMapPath,cartePath);
     }
     QString fileName = QFileDialog::getOpenFileName(this,
                          tr("Choisir un fichier kap"),
                          cartePath,
                          filter);
-
     if (fileName != "")
     {
         QFileInfo finfo(fileName);
         cartePath = finfo.absolutePath();
         this->FileName->setText(fileName);
-        Settings::setSetting("cartePath",cartePath);
+        Settings::setSetting(kapMapPath,cartePath);
     }
     showSnapshot();
 }

@@ -19,6 +19,8 @@ class DialogRouteComparator : public QDialog, public Ui::DialogRouteComparator
 public:
     explicit DialogRouteComparator(myCentralWidget *parent = 0);
     ~DialogRouteComparator();
+public slots:
+    void slot_screenResize();
 private slots:
     void slot_deleteRoute();
     void slot_removeRoute();

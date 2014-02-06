@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Util.h"
 #include "inetConnexion.h"
 #include "DialogInetProgess.h"
+#include <QScroller>
 #define VLM_REQUEST_GET_FOLDER 0
 #define VLM_REQUEST_GET_FILE   1
 
@@ -41,6 +42,8 @@ DialogVlmGrib::DialogVlmGrib(MainWindow * ,myCentralWidget * parent,inetConnexio
         inetClient(inet)
 {
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     listRadio[0]=radio1;
     listRadio[1]=radio2;
@@ -51,20 +54,25 @@ DialogVlmGrib::DialogVlmGrib(MainWindow * ,myCentralWidget * parent,inetConnexio
     waitBox = new QMessageBox(QMessageBox::Information,
                              tr("VLM Grib"),
                              tr("Chargement de la liste de grib"));
-
+}
+void DialogVlmGrib::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 
 void DialogVlmGrib::done(int res)
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
+    Settings::saveGeometry(this);
     if(res == QDialog::Accepted)
     {        
         if(!doRequest(VLM_REQUEST_GET_FILE))
             res=QDialog::Rejected;
+        else
+            return;
     }
 
-    QDialog::done(res);
+    //QDialog::done(res);
+    this->deleteLater();
 }
 
 void DialogVlmGrib::showDialog(void)
@@ -131,16 +139,16 @@ int DialogVlmGrib::parseFolderListing(QString data)
 
 bool DialogVlmGrib::gribFileReceived(QByteArray * content)
 {
-    QString gribPath=Settings::getSetting("edtGribFolder",appFolder.value("grib")).toString();
+    QString gribPath=Settings::getSetting(edtGribFolder).toString();
     QDir dirGrib(gribPath);
     if(!dirGrib.exists())
     {
         gribPath=appFolder.value("grib");
-        Settings::setSetting("askGribFolder",1);
-        Settings::setSetting("edtGribFolder",gribPath);
+        Settings::setSetting(askGribFolder,1);
+        Settings::setSetting(edtGribFolder,gribPath);
     }
     filename=gribPath+"/"+filename;
-    if(Settings::getSetting("askGribFolder",1)==1)
+    if(Settings::getSetting(askGribFolder)==1)
     {
         filename = QFileDialog::getSaveFileName(this,
                          tr("Sauvegarde du fichier GRIB"), filename, "Grib (*.grb)");
@@ -185,7 +193,8 @@ bool DialogVlmGrib::doRequest(int reqType)
     switch(reqType)
     {
         case VLM_REQUEST_GET_FOLDER:
-            inetGet(VLM_REQUEST_GET_FOLDER,"/","http://grib.v-l-m.org",false);
+            page="/";
+            inetGet(VLM_REQUEST_GET_FOLDER,page,"http://grib.v-l-m.org",false);
             break;
         case VLM_REQUEST_GET_FILE:
             /*search selected file*/
@@ -200,8 +209,9 @@ bool DialogVlmGrib::doRequest(int reqType)
             else
                 filename=filename.mid(0,23);
             page="/"+filename;
-            connect (this->getInet()->getProgressDialog(),SIGNAL(rejected()),this,SLOT(slot_abort()));
+            this->hide();
             inetGetProgress(VLM_REQUEST_GET_FILE,page,"http://grib.v-l-m.org",false);
+            connect (this->getInet()->getProgressDialog(),SIGNAL(rejected()),this,SLOT(slot_abort()));
             break;
     }
     return true;
@@ -211,35 +221,42 @@ void DialogVlmGrib::slot_abort()
     qWarning()<<"aborting VLM grib donwload";
     this->inetAbort();
     filename.clear();
+    this->deleteLater();
 }
 
 void DialogVlmGrib::requestFinished (QByteArray data)
 {
+    //qWarning()<<"vlmgrib requestFinished";
     int nb;
     if(data.isEmpty() || data.isNull()) return;
     switch(getCurrentRequest())
     {
         case VLM_REQUEST_GET_FOLDER:
-            if(!waitBox->isVisible())
-                return;
+//            if(!waitBox->isVisible())
+//                return;
             waitBox->hide();
             nb=parseFolderListing(QString(data));
             if(nb==0)
+            {
+                this->deleteLater();
                 return;
+            }
             listRadio[nb-1]->setChecked(true);
+            Util::setFontDialog(this);
             exec();
             break;
         case VLM_REQUEST_GET_FILE:
-            if(filename.isEmpty())
-            {
-                qWarning() << "Empty file name in VLM grib save";
-            }
+            if(!gribFileReceived(&data))
+                showDialog();
             else
-                if(!gribFileReceived(&data))
-                    showDialog();
-                else
-                    emit signalGribFileReceived(filename);
-
+            {
+                emit signalGribFileReceived(filename);
+                this->deleteLater();
+            }
             break;
     }
+}
+DialogVlmGrib::~DialogVlmGrib()
+{
+    delete waitBox;
 }

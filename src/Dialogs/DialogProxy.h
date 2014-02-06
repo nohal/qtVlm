@@ -36,7 +36,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 class DialogProxy : public QDialog, public Ui::paramProxy_ui
 { Q_OBJECT
     public:
-        DialogProxy();
+        DialogProxy(myCentralWidget *parent);
 
         void done(int result);
     
@@ -44,7 +44,8 @@ class DialogProxy : public QDialog, public Ui::paramProxy_ui
         void slot_proxyType_changed(int);
         void slot_useProxy_changed();
 
-    signals:
+        void slot_screenResize();
+signals:
         void proxyUpdated(void);
 };
 

@@ -111,7 +111,7 @@
     <widget class="QLCDNumber" name="lcd_TWS">
      <property name="geometry">
       <rect>
-       <x>30</x>
+       <x>42</x>
        <y>300</y>
        <width>71</width>
        <height>31</height>
@@ -130,10 +130,10 @@
     <widget class="QLabel" name="lab_TWS">
      <property name="geometry">
       <rect>
-       <x>0</x>
+       <x>-3</x>
        <y>300</y>
-       <width>31</width>
-       <height>16</height>
+       <width>41</width>
+       <height>21</height>
       </rect>
      </property>
      <property name="font">
@@ -146,13 +146,16 @@
      <property name="text">
       <string>TWS</string>
      </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
     </widget>
     <widget class="QLCDNumber" name="lcd_TWD">
      <property name="geometry">
       <rect>
-       <x>150</x>
+       <x>163</x>
        <y>300</y>
-       <width>91</width>
+       <width>81</width>
        <height>31</height>
       </rect>
      </property>
@@ -166,16 +169,16 @@
       <number>6</number>
      </property>
      <property name="value" stdset="0">
-      <double>117.239999999999995</double>
+      <double>117.340000000000003</double>
      </property>
     </widget>
     <widget class="QLabel" name="lab_TWD">
      <property name="geometry">
       <rect>
-       <x>120</x>
+       <x>118</x>
        <y>300</y>
-       <width>31</width>
-       <height>16</height>
+       <width>41</width>
+       <height>21</height>
       </rect>
      </property>
      <property name="font">
@@ -187,6 +190,9 @@
      </property>
      <property name="text">
       <string>TWD</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
     <widget class="QLabel" name="lab_backTab1">
@@ -778,7 +784,7 @@
        <x>5</x>
        <y>257</y>
        <width>231</width>
-       <height>77</height>
+       <height>85</height>
       </rect>
      </property>
      <property name="font">
@@ -789,139 +795,117 @@
      <property name="title">
       <string>Race</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_4">
-      <property name="leftMargin">
-       <number>5</number>
-      </property>
-      <property name="topMargin">
-       <number>1</number>
-      </property>
-      <property name="rightMargin">
-       <number>5</number>
-      </property>
-      <property name="bottomMargin">
-       <number>5</number>
-      </property>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_7">
-        <property name="spacing">
-         <number>3</number>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="2" column="1">
+       <widget class="QLabel" name="det_GATE_VMG">
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
         </property>
-        <item>
-         <widget class="QLabel" name="det_arrow">
-          <property name="font">
-           <font>
-            <pointsize>8</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>-&gt;</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="det_GATE">
-          <property name="font">
-           <font>
-            <pointsize>8</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Fasnet gate</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
+        <property name="text">
+         <string>132.23d</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
       </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_8">
-        <property name="spacing">
-         <number>3</number>
+      <item row="1" column="1">
+       <widget class="QLabel" name="det_GATE_ORT">
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
         </property>
-        <item>
-         <widget class="QLabel" name="label_17">
-          <property name="font">
-           <font>
-            <pointsize>8</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Ortho:</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="det_GATE_ORT">
-          <property name="font">
-           <font>
-            <pointsize>8</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>132.23d</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_18">
-          <property name="font">
-           <font>
-            <pointsize>8</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>Dist:</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="det_GATE_DIST">
-          <property name="font">
-           <font>
-            <pointsize>8</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>132.23d</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-       </layout>
+        <property name="text">
+         <string>132.23d</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" colspan="2">
+       <widget class="QLabel" name="det_GATE">
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Fasnet gate</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_19">
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Ortho:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QLabel" name="label_18">
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Dist:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_17">
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>B-VMG:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3">
+       <widget class="QLabel" name="det_GATE_DIST">
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>132.23d</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -1117,7 +1101,7 @@
      <string>°</string>
     </property>
     <property name="maximum">
-     <double>359.990000000000009</double>
+     <double>400.000000000000000</double>
     </property>
     <property name="value">
      <double>257.149999999999977</double>
@@ -1126,24 +1110,30 @@
    <widget class="QLabel" name="lab_TWA">
     <property name="geometry">
      <rect>
-      <x>104</x>
+      <x>105</x>
       <y>60</y>
-      <width>32</width>
+      <width>31</width>
       <height>20</height>
      </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
     </property>
     <property name="text">
      <string>TWA</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignCenter</set>
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
    <widget class="QDial" name="dial">
     <property name="geometry">
      <rect>
       <x>150</x>
-      <y>56</y>
+      <y>60</y>
       <width>50</width>
       <height>50</height>
      </rect>
@@ -1170,8 +1160,8 @@
    <widget class="QRadioButton" name="rd_VBVMG">
     <property name="geometry">
      <rect>
-      <x>170</x>
-      <y>42</y>
+      <x>169</x>
+      <y>44</y>
       <width>16</width>
       <height>17</height>
      </rect>
@@ -1183,24 +1173,30 @@
    <widget class="QLabel" name="lab_VMG">
     <property name="geometry">
      <rect>
-      <x>214</x>
+      <x>215</x>
       <y>60</y>
-      <width>33</width>
+      <width>41</width>
       <height>16</height>
      </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
     </property>
     <property name="text">
      <string>VMG</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignCenter</set>
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
    <widget class="QRadioButton" name="rd_ORTHO">
     <property name="geometry">
      <rect>
       <x>186</x>
-      <y>102</y>
+      <y>103</y>
       <width>16</width>
       <height>17</height>
      </rect>
@@ -1212,17 +1208,23 @@
    <widget class="QLabel" name="lab_HDG">
     <property name="geometry">
      <rect>
-      <x>116</x>
+      <x>114</x>
       <y>110</y>
-      <width>33</width>
+      <width>31</width>
       <height>20</height>
      </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
     </property>
     <property name="text">
      <string>HDG</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignCenter</set>
+     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
     </property>
    </widget>
    <widget class="QRadioButton" name="rd_VMG">
@@ -1241,11 +1243,17 @@
    <widget class="QLabel" name="lab_VBVMG">
     <property name="geometry">
      <rect>
-      <x>147</x>
-      <y>25</y>
+      <x>146</x>
+      <y>22</y>
       <width>61</width>
       <height>20</height>
      </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
     </property>
     <property name="text">
      <string>VBVMG</string>
@@ -1275,10 +1283,10 @@
      <string>°</string>
     </property>
     <property name="minimum">
-     <double>-179.990000000000009</double>
+     <double>-200.000000000000000</double>
     </property>
     <property name="maximum">
-     <double>180.000000000000000</double>
+     <double>200.000000000000000</double>
     </property>
     <property name="value">
      <double>-154.319999999999993</double>
@@ -1287,7 +1295,7 @@
    <widget class="QRadioButton" name="rd_TWA">
     <property name="geometry">
      <rect>
-      <x>137</x>
+      <x>140</x>
       <y>61</y>
       <width>16</width>
       <height>17</height>
@@ -1302,9 +1310,15 @@
      <rect>
       <x>207</x>
       <y>110</y>
-      <width>33</width>
+      <width>41</width>
       <height>16</height>
      </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
     </property>
     <property name="text">
      <string>ORT</string>
@@ -1316,8 +1330,8 @@
    <widget class="QRadioButton" name="rd_HDG">
     <property name="geometry">
      <rect>
-      <x>149</x>
-      <y>102</y>
+      <x>151</x>
+      <y>103</y>
       <width>16</width>
       <height>17</height>
      </rect>

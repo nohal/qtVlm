@@ -21,19 +21,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDebug>
 #include <QFile>
 #include <QDir>
+#include <QFileDialog>
 
 #include "DialogRealBoatConfig.h"
 
 #include "settings.h"
 #include "boatReal.h"
+#include "GpsReceiver.h"
 #include "Player.h"
 #include "Util.h"
+#include <QScroller>
 
 DialogRealBoatConfig::DialogRealBoatConfig(myCentralWidget *parent) : QDialog(parent)
 {
     this->parent=parent;
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     setupUi(this);
     Util::setFontDialog(this);
+}
+void DialogRealBoatConfig::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 
 void DialogRealBoatConfig::launch(boatReal * boat)
@@ -41,20 +50,58 @@ void DialogRealBoatConfig::launch(boatReal * boat)
     curBoat=boat;
     if(!curBoat) return;
     /* init dialog */
-    serialName->setText(Settings::getSetting("gpsPortName","COM1").toString());
-    int idx = baudRate->findText(Settings::getSetting("gpsBaudRate",BAUD4800).toString(),Qt::MatchExactly);
-    //qWarning() << "idx=" << idx << ", string= " << Settings::getSetting("gpsBaudRate",BAUD4800).toString();
+
+    //*** GPS ****
+
+    // Serial part
+    serialName->setText(Settings::getSetting(gpsSerial_portName).toString());
+    int idx = baudRate->findText(Settings::getSetting(gpsDerial_baudRate).toString(),Qt::MatchExactly);
     if(idx==-1) idx=baudRate->findText("4800",Qt::MatchExactly);
     if(idx==-1) idx=0;
     baudRate->setCurrentIndex(idx);
-    polarEfficiency->setValue(Settings::getSetting("polarEfficiency",100).toInt());
+
+    // File part
+    gpsFileName=Settings::getSetting(gpsFake_fileName).toString();
+    lb_fileName->setText(gpsFileName);
+
+    // GPSd part
+
+    // GPS source
+    // first disable all GPS widget - the needed one will be activate by setCheck
+    serialName->setEnabled(false);
+    baudRate->setEnabled(false);
+    btnFile->setEnabled(false);
+
+#ifndef __UNIX_QTVLM
+    rdGPSd->setChecked(false);
+#endif
+
+    gpsSource = Settings::getSetting(deviceType).toInt();
+    switch(gpsSource) {
+        case GPS_GPSD:
+#ifdef __UNIX_QTVLM
+        rdGPSd->setChecked(true);
+        break;
+#endif
+        case GPS_SERIAL:
+            rdSerial->setChecked(true);
+            break;
+        case GPS_FILE:
+            rdFile->setChecked(true);
+            break;
+    }
+
     this->displayNMEA->setChecked(boat->getDisplayNMEA());
+
+    //*** Polar ****
     QDir polarDir = QDir(appFolder.value("polar"));
     QStringList extStr;
     extStr.append("*.pol");
     extStr.append("*.POL");
     extStr.append("*.csv");
     extStr.append("*.CSV");
+    extStr.append("*.xml");
+    extStr.append("*.XML");
     QFileInfoList fileList=polarDir.entryInfoList(extStr,QDir::Files);
 
     /* default value */
@@ -74,42 +121,95 @@ void DialogRealBoatConfig::launch(boatReal * boat)
     {
         QString polarStr=curBoat->getPolarName();
         polarList->setCurrentIndex(polarStr.isEmpty()?0:polarList->findText(polarStr));
-        //qWarning() << "Init dialog with polar: " << polarStr;
     }
-    this->declinaison->setValue(Settings::getSetting("declinaison",0).toDouble());
-    this->minSpeedForEngine->setValue(Settings::getSetting("minSpeedForEngine",0).toDouble());
-    this->speedWithEngine->setValue(Settings::getSetting("speedWithEngine",6).toDouble());
+
+    spn_polarEfficiency->setValue(Settings::getSetting(polar_efficiency).toInt());
+
+    this->declinaison->setValue(Settings::getSetting(boat_declinaison).toDouble());
+    this->minSpeedForEngine->setValue(Settings::getSetting(boat_minSpeedForEngine).toDouble());
+    this->speedWithEngine->setValue(Settings::getSetting(boat_speedWithEngine).toDouble());
 
     exec();
 }
 
 void DialogRealBoatConfig::done(int result)
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
+    Settings::saveGeometry(this);
     if(result == QDialog::Accepted)
     {
-        Settings::setSetting("gpsPortName",serialName->text());
-        //qWarning() << "Set rate=" << baudRate->currentText();
-        Settings::setSetting("gpsBaudRate",baudRate->currentText());
-        Settings::setSetting("polarEfficiency",polarEfficiency->value());
-        Settings::setSetting("minSpeedForEngine",minSpeedForEngine->value());
-        Settings::setSetting("speedWithEngine",speedWithEngine->value());
+        /* GPS settings */
+        // Serial
+        Settings::setSetting(gpsSerial_portName,serialName->text());
+        Settings::setSetting(gpsDerial_baudRate,baudRate->currentText());
+
+        // File
+        Settings::setSetting(gpsFake_fileName,gpsFileName);
+        // GPSd
+
+        // GPS mode
+        Settings::setSetting(deviceType,gpsSource);
+
+        curBoat->setDisplayNMEA(this->displayNMEA->isChecked());
+
+        if(curBoat->gpsIsRunning())
+            curBoat->restartGPS();
+
+        Settings::setSetting(polar_efficiency,spn_polarEfficiency->value());
+        Settings::setSetting(boat_minSpeedForEngine,minSpeedForEngine->value());
+        Settings::setSetting(boat_speedWithEngine,speedWithEngine->value());
         if(curBoat)
         {
             qWarning() << "Saving polar in boat: " << polarList->currentText();
 
             curBoat->setPolar(polarList->currentIndex()==0?QString():polarList->currentText());
         }
-        Settings::setSetting("declinaison",QString().sprintf("%.1f",this->declinaison->value()));
-        curBoat->setDisplayNMEA(this->displayNMEA->isChecked());
+        Settings::setSetting(boat_declinaison,QString().sprintf("%.1f",this->declinaison->value()));
+
         curBoat->setDeclinaison(declinaison->value());
-        if(!curBoat->gpsIsRunning())
-            curBoat->emitMoveBoat();
+
         curBoat->setMinSpeedForEngine(minSpeedForEngine->value());
         curBoat->setSpeedWithEngine(speedWithEngine->value());
         this->parent->emitUpdateRoute(curBoat);
     }
     QDialog::done(result);
+}
+
+void DialogRealBoatConfig::slot_selectFile(void) {
+    QString fileName = QFileDialog::getOpenFileName(this,
+                         tr("Choisir un fichier"));
+    if (fileName != "")
+    {
+        gpsFileName=fileName;
+        lb_fileName->setText(fileName);
+    }
+}
+
+void DialogRealBoatConfig::slot_serial(bool st) {
+    if(st) {
+        serialName->setEnabled(true);
+        baudRate->setEnabled(true);
+        gpsSource=GPS_SERIAL;
+    }
+    else {
+        serialName->setEnabled(false);
+        baudRate->setEnabled(false);
+    }
+
+}
+
+void DialogRealBoatConfig::slot_file(bool st) {
+    if(st) {
+        btnFile->setEnabled(true);
+        gpsSource=GPS_FILE;
+    }
+    else {
+        btnFile->setEnabled(false);
+    }
+}
+
+void DialogRealBoatConfig::slot_gpsd(bool st) {
+    if(st) {
+        gpsSource=GPS_GPSD;
+    }
 }
 

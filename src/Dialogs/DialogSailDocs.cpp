@@ -21,17 +21,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogSailDocs.h"
 #include "Util.h"
 #include "settings.h"
-DialogSailDocs::DialogSailDocs(QString param, QWidget * parent) : QDialog(parent)
+#include <QScroller>
+#include "mycentralwidget.h"
+DialogSailDocs::DialogSailDocs(QString param, myCentralWidget * parent) : QDialog(parent->getMainWindow())
 {
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     this->param->setText(param);
     this->param->setFocus();
     this->param->selectAll();
 }
+void DialogSailDocs::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
+}
 DialogSailDocs::~DialogSailDocs()
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
+    Settings::saveGeometry(this);
 }
 

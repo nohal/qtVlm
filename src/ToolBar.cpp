@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Terrain.h"
 #include "boatVLM.h"
 #include "Util.h"
+#include <QDesktopWidget>
 //#include "Board.h"
 
 /**********************************************************************/
@@ -41,6 +42,17 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     /*********************/
     this->mainWindow=mainWindow;
     centralWidget = mainWindow->getMy_centralWidget();
+    connect(centralWidget,SIGNAL(geometryChanged()),this,SLOT(manageToolbarBreak()));
+//    double ppi=QApplication::desktop()->physicalDpiX();
+//    int s=24*ppi/72;
+//    iconSize=QSize(s,s);
+    iconSize=QToolBar().iconSize();
+    //qWarning()<<"iconSize="<<iconSize;
+    QPixmap add("img/add.png");
+#ifdef __ANDROID__
+    add=add.scaled(iconSize,Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
+#endif
+    add.save("img/addResized.png");
 
 //    miscToolBar=new MyToolBar("Misc",tr("Misc"),this,mainWindow);
 //    toolBarList.append(miscToolBar);
@@ -56,16 +68,12 @@ ToolBar::ToolBar(MainWindow *mainWindow)
 
     boatToolBar=new MyToolBar("Boat",tr("Boat"),this,mainWindow);
     toolBarList.append(boatToolBar);
-
-    etaToolBar=new MyToolBar("ETA",tr("ETA"),this,mainWindow);
-    toolBarList.append(etaToolBar);
-
     barrierToolBar=new MyToolBar("BarrierSet",tr("Barrier Set"),this,mainWindow);
     toolBarList.append(barrierToolBar);
 
     /* adding all toolBar to mainWindow dock */
     for(int i=0;i<toolBarList.count();++i)
-        mainWindow->addToolBar(toolBarList.at(i));
+        mainWindow->addToolBar(Qt::TopToolBarArea,toolBarList.at(i));
 
     /* font */
     QFontInfo finfo = gribToolBar->fontInfo();
@@ -83,9 +91,10 @@ ToolBar::ToolBar(MainWindow *mainWindow)
 
     /* Grib toolBar */
     gribDwnld = new QToolButton(gribToolBar);
-    gribDwnld->setIcon(QIcon(appFolder.value("img")+"wind.png"));
+    mySetIcon(gribDwnld,QString(appFolder.value("img")+"wind.png"));
     gribDwnld->setToolTip(tr("Hold to select download method"));
     gribSubMenu = new QMenu(gribDwnld);
+    Util::setFontDialog(gribSubMenu);
     acWindZygrib = init_Action(tr("Telechargement zyGrib"),tr(""),tr(""),appFolder.value("img")+ "network.png",gribToolBar);
     acWindVlm = init_Action(tr("Telechargement VLM"),tr(""),tr(""), appFolder.value("img")+"VLM_mto.png",gribToolBar);
     acWindSailsDoc = init_Action(tr("Telechargement SailsDoc"),tr(""),tr(""),appFolder.value("img")+ "kmail.png",gribToolBar);
@@ -109,7 +118,9 @@ ToolBar::ToolBar(MainWindow *mainWindow)
 
     datesGrib_now = init_Action(tr("Now"),tr(""),tr(""),appFolder.value("img")+"now.png",gribToolBar);
     datesGrib_sel = init_Action(tr("Select date"),tr(""),tr(""),appFolder.value("img")+"clock.png",gribToolBar);
-
+    acGrib_dialog = init_Action(tr("Grib drawing config"),tr(""),
+                              tr("Grib drawing config"),appFolder.value("img")+"wind.png",gribToolBar);
+    acGrib_dialog->setCheckable(true);
     cbGribStep = new QComboBox(gribToolBar);
     cbGribStep->setSizeAdjustPolicy(QComboBox::AdjustToContents);
     cbGribStep->setFont(font);
@@ -122,13 +133,15 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     cbGribStep->addItem(tr("6 h"),21600);
     cbGribStep->addItem(tr("12 h"),43200);
     //FontManagement::setFontDialog(cbGribStep);
-    cbGribStep->setCurrentIndex(Settings::getSetting("gribDateStep", 2).toInt());
+    cbGribStep->setCurrentIndex(Settings::getSetting(gribDateStep).toInt());
 
     gribToolBar->addWidget(gribDwnld);
     gribToolBar->addAction(acOpenGrib);
     gribToolBar->addSeparator();
     gribToolBar->addAction(datesGrib_sel);
     gribToolBar->addAction(datesGrib_now);
+    gribToolBar->addSeparator();
+    gribToolBar->addAction(acGrib_dialog);
     gribToolBar->addSeparator();
     gribToolBar->addAction(acDatesGrib_prev);
     gribToolBar->addWidget(cbGribStep);    
@@ -165,6 +178,7 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     spnEstime=new QSpinBox(estimeToolBar);
     spnEstime->setMaximum(999);
     spnEstime->setMinimum(1);
+    spnEstime->setAlignment(Qt::AlignRight);
     cbEstime=new QComboBox(estimeToolBar);
     cbEstime->addItem(tr("mins"));
     cbEstime->addItem(tr("vacs"));
@@ -172,7 +186,7 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     slot_loadEstimeParam();
     chkEstime = new QCheckBox(estimeToolBar);
     chkEstime->setToolTip(tr("Si cette option est cochee<br>l'estime calcule la vitesse du bateau<br>a la prochaine vac.<br>Sinon elle utilise la vitesse du bateau<br>telle que donnee par VLM"));
-    chkEstime->setChecked(Settings::getSetting("startSpeedEstime", 1).toInt()==1);
+    chkEstime->setChecked(Settings::getSetting(startSpeedEstime).toInt()==1);
 
     estimeToolBar->addWidget(lbEstime);
     estimeToolBar->addWidget(spnEstime);
@@ -185,11 +199,6 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     boatList->setSizeAdjustPolicy(QComboBox::AdjustToContents);
     boatToolBar->addAction(acLock);
     boatToolBar->addWidget((boatList));
-
-    /* Eta toolBar */
-    ETA = new QLabel(tr("No WP"),etaToolBar);
-    ETA->setStyleSheet("color: rgb(0, 0, 255);");
-    etaToolBar->addWidget(ETA);
 
     /* BarrierSet toolBar */
     barrierAdd = init_Action(tr("Add Barrier"),tr(""),tr(""),appFolder.value("img")+"add_barrier.png",barrierToolBar);
@@ -217,6 +226,7 @@ ToolBar::ToolBar(MainWindow *mainWindow)
 
     connect(cbGribStep, SIGNAL(activated(int)),mainWindow, SLOT(slotDateStepChanged(int)));
     connect(datesGrib_now, SIGNAL(triggered()),mainWindow, SLOT(slotDateGribChanged_now()));
+    connect(acGrib_dialog,SIGNAL(triggered()),centralWidget, SLOT(slot_gribDialog()));
     connect(datesGrib_sel, SIGNAL(triggered()),mainWindow, SLOT(slotDateGribChanged_sel()));
     connect(acDatesGrib_next, SIGNAL(triggered()),mainWindow, SLOT(slotDateGribChanged_next()));
     connect(acDatesGrib_prev, SIGNAL(triggered()),mainWindow, SLOT(slotDateGribChanged_prev()));
@@ -237,7 +247,7 @@ ToolBar::ToolBar(MainWindow *mainWindow)
 
     /* Boat ToolBar */
     connect(acLock, SIGNAL(triggered()), mainWindow, SLOT(slotFile_Lock()));
-    connect(mainWindow,SIGNAL(updateLockIcon(QIcon)),this,SLOT(slot_updateLockIcon(QIcon)));
+    connect(mainWindow,SIGNAL(updateLockIcon(QString)),this,SLOT(slot_updateLockIcon(QString)));
     connect(boatList, SIGNAL(activated(int)),mainWindow, SLOT(slotChgBoat(int)));
 
     /* BarrierSet ToolBar */
@@ -245,6 +255,23 @@ ToolBar::ToolBar(MainWindow *mainWindow)
 
     //load_settings();
     Util::setFontDialog(this);
+}
+void ToolBar::mySetIcon(QToolButton * button,QString iconFile)
+{
+    QPixmap pix=QPixmap(iconFile);
+#ifdef __ANDROID__
+    pix=pix.scaled(iconSize,Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
+#endif
+    button->setIconSize(iconSize);
+    button->setIcon(QIcon(pix));
+}
+void ToolBar::mySetIcon(QAction * action,QString iconFile)
+{
+    QPixmap pix=QPixmap(iconFile);
+#ifdef __ANDROID__
+    pix=pix.scaled(iconSize,Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
+#endif
+    action->setIcon(QIcon(pix));
 }
 
 int ToolBar::build_showHideMenu(QMenu *menu) {
@@ -274,8 +301,8 @@ void ToolBar::chgBoatType(int boatType) {
     }
 }
 
-void ToolBar::slot_updateLockIcon(QIcon ic) {
-    acLock->setIcon(ic);
+void ToolBar::slot_updateLockIcon(QString ic) {
+    mySetIcon(acLock,ic);
 }
 
 QAction* ToolBar::init_Action(QString title, QString shortcut, QString statustip,QString iconFileName,QToolBar * toolBar)
@@ -284,74 +311,77 @@ QAction* ToolBar::init_Action(QString title, QString shortcut, QString statustip
     action = new QAction(title,toolBar);
     action->setShortcut  (shortcut);
     action->setShortcutContext (Qt::ApplicationShortcut);
-    action->setStatusTip (statustip);
+    action->setToolTip (statustip);
     if (iconFileName != "")
-        action->setIcon(QIcon(iconFileName));
+        mySetIcon(action,QString(iconFileName));
     return action;
 }
 
 void ToolBar::load_settings(void) {
     for(int i=0;i<toolBarList.count();++i) {
         MyToolBar * toolBar = toolBarList.at(i);
+        bool myVisible=true;
+#ifndef __ANDROID__
         QString key = "TB_" + toolBar->get_name();
-        toolBar->setVisible(Settings::getSetting(key,"true","ToolBar").toString()=="true");
-        toolBar->setEnabled(toolBar->isVisible());
-        toolBar->set_displayed(toolBar->isVisible());
+        myVisible=Settings::getSettingOld(key,true,"ToolBar").toBool();
+#endif
+        toolBar->setVisible(myVisible);
+        toolBar->setEnabled(myVisible);
+        toolBar->set_displayed(myVisible);
         toolBar->initCanHide();
+//#ifdef __ANDROID__
+        mainWindow->addToolBar(Qt::TopToolBarArea,toolBar);
+//#endif
+        manageToolbarBreak();
     }
+}
+void ToolBar::manageToolbarBreak()
+{
+    //return;
+    int Wmain=mainWindow->width();
+    int currentWidth=0;
+    for(int i=0;i<toolBarList.count();++i)
+    {
+        MyToolBar * tb=toolBarList.at(i);
+        if(mainWindow->toolBarBreak(tb))
+            mainWindow->removeToolBarBreak(tb);
+        if(tb->isFloating()) continue;
+        currentWidth+=tb->layout()->sizeHint().width();
+        //qWarning()<<currentWidth<<tb->layout()->sizeHint().width()<<tb->get_name()<<1;
+        if(currentWidth>Wmain)
+        {
+            currentWidth=tb->layout()->sizeHint().width();
+            mainWindow->insertToolBarBreak(tb);
+        }
+        //qWarning()<<currentWidth<<tb->layout()->sizeHint().width()<<tb->get_name()<<2;
+    }
+    //qWarning()<<"exit manageToolBarBreak";
 }
 
 void ToolBar::save_settings(void) {
     for(int i=0;i<toolBarList.count();++i) {
         MyToolBar * toolBar = toolBarList.at(i);
         QString key = "TB_" + toolBar->get_name();
-        Settings::setSetting(key,toolBar->get_displayed()?"true":"false","ToolBar");
+        Settings::setSettingOld(key,toolBar->get_displayed(),"ToolBar");
     }
 }
 
-/**********************************************************************/
-/*                         ETA                                        */
-/**********************************************************************/
-
-void ToolBar::clear_eta(void) {
-    ETA->setText(tr("No WP"));
-}
-
-void ToolBar::update_eta(QDateTime eta_dtm) {
-    int nbS,j,h,m;
-    QString txt;
-    eta_dtm.setTimeSpec(Qt::UTC);
-    QDateTime now = (QDateTime::currentDateTime()).toUTC();
-    nbS=now.secsTo(eta_dtm);
-    j = nbS/(24*3600);
-    nbS-=j*24*3600;
-    h=nbS/3600;
-    nbS-=h*3600;
-    m=nbS/60;
-    nbS-=m*60;
-    txt.sprintf("(%dj %02dh%02dm%02ds)",j,h,m,nbS);
-    txt.replace("j",tr("j"));
-    txt.replace("h",tr("h"));
-    txt.replace("m",tr("m"));
-    txt.replace("s",tr("s"));
-    ETA->setText(tr(" Arrivee WP")+": " +eta_dtm.toString(tr("dd-MM-yyyy, HH:mm:ss"))+ " " +txt);
-}
 
 /**********************************************************************/
 /*                         Estime                                     */
 /**********************************************************************/
 
 void ToolBar::slot_estimeValueChanged(int value) {
-    switch(Settings::getSetting("estimeType","0").toInt())
+    switch(Settings::getSetting(estimeType).toInt())
     {
         case 0:
-            Settings::setSetting("estimeTime",value);
+            Settings::setSetting(estimeTime,value);
             break;
         case 1:
-            Settings::setSetting("estimeVac",value);
+            Settings::setSetting(estimeVac,value);
             break;
         case 2:
-            Settings::setSetting("estimeLen",value);
+            Settings::setSetting(estimeLen,value);
             break;
         default:
             break;
@@ -360,18 +390,18 @@ void ToolBar::slot_estimeValueChanged(int value) {
 }
 
 void ToolBar::slot_estimeTypeChanged(int num) {
-    Settings::setSetting("estimeType",num);
+    Settings::setSetting(estimeType,num);
 
     switch(num)
     {
         case 0:
-            spnEstime->setValue(Settings::getSetting("estimeTime","60").toInt());
+            spnEstime->setValue(Settings::getSetting(estimeTime).toInt());
             break;
         case 1:
-            spnEstime->setValue(Settings::getSetting("estimeVac","12").toInt());
+            spnEstime->setValue(Settings::getSetting(estimeVac).toInt());
             break;
         case 2:
-            spnEstime->setValue(Settings::getSetting("estimeLen","50").toInt());
+            spnEstime->setValue(Settings::getSetting(estimeLen).toInt());
             break;
         default:
             spnEstime->setValue(0);
@@ -385,30 +415,30 @@ void ToolBar::slot_loadEstimeParam(void) {
 
     cbEstime->setEnabled(true);
 
-    if(Settings::getSetting("scalePolar",0).toInt()!=1) {
-        switch(Settings::getSetting("estimeType","0").toInt())
+    if(Settings::getSetting(scalePolar).toInt()!=1) {
+        switch(Settings::getSetting(estimeType).toInt())
         {
             case 0:
                 cbEstime->setCurrentIndex(0);
-                spnEstime->setValue(Settings::getSetting("estimeTime","60").toInt());
+                spnEstime->setValue(Settings::getSetting(estimeTime).toInt());
                 break;
             case 1:
                 cbEstime->setCurrentIndex(1);
-                spnEstime->setValue(Settings::getSetting("estimeVac","12").toInt());
+                spnEstime->setValue(Settings::getSetting(estimeVac).toInt());
                 break;
             case 2:
                 cbEstime->setCurrentIndex(2);
-                spnEstime->setValue(Settings::getSetting("estimeLen","50").toInt());
+                spnEstime->setValue(Settings::getSetting(estimeLen).toInt());
                 break;
             default:
-                Settings::setSetting("estimeType",0);
+                Settings::setSetting(estimeType,0);
                 cbEstime->setCurrentIndex(0);
                 spnEstime->setValue(0);
         }
     }
     else {
         cbEstime->setCurrentIndex(1);
-        spnEstime->setValue(Settings::getSetting("estimeVac","12").toInt());
+        spnEstime->setValue(Settings::getSetting(estimeVac).toInt());
         cbEstime->setEnabled(false);
     }
 
@@ -419,7 +449,7 @@ void ToolBar::slot_loadEstimeParam(void) {
 
 void ToolBar::slot_estimeStartChanged(int state) {
     if(state>1) state=1;
-    Settings::setSetting("startSpeedEstime", state);
+    Settings::setSetting(startSpeedEstime, state);
     emit estimeParamChanged();
 }
 
@@ -468,9 +498,9 @@ void ToolBar::slot_gribPlay(void) {
             int step=get_gribStep();
             if((tps+step)<=max)
             {
-                acGrib_play->setIcon(QIcon(appFolder.value("img")+"player_end.png"));
+                mySetIcon(acGrib_play,QString(appFolder.value("img")+"player_end.png"));
                 acGrib_play->setData(1);
-                connect(centralWidget->getTerre(),SIGNAL(terrainUpdated()),mainWindow,SLOT(slotDateGribChanged_next()));
+                connect(centralWidget->get_terrain(),SIGNAL(terrainUpdated()),mainWindow,SLOT(slotDateGribChanged_next()));
                 mainWindow->slotDateGribChanged_next();
             }
         }
@@ -480,13 +510,13 @@ void ToolBar::slot_gribPlay(void) {
 }
 
 void ToolBar::stopPlaying(void) {
-    acGrib_play->setIcon(QIcon(appFolder.value("img")+"player_play.png"));
+    mySetIcon(acGrib_play,QString(appFolder.value("img")+"player_play.png"));
     acGrib_play->setData(0);
-    disconnect(centralWidget->getTerre(),SIGNAL(terrainUpdated()),mainWindow,SLOT(slotDateGribChanged_next()));
+    disconnect(centralWidget->get_terrain(),SIGNAL(terrainUpdated()),mainWindow,SLOT(slotDateGribChanged_next()));
 }
 
 void ToolBar::slot_gribDwnld(void) {
-    switch(Settings::getSetting("defaultGribDwnld",GRIB_DWNLD_ZYGRIB,"ToolBar").toInt()) {
+    switch(Settings::getSetting(defaultGribDwnld).toInt()) {
         case GRIB_DWNLD_ZYGRIB: slot_gribZygrib(); break;
         case GRIB_DWNLD_VLM: slot_gribVlm(); break;
         case GRIB_DWNLD_SAILSDOC: slot_gribSailsDoc(); break;
@@ -494,26 +524,26 @@ void ToolBar::slot_gribDwnld(void) {
 }
 
 void ToolBar::slot_gribZygrib(void) {
-    Settings::setSetting("defaultGribDwnld",GRIB_DWNLD_ZYGRIB,"ToolBar");
+    Settings::setSetting(defaultGribDwnld,GRIB_DWNLD_ZYGRIB);
     update_gribDownloadBtn();
     emit gribZygrib();
 }
 
 void ToolBar::slot_gribVlm(void) {
-    Settings::setSetting("defaultGribDwnld",GRIB_DWNLD_VLM,"ToolBar");
+    Settings::setSetting(defaultGribDwnld,GRIB_DWNLD_VLM);
     update_gribDownloadBtn();
     emit gribVlm();
 }
 
 void ToolBar::slot_gribSailsDoc(void) {
-    Settings::setSetting("defaultGribDwnld",GRIB_DWNLD_SAILSDOC,"ToolBar");
+    Settings::setSetting(defaultGribDwnld,GRIB_DWNLD_SAILSDOC);
     update_gribDownloadBtn();
     emit gribSailsDoc();
 }
 
 void ToolBar::update_gribDownloadBtn(void) {
     QString iconString;
-    switch(Settings::getSetting("defaultGribDwnld",GRIB_DWNLD_ZYGRIB,"ToolBar").toInt()) {
+    switch(Settings::getSetting(defaultGribDwnld).toInt()) {
         case GRIB_DWNLD_ZYGRIB:
             iconString=appFolder.value("img")+ "network.png";
             break;
@@ -529,7 +559,7 @@ void ToolBar::update_gribDownloadBtn(void) {
     }
 
     if(!iconString.isEmpty())
-        gribDwnld->setIcon(QIcon(iconString));
+        mySetIcon(gribDwnld,QString(iconString));
 }
 
 /**********************************************************************/
@@ -569,21 +599,32 @@ void ToolBar::chg_barrierAddState(bool state) {
 /* MyToolBar                                        */
 /****************************************************/
 
-MyToolBar::MyToolBar(QString name,QString title,ToolBar *toolBar, QWidget *parent,bool canHide): QToolBar(title,parent) {
+MyToolBar::MyToolBar(QString name,QString title,ToolBar *toolBar, QWidget *parent,bool canHide): QToolBar(title,parent)
+{
     this->name=name;
     setObjectName(name);
     this->toolBar=toolBar;
+    this->setIconSize(toolBar->getIconSize());
     displayed=true;
     forceMenuHide=false;
     this->canHide=canHide;
-    if(!canHide) {
+#ifdef __ANDROID__
+    this->canHide=false;
+#endif
+#ifdef __MAC_QTVLM
+    this->canHide=false;
+#endif
+    if(!this->canHide) {
         setFloatable(false);
         setMovable(false);
     }
     hide();
+//    QString style=QString().sprintf("QToolButton#qt_toolbar_ext_button{min-width: %dpx; min-height: %dpx;}",toolBar->getIconSize().width()/2,toolBar->getIconSize().width()/2);
+//    style+=QString().sprintf("QToolButton#qt_toolbar_ext_button{width: %dpx; height: %dpx;}",toolBar->getIconSize().width()/2,toolBar->getIconSize().width()/2);
+//    style+="QToolButton#qt_toolbar_ext_button {qproperty-icon: url(img/addResized.png);}";
+//    this->setStyleSheet(style);
     connect(this,SIGNAL(visibilityChanged(bool)),this,SLOT(slot_visibilityChanged(bool)));
 }
-
 /*
 void MyToolBar::closeEvent ( QCloseEvent * event ) {
     qWarning() << "Closing tool " << name;

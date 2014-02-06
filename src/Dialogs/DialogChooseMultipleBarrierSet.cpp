@@ -22,11 +22,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "boat.h"
 #include "settings.h"
 #include "Util.h"
-
+#include <QScroller>
 #include "DialogChooseMultipleBarrierSet.h"
 
-DialogChooseMultipleBarrierSet::DialogChooseMultipleBarrierSet(QWidget *parent): QDialog(parent) {
+DialogChooseMultipleBarrierSet::DialogChooseMultipleBarrierSet(MainWindow *parent): QDialog(parent) {
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent->getMy_centralWidget(),SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     QMap<QWidget *,QFont> exceptions;
     QFont wfont=QApplication::font();
@@ -35,9 +37,12 @@ DialogChooseMultipleBarrierSet::DialogChooseMultipleBarrierSet(QWidget *parent):
     Util::setSpecificFont(exceptions);
     activeSets=NULL;
 }
+void DialogChooseMultipleBarrierSet::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
+}
 DialogChooseMultipleBarrierSet::~DialogChooseMultipleBarrierSet() {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
+    Settings::saveGeometry(this);
 }
 
 void DialogChooseMultipleBarrierSet::init_dialog(QList<BarrierSet*> * activeSets, boat* myBoat) {
@@ -60,6 +65,7 @@ void DialogChooseMultipleBarrierSet::init_dialog(QList<BarrierSet*> * activeSets
 }
 
 void DialogChooseMultipleBarrierSet::done(int result) {
+    Settings::saveGeometry(this);
     if(result == QDialog::Accepted) {
         /* update list */
         activeSets->clear();
@@ -81,7 +87,7 @@ void DialogChooseMultipleBarrierSet::done(int result) {
     QDialog::done(result);
 }
 
-void DialogChooseMultipleBarrierSet::chooseBarrierSet(QWidget *parent, QList<BarrierSet *> * activeSets, boat* myBoat) {
+void DialogChooseMultipleBarrierSet::chooseBarrierSet(MainWindow *parent, QList<BarrierSet *> * activeSets, boat* myBoat) {
     if(!activeSets || !myBoat) return;
     DialogChooseMultipleBarrierSet dialog(parent);
     dialog.init_dialog(activeSets,myBoat);

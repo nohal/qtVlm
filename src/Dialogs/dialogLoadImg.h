@@ -23,6 +23,7 @@ public slots:
     void slotGribKap();
     void showSnapshot();
     void nominalZoom();
+    void slot_screenResize();
 private:
     loadImg * carte;
     myCentralWidget * parent;

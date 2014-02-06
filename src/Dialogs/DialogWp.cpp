@@ -18,6 +18,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
+#include <QScroller>
+#include <QMessageBox>
+#include <QDebug>
+
 #include "DialogWp.h"
 
 #include "boatVLM.h"
@@ -25,26 +29,42 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "POI.h"
 #include "Util.h"
 #include "settings.h"
-#include "BoardVlmNew.h"
-#include <QMessageBox>
+#include "mycentralwidget.h"
 
 
 /************************/
 /* Dialog WP            */
 
-DialogWp::DialogWp(QWidget * parent) : QDialog(parent)
+DialogWp::DialogWp(myCentralWidget * parent) : QDialog(parent->getMainWindow())
 {
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     currentBoat=NULL;
-
+    if(Settings::getSetting(fusionStyle).toInt()==1)
+    {
+        WP_lat->setStyleSheet("background-color: rgb(53, 53, 53);");
+        WP_lon->setStyleSheet("background-color: rgb(53, 53, 53);");
+        WP_heading->setStyleSheet("background-color: rgb(53, 53, 53);");
+    }
     WP_conv_lat->setText("");
     WP_conv_lon->setText("");
+}
+DialogWp::~DialogWp()
+{
+    qWarning()<<"deleting dialogWP";
+}
+
+void DialogWp::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 void DialogWp::setLocked(const bool &locked)
 {
     this->WP_lat->setEnabled(locked);
     this->WP_lon->setEnabled(locked);
+    this->WP_heading->setEnabled(locked);
     this->btn_clear->setEnabled(locked);
     this->btn_paste->setEnabled(locked);
     this->btn_selectPOI->setEnabled(locked);
@@ -67,7 +87,13 @@ void DialogWp::show_WPdialog(POI * poi, boat * boat)
         initDialog(poi->getLatitude(),poi->getLongitude(),poi->getWph());
     else
         initDialog(currentBoat->getWPLat(),currentBoat->getWPLon(),currentBoat->getWPHd());
-    exec();
+    show();
+}
+void DialogWp::slot_selectPOI(POI * poi)
+{
+    if(poi!=NULL)
+        initDialog(poi->getLatitude(),poi->getLongitude(),poi->getWph());
+    show();
 }
 
 void DialogWp::initDialog(double WPLat,double WPLon,double WPHd)
@@ -91,8 +117,8 @@ void DialogWp::initDialog(double WPLat,double WPLon,double WPHd)
 
 void DialogWp::done(int result)
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
+    //qWarning()<<"done with "<<result;
+    Settings::saveGeometry(this);
     if(result == QDialog::Accepted)
     {
         QPointF pos;
@@ -182,5 +208,5 @@ void DialogWp::doCopy()
 void DialogWp::doSelPOI()
 {
     emit selectPOI();
-    QDialog::done(QDialog::Rejected);
+    hide();
 }

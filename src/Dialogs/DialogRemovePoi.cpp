@@ -32,11 +32,13 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "route.h"
 #include "settings.h"
 #include "Util.h"
-
+#include <QScroller>
 #include "DialogRemovePoi.h"
 
 DialogRemovePoi::DialogRemovePoi(QWidget * parent,myCentralWidget * centralWidget): QDialog(parent) {
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(centralWidget,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     QMap<QWidget *,QFont> exceptions;
     QFont wfont=QApplication::font();
@@ -57,6 +59,10 @@ DialogRemovePoi::DialogRemovePoi(QWidget * parent,myCentralWidget * centralWidge
     }
 
     updateNbSelected();
+}
+void DialogRemovePoi::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 
 void DialogRemovePoi::updateNbSelected(void) {
@@ -98,8 +104,7 @@ void DialogRemovePoi::slot_remove(void) {
                 poi->deleteLater();
             }
         }
-        Settings::setSetting(this->objectName()+".height",this->height());
-        Settings::setSetting(this->objectName()+".width",this->width());
+        Settings::saveGeometry(this);
         accept();
     }
 }

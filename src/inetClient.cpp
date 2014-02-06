@@ -18,7 +18,13 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
-#include <parser.h>
+#ifdef QT_V5
+#include <QtCore/QJsonDocument>
+#else
+#include "libs/qjson/parser.h"
+#include "libs/qjson/serializer.h"
+#endif
+
 #include <QMessageBox>
 #include <QDateTime>
 
@@ -106,18 +112,92 @@ void inetClient::resetReply()
     }
 }
 
+bool inetClient::JSON_to_map(QByteArray buf,QVariantMap *map) {
+    if(!map) return false;
+#ifdef QT_V5
+    QJsonParseError err;
+    QVariant v = QJsonDocument::fromJson(buf,&err).toVariant();
+    if(err.error!=0) {
+        qWarning() << "Error parsing json data";
+        qWarning() << "Error: " << err.errorString() << " - err num= " << err.error;
+        qWarning() << "Json buffer:\n" << buf;
+        QMessageBox::critical (NULL,
+                               QObject::tr("Erreur"),
+                               QObject::tr("Erreur de lecture json."));
+        *map=QVariantMap();
+        return false;
+    }
+    *map = v.toMap();
+#else
+    QJson::Parser parser;
+    bool ok;
+    *map = parser.parse (buf, &ok).toMap();
+    if (!ok) {
+        //qWarning() << "Error parsing json data in " << name;
+        qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
+        qWarning() << "Json buffer:\n" << buf;
+        QMessageBox::critical (NULL,
+                               QObject::tr("Erreur"),
+                               QObject::tr("Erreur de lecture json."));
+        *map=QVariantMap();
+        return false;
+    }
+#endif
+    return true;
+}
+
+bool inetClient::JSON_to_list(QByteArray buf,QList<QVariant> *list) {
+    if(!list) return false;
+#ifdef QT_V5
+    QJsonParseError err;
+    QVariant v = QJsonDocument::fromJson(buf,&err).toVariant();
+    if(err.error!=0) {
+        qWarning() << "Error parsing json data";
+        qWarning() << "Error: " << err.errorString() << " - err num= " << err.error;
+        qWarning() << "Json buffer:\n" << buf;
+        QMessageBox::critical (NULL,
+                               QObject::tr("Erreur"),
+                               QObject::tr("Erreur de lecture json."));
+        *list=QList<QVariant>();
+        return false;
+    }
+    *list = v.toList();
+#else
+    QJson::Parser parser;
+    bool ok;
+    *list = parser.parse (buf, &ok).toList();
+    if (!ok) {
+        //qWarning() << "Error parsing json data in " << name;
+        qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
+        qWarning() << "Json buffer:\n" << buf;
+        QMessageBox::critical (NULL,
+                               QObject::tr("Erreur"),
+                               QObject::tr("Erreur de lecture json."));
+        *list=QList<QVariant>();
+        return false;
+    }
+#endif
+    return true;
+}
+
+bool inetClient::map_to_JSON( QVariantMap map,QByteArray * json) {
+    if(!json) return false;
+#ifdef QT_V5
+    QVariant v(map);
+    *json = QJsonDocument::fromVariant(v).toJson(QJsonDocument::Compact);
+#else
+    QJson::Serializer serializer;
+    *json = serializer.serialize(map);
+#endif
+    return true;
+}
+
 
 bool inetClient::checkWSResult(QByteArray res,QString caller,QWidget * parent,QString order)
 {
-    QJson::Parser parser;
-    bool ok;
-
-    QVariantMap result = parser.parse (res, &ok).toMap();
-    if (!ok) {
-        qWarning() << "Error parsing json data " << res;
-        qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
+    QVariantMap result;
+    if(!inetClient::JSON_to_map(res,&result))
         return false;
-    }
 
     if(result["success"].toBool())
     {

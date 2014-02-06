@@ -28,14 +28,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "dataDef.h"
 #include "settings.h"
 #include "DataManager.h"
+#include <QScroller>
 
 #ifdef __QTVLM_WITH_TEST
-extern int nbWarning;
+//extern int nbWarning;
 #endif
 DialogGribValidation::DialogGribValidation(myCentralWidget * my_centralWidget,MainWindow * mainWindow) :  QDialog(my_centralWidget)
 {
     setupUi(this);
     Util::setFontDialog(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(my_centralWidget,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     this->my_centralWidget=my_centralWidget;
     this->mainWindow=mainWindow;
     dataManager=my_centralWidget->get_dataManager();
@@ -48,14 +51,17 @@ DialogGribValidation::DialogGribValidation(myCentralWidget * my_centralWidget,Ma
     longitude->setText("0");
     this->latitude->blockSignals(true);
 #ifdef __QTVLM_WITH_TEST
-    nbWarning=0;
+    //nbWarning=0;
 #endif
+}
+void DialogGribValidation::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 
 DialogGribValidation::~DialogGribValidation()
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
+    Settings::saveGeometry(this);
 }
 
 void DialogGribValidation::setMode(int mode)
@@ -67,6 +73,7 @@ void DialogGribValidation::setMode(int mode)
 void DialogGribValidation::done(int result)
 {
     int newMode;
+    Settings::saveGeometry(this);
     if(result == QDialog::Accepted)
         newMode=this->type->currentIndex()+1;
     else
@@ -104,7 +111,7 @@ void DialogGribValidation::interpolationChanged(int newMode)
 void DialogGribValidation::inputChanged(void)
 {
 #ifdef __QTVLM_WITH_TEST
-    nbWarning=0;
+    //nbWarning=0;
 #endif
     /* recompute interpolation */
     double lat,lon;

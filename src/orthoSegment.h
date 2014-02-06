@@ -25,42 +25,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QGraphicsScene>
 #include <QGraphicsWidget>
 #include <QPainter>
-
+#include "vlmLine.h"
 #include "class_list.h"
 
 class orthoSegment : public QGraphicsWidget
 {Q_OBJECT
     public:
         orthoSegment(Projection * proj, QGraphicsScene * myScene,int z_level,bool roundedEnd=false);
-
-        void initSegment(double xa,double ya,double xb, double yb);
-        void moveSegment(double x,double y);
+        ~orthoSegment();
+        void initSegment(const double &lon1,const double &lat1,const double &lon2, const double &lat2);
+        void moveSegment(const double &lon2,const double &lat2);
         void hideSegment(void);
-        void setOrthoMode(bool mode) { isOrtho=mode; }
-        bool orthoMode(void) { return isOrtho; }
-        void getStartPoint(double * xx,double * yy){*xx=xa;*yy=ya;}
-        void setLinePen ( const QPen & pen ) {linePen = pen;update(); }
-        void setAlsoDrawLoxo(bool b){this->alsoDrawLoxo=b;}
+        void setOrthoMode(const bool &mode) { isOrtho=mode; }
+        bool orthoMode(void) const { return isOrtho; }
+        void getStartPoint(double * xx,double * yy) const {*xx=lon1;*yy=lat1;}
+        void setLinePen ( const QPen & pen ) {linePen = pen;myLine->setLinePen(linePen); }
+        void setAlsoDrawLoxo(const bool &b){this->alsoDrawLoxo=b;}
+        void set_toolTip(const QString &mes){this->myLine->setToolTip(mes);}
 
-        QRectF boundingRect() const;
-
-    protected:
-        void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
-    public slots:
-        void projUpdated(){updateSizeAndPosition();}
-
-    private:
-        int size;
-        double xa,xb,ya,yb;
+        void showSegment();
+private:
+        double lon1,lat1,lon2,lat2;
         bool isOrtho;
         QPen linePen;
 
         Projection * proj;
 
-        void draw_orthoSegment(QPainter * pnt,double i0,double j0, double i1, double j2, int recurs=0);
-        void updateSizeAndPosition(void);
+        void draw_orthoSegment(const double &longitude1, const double &latitude1, const double longitude2, const double latitude2, const int &recurs);
         bool roundedEnd;
         bool alsoDrawLoxo;
+        vlmLine * myLine;
+        void calculatePoly();
 };
 Q_DECLARE_TYPEINFO(orthoSegment,Q_MOVABLE_TYPE);
 

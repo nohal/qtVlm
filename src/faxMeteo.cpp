@@ -71,23 +71,23 @@ faxMeteo::~faxMeteo()
 }
 void faxMeteo::savePreset()
 {
-    Settings::setSetting("faxMeteoLat"+presetNb,lat);
-    Settings::setSetting("faxMeteoLon"+presetNb,lon);
-    Settings::setSetting("faxMeteoLatRange"+presetNb,latRange);
-    Settings::setSetting("faxMeteoLonRange"+presetNb,lonRange);
-    Settings::setSetting("faxMeteoAlpha"+presetNb,alpha);
-    Settings::setSetting("faxMeteoFileName"+presetNb,imgFileName);
+    Settings::setSettingOld("faxMeteoLat"+presetNb,lat,"faxMeteo");
+    Settings::setSettingOld("faxMeteoLon"+presetNb,lon,"faxMeteo");
+    Settings::setSettingOld("faxMeteoLatRange"+presetNb,latRange,"faxMeteo");
+    Settings::setSettingOld("faxMeteoLonRange"+presetNb,lonRange,"faxMeteo");
+    Settings::setSettingOld("faxMeteoAlpha"+presetNb,alpha,"faxMeteo");
+    Settings::setSettingOld("faxMeteoFileName"+presetNb,imgFileName,"faxMeteo");
 }
 void faxMeteo::loadPreset()
 {
-    this->lat=Settings::getSetting("faxMeteoLat"+presetNb,0).toDouble();
-    this->lon=Settings::getSetting("faxMeteoLon"+presetNb,0).toDouble();
-    this->latRange=Settings::getSetting("faxMeteoLatRange"+presetNb,10).toDouble();
-    this->lonRange=Settings::getSetting("faxMeteoLonRange"+presetNb,10).toDouble();
-    this->alpha=Settings::getSetting("faxMeteoAlpha"+presetNb,0.7).toDouble();
+    this->lat=Settings::getSettingOld("faxMeteoLat"+presetNb,0,"faxMeteo").toDouble();
+    this->lon=Settings::getSettingOld("faxMeteoLon"+presetNb,0,"faxMeteo").toDouble();
+    this->latRange=Settings::getSettingOld("faxMeteoLatRange"+presetNb,10,"faxMeteo").toDouble();
+    this->lonRange=Settings::getSettingOld("faxMeteoLonRange"+presetNb,10,"faxMeteo").toDouble();
+    this->alpha=Settings::getSettingOld("faxMeteoAlpha"+presetNb,0.7,"faxMeteo").toDouble();
     if(alpha<MIN_ALPHA) alpha=MIN_ALPHA;
     if(alpha>1) alpha=1;
-    this->setImgFileName(Settings::getSetting("faxMeteoFileName"+presetNb,"").toString());
+    this->setImgFileName(Settings::getSettingOld("faxMeteoFileName"+presetNb,"","faxMeteo").toString());
     this->setOpacity(alpha);
     int x1Fax,y1Fax,x2Fax,y2Fax;
     this->proj->map2screen(this->lon,this->lat,&x1Fax,&y1Fax);

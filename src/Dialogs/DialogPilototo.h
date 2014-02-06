@@ -43,44 +43,44 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class DialogPilototoInstruction : public QWidget, public Ui::instruction_ui
 {Q_OBJECT
     public:
-        DialogPilototoInstruction(QWidget * main,QWidget * parent=0);
+        DialogPilototoInstruction(DialogPilototo *dialogPilototo,QWidget * parent=0);
 
         int   getMode(void)       { return mode_scr; }
         double getAngle(void)      { return angle_scr; }
         double getLat(void)        { return lat_scr; }
         double getLon(void)        { return lon_scr; }
         double getWph(void)        { return wph_scr; }
-	bool  getLockStatus(void) { return locked; }
-	int   getRef(void)        { return ref; }
+        bool  getLockStatus(void) { return locked; }
+        int   getRef(void)        { return ref; }
         int   getStatus(void)     { return status_scr; }
         int   getTstamp(void)     { return tstamp_scr.toTime_t(); }
-	bool  getHasChanged(void) { return hasChanged; }
+        bool  getHasChanged(void) { return hasChanged; }
         QString getPip(void);
 
-	void setMode(int val);
+        void setMode(int val);
         void setAngle(double val);
         void setLat(double val);
         void setLon(double val);
         void setWph(double val);
-	void setLock(bool status);
-	void setStatus(int val);
-	void setTstamp(int val);
+        void setLock(bool status);
+        void setStatus(int val);
+        void setTstamp(int val);
 
-	void setRef(int val) { ref=val; }
+        void setRef(int val) { ref=val; }
 
         void initVal(int mode_ini,double angle_ini,double lat_ini,double lon_ini, double wph_ini,int ref_ini);
-	void initVal(void);
-	void updateHasChanged(bool status);
+        void initVal(void);
+        void updateHasChanged(bool status);
 
     private slots:
-	void delInstruction(void);
-	void editInstruction(void);
-	void pastePOI(void);
-	void copyPOI(void);
-	void validateModif(void);
+        void delInstruction(void);
+        void editInstruction(void);
+        void pastePOI(void);
+        void copyPOI(void);
+        void validateModif(void);
         void cancelModif(void);
-	void dateTime_changed(QDateTime);
-	void maintenant(void);
+        void dateTime_changed(QDateTime);
+        void maintenant(void);
         void doSelectPOI();
         void modeChanged(int index);
         void pipChanged(QString);
@@ -93,7 +93,9 @@ class DialogPilototoInstruction : public QWidget, public Ui::instruction_ui
         void selectPOI(DialogPilototoInstruction *,int);
 
     private:
-	int mode;
+        DialogPilototo * dialogPilototo;
+
+        int mode;
         double angle;
         double lat;
         double lon;
@@ -103,16 +105,16 @@ class DialogPilototoInstruction : public QWidget, public Ui::instruction_ui
         double lat_scr;
         double lon_scr;
         double wph_scr;
-	QDateTime tstamp;
+        QDateTime tstamp;
         QDateTime tstamp_scr;
-	int ref;
-	int status;
+        int ref;
+        int status;
         int status_scr;
 
-	bool locked;
-	bool hasChanged;
+        bool locked;
+        bool hasChanged;
 
-	QWidget * parent;
+        QWidget * parent;
         QWidget * pilototo;
 
         QPalette pipPalette;
@@ -122,8 +124,6 @@ class DialogPilototoInstruction : public QWidget, public Ui::instruction_ui
         bool chkHasChanged(void);
         bool checkPIP(bool savChange,bool chgColor);
         void pickPipColor(void);
-
-
 };
 
 /******************************
@@ -144,17 +144,20 @@ class DialogPilototo : public QDialog, public Ui::pilototo_ui, public inetClient
         void done(int);
         DialogPilototoParam * instructionEditor;
 
+        FCT_GET(myCentralWidget*,parent)
+
         /* inetClient */
         void requestFinished(QByteArray res);
         QString getAuthLogin(bool * ok);
         QString getAuthPass(bool * ok);
 
-    public slots:
+public slots:
+        void slot_screenResize();
         void delInstruction(DialogPilototoInstruction *);
         void setInstructions(boat *pvBoat,QList<POI*> pois);
-	void editInstructions(void);
+        void editInstructions(void);
         void editInstructionsPOI(DialogPilototoInstruction * instruction,POI * poi);
-	void instructionUpdated(void);
+        void instructionUpdated(void);
         void slot_boatUpdated(boat * pvBoat);
         void updateTime(void);
         void doSelectPOI(DialogPilototoInstruction * instruction, int type); /* 1=instruction, 2=editor */
@@ -188,6 +191,7 @@ class DialogPilototo : public QDialog, public Ui::pilototo_ui, public inetClient
         void sendPilototo(void);
         bool updateBoat;
         POI * poiToWp;
+        static bool confirmChange();
 };
 
 #endif

@@ -36,18 +36,20 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #define POI_TYPE_WP     1
 #define POI_TYPE_BALISE 2
 
+//#define ALLOW_VBVMG_VLM_OPTIM
+
 //===================================================================
 class POI : public QGraphicsWidget
 { Q_OBJECT
     public:
         /* constructeurs, destructeurs */
-        POI(QString name, int type, double lat, double lon,
+        POI(const QString &name, const int &type, const double &lat, const double &lon,
                     Projection *proj, MainWindow *ownerMeteotable, myCentralWidget *parentWindow,
-                    double wph, int tstamp,bool useTstamp, boat *boat);
+                    const double &wph, const int &tstamp, const bool &useTstamp);
 
         ~POI();
 
-        /* accés aux données */
+        /* accÃ©s aux donnÃ©es */
         QString  getName(void)         {return name;}
         ROUTE    *getRoute(void)        {return route;}
         double    getLongitude(void)    {return lon;}
@@ -67,7 +69,8 @@ class POI : public QGraphicsWidget
         bool    getOptimizing(void) {return this->optimizing;}
         bool    getWasWP(void) {return this->wasWP;}
         void    setWasWP(bool b){this->wasWP=b;}
-        static QString  getTypeStr(int index);
+        static QString  getTypeStr(int index){    QString type_str[3] = { "POI", "Marque", "Balise" };
+                                                  return type_str[index];}
         QString  getTypeStr(void)      {return getTypeStr(type); }
         int     getNavMode(){return this->navMode;}
         bool    getHas_eta(void)        {return useRouteTstamp;}
@@ -75,7 +78,7 @@ class POI : public QGraphicsWidget
         double getLatConnected(){return latConnected;}
         bool    getAutoRange(void)  { return autoRange; }
 
-        /* modification des données */
+        /* modification des donnÃ©es */
         void setName           (QString name);
         void setLongitude      (double lon);
         void setLatitude       (double lat);
@@ -103,7 +106,7 @@ class POI : public QGraphicsWidget
         POI * getConnectedPoi(){return connectedPoi;}
         void setConnectedPoi(POI * p){connectedPoi=p;}
         void setPosConnected(double lon,double lat){lonConnected=lon;latConnected=lat;}
-        void setLineBetweenPois(vlmLine * line){this->lineBetweenPois=line;}
+        void setLineBetweenPois(orthoSegment * line){this->lineBetweenPois=line;}
         bool getPiloteSelected(){return piloteSelected;}
         void setPiloteSelected(bool b){this->piloteSelected=b;this->ac_pilot->setChecked(b);}
         void setAutoRange (bool b) { autoRange = b; }
@@ -115,7 +118,7 @@ class POI : public QGraphicsWidget
         QPainterPath shape() const;
         QRectF boundingRect() const;
 
-        /* event propagé par la scene */
+        /* event propagÃ© par la scene */
         bool tryMoving(int x, int y);
         time_t getPiloteDate(){return piloteDate;}
         void setPiloteDate(const time_t &t){this->piloteDate=t;}
@@ -134,6 +137,10 @@ class POI : public QGraphicsWidget
         static void read_POIData(myCentralWidget * centralWidget);
         static void write_POIData(QList<POI*> & poi_list,myCentralWidget * centralWidget);
         static void cleanFile(QString fname);
+        FCT_GET_CST(bool,drawLineOrtho)
+        FCT_SETGET_CST(int, myBoatId)
+        void set_drawLineOrtho(const bool &b){this->drawLineOrtho=b;manageBoatCircle();}
+        void setBoatCircle(const int &id);
 
 public slots:
         void slot_updateProjection();
@@ -145,7 +152,7 @@ public slots:
         void slot_copy();
         void slot_paramChanged();
         void slot_WPChanged(double tlat,double tlon);
-        void slot_updateTip(boat *);
+        void slot_updateTip();
         void slot_shPoi(bool isHidden){if(isHidden) hide(); else show();}
         void slot_shLab(bool state){this->labelHidden=state;update();}
         void slot_routeMenu(QAction* ptr_action);
@@ -169,7 +176,9 @@ public slots:
         void slot_timerSimp();
         void slot_centerOnBoat(void);
 
-    signals:
+        void slot_boatCircleMenu();
+        void manageBoatCircle();
+signals:
         void chgWP(double,double,double);
         void addPOI_list(POI*);
         void delPOI_list(POI*);
@@ -217,7 +226,7 @@ public slots:
         int      typeMask;
         bool     isMoving;
         int      mouse_x,mouse_y;
-        boat *   myBoat;
+        int      myBoatId;
         bool     autoRange;
 
         void update_myStr();
@@ -248,6 +257,7 @@ public slots:
         QAction * ac_modeList2;
         QAction * ac_modeList3;
         QAction * ac_connect;
+        QAction * ac_boatCircle;
         QAction * ac_pilot;
         QAction * ac_routage;
         QAction * ac_simplifiable;
@@ -269,7 +279,8 @@ public slots:
         bool partOfTwa;
         bool notSimplificable;
         POI * connectedPoi;
-        vlmLine * lineBetweenPois;
+        orthoSegment * lineBetweenPois;
+        bool drawLineOrtho;
         QColor lineColor;
         double lineWidth;
         int colorPilototo;
@@ -280,6 +291,7 @@ public slots:
         double lonConnected,latConnected;
         int sequence;
         QTimer * timerSimp;
+        vlmLine * boatCircle;
 };
 Q_DECLARE_TYPEINFO(POI,Q_MOVABLE_TYPE);
 

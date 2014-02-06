@@ -20,8 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QMessageBox>
 #include <QDebug>
-#include <parser.h>
-#include <serializer.h>
 
 #include "boatVLM.h"
 
@@ -35,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Orthodromie.h"
 #include "inetConnexion.h"
 #include "DataManager.h"
+#include "opponentBoat.h"
 
 
 boatVLM::boatVLM(QString        pseudo, bool activated, int boatId, int playerId,Player * player, int isOwn,
@@ -193,13 +192,13 @@ void boatVLM::setWP(QPointF WP,double WPHd) {
 }
 
 double boatVLM::getWPangle(void) {
-    return Util::A360(getOrtho()-getWindDir());
+    return AngleUtil::A360(getOrtho()-getWindDir());
 }
 
 
 bool boatVLM::confirmChange(QString question, QString info)
 {
-    if(Settings::getSetting("askConfirmation","0").toInt()==0)
+    if(Settings::getSetting(askConfirmation).toInt()==0)
         return true;
 
     if(QMessageBox::question(mainWindow,tr("Instruction pour ")+getBoatPseudo(),
@@ -217,24 +216,30 @@ void boatVLM::sendPilotMode(QString phpScript,QVariantMap instruction) {
 
     if(hasInet()) {
         if(hasRequest()) {
-            qWarning() << "request already running for " << getBoatPseudo();
+            qWarning() << "[Boat-sendPilotMode]  request already running for " << getBoatPseudo()<< " (" << getCurrentRequest() << ")";
             return;
         }
+
+        clearCurrentRequest();
 
         QString url;
         QString data;
 
         instruction.insert("idu",getId());
+        //instruction.insert("debug","true");
 
-        QJson::Serializer serializer;
-        QByteArray json = serializer.serialize(instruction);
+        QByteArray json;
+        inetClient::map_to_JSON(instruction,&json);
 
         QTextStream(&url) << "/ws/boatsetup/" << phpScript;
 
 
 
-        QTextStream(&data) << "parms=" << json;
+        QTextStream(&data) << "parms=" << QUrl::toPercentEncoding(json);
+        //QTextStream(&data) << "parms=" << json;
         QTextStream(&data) << "&select_idu=" << getId();
+
+        //qWarning() << url << " - " << data;
 
         inetPost(VLM_REQUEST_SENDPILOT,url,data,QString(),true);
     }
@@ -262,7 +267,7 @@ void boatVLM::doRequest(int requestCmd)
     {
         if(hasRequest() )
         {
-            qWarning() << "request already running for " << pseudo;
+            qWarning() << "[Boat-doRequest]   request already running for " << pseudo << " (cur=" << getCurrentRequest() << ", new=" << requestCmd << ")";
             return;
         }
         else
@@ -289,7 +294,7 @@ void boatVLM::doRequest(int requestCmd)
                     return;
                 }
                 time_t et=QDateTime::currentDateTime().toUTC().toTime_t();
-                time_t st=et-(Settings::getSetting("trace_length",12).toInt()*60*60);
+                time_t st=et-(Settings::getSetting(traceLength).toInt()*60*60);
                 clearCurrentRequest();
                 //qWarning()<<this->name<<"normal st"<<QDateTime::fromTime_t(st).toUTC();
                 if(!trace_drawing->getPoints()->isEmpty())
@@ -320,6 +325,10 @@ void boatVLM::doRequest(int requestCmd)
                 QTextStream(&page) << "/Polaires/"+this->polarVlm+".csv";
                 //qWarning()<<"requesting VLM_REQUEST_POLAR"<<pseudo;
                 break;
+            case VLM_REQUEST_FLAG:
+                QTextStream(&page) << "/cache/flags/" << country << ".png";
+                qWarning() << "requesting flag: " << page;
+                break;
             default:
                 qWarning() << "[boatVLM-doRequest] error: unknown request: " << requestCmd;
                 break;
@@ -337,6 +346,7 @@ void boatVLM::doRequest(int requestCmd)
          vacLen=300;
          race_name = "Test race";
          updating=false;
+         //qWarning()<<"updateBoatData 1";
          updateBoatData();
          emit hasFinishedUpdating();
     }
@@ -347,6 +357,7 @@ void boatVLM::doRequest(int requestCmd)
 void boatVLM::requestFinished (QByteArray res_byte)
 {
     double latitude=0,longitude=0;
+    QString newCountry;
 
     //QString res(res_byte);
 
@@ -357,15 +368,23 @@ void boatVLM::requestFinished (QByteArray res_byte)
         case VLM_REQUEST_WS:
             break;
 
+        case VLM_REQUEST_FLAG: {
+            QImage img;
+            if(img.loadFromData(res_byte))
+            {
+                img.save(appFolder.value("flags")+country+".png");
+                //qWarning()<<"saving flag"<<imgFileName;
+            }
+            update();
+            break;
+        }
+
+
         case VLM_REQUEST_BOAT:
         {
-            QJson::Parser parser;
-            bool ok;
-
-            QVariantMap result = parser.parse (res_byte, &ok).toMap();
-            if (!ok) {
-                qWarning() << "Error parsing json data " << res_byte;
-                qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
+            QVariantMap result;
+            if (!inetClient::JSON_to_map(res_byte,&result)) {
+                return;
             }
 
             if(1 /*checkWSResult(res_byte,"BoatVLM_boatf",mainWindow)*/) // pas de wsCheck car VLM ne renvoit pas "success"
@@ -385,6 +404,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
                     /* clearing trace */
                     trace_drawing->deleteAll();
                     /*updating everything*/
+                    //qWarning()<<"updateBoatData 2";
                     updateBoatData();
                     updating=false;
                     QMessageBox::warning(0,QObject::tr("Bateau au ponton"),
@@ -415,7 +435,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
                 loxo        = result["LOX"].toDouble();
                 vmg         = result["VMG"].toDouble();
                 windDir     = result["TWD"].toDouble();
-                country     = result["CNT"].toString();
+                newCountry  = result["CNT"].toString();
                 windSpeed   = result["TWS"].toDouble();
                 WP.setY(      result["WPLAT"].toDouble());
                 WP.setX(      result["WPLON"].toDouble());
@@ -460,6 +480,16 @@ void boatVLM::requestFinished (QByteArray res_byte)
 
                 lat = latitude/1000;
                 lon = longitude/1000;
+
+                if(country!=newCountry) {
+                    //qWarning() << "New flag: " << newCountry;
+                    flag=QImage();
+                    country=newCountry;
+                    flagBad=false;
+                }
+                /*else
+                    qWarning() << "country ok: " << newCountry << "(old: " << country << ")";*/
+
                 if(activated && !this->forcePolar && !polarVlm.isEmpty())
                 {
                     if(!this->polarData || this->polarData->getName()!=polarName)
@@ -484,6 +514,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
             {
                 /* clearing trace */
                 trace_drawing->deleteAll();
+                //qWarning()<<"updateBoatData 3";
                 updateBoatData();
                 updating=false;
                 setStatus(false);
@@ -542,6 +573,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
 #endif
             trace_drawing->slot_showMe();
             /* we can now update everything */
+            //qWarning()<<"updateBoatData 4";
             updateBoatData();
             updateTraceColor();
 
@@ -565,13 +597,9 @@ void boatVLM::requestFinished (QByteArray res_byte)
         }
         case VLM_REQUEST_GATE:
             {
-                QJson::Parser parser;
-                bool ok;
-
-                QVariantMap result = parser.parse (res_byte, &ok).toMap();
-                if (!ok) {
-                    qWarning() << "Error parsing json data " << res_byte;
-                    qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
+                QVariantMap result;
+                if (!inetClient::JSON_to_map(res_byte,&result)) {
+                    return;
                 }
 
                 //qWarning() << "id Race: " << result["idraces"].toString();
@@ -583,12 +611,13 @@ void boatVLM::requestFinished (QByteArray res_byte)
                     QString str;
                     QVariantMap wp= wps[str.setNum(i)].toMap();
                     if(wp.isEmpty()) break;
-                    //qWarning()<<"wp: "<<wp["libelle"].toString();
                     double lonPorte1=wp["longitude1"].toDouble()/1000.000;
                     double latPorte1=wp["latitude1"].toDouble()/1000.000;
                     double lonPorte2=wp["longitude2"].toDouble()/1000.000;
                     double latPorte2=wp["latitude2"].toDouble()/1000.000;
                     int wpformat=wp["wpformat"].toInt();
+//                    qWarning()<<"wp: "<<wp["libelle"].toString()<<wpformat;
+//                    qWarning()<<wp;
                     bool oneBuoy=false;
                     bool iceGateN=false;
                     bool iceGateS=false;
@@ -698,7 +727,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
             break;
         case VLM_REQUEST_SENDPILOT:
             /* pilot data send => updating boat*/
-            qWarning() << "Pilot data send, result= " << res_byte;
+            //qWarning() << "Pilot data send, result= " << res_byte;
             slot_getDataTrue();
             break;
         default:
@@ -744,6 +773,7 @@ void boatVLM::endOfUpdating()
         /* clearing trace */
         trace_drawing->deleteAll();
         /*updating everything*/
+        //qWarning()<<"updateBoatData 5";
         updateBoatData();
         updating=false;
         QMessageBox::warning(0,QObject::tr("Bateau au ponton"),
@@ -773,6 +803,10 @@ void boatVLM::authFailed(void)
 
 void boatVLM::inetError()
 {
+    if(getCurrentRequest()==VLM_REQUEST_FLAG) {
+        qWarning() << "Error getting flag ==> flagBad set to true";
+        flagBad=true;
+    }
     updating=false;
     emit hasFinishedUpdating();
     //emit boatUpdated(this,newRace,doingSync);
@@ -823,8 +857,8 @@ void boatVLM::showNextGates()
         else if (j==nWP)
         {
             porte->setZValue(Z_VALUE_NEXT_GATE);
-            QPen penLine(Settings::getSetting("nextGateLineColor", QColor(Qt::blue)).value<QColor>(),1);
-            penLine.setWidthF(Settings::getSetting("nextGateLineWidth", 3.0).toDouble());
+            QPen penLine(Settings::getSetting(nextGateLineColor).value<QColor>(),1);
+            penLine.setWidthF(Settings::getSetting(nextGateLineWidth).toDouble());
             porte->setLinePen(penLine);
             porte->setHidden(false);
             porte->slot_showMe();
@@ -832,8 +866,8 @@ void boatVLM::showNextGates()
         else
         {
             porte->setZValue(Z_VALUE_GATE);
-            QPen penLine(Settings::getSetting("gateLineColor", QColor(Qt::magenta)).value<QColor>(),1);
-            penLine.setWidthF(Settings::getSetting("gateLineWidth", 3.0).toDouble());
+            QPen penLine(Settings::getSetting(gateLineColor).value<QColor>(),1);
+            penLine.setWidthF(Settings::getSetting(gateLineWidth).toDouble());
             porte->setLinePen(penLine);
             porte->setHidden(false);
             porte->slot_showMe();
@@ -852,7 +886,7 @@ void boatVLM::updateBoatString()
         my_str=alias;
     else
     {
-        switch(Settings::getSetting("opp_labelType",0).toInt())
+        switch(Settings::getSetting(opp_labelType).toInt())
         {
             case SHOW_PSEUDO:
                 my_str=pseudo;
@@ -900,8 +934,9 @@ void boatVLM::updateHint(void)
     }
     QString desc;
     if(!polarData) desc=tr(" (pas de polaire chargee)");
-    else if (polarData->getIsCsv()) desc=polarData->getName() + tr(" (format CSV)");
-    else desc=polarData->getName() + tr(" (format POL)");
+    else
+        desc = polarData->getName() + " (" + tr("format") + " " + polarData->get_fileTypeStr() + ")";
+
     if(stopAndGo!="0")
     {
         int secs=stopAndGo.toInt()-QDateTime().currentDateTimeUtc().toTime_t();
@@ -989,10 +1024,17 @@ void boatVLM::updateHint(void)
     {
         QString str2=tr("Prochaine porte: ")+QString().sprintf("%.2f",closest.capArrival)+tr("deg")+"/"+
                 QString().sprintf("%.2f NM<br>",closest.distArrival);
-        double vvmg=this->speed*(cos(degToRad(Util::myDiffAngle(heading,closest.capArrival))));
+        double vvmg=this->speed*(cos(degToRad(AngleUtil::myDiffAngle(heading,closest.capArrival))));
         str2+=QString().sprintf("VMG: %.2f ",vvmg)+tr("kts")+"<br>";
         str=str2+str;
     }
+
+    // get loch info from opp
+    opponent * opp=parent->getOppList()->get_opponent(boat_id);
+    if(opp) {
+        qWarning() << "loch: " << opp->get_loch1h() << " - " << opp->get_loch3h() << " - " << opp->get_loch24h();
+    }
+
     str=str.replace(" ","&nbsp;");
     desc=desc.replace(" ","&nbsp;");
     setToolTip(desc+"<br>"+str);
@@ -1047,7 +1089,7 @@ QString boatVLM::getDispName(void)
         return alias + " (" + pseudo + " - " + getBoatId() + ")";
     else
     {
-        switch(Settings::getSetting("opp_labelType",0).toInt())
+        switch(Settings::getSetting(opp_labelType).toInt())
         {
             case SHOW_PSEUDO:
                 return pseudo + " (" + name + " - " + getBoatId() +")";

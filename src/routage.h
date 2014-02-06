@@ -211,6 +211,7 @@ class ROUTAGE : public QObject
         FCT_SETGET(int,multiNb)
         FCT_GET_CST(double,maxDist)
         FCT_SETGET_CST(double,maxWaveHeight)
+        FCT_GET_CST(bool,threaded)
         static vlmPoint multiThreadedContains(const vlmPoint &p);
         static QList<vlmPoint> finalEpuration(const QList<vlmPoint> &listPoints);
         static QList<vlmPoint> findPointThreaded(const QList<vlmPoint> &list);
@@ -382,6 +383,7 @@ public slots:
         int multiMin;
         double maxDist;
         void calculateMaxDist();
+        bool threaded;
 };
 Q_DECLARE_TYPEINFO(ROUTAGE,Q_MOVABLE_TYPE);
 #endif // ROUTAGE_H

@@ -65,6 +65,8 @@ class boatVLM : public boat, public inetClient
         int     getIsOwn(void)          {    return isOwn; }
         int     getId(void)             {    return boat_id; }
 
+        void get_flag(void)             { if(flagBad) return; if(!country.isEmpty()) doRequest(VLM_REQUEST_FLAG);  else flagBad=true;}
+
         QString getDispName(void);
 
         void    updateData(boatData * data);
@@ -188,8 +190,8 @@ class boatVLM : public boat, public inetClient
 
         void updateBoatString(void);
         void updateHint(void);
-        QImage flag;
-        bool drawFlag;
+        //QImage flag;
+        //bool drawFlag;
         bool initialized;
         bool showNpd;
         QString npd;

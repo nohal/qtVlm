@@ -42,6 +42,8 @@ Lecture mise en memoire d'un fichier GRIB
 
 #include "dataDef.h"
 
+//#define PRINT_WARNING
+
 
 //===============================================================
 class Grib: public QObject
@@ -81,8 +83,9 @@ class Grib: public QObject
         int getNumberOfGribRecords(int dataType,int levelType,int levelValue);
 
         /* iso management */
-        std::list<IsoLine *> * get_isobars(void) { return &listIsobars; }
+        std::list<IsoLine *> * get_isobars(int levelType,int levelValue);
         std::list<IsoLine *> * get_isotherms0(void) { return &listIsotherms0; }
+        void clean_isoBars(void);
         void init_isoBars(time_t t);
         void init_isoTherms0(time_t t);
 
@@ -123,7 +126,8 @@ class Grib: public QObject
         std::set<time_t>  tList;
 
 
-        std::list<IsoLine *> listIsobars;      // liste d'isobares precalculees
+        QMap< Couple,std::list<IsoLine *> * > listIsobarsMap;
+        //std::list<IsoLine *> listIsobars;      // liste d'isobares precalculees
         std::list<IsoLine *> listIsotherms0;   // liste d'isothermes 0C precalculees
 
         void createDewPointData(void);

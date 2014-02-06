@@ -24,22 +24,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "settings.h"
 #include "MapDataDrawer.h"
 #include "Terrain.h"
-
+#include <QScroller>
 
 routeInfo::routeInfo(myCentralWidget *parent, ROUTE *route) :
     QDialog(parent)
 {
     this->setWindowFlags(Qt::Tool);
-    setupUi(this);
-    Util::setFontDialog(this);
     this->route=route;
     this->parent=parent;
+    setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
+    Util::setFontDialog(this);
     this->setWindowTitle(QObject::tr("Information au point d'interpolation pour ")+route->getName());
     drawBoat.moveTo(20,10);
     drawBoat.quadTo(12,22,17,30);
     drawBoat.lineTo(23,30);
     drawBoat.quadTo(28,22,20,10);
     //qWarning()<<"end of roadInfo init";
+}
+void routeInfo::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
 }
 void routeInfo::setValues(double twd, double tws, double twa, double bs, double hdg, double cnm, double dnm, bool engineUsed,
                           bool south, double cog, double sog, double cs, double cd, double wh, double wd, bool night, double wsh)
@@ -141,8 +147,7 @@ void routeInfo::closeEvent(QCloseEvent *)
 void routeInfo::resizeEvent(QResizeEvent *e)
 {
     QDialog::resizeEvent(e);
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
+    Settings::saveGeometry(this);
 }
 
 void routeInfo::drawTransformedLine( QPainter &pnt,

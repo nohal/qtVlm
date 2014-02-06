@@ -39,9 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Polar.h"
 #include "orthoSegment.h"
 #include "Projection.h"
-
-
-//#define GPS_FILE
+#include "GpsReceiver.h"
 
 boatReal::boatReal(QString pseudo, bool activated, Projection * proj,MainWindow * main,
                    myCentralWidget * parent): boat(pseudo,activated,proj,main,parent)
@@ -56,7 +54,8 @@ boatReal::boatReal(QString pseudo, bool activated, Projection * proj,MainWindow 
 
     /* init thread */
     gpsReader = NULL;
-    nmea_zero_INFO(&info);
+    gpsReaderType=GPS_NONE;
+    clearGpsData(&info);
     this->lat=0;
     this->lon=0;
     this->vacLen=300;
@@ -82,9 +81,9 @@ boatReal::boatReal(QString pseudo, bool activated, Projection * proj,MainWindow 
     this->eta=-1;
     changeLocked=false;
     forceEstime=false;
-    this->declinaison=Settings::getSetting("declinaison",0).toDouble();
-    this->minSpeedForEngine=Settings::getSetting("minSpeedForEngine",0).toDouble();
-    this->speedWithEngine=Settings::getSetting("speedWithEngine",4).toDouble();
+    this->declinaison=Settings::getSetting(boat_declinaison).toDouble();
+    this->minSpeedForEngine=Settings::getSetting(boat_minSpeedForEngine).toDouble();
+    this->speedWithEngine=Settings::getSetting(boat_speedWithEngine).toDouble();
 
     myCreatePopUpMenu();
     connect(this->popup,SIGNAL(aboutToShow()),parent,SLOT(slot_resetGestures()));
@@ -92,23 +91,20 @@ boatReal::boatReal(QString pseudo, bool activated, Projection * proj,MainWindow 
     this->lastUpdateTime=QDateTime().currentDateTimeUtc().toTime_t();
     this->displayNMEA=false;
     this->pause=true;
+    hide();
 }
 
-boatReal::~boatReal()
-{
+boatReal::~boatReal() {
     if(gpsReader && gpsReader->isRunning())
-    {
         this->stopRead();
-    }
+
     if(gpsReader) delete gpsReader;
+
     if( !parent->getAboutToQuit() )
-    {
-        if(trace)
-        {
+        if(trace) {
             parent->getScene()->removeItem(trace);
             delete trace;
         }
-    }
 }
 
 void boatReal::setWP(QPointF point,double w) {
@@ -145,21 +141,50 @@ void boatReal::myCreatePopUpMenu(void)
     connect(ac_chgPos,SIGNAL(triggered()),this,SLOT(slot_chgPos()));
 }
 
-void boatReal::startRead()
-{
-
+void boatReal::startRead() {
+#ifndef __ANDROID__
+    int curDeviceType=Settings::getSetting(deviceType).toInt();
     /* start loop */
     cnt=0;
-    if(!gpsReader)
-        gpsReader = new ReceiverThread(this);
+    if(gpsReader && gpsReader->get_deviceType()!=curDeviceType) {
+        if(gpsReader->isRunning())
+            this->stopRead();
+        delete gpsReader;
+        gpsReader=NULL;
+    }
+
+    if(!gpsReader) {
+        switch(curDeviceType) {
+            case GPS_GPSD:
+#ifdef __UNIX_QTVLM
+                gpsReader = new GPSdReceiverThread(this);
+                break;
+#endif
+            case GPS_NONE:
+                return;
+            case GPS_SERIAL:
+                gpsReader = new SerialReceiverThread(this);
+                break;
+            case GPS_FILE:
+                gpsReader = new FileReceiverThread(this);
+                break;
+
+
+        }
+    }
+
+
     if(!gpsReader->isRunning())
     {
-        if(!gpsReader->initPort())
+        if(!gpsReader->initDevice())
             return;
     }
+
     this->pause=false;
+
     if(!gpsReader->isRunning())
         gpsReader->start();
+#endif
 }
 
 void boatReal::stopRead()
@@ -182,33 +207,33 @@ bool boatReal::gpsIsRunning()
     return true;
 }
 
-void boatReal::updateBoat(nmeaINFO info)
+void boatReal::updateBoat(GpsData info)
 {
     this->info=info;
     QDateTime now;
     now=now.currentDateTime();
-//    QString s=now.toString("hh:mm:ss");
-//    qWarning()<<s<<
-//        "speed:"<<info.speed<<"cap:"<<info.direction<<"lat:"<<info.lat;
+    QString s=now.toString("hh:mm:ss");
+    qWarning()<<s<<"speed:"<<info.speed<<"cap:"<<info.direction<<"lat:"<<info.latitude<<"lon:"<<info.longitude;
+    qWarning()<<s<<"sig:" << info.sig << "fix:" << info.fix;
     this->fix=info.fix;
     this->sig=info.sig;
     if(info.declination!=0)
         this->declinaison=info.declination;
     else
-        this->declinaison=Settings::getSetting("declinaison",0).toDouble();
+        this->declinaison=Settings::getSetting(boat_declinaison).toDouble();
     this->pdop=info.PDOP;
     if(sig<0 || sig>3)
         qWarning()<<"strange sig value:"<<sig;
-    this->speed=info.speed/1.852;
+    this->speed=info.speed;
     this->heading=info.direction;
     if(info.fix==1)
     {
-//        qWarning()<<"bad gps signal, fix="<<info.fix<<",sig="<<info.sig;
+        qWarning()<<"bad gps signal, fix="<<info.fix<<",sig="<<info.sig;
         emit(boatUpdated(this,false,false));
         return;
     }
-    this->lat=nmea_ndeg2degree(info.lat);
-    this->lon=nmea_ndeg2degree(info.lon);
+    this->lat=info.latitude;
+    this->lon=info.longitude;
     this->lastUpdateTime=QDateTime().currentDateTimeUtc().toTime_t();
     if(previousLon!=lon || previousLat!=lat)
         updateBoatData();
@@ -262,13 +287,7 @@ void boatReal::mousePressEvent(QGraphicsSceneMouseEvent * e)
 
 bool boatReal::tryMoving(int x, int y)
 {
-    if(isMoving)
-    {
-//        int new_x=x;
-//        int new_y=y-height/2;
-
-//        setPos(new_x,new_y);
-
+    if(isMoving) {
         mouse_x=x;
         mouse_y=y;
         double newlon,newlat;
@@ -394,204 +413,3 @@ void boatReal::slot_chgPos(void)
     DialogRealBoatPosition dialog(parent);
     dialog.showDialog(this);
 }
-
-/****************************************************/
-/* Receiver Thread                                  */
-/****************************************************/
-
-ReceiverThread::ReceiverThread(boatReal * parent)
-{
-    qRegisterMetaType<nmeaINFO>("nmeaINFO");
-    connect(this,SIGNAL(updateBoat(nmeaINFO)),parent,SLOT(updateBoat(nmeaINFO)));
-    connect(this,SIGNAL(finished()),parent,SLOT(slot_threadStartedOrFinished()));
-    connect(this,SIGNAL(started()),parent,SLOT(slot_threadStartedOrFinished()));
-
-    port=NULL;
-    //initPort();
-    this->parent=parent;
-    nmea_zero_INFO(&info);
-    nmea_parser_init(&parser);
-    if(parser.buff_size==0)
-        qWarning()<<"no parser!!!";
-    this->listNMEA=NULL;
-}
-
-ReceiverThread::~ReceiverThread(void)
-{
-    if(port && port->isOpen())
-    {
-        port->close();
-    }
-    if(port)
-        delete port;
-    port=NULL;
-}
-
-bool ReceiverThread::initPort(void)
-{
-#ifndef GPS_FILE
-    /* close existing port */
-    if(port==NULL)
-        port=new QextSerialPort();
-    if(port && port->isOpen())
-        port->close();
-    /* init serial port */
-#ifdef __WIN_QTVLM
-    port->setPortName("\\\\.\\"+Settings::getSetting("gpsPortName","COM1").toString());
-#else
-    port->setPortName(Settings::getSetting("gpsPortName","COM1").toString());
-#endif
-    port->setBaudRate((BaudRateType)Settings::getSetting("gpsBaudRate",BAUD4800).toInt());
-    port->setFlowControl(FLOW_OFF);
-    port->setParity(PAR_NONE);
-    port->setDataBits(DATA_8);
-    port->setStopBits(STOP_1);
-    if(!port->open(QIODevice::ReadOnly | QIODevice::Unbuffered))
-    {
-        QMessageBox::critical (0,
-            tr("Activation du GPS"),
-            tr("Impossible d'ouvrir le port ")+Settings::getSetting("gpsPortName","COM1").toString()+"\n"+tr("Erreur: ")+port->lastError());
-        return false;
-    }
-//    port->write("$PSRF151,01*0F"); /*enabling WAAS/EGNOS on sirf chipset*/
-//    port->flush();
-#endif
-    if(parent->getDisplayNMEA())
-    {
-        QDialog *NMEA=new QDialog();
-        NMEA->setMinimumSize(600,300);
-        NMEA->setWindowFlags(Qt::WindowStaysOnTopHint);
-        NMEA->setModal(false);
-        QGridLayout  *lay = new QGridLayout(NMEA);
-        listNMEA=new QListWidget();
-        listNMEA->setSelectionMode(QAbstractItemView::ContiguousSelection);
-        lay->addWidget(listNMEA);
-        QPushButton * clipBoard=new QPushButton(tr("Copier"));
-        connect(clipBoard,SIGNAL(clicked()),this,SLOT(copyClipBoard()));
-        lay->addWidget(clipBoard);
-        NMEA->show();
-    }
-    return true;
-}
-void ReceiverThread::copyClipBoard()
-{
-    QStringList liste;
-    for (int i=0;i<listNMEA->count();++i)
-        liste<<listNMEA->item(i)->text();
-    QApplication::clipboard()->setText(liste.join("\n"));
-}
-
-void ReceiverThread::run()
-{
-    //qWarning() << "Starting thread loop (1)";
-    int numBytes = 0;
-    int l = 512;
-#ifndef GPS_FILE
-    if(!port ||(port && !port->isOpen()))
-    {
-        qWarning()<<"anomaly 1";
-        if(port)
-        {
-            delete port;
-            port=NULL;
-        }
-        /*retry to open the port*/
-        if(!this->initPort())
-        {
-            qWarning() << "Port not open => not starting GPS thread";
-            if(port) port->close();
-            delete port;
-            port=NULL;
-            exit();
-            return;
-        }
-    }
-#else
-    QFile fakeGPS("fakeGPS.data");
-    if(!fakeGPS.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
-        qWarning()<<"failed to open fakeGPS.data";
-        return;
-    }
-#endif
-    //qWarning() << "Starting thread loop (2)";
-
-    /*clear port*/
-    //port->readAll();
-    while (!parent->getPause() && port && port->isOpen())
-    {
-#ifndef GPS_FILE
-        numBytes = port->bytesAvailable();
-#else
-        numBytes=513;
-#endif
-        if(numBytes > l)
-        {
-            QByteArray buffer;
-#ifndef GPS_FILE
-            while(port->bytesAvailable()>0)
-            {
-                buffer=buffer+port->read(512);
-            }
-#else
-            buffer.clear();
-        for(int pass=0;pass<50;++pass)
-        {
-            if(fakeGPS.atEnd())
-            {
-                fakeGPS.seek(0);
-                qWarning()<<"restarting fakeGPS file";
-            }
-            buffer=fakeGPS.readLine();
-#endif
-            QList<QByteArray> lines=buffer.split('\n');
-            for (int n=0;n<lines.count();++n)
-            {
-                if(lines.at(n).count()>1)
-                {
-#ifndef GPS_FILE
-                    QString temp=QString(lines.at(n).left(lines.at(n).length()-1));
-#else
-                    QString temp=lines.at(n);
-#endif
-//                    if(temp.contains("RMC"))
-//                        qWarning()<<temp;
-#ifndef GPS_FILE
-                    QByteArray data=lines.at(n).left(lines.at(n).length()-1);
-#else
-                    QByteArray data=lines.at(n);
-#endif
-                    //data.replace("$II","$GP"); would have been good but... checksum
-                    data.push_back('\r' );
-                    data.push_back('\n');
-                    char * record=data.data();
-                    nmea_parse(&parser, record, data.size(), &info);
-                    if(listNMEA)
-                    {
-                        listNMEA->addItem(temp);
-                    }
-                }
-            }
-            emit updateBoat(info);
-#ifdef GPS_FILE
-        }
-#endif
-        }
-        this->msleep(3000);
-    }
-    if(port)
-    {
-        if(port->isOpen())
-            port->close();
-        //qWarning()<<"deleting port";
-        delete port;
-        port=NULL;
-    }
-    //qWarning() << "Exiting thread loop";
-    this->exit();
-}
-
-
-
-
-

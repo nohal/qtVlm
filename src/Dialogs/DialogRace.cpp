@@ -19,24 +19,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
 #include <QDebug>
+#include <QStandardItemModel>
+#include <QStandardItem>
+#include <QImage>
+#include <QDesktopWidget>
+#include <QDebug>
+#include <QInputDialog>
 
 #include "DialogRace.h"
 #include "Util.h"
-
 #include "opponentBoat.h"
 #include "mycentralwidget.h"
 #include "boatVLM.h"
 #include "MainWindow.h"
-#include "parser.h"
-#include <QStandardItemModel>
-#include <QStandardItem>
 #include "Orthodromie.h"
-#include <QImage>
-#include <QDesktopWidget>
 #include "settings.h"
-#include <QDebug>
-#include <QInputDialog>
-
+#include <QScroller>
 #define RACE_NO_REQUEST     0
 #define RACE_LIST_BOAT      1
 #define RESULT_LIST_BOAT    2
@@ -52,13 +50,15 @@ DialogRace::DialogRace(MainWindow * main,myCentralWidget * parent, inetConnexion
     this->somethingChanged=false;
     inetClient::setName("RaceDialog");
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
 
     model= new QStandardItemModel(this);
-    model->setColumnCount(10);
+    model->setColumnCount(11);
     model->setHeaderData(0,Qt::Horizontal,QObject::tr("Sel"));
     model->setHeaderData(1,Qt::Horizontal,QObject::tr("Rang"));
-    switch (Settings::getSetting("opp_labelType",0).toInt())
+    switch (Settings::getSetting(opp_labelType).toInt())
     {
         case SHOW_PSEUDO:
             model->setHeaderData(2,Qt::Horizontal,QObject::tr("Pseudo"));
@@ -76,7 +76,8 @@ DialogRace::DialogRace(MainWindow * main,myCentralWidget * parent, inetConnexion
     model->setHeaderData(6,Qt::Horizontal,QObject::tr("Loch 3h"));
     model->setHeaderData(7,Qt::Horizontal,QObject::tr("Loch 24h"));
     model->setHeaderData(8,Qt::Horizontal,QObject::tr("DNM"));
-    model->setHeaderData(9,Qt::Horizontal,QObject::tr("Dist 1er"));
+    model->setHeaderData(9,Qt::Horizontal,QObject::tr("Ecart 1er"));
+    model->setHeaderData(10,Qt::Horizontal,QObject::tr("Dist 1er"));
     model->setSortRole(Qt::UserRole);
     ranking->setModel(model);
     connect(this,SIGNAL(updateOpponent()),main,SLOT(slotUpdateOpponent()));
@@ -86,7 +87,7 @@ DialogRace::DialogRace(MainWindow * main,myCentralWidget * parent, inetConnexion
     modelResult= new QStandardItemModel(this);
     modelResult->setColumnCount(7);
     modelResult->setHeaderData(0,Qt::Horizontal,QObject::tr("Rang"));
-    switch (Settings::getSetting("opp_labelType",0).toInt())
+    switch (Settings::getSetting(opp_labelType).toInt())
     {
         case SHOW_PSEUDO:
             modelResult->setHeaderData(1,Qt::Horizontal,QObject::tr("Pseudo"));
@@ -121,11 +122,18 @@ DialogRace::DialogRace(MainWindow * main,myCentralWidget * parent, inetConnexion
 
     connect(buttonBox->button(QDialogButtonBox::Apply), SIGNAL(clicked()), this, SLOT(doSynch()));
 }
+void DialogRace::slot_screenResize()
+{
+    Util::setWidgetSize(this,this->sizeHint());
+}
 
 DialogRace::~DialogRace()
 {
-    Settings::setSetting(this->objectName()+".height",this->height());
-    Settings::setSetting(this->objectName()+".width",this->width());
+    Settings::saveGeometry(this);
+    for(int c=0;c<model->columnCount();++c)
+        Settings::setSettingOld(this->objectName()+".model"+QString().setNum(c)+".width",this->ranking->columnWidth(c),"DialogGeometry");
+    for(int c=0;c<modelResult->columnCount();++c)
+        Settings::setSettingOld(this->objectName()+".result"+QString().setNum(c)+".width",this->arrived->columnWidth(c),"DialogGeometry");
     if(model)
         delete model;
     if(modelResult)
@@ -325,7 +333,28 @@ void DialogRace::getNextRace()
         /* finished */
         initDone = true;
         numRace=-1;
-        chgRace(0);
+        int id=0;
+        // compute id according to current boat race
+        boat * curBoat=main->getSelectedBoat();
+        if(curBoat && curBoat->get_boatType()==BOAT_VLM) {
+            boatVLM * curVLMBoat=(boatVLM*)curBoat;
+            QString raceId=curVLMBoat->getRaceId();
+            //qWarning() << "Has cur boat => race is: " << raceId;
+            for(int i=0;i<chooser_raceList->count();++i)
+                if(chooser_raceList->itemData(i).toString()==raceId) {
+                    id=i;
+                    //qWarning() << "race found for selected boat: " << id;
+                    break;
+                }
+
+        }
+        else {
+            qWarning() << "No current boat ==> get first one in list";
+        }
+        chooser_raceList->blockSignals(true);
+        chooser_raceList->setCurrentIndex(id);
+        chooser_raceList->blockSignals(false);
+        chgRace(id);
         waitBox->hide();
         this->exec();
         return;
@@ -370,15 +399,11 @@ void DialogRace::requestFinished (QByteArray res_byte)
 {
     struct boatParam * ptr;
 
-    QJson::Parser parser;
-    bool ok;
     QVariantMap result;
     if(getCurrentRequest()!=FLAG_REQUEST)
     {
-        result = parser.parse (res_byte, &ok).toMap();
-        if (!ok) {
-            qWarning() << "Error parsing json data " << res_byte;
-            qWarning() << "Error: " << parser.errorString() << " (line: " << parser.errorLine() << ")";
+        if (!inetClient::JSON_to_map(res_byte,&result)) {
+            return;
         }
 
         if(!checkWSResult(res_byte,"raceDialog->RACE_LIST_BOAT",main))
@@ -395,11 +420,17 @@ void DialogRace::requestFinished (QByteArray res_byte)
             QMapIterator<QString,QVariant> it(ranking);
             QString tt;
             Orthodromie orth(0,0,0,0);
+            double firstDNM=0;
+            QString firstM=0;
             while (it.hasNext())
             {
                 QVariantMap data=it.next().value().toMap();
                 if(data["rank"].toInt()==1)
+                {
                     orth.setStartPoint(data["longitude"].toFloat(),data["latitude"].toFloat());
+                    firstM=data["nwp"].toString();
+                    firstDNM=data["dnm"].toFloat();
+                }
                 ptr = new boatParam();
                 ptr->pseudo=data["boatpseudo"].toString();
                 ptr->name=data["boatname"].toString();
@@ -410,6 +441,8 @@ void DialogRace::requestFinished (QByteArray res_byte)
                 ptr->last3h=tt.sprintf("%.2f",data["last3h"].toFloat());
                 ptr->last24h=tt.sprintf("%.2f",data["last24h"].toFloat());
                 ptr->dnm=data["nwp"].toString()+"->"+tt.sprintf("%10.2f",data["dnm"].toFloat());
+                ptr->nextMark=data["nwp"].toString();
+                ptr->distNextMark=data["dnm"].toFloat();
                 if(data["deptime"].toString()=="-1")
                     ptr->statusVLM=tr("Au mouillage");
                 else
@@ -424,6 +457,12 @@ void DialogRace::requestFinished (QByteArray res_byte)
             {
                 orth.setEndPoint(param_list[currentRace]->boats[ii]->longitude,param_list[currentRace]->boats[ii]->latitude);
                 param_list[currentRace]->boats[ii]->fromFirst=tt.sprintf("%.2f",orth.getDistance());
+                QString ecartMark;
+                if(param_list[currentRace]->boats[ii]->nextMark==firstM)
+                    ecartMark=QString().sprintf("%.2f",qAbs(param_list[currentRace]->boats[ii]->distNextMark-firstDNM));
+                else
+                    ecartMark="-";
+                param_list[currentRace]->boats[ii]->ecartMark=ecartMark;
             }
             param_list[currentRace]->displayNSZ=currentDisplayNSZ;
             param_list[currentRace]->latNSZ=currentLatNSZ;
@@ -538,6 +577,7 @@ void DialogRace::clear(void)
 
 void DialogRace::done(int result)
 {
+    Settings::saveGeometry(this);
     if(result == QDialog::Accepted)
     {
         param_list[numRace]->colorNSZ=inputTraceColor->getLineColor();
@@ -643,17 +683,19 @@ void DialogRace::chgRace(int id)
 
     QString idRace = chooser_raceList->itemData(id).toString();
 
+    //qWarning() << "[chgRace] trying to find id="<< id << " => raceId="<<idRace;
+
     for(numRace=0;numRace<param_list.size();numRace++)
         if(param_list[numRace]->id == idRace)
             break;
     if(numRace==param_list.size())
     {
-        qWarning() << "chgRace: id not found";
-        return;
+        qWarning() << "chgRace: id not found ==> defaulting to first race";
+        numRace=0;
     }
 
     model->blockSignals(true);
-    int labelType=Settings::getSetting("opp_labelType",0).toInt();
+    int labelType=Settings::getSetting(opp_labelType).toInt();
     switch (labelType)
     {
         case SHOW_PSEUDO:
@@ -727,8 +769,10 @@ void DialogRace::chgRace(int id)
         items[7]->setData(param_list[numRace]->boats[i]->last24h.toFloat(),Qt::UserRole);
         items.append(new QStandardItem(param_list[numRace]->boats[i]->dnm));
         items[8]->setData(param_list[numRace]->boats[i]->dnm,Qt::UserRole);
+        items.append(new QStandardItem(param_list[numRace]->boats[i]->ecartMark));
+        items[9]->setData(param_list[numRace]->boats[i]->ecartMark,Qt::UserRole);
         items.append(new QStandardItem(param_list[numRace]->boats[i]->fromFirst));
-        items[9]->setData(param_list[numRace]->boats[i]->fromFirst.toFloat(),Qt::UserRole);
+        items[10]->setData(param_list[numRace]->boats[i]->fromFirst.toFloat(),Qt::UserRole);
         if(!items[0]->isEnabled())
         {
             for(int it=0;it<items.count();it++)
@@ -755,6 +799,12 @@ void DialogRace::chgRace(int id)
                 model->item(r,c)->setTextAlignment(Qt::AlignCenter | Qt::AlignVCenter);
         }
         ranking->resizeColumnToContents(c);
+        for(int c=0;c<model->columnCount();++c)
+        {
+            int w=Settings::getSettingOld(this->objectName()+".model"+QString().setNum(c)+".width",-1,"DialogGeometry").toInt();
+            if(w>1)
+                ranking->setColumnWidth(c,w);
+        }
     }
     model->blockSignals(false);
     model->sort(1);
@@ -831,6 +881,12 @@ void DialogRace::chgRace(int id)
                 modelResult->item(r,c)->setTextAlignment(Qt::AlignCenter| Qt::AlignVCenter);
         }
         arrived->resizeColumnToContents(c);
+        for(int c=0;c<modelResult->columnCount();++c)
+        {
+            int w=Settings::getSettingOld(this->objectName()+".result"+QString().setNum(c)+".width",-1,"DialogGeometry").toInt();
+            if(w>1)
+                arrived->setColumnWidth(c,w);
+        }
     }
     modelResult->blockSignals(false);
     modelResult->sort(0);

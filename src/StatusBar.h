@@ -34,12 +34,13 @@ class StatusBar : public QStatusBar
     public:
         StatusBar(MainWindow * mainWindow);
 
-        void showWindData(double x,double y);
+        void showGribData(double x,double y);
         void showSelectedZone(double x0, double y0, double x1, double y1);
-        void drawVacInfo(void);
     
 
-    signals:
+        void update_eta(QDateTime eta_dtm);
+        void clear_eta();
+signals:
     
     public slots:
 
@@ -47,11 +48,13 @@ class StatusBar : public QStatusBar
         MainWindow * mainWindow;
         myCentralWidget * my_centralWidget;
 
-        bool showingSelectionMessage;
 
-        QLabel       *stBar_label_1;
-        QLabel       *stBar_label_2;
-        QLabel       *stBar_label_3;
+        QString compute_dataTxt(DataManager * dataManager, MapDataDrawer* mapDrawer, QMap<int,QStringList> * mapDataTypes,
+                                int mode, int levelType, int levelValue, double x, double y);
+
+        QLabel       *labelOrtho;
+        QLabel       *labelGrib;
+        QLabel       *labelEta;
     
 };
 
