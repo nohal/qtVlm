@@ -35,9 +35,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 DialogRealBoatConfig::DialogRealBoatConfig(myCentralWidget *parent) : QDialog(parent)
 {
     this->parent=parent;
-    QScroller::grabGesture(this->scrollArea->viewport());
     connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     setupUi(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
     Util::setFontDialog(this);
 }
 void DialogRealBoatConfig::slot_screenResize()
