@@ -784,6 +784,10 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
         <source>Ortho selection :</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Isothermes :</source>
+        <translation>Isotherme 0 C :</translation>
+    </message>
 </context>
 <context>
     <name>DialogGribDrawing</name>

@@ -1179,57 +1179,62 @@ La bo�te � cocher trace partielle s&apos;active apres l&apos;entree d&apos;u
         <translation>Cancel</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="296"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="298"/>
         <source>Couleur de fond :</source>
         <translation>Background colour :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="306"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="308"/>
         <source>Couleur des oceans :</source>
         <translation>Oceans colour :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="338"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="340"/>
         <source>Opacite des zones de nuit :</source>
         <translation>Night zone opacity :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="362"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="364"/>
         <source>Traits de cotes :</source>
         <translation>Coastlines :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="374"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="376"/>
         <source>Frontieres :</source>
         <translation>Borders :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="386"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="388"/>
         <source>Rivieres :</source>
         <translation>Rivers :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="421"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="411"/>
+        <source>Isothermes :</source>
+        <translation>Isotherms 0 C :</translation>
+    </message>
+    <message>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="423"/>
         <source>Prochaine porte :</source>
         <translation>Next active gate :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="433"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="435"/>
         <source>Portes suivantes :</source>
         <translation>Next other gates :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="446"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="448"/>
         <source>Routes :</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="459"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="461"/>
         <source>Trace TWA :</source>
         <translation>TWA trace :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="472"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="474"/>
         <source>Ortho selection :</source>
         <translation></translation>
     </message>
@@ -1238,17 +1243,17 @@ La bo�te � cocher trace partielle s&apos;active apres l&apos;entree d&apos;u
         <translation type="obsolete">Oceans color :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="316"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="318"/>
         <source>Couleur des terres :</source>
         <translation>Land colour :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="326"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="328"/>
         <source>Opacite des terres :</source>
         <translation>Land opacity :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="350"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="352"/>
         <source>Estime :</source>
         <translation>Reckoning :</translation>
     </message>
@@ -1265,8 +1270,7 @@ La bo�te � cocher trace partielle s&apos;active apres l&apos;entree d&apos;u
         <translation type="obsolete">Rivers :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="398"/>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="409"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="400"/>
         <source>Isobares :</source>
         <translation>Isobars :</translation>
     </message>

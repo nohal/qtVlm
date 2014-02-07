@@ -259,6 +259,8 @@ void DialogGraphicsParams::slotBtOK()
         Settings::setSetting(riversLineColor,  inputRiversLine->getLineColor());
         Settings::setSetting(isobarsLineWidth,  inputIsobarsLine->getLineWidth());
         Settings::setSetting(isobarsLineColor,  inputIsobarsLine->getLineColor());
+        Settings::setSetting(isotherms0LineWidth,  inputIsotherms0Line->getLineWidth());
+        Settings::setSetting(isotherms0LineColor,  inputIsotherms0Line->getLineColor());
         Settings::setSetting(nextGateLineWidth,  inputNextGateLine->getLineWidth());
         Settings::setSetting(nextGateLineColor,  inputNextGateLine->getLineColor());
         Settings::setSetting(gateLineWidth,  inputGateLine->getLineWidth());
@@ -406,7 +408,7 @@ QFrame *DialogGraphicsParams::createFrameGui(QWidget *parent)
 				this);
     lay->addWidget( inputIsobarsLine, lig,1, Qt::AlignLeft);
     lig ++;
-    label = new QLabel(tr("Isobares :"), frm);
+    label = new QLabel(tr("Isothermes :"), frm);
     lay->addWidget( label,    lig,0, Qt::AlignRight);
     inputIsotherms0Line =
         new InputLineParams(

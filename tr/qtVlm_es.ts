@@ -1133,57 +1133,62 @@ Se requiere identificación válida de barco y carrera para habilitar la casilla
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="296"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="298"/>
         <source>Couleur de fond :</source>
         <translation>Color de fondo :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="306"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="308"/>
         <source>Couleur des oceans :</source>
         <translation>Color de los océanos :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="338"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="340"/>
         <source>Opacite des zones de nuit :</source>
         <translation>Opacidad de las zonas nocturnas :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="362"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="364"/>
         <source>Traits de cotes :</source>
         <translation>Líneas de costa :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="374"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="376"/>
         <source>Frontieres :</source>
         <translation>Fronteras :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="386"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="388"/>
         <source>Rivieres :</source>
         <translation>Ríos :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="421"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="411"/>
+        <source>Isothermes :</source>
+        <translation>Isotherms 0 C :</translation>
+    </message>
+    <message>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="423"/>
         <source>Prochaine porte :</source>
         <translation>Puerta activa siguiente :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="433"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="435"/>
         <source>Portes suivantes :</source>
         <translation>Otras puertas siguientes :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="446"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="448"/>
         <source>Routes :</source>
         <translation>Rutas :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="459"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="461"/>
         <source>Trace TWA :</source>
         <translation>Traza TWA :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="472"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="474"/>
         <source>Ortho selection :</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1192,17 +1197,17 @@ Se requiere identificación válida de barco y carrera para habilitar la casilla
         <translation type="obsolete">Oceans color :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="316"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="318"/>
         <source>Couleur des terres :</source>
         <translation>Color de la tierra :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="326"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="328"/>
         <source>Opacite des terres :</source>
         <translation>Opacidad de la tierra :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="350"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="352"/>
         <source>Estime :</source>
         <translation>Estima :</translation>
     </message>
@@ -1219,8 +1224,7 @@ Se requiere identificación válida de barco y carrera para habilitar la casilla
         <translation type="obsolete">Rivers :</translation>
     </message>
     <message>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="398"/>
-        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="409"/>
+        <location filename="../src/Dialogs/DialogGraphicsParams.cpp" line="400"/>
         <source>Isobares :</source>
         <translation>Isobaras :</translation>
     </message>
