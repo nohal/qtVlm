@@ -1804,13 +1804,15 @@ void MainWindow::showDashBoard()
 {
     bool shTdb=Settings::getSetting(show_DashBoard).toInt()==1;
     if(use_old_board)
-        menuBar->acOptions_SH_Tdb->setVisible(false);
+    {
+        if (myBoard)
+            myBoard->showCurrentBoard(shTdb);
+    }
     else
     {
         boardPlugin->setVisible(shTdb);
-        menuBar->acOptions_SH_Tdb->setVisible(true);
-        menuBar->acOptions_SH_Tdb->setChecked(shTdb);
     }
+    menuBar->acOptions_SH_Tdb->setChecked(shTdb);
 }
 
 void MainWindow::updatePilototo_Btn(boatVLM * boat)
