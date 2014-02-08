@@ -3035,7 +3035,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Telechargement</source>
-        <translation>Téléchargement</translation>
+        <translation>Téléchargement zyGrib</translation>
     </message>
     <message>
         <source>CAPE (surface)</source>
@@ -5825,7 +5825,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Telechargement zyGrib</source>
-        <translation></translation>
+        <translation>Téléchargement zyGrib</translation>
     </message>
     <message>
         <source>Telechargement VLM</source>

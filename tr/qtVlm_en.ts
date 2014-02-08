@@ -4473,7 +4473,7 @@ Etes-vous sur ?</source>
         <location filename="../src/MenuBar.cpp" line="156"/>
         <location filename="../src/MenuBar.cpp" line="158"/>
         <source>Telechargement</source>
-        <translation>Download</translation>
+        <translation>Download from zyGrib</translation>
     </message>
     <message>
         <location filename="../src/MenuBar.cpp" line="159"/>

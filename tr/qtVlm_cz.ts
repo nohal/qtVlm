@@ -4344,7 +4344,7 @@ Etes-vous sur ?</source>
     <message>
         <location filename="../src/MenuBar.cpp" line="104"/>
         <source>Montrer les pavillons sur la carte</source>
-        <translation type="unfinished">Ukázat vlajky na mapě</translation>
+        <translation>Ukázat vlajky na mapě</translation>
     </message>
     <message>
         <location filename="../src/MenuBar.cpp" line="106"/>
