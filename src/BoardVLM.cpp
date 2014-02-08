@@ -190,11 +190,15 @@ boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) :
     set_style(this->goPilotOrtho);
     set_style(this->goVBVMG);
     set_style(this->goVMG);
+    QApplication::processEvents();
+    this->adjustSize();
 //    QScrollBar * vert=this->scrollArea->verticalScrollBar();
-//    qWarning()<<this->size()<<vert->minimum()<<vert->maximum();
+//    QScrollBar * horz=this->scrollArea->horizontalScrollBar();
 //    int myW=vert->size().width();
+//    qWarning()<<this->size()<<vert->minimum()<<vert->maximum()<<this->scrollAreaWidgetContents_2->minimumSizeHint()<<myW;
 //    this->setMaximumWidth(this->scrollAreaWidgetContents_2->minimumSizeHint().width()+myW);
-//    qWarning()<<this->size();
+//    this->setMinimumWidth(this->scrollAreaWidgetContents_2->minimumSizeHint().width()+myW);
+//    qWarning()<<this->size()<<horz->minimum()<<horz->maximum();
 }
 void boardVLM::set_style(QPushButton * button, QColor color, QColor color2)
 {
@@ -1320,6 +1324,8 @@ tool_windAngle::tool_windAngle(QWidget * parent):QWidget(parent)
     WPdir = -1;
     newHeading=-1;
     closest=vlmPoint(0,0);
+    this->setMinimumSize(img_fond->size());
+    this->setMaximumSize(img_fond->size());
 }
 
 void tool_windAngle::paintEvent(QPaintEvent * /*event*/)
@@ -1419,17 +1425,17 @@ QColor tool_windAngle::windSpeed_toColor()
    else if (windSpeed <= 3) return QColor(150, 150, 225 );
    // <=F2 : bleu un peu plus soutenu
    else if (windSpeed <= 6) return QColor(80, 140, 205);
-   // <=F3 : bleu plus fonc�
+   // <=F3 : bleu plus fonce
    else if (windSpeed <= 10) return QColor(60, 100, 180);
    // <=F4 : vert
    else if (windSpeed <= 15) return QColor(65, 180, 100);
-   // <=F5 : jaune l�g�rement vert
+   // <=F5 : jaune legerement vert
    else if (windSpeed <= 21) return QColor(180, 205, 10);
-   // <=F6 : jaune orang�
+   // <=F6 : jaune orange
    else if (windSpeed <= 26) return QColor(210, 210, 22);
-   // <=F7 : jaune orang� un peu plus rougeatre
+   // <=F7 : jaune orange un peu plus rougeatre
    else if (windSpeed <= 33) return QColor(225, 210, 32);
-   // <=F8 : orange fonc�
+   // <=F8 : orange fonce
    else if (windSpeed <= 40) return QColor(255, 179, 0);
    // <=F9 : rouge
    else if (windSpeed <= 47) return QColor(255, 111, 0);
