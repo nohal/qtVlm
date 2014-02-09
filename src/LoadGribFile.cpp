@@ -204,10 +204,10 @@ void LoadGribFile::requestFinished ( QNetworkReply* inetReply)
         {
             QString m=tr("Vous n'utilisez pas la derniere version de qtVlm: ")+strbuf;
 #ifdef __WIN_QTVLM
-            m+="<br>"+tr("Emplacement:")+" <a href='http://www.virtual-winds.org/oxygen'>"+tr("qtVlm downloads")+"</a>";
+            m+="<br>"+tr("Emplacement:")+" <a href='http://sourceforge.net/projects/qtvlm/files/Windows%20-%20setup/'>"+tr("qtVlm downloads")+"</a>";
 #endif
 #ifdef __MAC_QTVLM
-            m+="<br>"+tr("Emplacement:")+" <a href='http://www.virtual-winds.org/oxygen/mac'>"+tr("qtVlm downloads")+"</a>";
+            m+="<br>"+tr("Emplacement:")+" <a href='http://sourceforge.net/projects/qtvlm/files/MacOS/'>"+tr("qtVlm downloads")+"</a>";
 #endif
             QMessageBox::warning (0,
                 tr("qtVlm version"),

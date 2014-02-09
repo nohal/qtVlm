@@ -48,37 +48,48 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
     font.setFixedPitch(true);
 #endif
 
-    labelOrtho = new QLabel("Welcome in QtVlm", this);
+    labelOrtho = new QLabel("<pre>Welcome in QtVlm</pre>", this);
     if(Settings::getSetting(fusionStyle).toInt()==1)
         labelOrtho->setStyleSheet("color: rgb(234, 221, 21);");
     else
         labelOrtho->setStyleSheet("color: rgb(0, 0, 255);");
+    labelOrtho->setFont(font);
+    labelOrtho->setTextFormat(Qt::RichText);
+
     labelGrib = new QLabel("", this);
     if(Settings::getSetting(fusionStyle).toInt()==1)
-        labelGrib->setStyleSheet("color: rgb(234, 154, 84); font: bold;");
+        labelGrib->setStyleSheet("color: rgb(234, 154, 84);");
     else
-        labelGrib->setStyleSheet("color: rgb(255, 0, 0); font: bold;");
-    labelOrtho->setFont(font);
+        labelGrib->setStyleSheet("color: rgb(255, 0, 0);");
     labelGrib->setFont(font);
+    labelGrib->setTextFormat(Qt::RichText);
+    /*font=labelGrib->font();
+    font.setBold(true);
+    labelGrib->setFont(font);*/
+
     labelEta=new QLabel("",this);
     if(Settings::getSetting(fusionStyle).toInt()==1)
         labelEta->setStyleSheet("color: rgb(51, 212, 195);");
     else
         labelEta->setStyleSheet("color: rgb(33,33,179);");
-    labelOrtho->setTextFormat(Qt::RichText);
-    labelGrib->setTextFormat(Qt::RichText);
     labelEta->setTextFormat(Qt::RichText);
     labelEta->setAlignment(Qt::AlignRight);
-    font=labelGrib->font();
-    font.setBold(true);
-    labelGrib->setFont(font);
+
+
 #ifdef __ANDROID__
     labelEta->setWordWrap(true);
 #else
-    QLabel *a1=new QLabel(" - ");
+    separator=new QLabel("<pre> - </pre>");
+    if(Settings::getSetting(fusionStyle).toInt()==1)
+        separator->setStyleSheet("color: rgb(234, 221, 21);");
+    else
+        separator->setStyleSheet("color: rgb(0, 0, 255);");
+    separator->setFont(font);
     this->addWidget(labelGrib,0);
-    this->addWidget(a1);
+    this->addWidget(separator,0);
     this->addWidget(labelOrtho,0);
+
+    separator->setVisible(false);
 #endif
     this->addPermanentWidget(labelEta,0);
     mainWindow->setStatusBar(this);
@@ -177,6 +188,7 @@ void StatusBar::showGribData(double x,double y)
     }
 #endif
     QString res;
+    bool hasGribData = false;
 
 
     QString label1= Util::pos2String(TYPE_LAT,y) + " " + Util::pos2String(TYPE_LON,x);
@@ -201,8 +213,10 @@ void StatusBar::showGribData(double x,double y)
         int levelType=terrain->get_colorMapLevelType();
         int levelValue=terrain->get_colorMapLevelValue();
 
-        if(mode!=DATA_NOTDEF)
+        if(mode!=DATA_NOTDEF) {
             res = compute_dataTxt(dataManager,mapDrawer,dataManager->get_dataTypes(),mode,levelType,levelValue,x,y);
+            hasGribData=!res.isEmpty();
+        }
 
         /* frst arrow */
         int arwMode=terrain->get_frstArwMode();
@@ -211,8 +225,11 @@ void StatusBar::showGribData(double x,double y)
 
         if(arwMode!=DATA_NOTDEF && (arwMode!=mode || arwLevelType!=levelType || arwLevelValue!=levelValue)) {
             QString s=compute_dataTxt(dataManager,mapDrawer,dataManager->get_arrowTypesFst(),arwMode,arwLevelType,arwLevelValue,x,y);
-            if(!s.isEmpty())
-                res += " - " + s;
+            if(!s.isEmpty()) {
+                hasGribData=true;
+                if(!res.isEmpty()) res += " - ";
+                res += s;
+            }
         }
 
         /* sec arrow */
@@ -221,11 +238,20 @@ void StatusBar::showGribData(double x,double y)
         arwLevelValue=terrain->get_secArwLevelValue();
 
         if(arwMode!=DATA_NOTDEF && (arwMode!=mode || arwLevelType!=levelType || arwLevelValue!=levelValue)) {
-            res += compute_dataTxt(dataManager,mapDrawer,dataManager->get_arrowTypesSec(),arwMode,arwLevelType,arwLevelValue,x,y);
+            QString s=compute_dataTxt(dataManager,mapDrawer,dataManager->get_arrowTypesSec(),arwMode,arwLevelType,arwLevelValue,x,y);
+            if(!s.isEmpty()) {
+                hasGribData=true;
+                if(!res.isEmpty()) res += " - ";
+                res += s;
+            }
         }
     }
 
-    labelGrib->setText("<pre>"+res+"</pre>");
+    labelGrib->setText("<pre>"+res+"</pre><");
+#ifndef __ANDROID__
+    qWarning() << "HasGribData="<< hasGribData;
+    separator->setVisible(hasGribData);
+#endif
 }
 
 QString StatusBar::compute_dataTxt(DataManager * dataManager, MapDataDrawer* mapDrawer,

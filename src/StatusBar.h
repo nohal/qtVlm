@@ -55,6 +55,9 @@ signals:
         QLabel       *labelOrtho;
         QLabel       *labelGrib;
         QLabel       *labelEta;
+#ifndef __ANDROID__
+        QLabel       *separator;
+#endif
     
 };
 
