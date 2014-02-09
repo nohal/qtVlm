@@ -48,7 +48,15 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
     font.setFixedPitch(true);
 #endif
 
-    labelOrtho = new QLabel("<pre>Welcome in QtVlm</pre>", this);
+    if(Settings::getSetting(fusionStyle).toInt()==1)
+        this->setStyleSheet("color: rgb(234, 221, 21);");
+    else
+        this->setStyleSheet("color: rgb(0, 0, 255);");
+
+    this->setFont(font);
+    //this->setTextFormat(Qt::RichText);
+
+    labelOrtho = new QLabel("Welcome in QtVlm", this);
     if(Settings::getSetting(fusionStyle).toInt()==1)
         labelOrtho->setStyleSheet("color: rgb(234, 221, 21);");
     else
@@ -72,6 +80,7 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
         labelEta->setStyleSheet("color: rgb(51, 212, 195);");
     else
         labelEta->setStyleSheet("color: rgb(33,33,179);");
+    labelEta->setFont(font);
     labelEta->setTextFormat(Qt::RichText);
     labelEta->setAlignment(Qt::AlignRight);
 
@@ -79,7 +88,7 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
 #ifdef __ANDROID__
     labelEta->setWordWrap(true);
 #else
-    separator=new QLabel("<pre> - </pre>");
+    separator=new QLabel(" - ");
     if(Settings::getSetting(fusionStyle).toInt()==1)
         separator->setStyleSheet("color: rgb(234, 221, 21);");
     else
@@ -198,7 +207,7 @@ void StatusBar::showGribData(double x,double y)
         label1=label1+QString().sprintf(" - %6.2f",oo.getAzimutDeg())+tr("deg")+
                 QString().sprintf(" %7.2fNM",oo.getDistance());
     }
-    labelOrtho->setText("<pre>"+label1+"</pre>");
+    labelOrtho->setText(label1.replace(" ","&nbsp;"));
 
     DataManager * dataManager=my_centralWidget->get_dataManager();
     Terrain * terrain=my_centralWidget->get_terrain();
@@ -247,9 +256,9 @@ void StatusBar::showGribData(double x,double y)
         }
     }
 
-    labelGrib->setText("<pre>"+res+"</pre><");
+    labelGrib->setText("<b>"+res.replace(" ","&nbsp;")+"</b>");
 #ifndef __ANDROID__
-    qWarning() << "HasGribData="<< hasGribData;
+    //qWarning() << "HasGribData="<< hasGribData;
     separator->setVisible(hasGribData);
 #endif
 }
@@ -298,16 +307,16 @@ void StatusBar::showSelectedZone(double x0, double y0, double x1, double y1)
 {
     QString message =
             tr("Selection: ")
-            + Util::formatPosition(x0,y0)
+            + Util::pos2String(TYPE_LAT,y0) + " " + Util::pos2String(TYPE_LON,x0)
             + " -> "
-            + Util::formatPosition(x1,y1);
+            + Util::pos2String(TYPE_LAT,y1) + " " + Util::pos2String(TYPE_LON,x1);
 
     Orthodromie orth(x0,y0, x1,y1);
     QString s;
     message = message+ " "
                 + tr("(dist.orthodromique:")
                 + Util::formatDistance(orth.getDistance())
-                + tr("  init.dir: %1deg").arg(s.sprintf("%.1f",orth.getAzimutDeg()))
+                + tr("  init.dir: %1deg").arg(s.sprintf("%6.2f",orth.getAzimutDeg()))
                 + ")";
     showMessage(message,0);
 }
@@ -317,8 +326,7 @@ void StatusBar::showSelectedZone(double x0, double y0, double x1, double y1)
 /**********************************************************************/
 
 void StatusBar::clear_eta(void) {
-    //ETA->setText("<pre> - "+tr("No WP")+"</pre>");
-    labelEta->setText(tr("No WP"));
+    labelEta->setText("<b>"+tr("No WP")+"</b>");
     this->labelEta->setMinimumSize(labelEta->sizeHint());
 }
 
@@ -341,5 +349,5 @@ void StatusBar::update_eta(QDateTime eta_dtm)
     QString myEta=tr(" ETA WP")+": " +eta_dtm.toString(tr("dd-MM-yyyy, HH:mm:ss"));
     myEta.replace(" ","&nbsp;");
     txt.replace(" ","&nbsp;");
-    labelEta->setText(myEta+" "+txt);
+    labelEta->setText("<b>"+myEta+" "+txt+"</b>");
 }

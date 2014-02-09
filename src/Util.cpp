@@ -367,7 +367,7 @@ QString Util::formatDegres(const double &x)
         int deg = (int) fabs(x);
         double min = (fabs(x) - deg)*60.0;
         char sign = (x<0) ? '-' : ' ';
-        r.sprintf("%c%ddeg%5.2f'", sign,deg,min);
+        r.sprintf("%c%03ddeg%5.2f'", sign,deg,min);
     }
     else if (unit == "dddegmm'ss")
     {
@@ -377,11 +377,11 @@ QString Util::formatDegres(const double &x)
         min = min % 60;                  // reste en minutes
         sec = sec % 60;                  // reste en secondes
         char sign = (x<0) ? '-' : ' ';
-        r.sprintf("%c%ddeg%02d'%02d\"", sign,deg,min,sec);
+        r.sprintf("%c%03ddeg%02d'%02d\"", sign,deg,min,sec);
     }
     else // if (unit == "dd,dddeg")
     {
-        r.sprintf("%.2fdeg",x);
+        r.sprintf("%3.2fdeg",x);
     }
     QString deg = QObject::tr ("deg");
     if (deg == "deg") {
