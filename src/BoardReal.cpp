@@ -37,11 +37,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "dataDef.h"
 #include "Util.h"
 #include "AngleUtil.h"
+#include "QScroller"
 
 boardReal::boardReal(MainWindow * mainWin, board * parent) : QWidget(mainWin)
 {
     setupUi(this);
     board::setFontDialog(this);
+    QScroller::grabGesture(this->scrollArea->viewport());
 //    QString textColor="QPushButton{color: black;}";
 //    this->btn_boatInfo->setStyleSheet(textColor);
     QMap<QWidget *,QFont> exceptions;
@@ -203,13 +205,13 @@ void boardReal::boatUpdated(void)
             double bb=b+myBoat->getSpeed();
             double aws=sqrt(a*a+bb*bb);
             double awa=90-radToDeg(atan(bb/a));
-            s=s.sprintf("<BODY LEFTMARGIN=\"0\">TWS <FONT COLOR=\"RED\"><b>%.1fnds</b></FONT> TWD %.0fdeg TWA %.0fdeg<br>AWS %.1fnds AWA %.0fdeg",tws,twd,AngleUtil::A180(twa),aws,awa);
+            s=s.sprintf("TWS <FONT COLOR=\"RED\"><b>%.1fnds</b></FONT> TWD %.0fdeg TWA %.0fdeg AWS %.1fnds AWA %.0fdeg",tws,twd,AngleUtil::A180(twa),aws,awa);
             if(myBoat->getPolarData())
             {
                 QString s1;
                 double bvmgUp=myBoat->getBvmgUp(tws);
                 double bvmgDown=myBoat->getBvmgDown(tws);
-                s=s+s1.sprintf("<br>Pres %.0fdeg Portant %.0fdeg",bvmgUp,bvmgDown);
+                s=s+s1.sprintf(" Pres %.0fdeg Portant %.0fdeg",bvmgUp,bvmgDown);
             }
             s=s.replace("nds",tr("nds"));
             s=s.replace("deg",tr("deg"));
