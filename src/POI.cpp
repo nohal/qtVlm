@@ -338,7 +338,6 @@ void POI::createPopUpMenu(void)
     connect(ac_pilot,SIGNAL(triggered()),this,SLOT(slot_pilote()));
     popup->addAction(ac_pilot);
 
-    popup->addSeparator();
     ac_routage=new QAction(tr("Routage vers ce POI"),popup);
     connect(ac_routage,SIGNAL(triggered()),this,SLOT(slot_routage()));
     popup->addAction(ac_routage);

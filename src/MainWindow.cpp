@@ -595,8 +595,12 @@ MainWindow::MainWindow(QWidget *parent)
 
 
                 "QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical{"
-                      "background: none;}";
-
+                      "background: none;}"
+                "QMenu::separator{"
+                    "height: 2px;"
+                    "background: myColor6;"
+                    "margin-left: 10px;"
+                    "margin-right: 5px;}";
         customStyle.replace("myColor1",myColor1);
         customStyle.replace("myColor2",myColor2);
         customStyle.replace("myColor3",myColor3);
