@@ -976,18 +976,16 @@ void MainWindow::loadBoard()
         myBoard->playerChanged(my_centralWidget->getPlayer());
         return;
     }
-    if(!use_old_board && boardPlugin) return;
+// TODO: do not reload same plugin
+#if 0
+    if(!use_old_board && boardPlugin)
+    {
+        if(boardPlugin->getUiFileName==Settings::getSetting(vlmBoardType).toString()) return;
+    }
+#endif
     if(boardPlugin)
     {
-        // if(pluginLoader!=NULL)
-        // {
-        //     pluginLoader->unload();
-        //     delete pluginLoader;
-        //     pluginLoader=NULL;
-        // }
-        // else
-            delete boardPlugin;
-        boardPlugin=NULL;
+        delete boardPlugin;
     }
     if(myBoard){
         delete myBoard;
