@@ -980,7 +980,7 @@ void MainWindow::loadBoard()
 #if 0
     if(!use_old_board && boardPlugin)
     {
-        if(boardPlugin->getUiFileName==Settings::getSetting(vlmBoardType).toString()) return;
+        if(boardPlugin->getUiFileName()==Settings::getSetting(vlmBoardType).toString()) return;
     }
 #endif
     if(boardPlugin)

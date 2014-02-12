@@ -647,8 +647,9 @@ void BoardVlmNew::slot_updateData()
     this->windAngle->setValues(myBoat->getHeading(),myBoat->getWindDir(),myBoat->getWindSpeed(),myBoat->getWPdir(),myBoat->getClosest().capArrival,-1,vmg);
     update_btnPilototo();
     slot_updateBtnWP();
-    this->blockSignals(false);
     spin_PolarTWS->setValue(myBoat->getWindSpeed());
+    this->slot_drawPolar();
+    this->blockSignals(false);
     this->blocking=false;
     set_style(this->btn_sync,QColor(20,255,20));
     if(!vibration->isActive())
