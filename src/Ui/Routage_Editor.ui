@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>732</width>
-    <height>792</height>
+    <height>712</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -42,8 +42,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>687</width>
-        <height>792</height>
+        <width>712</width>
+        <height>692</height>
        </rect>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_9">
@@ -159,12 +159,6 @@
            </item>
            <item>
             <widget class="QGroupBox" name="colorBox">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>120</height>
-              </size>
-             </property>
              <property name="title">
               <string>Taille et couleur du resultat du routage</string>
              </property>
@@ -173,6 +167,12 @@
            </item>
            <item>
             <widget class="QGroupBox" name="groupBox_5">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="title">
               <string>Options</string>
              </property>
@@ -1109,19 +1109,6 @@ avec ce prefixe</string>
             </widget>
            </item>
            <item>
-            <spacer name="verticalSpacer_5">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
             <widget class="QGroupBox" name="autoZoom">
              <property name="title">
               <string>Auto Zoom</string>
@@ -1185,6 +1172,19 @@ La différence est surtout sensible lors d'un routage en diagonale.</string>
               </spacer>
              </item>
             </layout>
+           </item>
+           <item>
+            <spacer name="verticalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
            </item>
           </layout>
          </widget>
