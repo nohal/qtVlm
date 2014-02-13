@@ -9,15 +9,18 @@
 #include "Util.h"
 #include <QMessageBox>
 #include "bsb.h"
+#ifdef QT_V5
 #include <QScroller>
-
+#endif
 dialogLoadImg::dialogLoadImg(loadImg * carte, myCentralWidget *parent)
     : QDialog(parent)
 {
     this->carte=carte;
     this->parent=parent;
     setupUi(this);
+#ifdef QT_V5
     QScroller::grabGesture(this->scrollArea->viewport());
+#endif
     connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     this->alpha->setMaximum(100);

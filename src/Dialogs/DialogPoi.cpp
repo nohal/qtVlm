@@ -25,6 +25,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <cmath>
 #ifdef QT_V5
 #include <QtWidgets/QMessageBox>
+#include <QScroller>
 #else
 #include <QMessageBox>
 #endif
@@ -38,7 +39,6 @@ class POI_Editor;
 #include "boatVLM.h"
 #include <QDesktopWidget>
 #include "settings.h"
-#include <QScroller>
 #define POI_EDT_LAT 1
 #define POI_EDT_LON 2
 
@@ -49,7 +49,9 @@ DialogPoi::DialogPoi(MainWindow * main,myCentralWidget * parent)
     : QDialog(parent)
 {
     setupUi(this);
+#ifdef QT_V5
     QScroller::grabGesture(this->scrollArea->viewport());
+#endif
     connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
 //    int minSize=qMax(this->lat_sig->width(),this->lon_sig->width());

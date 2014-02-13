@@ -7,14 +7,17 @@
 #include "ui_DialogVlmLog.h"
 #include "Util.h"
 #include "settings.h"
+#ifdef QT_V5
 #include <QScroller>
-
+#endif
 DialogVlmLog::DialogVlmLog(myCentralWidget *parent) :
     QDialog(parent),
     ui(new Ui::DialogVlmLog)
 {
     ui->setupUi(this);
+#ifdef QT_V5
     QScroller::grabGesture(this->ui->scrollArea->viewport());
+#endif
     connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     // for some reason QTableView::setFont crashed.

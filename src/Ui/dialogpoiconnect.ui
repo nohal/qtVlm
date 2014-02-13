@@ -116,14 +116,6 @@
         </widget>
        </item>
       </layout>
-      <zorder>buttonBox</zorder>
-      <zorder>colorBox</zorder>
-      <zorder></zorder>
-      <zorder></zorder>
-      <zorder>buttonBox</zorder>
-      <zorder>colorBox</zorder>
-      <zorder></zorder>
-      <zorder></zorder>
      </widget>
     </widget>
    </item>

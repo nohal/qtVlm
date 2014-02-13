@@ -32,7 +32,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "settings.h"
 #include "ToolBar.h"
 #include "MenuBar.h"
+#ifdef QT_V5
 #include <QScroller>
+#endif
 #include "DialogGribDrawing.h"
 
 DialogGribDrawing::DialogGribDrawing(QWidget *parent, myCentralWidget *centralWidget) : QDialog(parent) {
@@ -43,7 +45,9 @@ DialogGribDrawing::DialogGribDrawing(QWidget *parent, myCentralWidget *centralWi
     setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
 
     setupUi(this);
+#ifdef QT_V5
     QScroller::grabGesture(this->scrollArea->viewport());
+#endif
     connect(centralWidget,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
 

@@ -25,6 +25,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <cmath>
 #ifdef QT_V5
 #include <QtWidgets/QMessageBox>
+#include <QScroller>
 #else
 #include <QMessageBox>
 #endif
@@ -43,7 +44,6 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QDesktopWidget>
 #include "settings.h"
 #include "Terrain.h"
-#include <QScroller>
 
 
 //-------------------------------------------------------
@@ -59,8 +59,10 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent, POI *endP
     if(endPOI)
         routage->setToPOI(endPOI);
     setupUi(this);
+#ifdef QT_V5
     QScroller::grabGesture(this->scrollArea->viewport());
     QScroller::grabGesture(this->scrollArea->viewport(),QScroller::LeftMouseButtonGesture);
+#endif
     connect(this->Default,SIGNAL(clicked()),this,SLOT(slot_default()));
     Util::setFontDialog(this);
     this->i_iso->setChecked(routage->getI_done());

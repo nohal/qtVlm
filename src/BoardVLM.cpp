@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef QT_V5
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QMessageBox>
+#include <QScroller>
 #else
 #include <QWidget>
 #include <QMessageBox>
@@ -39,7 +40,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Polar.h"
 #include "POI.h"
 #include "DialogWp.h"
-#include <QScroller>
 #include <QScrollBar>
 
 /* VLM CMD type */
@@ -53,9 +53,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) : QWidget(mainWin), inetClient(inet)
 {
     setupUi(this);
-    QScroller::grabGesture(this->scrollArea->viewport());
     board::setFontDialog(this);
 #ifdef QT_V5
+    QScroller::grabGesture(this->scrollArea->viewport());
     if(Settings::getSetting(fusionStyle).toInt()==1)
     {
         editAngle->setStyleSheet("background-color: rgb(53, 53, 53);");

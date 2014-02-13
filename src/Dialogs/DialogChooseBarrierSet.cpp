@@ -26,12 +26,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "settings.h"
 #include "boat.h"
 #include "MainWindow.h"
+#ifdef QT_V5
 #include <QScroller>
-
+#endif
 DialogChooseBarrierSet::DialogChooseBarrierSet(MainWindow * parent): QDialog(parent) {
     mainWindow=parent;
     setupUi(this);
+#ifdef QT_V5
     QScroller::grabGesture(this->scrollArea->viewport());
+#endif
     connect(parent->getMy_centralWidget(),SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
 }

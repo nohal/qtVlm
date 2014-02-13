@@ -25,6 +25,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <cmath>
 #ifdef QT_V5
 #include <QtWidgets/QMessageBox>
+#include <QScroller>
 #else
 #include <QMessageBox>
 #endif
@@ -50,7 +51,6 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QPixmap>
 #include <Terrain.h>
 #include <MapDataDrawer.h>
-#include <QScroller>
 //-------------------------------------------------------
 // ROUTE_Editor: Constructor for edit an existing ROUTE
 //-------------------------------------------------------
@@ -61,7 +61,9 @@ DialogRoute::DialogRoute(ROUTE *route, myCentralWidget *parent, bool createMode)
     this->parent=parent;
     tabWidthRatio=-1;
     setupUi(this);
+#ifdef QT_V5
     QScroller::grabGesture(this->scrollArea->viewport());
+#endif
     connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     this->warning_icon->setPixmap(QPixmap(appFolder.value("img")+"warning.png"));
     connect(this->useVbvmgVlm,SIGNAL(stateChanged(int)),this,SLOT(slot_hideShowWarning()));

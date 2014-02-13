@@ -23,6 +23,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 ***********************************************************************/
 #ifdef QT_V5
 #include <QtWidgets/QMessageBox>
+#include <QScroller>
 #else
 #include <QMessageBox>
 #endif
@@ -36,7 +37,6 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "MainWindow.h"
 #include "mycentralwidget.h"
 #include <QScrollArea>
-#include <QScroller>
 
 
 
@@ -133,7 +133,9 @@ DialogLoadGrib::DialogLoadGrib(MainWindow *main) : QDialog(main)
     this->setLayout(new QVBoxLayout(this));
     this->layout()->addWidget(scrollarea);
     this->resize(scrollarea->size());
+#ifdef QT_V5
     QScroller::grabGesture(scrollarea->viewport());
+#endif
     Util::setFontDialog(this);
 
 }

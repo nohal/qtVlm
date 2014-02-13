@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDebug>
 #ifdef QT_V5
 #include <QUiLoader>
+#include <QScroller>
 #else
 #include <QtUiTools/QUiLoader>
 #endif
@@ -46,13 +47,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Player.h"
 #include "BoardInterface.h"
 #include "inetConnexion.h"
-#include <QScroller>
 
 DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDialog(parent)
 {
     centralWidget=parent;
     setupUi(this);
+#ifdef QT_V5
     QScroller::grabGesture(this->scrollArea->viewport());
+#endif
     connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     connect(this,SIGNAL(resetTraceCache()),parent,SIGNAL(resetTraceCache()));

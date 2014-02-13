@@ -37,13 +37,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "dataDef.h"
 #include "Util.h"
 #include "AngleUtil.h"
+#ifdef QT_V5
 #include "QScroller"
-
+#endif
 boardReal::boardReal(MainWindow * mainWin, board * parent) : QWidget(mainWin)
 {
     setupUi(this);
     board::setFontDialog(this);
+#ifdef QT_V5
     QScroller::grabGesture(this->scrollArea->viewport());
+#endif
 //    QString textColor="QPushButton{color: black;}";
 //    this->btn_boatInfo->setStyleSheet(textColor);
     QMap<QWidget *,QFont> exceptions;

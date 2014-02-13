@@ -34,7 +34,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "MainWindow.h"
 #include "Orthodromie.h"
 #include "settings.h"
+#ifdef QT_V5
 #include <QScroller>
+#endif
 #define RACE_NO_REQUEST     0
 #define RACE_LIST_BOAT      1
 #define RESULT_LIST_BOAT    2
@@ -50,7 +52,9 @@ DialogRace::DialogRace(MainWindow * main,myCentralWidget * parent, inetConnexion
     this->somethingChanged=false;
     inetClient::setName("RaceDialog");
     setupUi(this);
+#ifdef QT_V5
     QScroller::grabGesture(this->scrollArea->viewport());
+#endif
     connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
 

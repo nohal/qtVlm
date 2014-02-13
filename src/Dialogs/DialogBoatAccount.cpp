@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 #ifdef QT_V5
 #include <QtWidgets/QWidget>
+#include <QScroller>
 #else
 #include <QtGui/QWidget>
 #endif
@@ -36,11 +37,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "MainWindow.h"
 #include "Util.h"
 #include "settings.h"
-#include <QScroller>
 DialogBoatAccount::DialogBoatAccount(Projection * proj, MainWindow * main, myCentralWidget * parent,inetConnexion * inet) : QDialog(parent)
 {
     setupUi(this);
+#ifdef QT_V5
     QScroller::grabGesture(this->scrollArea->viewport());
+#endif
     connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     this->proj = proj;

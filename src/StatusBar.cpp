@@ -47,27 +47,32 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
     font.setPointSizeF(Settings::getSetting(applicationFontSize).toDouble());
     font.setFixedPitch(true);
 #endif
-
+#ifdef QT_V5
     if(Settings::getSetting(fusionStyle).toInt()==1)
         this->setStyleSheet("color: rgb(234, 221, 21);");
     else
+#endif
         this->setStyleSheet("color: rgb(0, 0, 255);");
 
     this->setFont(font);
     //this->setTextFormat(Qt::RichText);
 
     labelOrtho = new QLabel("Welcome in QtVlm", this);
+#ifdef QT_V5
     if(Settings::getSetting(fusionStyle).toInt()==1)
         labelOrtho->setStyleSheet("color: rgb(234, 221, 21);");
     else
+#endif
         labelOrtho->setStyleSheet("color: rgb(0, 0, 255);");
     labelOrtho->setFont(font);
     labelOrtho->setTextFormat(Qt::RichText);
 
     labelGrib = new QLabel("", this);
+#ifdef QT_V5
     if(Settings::getSetting(fusionStyle).toInt()==1)
         labelGrib->setStyleSheet("color: rgb(234, 154, 84);");
     else
+#endif
         labelGrib->setStyleSheet("color: rgb(255, 0, 0);");
     labelGrib->setFont(font);
     labelGrib->setTextFormat(Qt::RichText);
@@ -76,9 +81,11 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
     labelGrib->setFont(font);*/
 
     labelEta=new QLabel("",this);
+#ifdef QT_V5
     if(Settings::getSetting(fusionStyle).toInt()==1)
         labelEta->setStyleSheet("color: rgb(51, 212, 195);");
     else
+#endif
         labelEta->setStyleSheet("color: rgb(33,33,179);");
     labelEta->setFont(font);
     labelEta->setTextFormat(Qt::RichText);
@@ -89,9 +96,11 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
     labelEta->setWordWrap(true);
 #else
     separator=new QLabel(" - ");
+#ifdef QT_V5
     if(Settings::getSetting(fusionStyle).toInt()==1)
         separator->setStyleSheet("color: rgb(234, 221, 21);");
     else
+#endif
         separator->setStyleSheet("color: rgb(0, 0, 255);");
     separator->setFont(font);
     this->addWidget(labelGrib,0);

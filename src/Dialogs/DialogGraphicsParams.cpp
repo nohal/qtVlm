@@ -25,6 +25,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QColorDialog>
 #include <QtWidgets/QDesktopWidget>
+#include <QScroller>
 #else
 #include <QMessageBox>
 #include <QColorDialog>
@@ -39,7 +40,6 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "settings.h"
 #include <QDebug>
 #include "Util.h"
-#include <QScroller>
 #include "mycentralwidget.h"
 
 
@@ -212,8 +212,9 @@ DialogGraphicsParams::DialogGraphicsParams(myCentralWidget * mcp)
     scroll=new QScrollArea(this);
     scroll->setWidget(wid);
     scroll->setLayout(new QVBoxLayout(this));
-
+#ifdef QT_V5
     QScroller::grabGesture(this->scroll->viewport());
+#endif
     Util::setFontDialog(this);
     int h,w,px,py;
     Settings::restoreGeometry(this,&h,&w,&px,&py);

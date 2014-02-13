@@ -32,8 +32,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogPilototo.h"
 #include "DialogPilototoParam.h"
 #include "settings.h"
+#ifdef QT_V5
 #include <QScroller>
-
+#endif
 DialogPilototo::DialogPilototo(MainWindow *main,myCentralWidget * parent,inetConnexion * inet):QDialog(parent), inetClient(inet)
 {
     this->parent=parent;
@@ -41,7 +42,9 @@ DialogPilototo::DialogPilototo(MainWindow *main,myCentralWidget * parent,inetCon
     navModeToDo=false;
     this->move(250,100);
     setupUi(this);
+#ifdef QT_V5
     QScroller::grabGesture(this->scrollArea->viewport());
+#endif
     connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     QMap<QWidget *,QFont> exceptions;

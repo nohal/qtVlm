@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDebug>
 #ifdef QT_V5
 #include <QtWidgets/QFileDialog>
+#include <QScroller>
 #else
 #include <QFileDialog>
 #endif
@@ -33,7 +34,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Util.h"
 #include "inetConnexion.h"
 #include "DialogInetProgess.h"
-#include <QScroller>
 #define VLM_REQUEST_GET_FOLDER 0
 #define VLM_REQUEST_GET_FILE   1
 
@@ -42,7 +42,9 @@ DialogVlmGrib::DialogVlmGrib(MainWindow * ,myCentralWidget * parent,inetConnexio
         inetClient(inet)
 {
     setupUi(this);
+#ifdef QT_V5
     QScroller::grabGesture(this->scrollArea->viewport());
+#endif
     connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     listRadio[0]=radio1;
