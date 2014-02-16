@@ -41,17 +41,10 @@ class DialogVlmGrib_view_pc: public QDialog, public DialogVlmGrib_view, public U
 { Q_OBJECT
     public:
         DialogVlmGrib_view_pc(myCentralWidget * centralWidget,DialogVlmGrib_ctrl * ctrl);
-        ~DialogVlmGrib_view_pc(void);
 
         void updateList(QStringList lst);
         void set_waitBoxVisibility(bool visible);
-
-        int get_selectedItem(void);
-        void launchDialog(void);
-        void hideDialog(void);
-
-    signals:
-        void exitDialog(int res);
+        void set_dialogVisibility(bool visible);
 
     public slots:
          void slot_screenResize(void);

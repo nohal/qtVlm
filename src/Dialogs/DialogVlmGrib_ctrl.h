@@ -34,7 +34,7 @@ class DialogVlmGrib_ctrl: public QObject, public inetClient
 
         void requestFinished (QByteArray);
 
-        void downloadGrib(void);
+        void downloadGrib(int itemIndex);
         void exitDialog(void);
 
     public slots:
@@ -50,7 +50,7 @@ class DialogVlmGrib_ctrl: public QObject, public inetClient
         QString filename;
         QStringList lst_fname;
 
-        bool doRequest(int reqType);
+        bool doRequest(int reqType, int param=-1);
         QStringList parseFolderListing(QString data);
         bool gribFileReceived(QByteArray * content);
 

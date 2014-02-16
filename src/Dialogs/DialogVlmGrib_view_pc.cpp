@@ -45,11 +45,7 @@ DialogVlmGrib_view_pc::DialogVlmGrib_view_pc(myCentralWidget * centralWidget,Dia
 
     waitBox = new QMessageBox(QMessageBox::Information,
                              tr("VLM Grib"),
-                             tr("Chargement de la liste de grib"));
-}
-
-DialogVlmGrib_view_pc::~DialogVlmGrib_view_pc(void) {
-    delete waitBox;
+                             tr("Chargement de la liste de grib"),QMessageBox::NoButton,this);
 }
 
 void DialogVlmGrib_view_pc::set_waitBoxVisibility(bool visible) {
@@ -59,38 +55,13 @@ void DialogVlmGrib_view_pc::set_waitBoxVisibility(bool visible) {
         waitBox->hide();
 }
 
-void DialogVlmGrib_view_pc::slot_screenResize() {
-    Util::setWidgetSize(this,this->sizeHint());
-}
-
-void DialogVlmGrib_view_pc::slot_download(void) {
-    Settings::saveGeometry(this);
-    ctrl->downloadGrib();
-}
-
-void DialogVlmGrib_view_pc::slot_cancel(void) {
-    Settings::saveGeometry(this);
-    ctrl->exitDialog();
-}
-
-void DialogVlmGrib_view_pc::launchDialog(void) {
-    show();
-    setWindowModality(Qt::ApplicationModal);
-}
-
-void DialogVlmGrib_view_pc::hideDialog(void) {
-    hide();
-}
-
-int DialogVlmGrib_view_pc::get_selectedItem(void) {
-    int i;
-    for(i=0;i<5;i++)
-        if(listRadio[i]->isChecked())
-            break;
-    if(i==5)
-        return -1;
+void DialogVlmGrib_view_pc::set_dialogVisibility(bool visible) {
+    if(visible) {
+        show();
+        setWindowModality(Qt::ApplicationModal);
+    }
     else
-        return i;
+        hide();
 }
 
 void DialogVlmGrib_view_pc::updateList(QStringList lst) {
@@ -103,4 +74,24 @@ void DialogVlmGrib_view_pc::updateList(QStringList lst) {
     }
 
     listRadio[lst.size()-1]->setChecked(true);
+}
+
+void DialogVlmGrib_view_pc::slot_screenResize() {
+    Util::setWidgetSize(this,this->sizeHint());
+}
+
+void DialogVlmGrib_view_pc::slot_download(void) {
+    int i;
+    for(i=0;i<5;i++)
+        if(listRadio[i]->isChecked())
+            break;
+    if(i!=5) {
+        Settings::saveGeometry(this);
+        ctrl->downloadGrib(i);
+    }
+}
+
+void DialogVlmGrib_view_pc::slot_cancel(void) {
+    Settings::saveGeometry(this);
+    ctrl->exitDialog();
 }

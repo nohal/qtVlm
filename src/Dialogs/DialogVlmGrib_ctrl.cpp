@@ -23,12 +23,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * Controle class for DialogVlmGrib View
  *
  * Uses child class of DialogVlmGriv_view
- * => call updateList to send new list
- * => call launchDialog to ask the dialog to show (hideDialog to hide)
- * => call set_waitBoxVisibility(BOOL) to show/hide a wiatBox during inet access
- * => call get_selectedItem to get currentSelected item
+ * => call updateList(LIST) to send new list
+ * => call set_dialogVisibility(BOOL) to show/hide dialog
+ * => call set_waitBoxVisibility(BOOL) to show/hide a waitBox during inet access
  *
- * View should call: downloadGrib to start a download / exitDialog to close dialog
+ * View should call: downloadGrib(INT) to start a download / exitDialog() to close dialog
  **************************************************************************************/
 
 #include <QNetworkRequest>
@@ -69,13 +68,15 @@ void DialogVlmGrib_ctrl::updateList(void) {
         exitDialog();
 }
 
-void DialogVlmGrib_ctrl::downloadGrib(void) {
-    if(!doRequest(VLM_REQUEST_GET_FILE))
-        exitDialog();
+void DialogVlmGrib_ctrl::downloadGrib(int itemIndex) {
+    if(itemIndex<0 || itemIndex>=lst_fname.size())
+        updateList();
+    if(!doRequest(VLM_REQUEST_GET_FILE,itemIndex))
+        updateList();
 }
 
 void DialogVlmGrib_ctrl::exitDialog(void) {
-    if(view) view->hideDialog();
+    if(view) view->set_dialogVisibility(false);
     deleteLater();
 }
 
@@ -160,7 +161,7 @@ bool DialogVlmGrib_ctrl::gribFileReceived(QByteArray * content) {
 * Inet request
 ****************************************/
 
-bool DialogVlmGrib_ctrl::doRequest(int reqType)
+bool DialogVlmGrib_ctrl::doRequest(int reqType,int param)
 {
     if(!hasInet() || hasRequest())
     {
@@ -179,15 +180,14 @@ bool DialogVlmGrib_ctrl::doRequest(int reqType)
         case VLM_REQUEST_GET_FILE:
             /*search selected file*/
             if(!view) return false;
-            int index=view->get_selectedItem();
-            if(index==-1 && index >= lst_fname.size()) return false;
-            filename=lst_fname.at(index);
+            if(param < 0 || param >= lst_fname.size()) return false;
+            filename=lst_fname.at(param);
             if(filename.contains("interim"))
                 filename=filename.mid(0,18);
             else
                 filename=filename.mid(0,23);
             page="/"+filename;
-            view->hideDialog();
+            view->set_dialogVisibility(false);
             inetGetProgress(VLM_REQUEST_GET_FILE,page,"http://grib.v-l-m.org",false);
             connect (this->getInet()->getProgressDialog(),SIGNAL(rejected()),this,SLOT(slot_abort()));
             break;
@@ -220,7 +220,7 @@ void DialogVlmGrib_ctrl::requestFinished (QByteArray data)
                 return;
             }
             view->updateList(lst);
-            view->launchDialog();
+            view->set_dialogVisibility(true);
             break;
         }
         case VLM_REQUEST_GET_FILE:

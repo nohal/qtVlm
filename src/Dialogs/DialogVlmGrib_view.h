@@ -29,9 +29,8 @@ class DialogVlmGrib_view{
 
         virtual void updateList(QStringList lst) = 0;
         virtual void set_waitBoxVisibility(bool visible) = 0;
-        virtual int get_selectedItem(void) = 0;
-        virtual void launchDialog(void) = 0;
-        virtual void hideDialog(void) = 0;
+        virtual void set_dialogVisibility(bool visible) = 0;
+
 
     protected:
         DialogVlmGrib_ctrl * ctrl;
