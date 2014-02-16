@@ -1,6 +1,6 @@
 /**********************************************************************
 qtVlm: Virtual Loup de mer GUI
-Copyright (C) 2008 - Christophe Thomas aka Oxygen77
+Copyright (C) 2014 - Christophe Thomas aka Oxygen77
 
 http://qtvlm.sf.net
 
@@ -18,96 +18,83 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
-#include <QDebug>
-#ifdef QT_V5
-#include <QtWidgets/QFileDialog>
-#include <QScroller>
-#else
-#include <QFileDialog>
-#endif
-#include <cassert>
 
-#include "DialogVlmGrib.h"
+/**********************************************************************************
+ * Controle class for DialogVlmGrib View
+ *
+ * Uses child class of DialogVlmGriv_view
+ * => call updateList to send new list
+ * => call launchDialog to ask the dialog to show (hideDialog to hide)
+ * => call set_waitBoxVisibility(BOOL) to show/hide a wiatBox during inet access
+ * => call get_selectedItem to get currentSelected item
+ *
+ * View should call: downloadGrib to start a download / exitDialog to close dialog
+ **************************************************************************************/
+
+#include <QNetworkRequest>
+#include <QFileDialog>
+#include <QMessageBox>
+
 #include "settings.h"
 #include "mycentralwidget.h"
-#include <QNetworkRequest>
 #include "Util.h"
 #include "inetConnexion.h"
 #include "DialogInetProgess.h"
+#include "MainWindow.h"
+
 #define VLM_REQUEST_GET_FOLDER 0
 #define VLM_REQUEST_GET_FILE   1
 
-DialogVlmGrib::DialogVlmGrib(MainWindow * ,myCentralWidget * parent,inetConnexion * inet) :
-        QDialog(parent),
-        inetClient(inet)
+#include "DialogVlmGrib_view_pc.h"
+#include "DialogVlmGrib_ctrl.h"
+
+DialogVlmGrib_ctrl::DialogVlmGrib_ctrl(MainWindow *mainWindow, myCentralWidget * centralWidget, inetConnexion * inet):  inetClient(inet)
 {
-    setupUi(this);
-#ifdef QT_V5
-    QScroller::grabGesture(this->scrollArea->viewport());
-#endif
-    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
-    Util::setFontDialog(this);
-    listRadio[0]=radio1;
-    listRadio[1]=radio2;
-    listRadio[2]=radio3;
-    listRadio[3]=radio4;
-    listRadio[4]=radio5;
 
-    waitBox = new QMessageBox(QMessageBox::Information,
-                             tr("VLM Grib"),
-                             tr("Chargement de la liste de grib"));
-}
-void DialogVlmGrib::slot_screenResize()
-{
-    Util::setWidgetSize(this,this->sizeHint());
-}
+    view = new DialogVlmGrib_view_pc(centralWidget,this);
+    if(!view) return;
+    this->centralWidget=centralWidget;
 
-void DialogVlmGrib::done(int res)
-{
-    Settings::saveGeometry(this);
-    if(res == QDialog::Accepted)
-    {        
-        if(!doRequest(VLM_REQUEST_GET_FILE))
-            res=QDialog::Rejected;
-        else
-            return;
-    }
-
-    //QDialog::done(res);
-    this->deleteLater();
-}
-
-void DialogVlmGrib::showDialog(void)
-{
-    /* disable all radio button */
-
-    for(int i=0;i<5;i++)
-        listRadio[i]->setEnabled(false);
-
+    connect(this,SIGNAL(signalGribFileReceived(QString)),mainWindow,SLOT(slot_gribFileReceived(QString)));
     filename="";
 
-    if(doRequest(VLM_REQUEST_GET_FOLDER))
-        waitBox->exec();
-   // if(waitBox->isVisible()) waitBox->hide();
+    updateList();
 }
 
-int DialogVlmGrib::parseFolderListing(QString data)
+void DialogVlmGrib_ctrl::updateList(void) {
+    if(doRequest(VLM_REQUEST_GET_FOLDER)) {
+        view->set_waitBoxVisibility(true);
+    }
+    else
+        exitDialog();
+}
+
+void DialogVlmGrib_ctrl::downloadGrib(void) {
+    if(!doRequest(VLM_REQUEST_GET_FILE))
+        exitDialog();
+}
+
+void DialogVlmGrib_ctrl::exitDialog(void) {
+    if(view) view->hideDialog();
+    deleteLater();
+}
+
+QStringList DialogVlmGrib_ctrl::parseFolderListing(QString data)
 {
     int pos=0;
-    int i;
 
     QString gribName_str;
     QString date_str;
     QString size_str;
 
-    i=0;
-    while(1)
-    {
+    lst_fname.clear();
+    QStringList lst;
+
+    while(1) {
         /* grib file name */
         int previousPos=pos;
         pos = data.indexOf("gfs_NOAA",pos);
-        if(pos==-1)
-        {
+        if(pos==-1) {
             pos=previousPos;
             pos = data.indexOf("gfs_interim",pos);
             if(pos==-1)
@@ -115,8 +102,7 @@ int DialogVlmGrib::parseFolderListing(QString data)
             gribName_str = data.mid(pos,18);
             pos+=18;
         }
-        else
-        {
+        else {
             gribName_str = data.mid(pos,23);
             pos+=23;
         }
@@ -132,44 +118,37 @@ int DialogVlmGrib::parseFolderListing(QString data)
         size_str = data.mid(pos+18,4);
         pos=pos+20;
 
-        listRadio[i]->setText(gribName_str + ", modified " + date_str + ", size " + size_str );
-        listRadio[i]->setEnabled(true);
-        i++;
+        lst_fname.append(gribName_str);
+        lst.append(gribName_str + ", modified " + date_str + ", size " + size_str);
     }
-    return i;
+    return lst;
 }
 
-bool DialogVlmGrib::gribFileReceived(QByteArray * content)
-{
+bool DialogVlmGrib_ctrl::gribFileReceived(QByteArray * content) {
     QString gribPath=Settings::getSetting(edtGribFolder).toString();
     QDir dirGrib(gribPath);
-    if(!dirGrib.exists())
-    {
+    if(!dirGrib.exists()) {
         gribPath=appFolder.value("grib");
         Settings::setSetting(askGribFolder,1);
         Settings::setSetting(edtGribFolder,gribPath);
     }
     filename=gribPath+"/"+filename;
-    if(Settings::getSetting(askGribFolder)==1)
-    {
-        filename = QFileDialog::getSaveFileName(this,
+    if(Settings::getSetting(askGribFolder)==1) {
+        filename = QFileDialog::getSaveFileName(centralWidget,
                          tr("Sauvegarde du fichier GRIB"), filename, "Grib (*.grb)");
     }
 
-    if (filename != "")
-    {
+    if (filename != "") {
         QFile *saveFile = new QFile(filename);
         assert(saveFile);
-        if (saveFile->open(QIODevice::WriteOnly))
-        {
+        if (saveFile->open(QIODevice::WriteOnly)) {
             int nb=saveFile->write(*content);
             saveFile->close();
             qWarning() << nb << " bytes saved in " << filename;
             return true;
         }
-        else
-        {
-            QMessageBox::critical (this,
+        else {
+            QMessageBox::critical (centralWidget,
                     tr("Erreur"),
                     tr("Ecriture du fichier impossible."));
         }
@@ -181,7 +160,7 @@ bool DialogVlmGrib::gribFileReceived(QByteArray * content)
 * Inet request
 ****************************************/
 
-bool DialogVlmGrib::doRequest(int reqType)
+bool DialogVlmGrib_ctrl::doRequest(int reqType)
 {
     if(!hasInet() || hasRequest())
     {
@@ -190,7 +169,6 @@ bool DialogVlmGrib::doRequest(int reqType)
     }
 
     QString page;
-    int i;
 
     switch(reqType)
     {
@@ -200,65 +178,60 @@ bool DialogVlmGrib::doRequest(int reqType)
             break;
         case VLM_REQUEST_GET_FILE:
             /*search selected file*/
-            for(i=0;i<5;i++)
-                if(listRadio[i]->isChecked())
-                    break;
-            if(i==5)
-                return false;
-            filename=listRadio[i]->text();
+            if(!view) return false;
+            int index=view->get_selectedItem();
+            if(index==-1 && index >= lst_fname.size()) return false;
+            filename=lst_fname.at(index);
             if(filename.contains("interim"))
                 filename=filename.mid(0,18);
             else
                 filename=filename.mid(0,23);
             page="/"+filename;
-            this->hide();
+            view->hideDialog();
             inetGetProgress(VLM_REQUEST_GET_FILE,page,"http://grib.v-l-m.org",false);
             connect (this->getInet()->getProgressDialog(),SIGNAL(rejected()),this,SLOT(slot_abort()));
             break;
     }
     return true;
 }
-void DialogVlmGrib::slot_abort()
+
+void DialogVlmGrib_ctrl::slot_abort()
 {
     qWarning()<<"aborting VLM grib donwload";
     this->inetAbort();
     filename.clear();
-    this->deleteLater();
+    updateList();
 }
 
-void DialogVlmGrib::requestFinished (QByteArray data)
+void DialogVlmGrib_ctrl::requestFinished (QByteArray data)
 {
-    //qWarning()<<"vlmgrib requestFinished";
-    int nb;
     if(data.isEmpty() || data.isNull()) return;
     switch(getCurrentRequest())
     {
-        case VLM_REQUEST_GET_FOLDER:
-//            if(!waitBox->isVisible())
-//                return;
-            waitBox->hide();
-            nb=parseFolderListing(QString(data));
-            if(nb==0)
+        case VLM_REQUEST_GET_FOLDER:{
+            if(!view) return;
+            view->set_waitBoxVisibility(false);
+            QStringList lst=parseFolderListing(QString(data));
+
+            if(lst.size()==0)
             {
-                this->deleteLater();
+                if(view) delete view;
+                view=NULL;
                 return;
             }
-            listRadio[nb-1]->setChecked(true);
-            Util::setFontDialog(this);
-            exec();
+            view->updateList(lst);
+            view->launchDialog();
             break;
+        }
         case VLM_REQUEST_GET_FILE:
-            if(!gribFileReceived(&data))
-                showDialog();
+            if(!gribFileReceived(&data) && view)
+                updateList();
             else
             {
-                emit signalGribFileReceived(filename);
-                this->deleteLater();
+                emit signalGribFileReceived(filename);                
+                exitDialog();
             }
             break;
     }
 }
-DialogVlmGrib::~DialogVlmGrib()
-{
-    delete waitBox;
-}
+

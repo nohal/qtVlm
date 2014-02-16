@@ -71,7 +71,6 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     Dialogs/DialogProxy.h \
     Dialogs/DialogGribDate.h \
     Dialogs/DialogHorn.h \
-    Dialogs/DialogVlmGrib.h \
     Dialogs/DialogRace.h \
     Dialogs/DialogRoute.h \
     Dialogs/DialogGribValidation.h \
@@ -179,8 +178,10 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     settings_ini.h \
     settings_def.h \
     AngleUtil.h \
-    Dialogs/DialogLanguageSelection.h
-
+    Dialogs/DialogLanguageSelection.h \
+    Dialogs/DialogVlmGrib_ctrl.h \
+    Dialogs/DialogVlmGrib_view.h \
+    Dialogs/DialogVlmGrib_view_pc.h
 
 
 FORMS += Ui/boatAccount_dialog.ui \
@@ -195,7 +196,7 @@ FORMS += Ui/boatAccount_dialog.ui \
     Ui/race_dialog.ui \
     Ui/WP_dialog.ui \
     Ui/dialog_gribDate.ui \
-    Ui/DialogVLM_grib.ui \
+    Ui/DialogVLMGrib_pc.ui \
     Ui/inetConn_progessDialog.ui \
     Ui/poi_delete.ui \
     Ui/Route_Editor.ui \
@@ -231,7 +232,6 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/DialogProxy.cpp \
     Dialogs/DialogGribDate.cpp \
     Dialogs/DialogHorn.cpp \
-    Dialogs/DialogVlmGrib.cpp \
     Dialogs/DialogRace.cpp \
     Dialogs/DialogRoute.cpp \
     Dialogs/DialogGribValidation.cpp \
@@ -330,7 +330,11 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     DataManager.cpp \
     Dialogs/DialogGribDrawing.cpp \
     AngleUtil.cpp \
-    Dialogs/DialogLanguageSelection.cpp
+    Dialogs/DialogLanguageSelection.cpp \
+    Dialogs/DialogVlmGrib_ctrl.cpp \
+    Dialogs/DialogVlmGrib_view.cpp \
+    Dialogs/DialogVlmGrib_view_pc.cpp
+
 
 
 

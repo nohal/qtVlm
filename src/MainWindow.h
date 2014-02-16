@@ -282,7 +282,7 @@ signals:
         //DialogPoiInput * poi_input_dialog;
         DialogPilototo * pilototo;
         DialogPilototoInstruction * selPOI_instruction;
-        DialogVlmGrib * loadVLM_grib;
+        DialogVlmGrib_ctrl * loadVLM_grib;
         DialogGribValidation * gribValidation_dialog;
         bool isSelectingWP;
 

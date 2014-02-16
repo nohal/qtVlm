@@ -1,19 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DialogVLM_grib_ui</class>
- <widget class="QDialog" name="DialogVLM_grib_ui">
+ <class>DialogVLMGrib_pc_ui</class>
+ <widget class="QDialog" name="DialogVLMGrib_pc_ui">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>258</width>
-    <height>186</height>
+    <height>153</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>VLM grib download</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <item>
     <widget class="QScrollArea" name="scrollArea">
      <property name="widgetResizable">
@@ -24,11 +36,23 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>238</width>
-        <height>166</height>
+        <width>256</width>
+        <height>151</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item>
         <widget class="QRadioButton" name="radio1">
          <property name="text">
@@ -80,14 +104,14 @@
           </spacer>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton">
+          <widget class="QPushButton" name="btn_download">
            <property name="text">
             <string>Download</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton_2">
+          <widget class="QPushButton" name="btn_cancel">
            <property name="text">
             <string>Cancel</string>
            </property>
@@ -117,30 +141,14 @@
  <resources/>
  <connections>
   <connection>
-   <sender>pushButton</sender>
+   <sender>btn_cancel</sender>
    <signal>clicked()</signal>
-   <receiver>DialogVLM_grib_ui</receiver>
-   <slot>accept()</slot>
+   <receiver>DialogVLMGrib_pc_ui</receiver>
+   <slot>slot_cancel()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>162</x>
-     <y>126</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>103</x>
-     <y>119</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pushButton_2</sender>
-   <signal>clicked()</signal>
-   <receiver>DialogVLM_grib_ui</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>270</x>
-     <y>118</y>
+     <x>210</x>
+     <y>145</y>
     </hint>
     <hint type="destinationlabel">
      <x>357</x>
@@ -148,5 +156,25 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btn_download</sender>
+   <signal>clicked()</signal>
+   <receiver>DialogVLMGrib_pc_ui</receiver>
+   <slot>slot_download()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>94</x>
+     <y>155</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>3</x>
+     <y>163</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>slot_download()</slot>
+  <slot>slot_cancel()</slot>
+ </slots>
 </ui>

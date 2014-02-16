@@ -81,7 +81,9 @@ class DialogLoadGrib;
 class DialogProxy;
 
 /* DialogVlmGrib.h */
-class DialogVlmGrib;
+class DialogVlmGrib_ctrl;
+class DialogVlmGrib_view;
+class DialogVlmGrib_view_pc;
 
 /*DialogFinePositt.h*/
 class DialogFinePosit;

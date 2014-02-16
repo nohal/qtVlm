@@ -1,6 +1,6 @@
 /**********************************************************************
 qtVlm: Virtual Loup de mer GUI
-Copyright (C) 2008 - Christophe Thomas aka Oxygen77
+Copyright (C) 2014 - Christophe Thomas aka Oxygen77
 
 http://qtvlm.sf.net
 
@@ -18,46 +18,44 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
-#ifndef DIALOGVLM_GRIB_H
-#define DIALOGVLM_GRIB_H
-#ifdef QT_V5
-#include <QtWidgets/QDialog>
-#include <QtWidgets/QMessageBox>
-#include <QtWidgets/QRadioButton>
-#else
-#include <QDialog>
-#include <QMessageBox>
-#include <QRadioButton>
-#endif
-#include "ui_DialogVLM_grib.h"
+#ifndef DIALOGVLMGRIB_CTRL_H
+#define DIALOGVLMGRIB_CTRL_H
 
-#include "class_list.h"
+#include <QStringList>
+
 #include "inetClient.h"
-#include <QFileDialog>
+#include "class_list.h"
 
-class DialogVlmGrib : public QDialog, public Ui::DialogVLM_grib_ui, public inetClient
-{ Q_OBJECT
+class DialogVlmGrib_ctrl: public QObject, public inetClient
+{
+    Q_OBJECT
     public:
-        DialogVlmGrib(MainWindow * main,myCentralWidget * parent, inetConnexion * inet);
-        void done(int res);
-        void showDialog(void);
+        DialogVlmGrib_ctrl(MainWindow * mainWindow,myCentralWidget * centralWidget,inetConnexion * inet);
+
         void requestFinished (QByteArray);
-        ~DialogVlmGrib();
+
+        void downloadGrib(void);
+        void exitDialog(void);
+
+    public slots:
+        void slot_abort();
 
     signals:
         void signalGribFileReceived(QString);
-    public slots:
-        void slot_abort();
-        void slot_screenResize();
-private:
-        QRadioButton * listRadio[5];
-        QMessageBox * waitBox;
+
+    private:
+        DialogVlmGrib_view * view;
+        myCentralWidget * centralWidget;
 
         QString filename;
+        QStringList lst_fname;
 
         bool doRequest(int reqType);
-        int parseFolderListing(QString data);
+        QStringList parseFolderListing(QString data);
         bool gribFileReceived(QByteArray * content);
+
+        void updateList(void);
+
 };
 
-#endif // DIALOGVLM_GRIB_H
+#endif // DIALOGVLMGRIB_CTRL_H

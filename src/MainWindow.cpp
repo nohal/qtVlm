@@ -84,7 +84,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "DialogGribValidation.h"
 #include "DialogPoiInput.h"
 #include "DialogProxy.h"
-#include "DialogVlmGrib.h"
+#include "DialogVlmGrib_ctrl.h"
 #include "DialogParamVlm.h"
 #include "DialogPilototo.h"
 #include "dialogviewpolar.h"
@@ -238,6 +238,7 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowIcon (QIcon (appFolder.value("icon")+"qtVlm_48x48.png"));
     noSave=false;
     originalPalette=QApplication::palette();
+    loadVLM_grib=NULL;
     qWarning()<<QStyleFactory::keys();
 #ifdef QT_V5
 #ifdef __ANDROID__
@@ -2969,10 +2970,7 @@ void MainWindow::releasePolar(QString fname)
 
 void MainWindow::slotLoadVLMGrib(void)
 {
-    loadVLM_grib = new DialogVlmGrib(this,my_centralWidget,my_centralWidget->getInet());
-    connect(loadVLM_grib, SIGNAL(signalGribFileReceived(QString)),
-            this,  SLOT(slot_gribFileReceived(QString)));
-    loadVLM_grib->showDialog();
+    loadVLM_grib = new DialogVlmGrib_ctrl(this,my_centralWidget,my_centralWidget->getInet());
 }
 
 /*************************************/
