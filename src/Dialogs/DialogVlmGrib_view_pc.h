@@ -46,6 +46,8 @@ class DialogVlmGrib_view_pc: public QDialog, public DialogVlmGrib_view, public U
         void set_waitBoxVisibility(bool visible);
         void set_dialogVisibility(bool visible);
 
+        void closeEvent(QCloseEvent * );
+
     public slots:
          void slot_screenResize(void);
          void slot_download(void);

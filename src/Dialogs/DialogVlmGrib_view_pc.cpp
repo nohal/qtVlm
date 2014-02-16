@@ -76,6 +76,10 @@ void DialogVlmGrib_view_pc::updateList(QStringList lst) {
     listRadio[lst.size()-1]->setChecked(true);
 }
 
+void DialogVlmGrib_view_pc::closeEvent(QCloseEvent * ) {
+    slot_cancel();
+}
+
 void DialogVlmGrib_view_pc::slot_screenResize() {
     Util::setWidgetSize(this,this->sizeHint());
 }
