@@ -78,7 +78,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogLoadGrib.h"
 #include "DialogRace.h"
 #include "DialogBoatAccount.h"
-#include "DialogGribDate.h"
+#include "DialogGribDate_ctrl.h"
 #include "DialogPoi.h"
 #include "DialogPlayerAccount.h"
 #include "DialogRoutage.h"
@@ -1363,14 +1363,11 @@ time_t myCentralWidget::getCurrentDate(void)
 
 void myCentralWidget::showGribDate_dialog(void)
 {
-    if(dataManager->isOk())
-    {
-        DialogGribDate * gribDateDialog = new DialogGribDate(this);
-        time_t res;
-        gribDateDialog->showDialog(dataManager->get_currentDate(),dataManager->get_dateList(),&res);
-        gribDateDialog->deleteLater();
-        setCurrentDate(res);
-    }
+    if(! dataManager->isOk()) return;
+
+    DialogGribDate_ctrl * gribDateDialog = new DialogGribDate_ctrl(this);
+    setCurrentDate(gribDateDialog->getGribDate(dataManager->get_currentDate(),dataManager->get_dateList()));
+    delete gribDateDialog;
 }
 
 bool myCentralWidget::get_gribZone(double * x0,double * y0,double * x1,double * y1) {

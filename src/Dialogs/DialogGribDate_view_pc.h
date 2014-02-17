@@ -1,6 +1,6 @@
 /**********************************************************************
 qtVlm: Virtual Loup de mer GUI
-Copyright (C) 2008 - Christophe Thomas aka Oxygen77
+Copyright (C) 2014 - Christophe Thomas aka Oxygen77
 
 http://qtvlm.sf.net
 
@@ -18,36 +18,27 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
-#ifndef DIALOG_GRIBDATE_H
-#define DIALOG_GRIBDATE_H
+#ifndef DIALOGGRIBDATE_VIEW_PC_H
+#define DIALOGGRIBDATE_VIEW_PC_H
 
 #include <set>
-#include <vector>
-#ifdef QT_V5
-#include <QtWidgets/QDialog>
-#else
-#include <QDialog>
-#endif
-#include "ui_dialog_gribDate.h"
+
+#include "Dialog_view_pc.h"
+#include "DialogGribDate_view.h"
+#include "ui_DialogGribDate_pc.h"
 #include "class_list.h"
-class DialogGribDate : public QDialog, public Ui::dialog_gribDate_ui
-{
-    Q_OBJECT
+
+class DialogGribDate_view_pc: public Dialog_view_pc, public DialogGribDate_view, public Ui::DialogGribDate_pc_ui
+{ Q_OBJECT
     public:
-        DialogGribDate(myCentralWidget * parent);
-        void done(int res);
-        void showDialog(time_t current,std::set<time_t>  * listGribDates,time_t * result);
+        DialogGribDate_view_pc(myCentralWidget * centralWidget,DialogGribDate_ctrl * ctrl);
 
-        void slot_screenResize();
-public slots:
-        void listChanged(int index);
-        void paramChanged(QDateTime date);
+        void initData(time_t current,std::set<time_t>  * listGrib);
+        time_t launchDialog(void);
 
-    private:
-        std::vector<time_t> listGribDates;
-        time_t startTime;
-        time_t * result;
-        bool listIsChanging;
+    public slots:
+        void slot_listChanged(int index);
+        void slot_timeChanged(QDateTime);
 };
 
-#endif // DIALOG_GRIBDATE_H
+#endif // DIALOGGRIBDATE_VIEW_PC_H

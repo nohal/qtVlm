@@ -69,7 +69,6 @@ RC_FILE = qtVlm.rc
 HEADERS += Dialogs/DialogGraphicsParams.h \
     Dialogs/DialogLoadGrib.h \
     Dialogs/DialogProxy.h \
-    Dialogs/DialogGribDate.h \
     Dialogs/DialogHorn.h \
     Dialogs/DialogRace.h \
     Dialogs/DialogRoute.h \
@@ -181,7 +180,11 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     Dialogs/DialogLanguageSelection.h \
     Dialogs/DialogVlmGrib_ctrl.h \
     Dialogs/DialogVlmGrib_view.h \
-    Dialogs/DialogVlmGrib_view_pc.h
+    Dialogs/DialogVlmGrib_view_pc.h \
+    Dialogs/DialogGribDate_ctrl.h \
+    Dialogs/DialogGribDate_view.h \
+    Dialogs/DialogGribDate_view_pc.h \
+    Dialogs/Dialog_view_pc.h
 
 
 FORMS += Ui/boatAccount_dialog.ui \
@@ -195,7 +198,7 @@ FORMS += Ui/boatAccount_dialog.ui \
     Ui/Pilototo.ui \
     Ui/race_dialog.ui \
     Ui/WP_dialog.ui \
-    Ui/dialog_gribDate.ui \
+    Ui/DialogGribDate_pc.ui \
     Ui/DialogVLMGrib_pc.ui \
     Ui/inetConn_progessDialog.ui \
     Ui/poi_delete.ui \
@@ -230,7 +233,6 @@ FORMS += Ui/boatAccount_dialog.ui \
 SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/DialogLoadGrib.cpp \
     Dialogs/DialogProxy.cpp \
-    Dialogs/DialogGribDate.cpp \
     Dialogs/DialogHorn.cpp \
     Dialogs/DialogRace.cpp \
     Dialogs/DialogRoute.cpp \
@@ -333,7 +335,11 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/DialogLanguageSelection.cpp \
     Dialogs/DialogVlmGrib_ctrl.cpp \
     Dialogs/DialogVlmGrib_view.cpp \
-    Dialogs/DialogVlmGrib_view_pc.cpp
+    Dialogs/DialogVlmGrib_view_pc.cpp \
+    Dialogs/DialogGribDate_ctrl.cpp \
+    Dialogs/DialogGribDate_view.cpp \
+    Dialogs/DialogGribDate_view_pc.cpp \
+    Dialogs/Dialog_view_pc.cpp
 
 
 

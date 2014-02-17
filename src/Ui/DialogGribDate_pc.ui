@@ -1,22 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DialogVLMGrib_pc_ui</class>
- <widget class="QDialog" name="DialogVLMGrib_pc_ui">
+ <class>DialogGribDate_pc_ui</class>
+ <widget class="QDialog" name="DialogGribDate_pc_ui">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>206</width>
-    <height>172</height>
+    <width>313</width>
+    <height>86</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>VLM grib download</string>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout_2">
-   <property name="sizeConstraint">
-    <enum>QLayout::SetMinimumSize</enum>
-   </property>
+  <property name="windowTitle">
+   <string>Grib dates</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -39,43 +42,30 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>204</width>
-        <height>170</height>
+        <width>311</width>
+        <height>84</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item>
-        <widget class="QRadioButton" name="radio1">
-         <property name="text">
-          <string>No grib file</string>
-         </property>
-        </widget>
+        <widget class="QComboBox" name="dateList"/>
        </item>
        <item>
-        <widget class="QRadioButton" name="radio2">
-         <property name="text">
-          <string>No grib file</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="radio3">
-         <property name="text">
-          <string>No grib file</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="radio4">
-         <property name="text">
-          <string>No grib file</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="radio5">
-         <property name="text">
-          <string>No grib file</string>
+        <widget class="QDateTimeEdit" name="dateParam">
+         <property name="displayFormat">
+          <string>M/d/yyyy hh:mm:ss</string>
          </property>
         </widget>
        </item>
@@ -95,9 +85,9 @@
           </spacer>
          </item>
          <item>
-          <widget class="QPushButton" name="btn_download">
+          <widget class="QPushButton" name="btn_ok">
            <property name="text">
-            <string>Download</string>
+            <string>Ok</string>
            </property>
           </widget>
          </item>
@@ -131,7 +121,7 @@
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>40</height>
+           <height>0</height>
           </size>
          </property>
         </spacer>
@@ -145,40 +135,74 @@
  <resources/>
  <connections>
   <connection>
-   <sender>btn_cancel</sender>
+   <sender>btn_ok</sender>
    <signal>clicked()</signal>
-   <receiver>DialogVLMGrib_pc_ui</receiver>
-   <slot>slot_cancel()</slot>
+   <receiver>DialogGribDate_pc_ui</receiver>
+   <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>210</x>
-     <y>145</y>
+     <x>92</x>
+     <y>71</y>
     </hint>
     <hint type="destinationlabel">
-     <x>357</x>
-     <y>117</y>
+     <x>89</x>
+     <y>169</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>btn_download</sender>
+   <sender>btn_cancel</sender>
    <signal>clicked()</signal>
-   <receiver>DialogVLMGrib_pc_ui</receiver>
-   <slot>slot_download()</slot>
+   <receiver>DialogGribDate_pc_ui</receiver>
+   <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>94</x>
-     <y>155</y>
+     <x>195</x>
+     <y>71</y>
     </hint>
     <hint type="destinationlabel">
-     <x>3</x>
-     <y>163</y>
+     <x>294</x>
+     <y>179</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dateList</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>DialogGribDate_pc_ui</receiver>
+   <slot>slot_listChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>49</x>
+     <y>15</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>56</x>
+     <y>132</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dateParam</sender>
+   <signal>dateTimeChanged(QDateTime)</signal>
+   <receiver>DialogGribDate_pc_ui</receiver>
+   <slot>slot_timeChanged(QDateTime)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>131</x>
+     <y>44</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>169</x>
+     <y>176</y>
     </hint>
    </hints>
   </connection>
  </connections>
  <slots>
-  <slot>slot_download()</slot>
+  <slot>slot_listChanged(int)</slot>
+  <slot>slot_timeChanged(QDateTime)</slot>
+  <slot>slot_ok()</slot>
   <slot>slot_cancel()</slot>
  </slots>
 </ui>

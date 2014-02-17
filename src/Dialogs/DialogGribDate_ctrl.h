@@ -18,42 +18,24 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
-#ifndef DIALOGVLMGRIB_VIEW_PC_H
-#define DIALOGVLMGRIB_VIEW_PC_H
+#ifndef DIALOGGRIBDATE_CTRL_H
+#define DIALOGGRIBDATE_CTRL_H
 
-#ifdef QT_V5
-#include <QtWidgets/QMessageBox>
-#include <QtWidgets/QRadioButton>
-#else
-#include <QMessageBox>
-#include <QRadioButton>
-#endif
-
-#include "ui_DialogVLMGrib_pc.h"
-
-#include "DialogVlmGrib_view.h"
-#include "Dialog_view_pc.h"
+#include <time.h>
+#include <set>
 
 #include "class_list.h"
 
-class DialogVlmGrib_view_pc: public Dialog_view_pc, public DialogVlmGrib_view, public Ui::DialogVLMGrib_pc_ui
-{ Q_OBJECT
+class DialogGribDate_ctrl
+{
     public:
-        DialogVlmGrib_view_pc(myCentralWidget * centralWidget,DialogVlmGrib_ctrl * ctrl);
+        DialogGribDate_ctrl(myCentralWidget *centralWidget);
 
-        void updateList(QStringList lst);
-        void set_waitBoxVisibility(bool visible);
-        void set_dialogVisibility(bool visible);
-
-        void closeEvent(QCloseEvent * );
-
-    public slots:
-         void slot_download(void);
-         void slot_cancel(void);
+        time_t getGribDate(time_t current,std::set<time_t>  * listGrib);
 
     private:
-        QRadioButton * listRadio[5];
-        QMessageBox * waitBox;
+
+        DialogGribDate_view * view;
 };
 
-#endif // DIALOGVLMGRIB_VIEW_PC_H
+#endif // DIALOGGRIBDATE_CTRL_H

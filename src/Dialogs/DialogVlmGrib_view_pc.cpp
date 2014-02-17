@@ -18,9 +18,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
-#ifdef QT_V5
-#include "QScroller"
-#endif
+
 
 #include "mycentralwidget.h"
 #include "Util.h"
@@ -29,14 +27,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogVlmGrib_ctrl.h"
 #include "DialogVlmGrib_view_pc.h"
 
-DialogVlmGrib_view_pc::DialogVlmGrib_view_pc(myCentralWidget * centralWidget,DialogVlmGrib_ctrl * ctrl): QDialog(centralWidget), DialogVlmGrib_view(centralWidget,ctrl)
+DialogVlmGrib_view_pc::DialogVlmGrib_view_pc(myCentralWidget * centralWidget,DialogVlmGrib_ctrl * ctrl):
+    Dialog_view_pc(centralWidget),
+    DialogVlmGrib_view(centralWidget,ctrl)
 {
-    setupUi(this);
-#ifdef QT_V5
-    QScroller::grabGesture(this->scrollArea->viewport());
-#endif
-    connect(centralWidget,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
-    Util::setFontDialog(this);
+    INIT_DIALOG
     listRadio[0]=radio1;
     listRadio[1]=radio2;
     listRadio[2]=radio3;
@@ -78,10 +73,6 @@ void DialogVlmGrib_view_pc::updateList(QStringList lst) {
 
 void DialogVlmGrib_view_pc::closeEvent(QCloseEvent * ) {
     slot_cancel();
-}
-
-void DialogVlmGrib_view_pc::slot_screenResize() {
-    Util::setWidgetSize(this,this->sizeHint());
 }
 
 void DialogVlmGrib_view_pc::slot_download(void) {

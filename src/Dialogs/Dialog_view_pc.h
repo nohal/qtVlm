@@ -18,42 +18,43 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
-#ifndef DIALOGVLMGRIB_VIEW_PC_H
-#define DIALOGVLMGRIB_VIEW_PC_H
+#ifndef DIALOG_VIEW_PC_H
+#define DIALOG_VIEW_PC_H
 
 #ifdef QT_V5
-#include <QtWidgets/QMessageBox>
-#include <QtWidgets/QRadioButton>
+#include <QtWidgets/QDialog>
+#include "QScroller"
 #else
-#include <QMessageBox>
-#include <QRadioButton>
+#include <QDialog>
 #endif
-
-#include "ui_DialogVLMGrib_pc.h"
-
-#include "DialogVlmGrib_view.h"
-#include "Dialog_view_pc.h"
 
 #include "class_list.h"
 
-class DialogVlmGrib_view_pc: public Dialog_view_pc, public DialogVlmGrib_view, public Ui::DialogVLMGrib_pc_ui
+#ifdef QT_V5
+#define INIT_DIALOG { \
+    setupUi(this); \
+    QScroller::grabGesture(this->scrollArea->viewport()); \
+    initDialog(); \
+}
+#else
+#define INIT_DIALOG { \
+    setupUi(this); \
+    initDialog(); \
+}
+#endif
+
+class Dialog_view_pc: public QDialog
 { Q_OBJECT
     public:
-        DialogVlmGrib_view_pc(myCentralWidget * centralWidget,DialogVlmGrib_ctrl * ctrl);
+        Dialog_view_pc(myCentralWidget * centralWidget);
 
-        void updateList(QStringList lst);
-        void set_waitBoxVisibility(bool visible);
-        void set_dialogVisibility(bool visible);
-
-        void closeEvent(QCloseEvent * );
+        void initDialog(void);
 
     public slots:
-         void slot_download(void);
-         void slot_cancel(void);
+        void slot_screenResize(void);
 
     private:
-        QRadioButton * listRadio[5];
-        QMessageBox * waitBox;
+        myCentralWidget * cWt;
 };
 
-#endif // DIALOGVLMGRIB_VIEW_PC_H
+#endif // DIALOG_VIEW_PC_H

@@ -49,7 +49,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 DialogVlmGrib_ctrl::DialogVlmGrib_ctrl(MainWindow *mainWindow, myCentralWidget * centralWidget, inetConnexion * inet):  inetClient(inet)
 {
-
     view = new DialogVlmGrib_view_pc(centralWidget,this);
     if(!view) return;
     this->centralWidget=centralWidget;

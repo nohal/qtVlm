@@ -33,6 +33,9 @@ class board;
 class boardVLM;
 class boardReal;
 
+/* Dialog_view_pc.h */
+class Dialog_view_pc;
+
 /* horn */
 class DialogHorn;
 
@@ -65,7 +68,9 @@ class inetClient;
 class inetConnexion;
 
 /* dialog_gribDate.h */
-class DialogGribDate;
+class DialogGribDate_ctrl;
+class DialogGribDate_view;
+class DialogGribDate_view_pc;
 
 /* DialogGraphicsParams.h */
 class InputLineParams_testZone;
