@@ -12,6 +12,9 @@ TARGET = qtVlm
 DEPENDPATH += .
 INCLUDEPATH += objs \
     Dialogs \
+    Dialogs/ctrl \
+    Dialogs/view \
+    Dialogs/view/pc \
     libs/bzip2 \
     libs/zlib-1.2.7 \
         libs/qextserialport12/src \
@@ -178,13 +181,13 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     settings_def.h \
     AngleUtil.h \
     Dialogs/DialogLanguageSelection.h \
-    Dialogs/DialogVlmGrib_ctrl.h \
-    Dialogs/DialogVlmGrib_view.h \
-    Dialogs/DialogVlmGrib_view_pc.h \
-    Dialogs/DialogGribDate_ctrl.h \
-    Dialogs/DialogGribDate_view.h \
-    Dialogs/DialogGribDate_view_pc.h \
-    Dialogs/Dialog_view_pc.h
+    Dialogs/ctrl/DialogVlmGrib_ctrl.h \
+    Dialogs/view/DialogVlmGrib_view.h \
+    Dialogs/view/pc/DialogVlmGrib_view_pc.h \
+    Dialogs/ctrl/DialogGribDate_ctrl.h \
+    Dialogs/view/DialogGribDate_view.h \
+    Dialogs/view/pc/DialogGribDate_view_pc.h \
+    Dialogs/view/pc/Dialog_view_pc.h
 
 
 FORMS += Ui/boatAccount_dialog.ui \
@@ -333,13 +336,13 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/DialogGribDrawing.cpp \
     AngleUtil.cpp \
     Dialogs/DialogLanguageSelection.cpp \
-    Dialogs/DialogVlmGrib_ctrl.cpp \
-    Dialogs/DialogVlmGrib_view.cpp \
-    Dialogs/DialogVlmGrib_view_pc.cpp \
-    Dialogs/DialogGribDate_ctrl.cpp \
-    Dialogs/DialogGribDate_view.cpp \
-    Dialogs/DialogGribDate_view_pc.cpp \
-    Dialogs/Dialog_view_pc.cpp
+    Dialogs/ctrl/DialogVlmGrib_ctrl.cpp \
+    Dialogs/view/DialogVlmGrib_view.cpp \
+    Dialogs/view/pc/DialogVlmGrib_view_pc.cpp \
+    Dialogs/ctrl/DialogGribDate_ctrl.cpp \
+    Dialogs/view/DialogGribDate_view.cpp \
+    Dialogs/view/pc/DialogGribDate_view_pc.cpp \
+    Dialogs/view/pc/Dialog_view_pc.cpp
 
 
 
