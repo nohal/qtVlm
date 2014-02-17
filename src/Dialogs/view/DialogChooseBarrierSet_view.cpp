@@ -17,20 +17,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
-#include <QDebug>
-
-#include "DialogGribDate_ctrl.h"
-
-#include "DialogGribDate_view_pc.h"
 
 #include "mycentralwidget.h"
+#include "DialogGribDate_ctrl.h"
 
-DialogGribDate_ctrl::DialogGribDate_ctrl(myCentralWidget * centralWidget) {
-    view=new DialogGribDate_view_pc(centralWidget,this);
-}
+#include "DialogChooseBarrierSet_view.h"
 
-time_t DialogGribDate_ctrl::choose_gribDate(myCentralWidget * centralWidget,time_t current,std::set<time_t>  * listGrib) {
-    DialogGribDate_ctrl * ctrl = new DialogGribDate_ctrl(centralWidget);
-    ctrl->view->initData(current,listGrib);
-    return ctrl->view->launchDialog();
+DialogChooseBarrierSet_view::DialogChooseBarrierSet_view(myCentralWidget *centralWidget, DialogChooseBarrierSet_ctrl *ctrl) {
+    this->ctrl=ctrl;
+    this->centralWidget=centralWidget;
 }

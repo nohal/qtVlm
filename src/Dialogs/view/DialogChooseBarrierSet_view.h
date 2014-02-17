@@ -1,6 +1,6 @@
 /**********************************************************************
 qtVlm: Virtual Loup de mer GUI
-Copyright (C) 2011 - Christophe Thomas aka Oxygen77
+Copyright (C) 2014 - Christophe Thomas aka Oxygen77
 
 http://qtvlm.sf.net
 
@@ -18,34 +18,23 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
-
-#ifndef DIALOGCHOOSEBARRIER_H
-#define DIALOGCHOOSEBARRIER_H
-
-#include "QDialog"
+#ifndef DIALOGCHOOSEBARRIERSET_VIEW_H
+#define DIALOGCHOOSEBARRIERSET_VIEW_H
 
 #include "class_list.h"
-#include "dataDef.h"
 
-#include "ui_DialogChooseBarrierSet.h"
-
-class DialogChooseBarrierSet: public QDialog, public Ui::DialogChooseBarrierSet_ui {
+class DialogChooseBarrierSet_view
+{
     public:
-        DialogChooseBarrierSet(MainWindow *parent);
-        ~DialogChooseBarrierSet();
+        DialogChooseBarrierSet_view(myCentralWidget *centralWidget, DialogChooseBarrierSet_ctrl *ctrl);
 
-        static BarrierSet * chooseBarrierSet(MainWindow *parent);
+        virtual void init_list(QList<BarrierSet *> lst) =0;
+        virtual BarrierSet * launchDialog(void) =0;
 
-        FCT_GET(BarrierSet*,choice)
+    protected:
+        DialogChooseBarrierSet_ctrl * ctrl;
+        myCentralWidget *centralWidget;
 
-        void done(int result);
-        int init_dialog(void);
-
-public slots:
-        void slot_screenResize();
-private:
-        MainWindow * mainWindow;
-        BarrierSet * choice;
 };
 
-#endif // DIALOGCHOOSEBARRIER_H
+#endif // DIALOGCHOOSEBARRIERSET_VIEW_H

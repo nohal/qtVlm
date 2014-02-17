@@ -1738,7 +1738,7 @@ void MainWindow::slotDateGribChanged_now(bool b)
 
 void MainWindow::slotDateGribChanged_sel()
 {
-    my_centralWidget->showGribDate_dialog();
+    my_centralWidget->choose_gribDate();
     updatePrevNext();
 }
 

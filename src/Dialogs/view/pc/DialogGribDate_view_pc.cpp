@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDateTime>
 #include <QDebug>
 
+#include "settings.h"
 #include "DialogGribDate_view_pc.h"
 #include "Util.h"
 
@@ -85,6 +86,7 @@ void DialogGribDate_view_pc::initData(time_t current,std::set<time_t>  * listGri
 }
 
 time_t DialogGribDate_view_pc::launchDialog(void) {
+    Settings::saveGeometry(this);
     if(exec()==QDialog::Accepted) {
         return dateParam->dateTime().toTime_t();
     }

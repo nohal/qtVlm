@@ -95,7 +95,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Progress.h"
 #include "StatusBar.h"
 #include "BarrierSet.h"
-#include "DialogChooseBarrierSet.h"
+#include "DialogChooseBarrierSet_ctrl.h"
 #include "DialogGribDrawing.h"
 #include "orthoSegment.h"
 
@@ -1361,13 +1361,9 @@ time_t myCentralWidget::getCurrentDate(void)
     return 0;
 }
 
-void myCentralWidget::showGribDate_dialog(void)
-{
+void myCentralWidget::choose_gribDate(void) {
     if(! dataManager->isOk()) return;
-
-    DialogGribDate_ctrl * gribDateDialog = new DialogGribDate_ctrl(this);
-    setCurrentDate(gribDateDialog->getGribDate(dataManager->get_currentDate(),dataManager->get_dateList()));
-    delete gribDateDialog;
+    setCurrentDate(DialogGribDate_ctrl::choose_gribDate(this,dataManager->get_currentDate(),dataManager->get_dateList()));
 }
 
 bool myCentralWidget::get_gribZone(double * x0,double * y0,double * x1,double * y1) {
@@ -1819,7 +1815,7 @@ void myCentralWidget::rm_barrierSet(BarrierSet * barrierSet) {
 /* event handler                                                            */
 /****************************************************************************/
 void myCentralWidget::slot_newBarrier(void) {
-    BarrierSet * set=DialogChooseBarrierSet::chooseBarrierSet(mainW);
+    BarrierSet * set=DialogChooseBarrierSet_ctrl::chooseBarrierSet(this);
 
     if(set)
     {
@@ -1851,7 +1847,7 @@ void myCentralWidget::slot_newBarrier(void) {
 /* point a position on map                                                  */
 /****************************************************************************/
 void myCentralWidget::slot_addBarrier(void) {
-    BarrierSet * set=DialogChooseBarrierSet::chooseBarrierSet(mainW);
+    BarrierSet * set=DialogChooseBarrierSet_ctrl::chooseBarrierSet(this);
 
     if(set) {
         currentSet=set;

@@ -31,7 +31,7 @@ class DialogGribDate_ctrl
     public:
         DialogGribDate_ctrl(myCentralWidget *centralWidget);
 
-        time_t getGribDate(time_t current,std::set<time_t>  * listGrib);
+        static time_t choose_gribDate(myCentralWidget * centralWidget,time_t current,std::set<time_t>  * listGrib);
 
     private:
 

@@ -178,7 +178,10 @@ class Barrier;
 class BarrierPoint;
 class DialogEditBarrier;
 class DialogChooseMultipleBarrierSet;
-class DialogChooseBarrierSet;
+class DialogChooseBarrierSet_ctrl;
+class DialogChooseBarrierSet_view;
+class DialogChooseBarrierSet_view_pc;
+
 
 /* DialogPoiInput.h */
 class DialogPoiInput;

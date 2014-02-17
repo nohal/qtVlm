@@ -17,20 +17,24 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
-#include <QDebug>
 
-#include "DialogGribDate_ctrl.h"
+#ifndef DIALOGCHOOSEBARRIERSET_VIEW_PC_H
+#define DIALOGCHOOSEBARRIERSET_VIEW_PC_H
 
-#include "DialogGribDate_view_pc.h"
+#include "Dialog_view_pc.h"
+#include "DialogChooseBarrierSet_view.h"
 
-#include "mycentralwidget.h"
+#include "ui_DialogChooseBarrierSet_pc.h"
 
-DialogGribDate_ctrl::DialogGribDate_ctrl(myCentralWidget * centralWidget) {
-    view=new DialogGribDate_view_pc(centralWidget,this);
-}
+#include "class_list.h"
 
-time_t DialogGribDate_ctrl::choose_gribDate(myCentralWidget * centralWidget,time_t current,std::set<time_t>  * listGrib) {
-    DialogGribDate_ctrl * ctrl = new DialogGribDate_ctrl(centralWidget);
-    ctrl->view->initData(current,listGrib);
-    return ctrl->view->launchDialog();
-}
+class DialogChooseBarrierSet_view_pc: public Dialog_view_pc, public DialogChooseBarrierSet_view, public Ui::DialogChooseBarrierSet_pc_ui
+{   Q_OBJECT
+    public:
+        DialogChooseBarrierSet_view_pc(myCentralWidget * centralWidget,DialogChooseBarrierSet_ctrl * ctrl);
+
+        void init_list(QList<BarrierSet *> lst);
+        BarrierSet * launchDialog(void);
+};
+
+#endif // DIALOGCHOOSEBARRIERSET_VIEW_PC_H

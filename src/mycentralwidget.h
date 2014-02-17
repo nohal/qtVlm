@@ -193,7 +193,7 @@ class myCentralWidget : public QWidget
         /* grib */
         void   setCurrentDate(time_t t, bool uRoute=true);
         time_t getCurrentDate(void);
-        void showGribDate_dialog(void);
+        void choose_gribDate(void);
         void loadGribFile(QString fileName, bool zoom);
         void loadGribFileCurrent(QString fileName, bool zoom);
         void closeGribFile(void);

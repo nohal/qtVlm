@@ -160,7 +160,6 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     Barrier.h \
     Dialogs/DialogEditBarrier.h \
     Dialogs/DialogChooseMultipleBarrierSet.h \
-    Dialogs/DialogChooseBarrierSet.h \
     XmlFile.h \
     Dialogs/DialogRouteComparator.h \
     Dialogs/DialogChooseMultipleBoat.h \
@@ -187,7 +186,10 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     Dialogs/ctrl/DialogGribDate_ctrl.h \
     Dialogs/view/DialogGribDate_view.h \
     Dialogs/view/pc/DialogGribDate_view_pc.h \
-    Dialogs/view/pc/Dialog_view_pc.h
+    Dialogs/view/pc/Dialog_view_pc.h \
+    Dialogs/view/pc/DialogChooseBarrierSet_view_pc.h \
+    Dialogs/view/DialogChooseBarrierSet_view.h \
+    Dialogs/ctrl/DialogChooseBarrierSet_ctrl.h
 
 
 FORMS += Ui/boatAccount_dialog.ui \
@@ -228,7 +230,7 @@ FORMS += Ui/boatAccount_dialog.ui \
     Ui/DialogEditBarrier.ui \
     Ui/DialogChooseMultipleBarrierSet.ui \
     Ui/DialogChooseMultipleBoat.ui \
-    Ui/DialogChooseBarrierSet.ui \
+    Ui/DialogChooseBarrierSet_pc.ui \
     Ui/RouteComparator.ui \
     Ui/DialogGribDrawing.ui \
     Ui/DialogLanguageSelection.ui
@@ -320,8 +322,7 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     BarrierSet.cpp \
     Barrier.cpp \
     Dialogs/DialogEditBarrier.cpp \
-    Dialogs/DialogChooseMultipleBarrierSet.cpp \
-    Dialogs/DialogChooseBarrierSet.cpp \
+    Dialogs/DialogChooseMultipleBarrierSet.cpp \    
     XmlFile.cpp \
     Dialogs/DialogRouteComparator.cpp \
     Dialogs/DialogChooseMultipleBoat.cpp \
@@ -342,7 +343,10 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/ctrl/DialogGribDate_ctrl.cpp \
     Dialogs/view/DialogGribDate_view.cpp \
     Dialogs/view/pc/DialogGribDate_view_pc.cpp \
-    Dialogs/view/pc/Dialog_view_pc.cpp
+    Dialogs/view/pc/Dialog_view_pc.cpp \
+    Dialogs/view/pc/DialogChooseBarrierSet_view_pc.cpp \
+    Dialogs/view/DialogChooseBarrierSet_view.cpp \
+    Dialogs/ctrl/DialogChooseBarrierSet_ctrl.cpp
 
 
 
