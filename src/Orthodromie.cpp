@@ -44,10 +44,10 @@ Orthodromie::Orthodromie(QPointF p1, QPointF p2)
 //------------------------------------------------------------------------------
 void Orthodromie::setPoints(double x0,double y0, double x1,double y1)
 {
-    lon0 = degToRad(AngleUtil::A360(x0));
-    lat0 = degToRad(AngleUtil::A360(y0));
-    lon1 = degToRad(AngleUtil::A360(x1));
-    lat1 = degToRad(AngleUtil::A360(y1));
+    lon0 = degToRad(AngleUtil::A180(x0));
+    lat0 = degToRad(AngleUtil::A180(y0));
+    lon1 = degToRad(AngleUtil::A180(x1));
+    lat1 = degToRad(AngleUtil::A180(y1));
 //    lon0 = x0 *M_PI/180.0;
 //    lat0 = y0 *M_PI/180.0;
 //    lon1 = x1 *M_PI/180.0;
@@ -98,15 +98,15 @@ void Orthodromie::initOrthodromie()
 //------------------------------------------------------------------------------
 void Orthodromie::setStartPoint (double x,double y)
 {
-    lon0 = degToRad(AngleUtil::A360(x));
-    lat0 = degToRad(AngleUtil::A360(y));
+    lon0 = degToRad(AngleUtil::A180(x));
+    lat0 = degToRad(AngleUtil::A180(y));
     initOrthodromie();
 }
 //------------------------------------------------------------------------------
 void Orthodromie::setEndPoint   (double x,double y)
 {
-    lon1 = degToRad(AngleUtil::A360(x));
-    lat1 = degToRad(AngleUtil::A360(y));
+    lon1 = degToRad(AngleUtil::A180(x));
+    lat1 = degToRad(AngleUtil::A180(y));
     initOrthodromie();
 }
 
@@ -204,8 +204,9 @@ double Orthodromie::getLoxoCap() const
 }
 double Orthodromie::getLoxoDistance() const
 {
-    double L0=log(tan(M_PI_4+lat0/2));
-    double L1=log(tan(M_PI_4+lat1/2));
+#if 1
+    double L0=log(tan(M_PI_4+lat0/2.0));
+    double L1=log(tan(M_PI_4+lat1/2.0));
     double q=0;
     if(qRound(qAbs(L0-L1)*10e4)==0)
         q=cos(lat1);
@@ -215,4 +216,66 @@ double Orthodromie::getLoxoDistance() const
     if(qAbs(dLon)>M_PI)
         dLon=dLon>0? -(2*M_PI-dLon) : (2*M_PI+dLon);
     return sqrt((lat1-lat0)*(lat1-lat0)+q*q*dLon*dLon)*6378.0/1.852;
+#else
+    /* routine vlm */
+      double angle,distance;
+      double ld, la;
+      double l, g, rfq;
+      double target_long=lon1;
+      double longitude=lon0;
+      double target_lat=lat1;
+      double latitude=lat0;
+      if (target_long > longitude) {
+            if (target_long - longitude > M_PI) {
+              target_long -= TWO_PI;
+            }
+          } else if (longitude - target_long > M_PI) {
+            longitude -= TWO_PI;
+          }
+          if (fabs(target_lat-latitude) < degToRad(0.001)) {
+            /* clamp to horizontal */
+            if (fabs(target_long-longitude) < M_PI) {
+              angle = ((target_long-longitude)>0) ? M_PI_2 : -M_PI_2;
+              distance = fabs(60.0 * cos((latitude+target_lat)/2)
+                               * radToDeg(target_long - longitude));
+            } else {
+              angle = ((target_long-longitude)>0) ? -M_PI_2 : M_PI_2;
+              distance = fabs(60.0 * cos((latitude+target_lat)/2)
+                               * (360.0 - radToDeg(target_long - longitude)));
+            }
+            return distance;
+          }
+          if (fabs(target_long-longitude) < degToRad(0.001)) {
+            /* clamp to vertical */
+            distance = fabs(60.0 * radToDeg(target_lat-latitude));
+            angle = ((target_lat-latitude) > 0) ? 0 : M_PI;
+            return distance;
+          }
+          ld = log(tan(M_PI_4 + (latitude/2.0)));
+          la = log(tan(M_PI_4 + (target_lat/2.0)));
+          l = target_lat - latitude;
+          g = target_long - longitude;
+          rfq = atan(fabs(g/(la-ld)));
+          if (l>0.0) {
+            if (g > 0.0) {
+              angle = rfq;
+            } else {
+              angle = TWO_PI - rfq;
+            }
+          } else {
+            if (g > 0.0) {
+              angle = PI - rfq;
+            } else {
+              angle = PI + rfq;
+            }
+          }
+          if (degToRad(rfq) > 89.0) {
+            distance = (60*fabs(radToDeg(g))*cos((latitude+target_lat)/2)) / sin(rfq);
+          } else {
+            distance = (60*fabs(radToDeg(l))) / cos(rfq);
+          }
+    return distance;
+
+
+#endif
 }
