@@ -1,6 +1,6 @@
 /**********************************************************************
 qtVlm: Virtual Loup de mer GUI
-Copyright (C) 2013 - Christophe Thomas aka Oxygen77
+Copyright (C) 2014 - Christophe Thomas aka Oxygen77
 
 http://qtvlm.sf.net
 
@@ -18,30 +18,31 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
-#ifndef DIALOGCHOOSEMULTIPLEBOAT_H
-#define DIALOGCHOOSEMULTIPLEBOAT_H
+#ifndef DIALOGCHOOSEMULTIPLE_VIEW_H
+#define DIALOGCHOOSEMULTIPLE_VIEWH
 
-#include "QDialog"
+#include <QList>
+#include <QVariant>
+#include <QString>
 
 #include "class_list.h"
-#include "dataDef.h"
 
-#include "ui_DialogChooseMultipleBoat.h"
-
-class DialogChooseMultipleBoat: public QDialog, Ui::DialogChooseMultipleBoat_ui
-{
-    public:
-        DialogChooseMultipleBoat(MainWindow *parent);
-        ~DialogChooseMultipleBoat();
-        void done(int result);
-        void init_dialog(BarrierSet * barrierSet, QList<boat *> boatList);
-
-        static void chooseBoat(MainWindow *parent, BarrierSet * barrierSet, QList<boat*> boatList);
-
-public slots:
-        void slot_screenResize();
-private:
-        BarrierSet *barrierSet;
+struct dataItem {
+    QString str;
+    QVariant dataVariant;
+    bool checked;
 };
 
-#endif // DIALOGCHOOSEMULTIPLEBOAT_H
+class DialogChooseMultiple_view
+{
+    public:
+        DialogChooseMultiple_view(myCentralWidget *centralWidget);
+        virtual ~DialogChooseMultiple_view(void) { }
+
+        virtual QList<dataItem> launchDialog(QString dialogTitle, QString title, QList<dataItem> dataItemList) =0;
+
+    protected:
+        myCentralWidget *centralWidget;
+};
+
+#endif // DIALOGCHOOSEMULTIPLE_VIEW_H

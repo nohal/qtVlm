@@ -18,44 +18,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
-#ifndef DIALOG_VIEW_PC_H
-#define DIALOG_VIEW_PC_H
+#include "DialogChooseMultiple_view.h"
 
-#ifdef QT_V5
-#include <QtWidgets/QDialog>
-#include "QScroller"
-#else
-#include <QDialog>
-#endif
+#include "mycentralwidget.h"
 
-#include "class_list.h"
-
-#ifdef QT_V5
-#define INIT_DIALOG { \
-    setupUi(this); \
-    QScroller::grabGesture(this->scrollArea->viewport()); \
-    initDialog(); \
+DialogChooseMultiple_view::DialogChooseMultiple_view(myCentralWidget *centralWidget)
+{
+    this->centralWidget=centralWidget;
 }
-#else
-#define INIT_DIALOG { \
-    setupUi(this); \
-    initDialog(); \
-}
-#endif
-
-class Dialog_view_pc: public QDialog
-{ Q_OBJECT
-    public:
-        Dialog_view_pc(myCentralWidget * centralWidget);
-        ~Dialog_view_pc();
-
-        void initDialog(void);
-
-    public slots:
-        void slot_screenResize(void);
-
-    private:
-        myCentralWidget * cWt;
-};
-
-#endif // DIALOG_VIEW_PC_H

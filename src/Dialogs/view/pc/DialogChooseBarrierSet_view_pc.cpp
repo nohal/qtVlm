@@ -43,8 +43,11 @@ void DialogChooseBarrierSet_view_pc::init_list(QList<BarrierSet *> lst) {
 BarrierSet * DialogChooseBarrierSet_view_pc::launchDialog(void) {
     Settings::saveGeometry(this);
     if(exec()==QDialog::Accepted) {
+        Settings::saveGeometry(this);
         return VPtr<BarrierSet>::asPtr(cb_barrierSets->itemData(cb_barrierSets->currentIndex()));
     }
-    else
+    else {
+        Settings::saveGeometry(this);
         return NULL;
+    }
 }

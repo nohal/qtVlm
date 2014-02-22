@@ -30,11 +30,10 @@ class DialogGribDate_view
 {
     public:
         DialogGribDate_view(myCentralWidget *centralWidget, DialogGribDate_ctrl *ctrl);
-
+        virtual ~DialogGribDate_view(void) { }
 
         virtual void initData(time_t current,std::set<time_t>  * listGrib) =0;
         virtual time_t launchDialog(void) =0;
-
 
     protected:
         DialogGribDate_ctrl * ctrl;

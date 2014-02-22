@@ -18,6 +18,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
+#include <QDebug>
+
 #include "mycentralwidget.h"
 #include "Util.h"
 
@@ -26,6 +28,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Dialog_view_pc::Dialog_view_pc(myCentralWidget *centralWidget):
     QDialog(centralWidget) {    
     this->cWt=centralWidget;
+}
+
+Dialog_view_pc::~Dialog_view_pc() {
+    disconnect(cWt,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
 }
 
 void Dialog_view_pc::slot_screenResize() {

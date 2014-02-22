@@ -29,7 +29,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "BarrierSet.h"
 #include "Util.h"
 #include "MyView.h"
-#include "DialogChooseMultipleBoat.h"
+#include "DialogChooseMultiple_ctrl.h"
 
 Barrier::Barrier(MainWindow *mainWindow,BarrierSet * barrierSet) {
     this->mainWindow=mainWindow;
@@ -305,7 +305,7 @@ void Barrier::slot_closeBarrierChg(bool status) {
 }
 
 void Barrier::slot_associateBoats(void) {
-    DialogChooseMultipleBoat::chooseBoat(mainWindow,barrierSet,centralWidget->get_boatList());
+    DialogChooseMultiple_ctrl::chooseMultipleBoat(centralWidget,barrierSet,centralWidget->get_boatList());
 }
 
 void Barrier::slot_setEdited(void) {

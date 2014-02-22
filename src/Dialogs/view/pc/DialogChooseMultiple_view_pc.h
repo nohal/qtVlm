@@ -18,44 +18,22 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
-#ifndef DIALOG_VIEW_PC_H
-#define DIALOG_VIEW_PC_H
+#ifndef DIALOGCHOOSEMULTIPLE_VIEW_PC_H
+#define DIALOGCHOOSEMULTIPLE_VIEW_PC_H
 
-#ifdef QT_V5
-#include <QtWidgets/QDialog>
-#include "QScroller"
-#else
-#include <QDialog>
-#endif
-
+#include "Dialog_view_pc.h"
+#include "DialogChooseMultiple_view.h"
+#include "ui_DialogChooseMultiple_pc.h"
 #include "class_list.h"
 
-#ifdef QT_V5
-#define INIT_DIALOG { \
-    setupUi(this); \
-    QScroller::grabGesture(this->scrollArea->viewport()); \
-    initDialog(); \
-}
-#else
-#define INIT_DIALOG { \
-    setupUi(this); \
-    initDialog(); \
-}
-#endif
-
-class Dialog_view_pc: public QDialog
+class DialogChooseMultiple_view_pc: public Dialog_view_pc, public DialogChooseMultiple_view, public Ui::DialogChooseMultiple_pc_ui
 { Q_OBJECT
     public:
-        Dialog_view_pc(myCentralWidget * centralWidget);
-        ~Dialog_view_pc();
+        DialogChooseMultiple_view_pc(myCentralWidget * centralWidget);
 
-        void initDialog(void);
+        ~DialogChooseMultiple_view_pc(void) { }
 
-    public slots:
-        void slot_screenResize(void);
-
-    private:
-        myCentralWidget * cWt;
+        QList<dataItem> launchDialog(QString dialogTitle, QString title, QList<dataItem> dataItemList);
 };
 
-#endif // DIALOG_VIEW_PC_H
+#endif // DIALOGCHOOSEMULTIPLE_VIEW_PC_H

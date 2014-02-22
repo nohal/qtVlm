@@ -32,6 +32,7 @@ class DialogGribDate_view_pc: public Dialog_view_pc, public DialogGribDate_view,
 { Q_OBJECT
     public:
         DialogGribDate_view_pc(myCentralWidget * centralWidget,DialogGribDate_ctrl * ctrl);
+        ~DialogGribDate_view_pc(void);
 
         void initData(time_t current,std::set<time_t>  * listGrib);
         time_t launchDialog(void);

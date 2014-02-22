@@ -29,8 +29,14 @@ DialogGribDate_ctrl::DialogGribDate_ctrl(myCentralWidget * centralWidget) {
     view=new DialogGribDate_view_pc(centralWidget,this);
 }
 
+DialogGribDate_ctrl::~DialogGribDate_ctrl(void) {
+    delete view;
+}
+
 time_t DialogGribDate_ctrl::choose_gribDate(myCentralWidget * centralWidget,time_t current,std::set<time_t>  * listGrib) {
     DialogGribDate_ctrl * ctrl = new DialogGribDate_ctrl(centralWidget);
     ctrl->view->initData(current,listGrib);
-    return ctrl->view->launchDialog();
+    time_t res=ctrl->view->launchDialog();
+    delete ctrl;
+    return res;
 }

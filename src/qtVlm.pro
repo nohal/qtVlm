@@ -159,10 +159,8 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     BarrierSet.h \
     Barrier.h \
     Dialogs/DialogEditBarrier.h \
-    Dialogs/DialogChooseMultipleBarrierSet.h \
     XmlFile.h \
     Dialogs/DialogRouteComparator.h \
-    Dialogs/DialogChooseMultipleBoat.h \
     MapDataDrawer.h \
     DataColors.h \
     Dialogs/DialogRemoveRoute.h \
@@ -189,7 +187,10 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     Dialogs/view/pc/Dialog_view_pc.h \
     Dialogs/view/pc/DialogChooseBarrierSet_view_pc.h \
     Dialogs/view/DialogChooseBarrierSet_view.h \
-    Dialogs/ctrl/DialogChooseBarrierSet_ctrl.h
+    Dialogs/ctrl/DialogChooseBarrierSet_ctrl.h \
+    Dialogs/view/DialogChooseMultiple_view.h \
+    Dialogs/view/pc/DialogChooseMultiple_view_pc.h \
+    Dialogs/ctrl/DialogChooseMultiple_ctrl.h
 
 
 FORMS += Ui/boatAccount_dialog.ui \
@@ -228,8 +229,7 @@ FORMS += Ui/boatAccount_dialog.ui \
     Ui/routeInfo.ui \
     Ui/DialogRemovePoi.ui \
     Ui/DialogEditBarrier.ui \
-    Ui/DialogChooseMultipleBarrierSet.ui \
-    Ui/DialogChooseMultipleBoat.ui \
+    Ui/DialogChooseMultiple_pc.ui \
     Ui/DialogChooseBarrierSet_pc.ui \
     Ui/RouteComparator.ui \
     Ui/DialogGribDrawing.ui \
@@ -322,10 +322,8 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     BarrierSet.cpp \
     Barrier.cpp \
     Dialogs/DialogEditBarrier.cpp \
-    Dialogs/DialogChooseMultipleBarrierSet.cpp \    
     XmlFile.cpp \
     Dialogs/DialogRouteComparator.cpp \
-    Dialogs/DialogChooseMultipleBoat.cpp \
     MapDataDrawer.cpp \
     DataColors.cpp \
     Dialogs/DialogRemoveRoute.cpp \
@@ -346,7 +344,10 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/view/pc/Dialog_view_pc.cpp \
     Dialogs/view/pc/DialogChooseBarrierSet_view_pc.cpp \
     Dialogs/view/DialogChooseBarrierSet_view.cpp \
-    Dialogs/ctrl/DialogChooseBarrierSet_ctrl.cpp
+    Dialogs/ctrl/DialogChooseBarrierSet_ctrl.cpp \
+    Dialogs/view/DialogChooseMultiple_view.cpp \
+    Dialogs/view/pc/DialogChooseMultiple_view_pc.cpp \
+    Dialogs/ctrl/DialogChooseMultiple_ctrl.cpp
 
 
 

@@ -33,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "boat.h"
 #include "boatVLM.h"
 #include "Orthodromie.h"
-#include "DialogChooseMultipleBarrierSet.h"
+#include "DialogChooseMultiple_ctrl.h"
 #include "BarrierSet.h"
 #include "Projection.h"
 #include <QGestureEvent>
@@ -922,7 +922,7 @@ void boat::update_barrierKey(BarrierSet* set) {
 
 void boat::slot_chooseBarrierSet(void) {
     cleanBarrierList();
-    DialogChooseMultipleBarrierSet::chooseBarrierSet(mainWindow,&barrierSets,this);
+    DialogChooseMultiple_ctrl::chooseMultipleBarrierSet(mainWindow->getMy_centralWidget() ,&barrierSets,this);
     updateBarrierKeys();
 }
 

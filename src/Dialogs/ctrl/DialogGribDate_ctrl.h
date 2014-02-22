@@ -30,11 +30,11 @@ class DialogGribDate_ctrl
 {
     public:
         DialogGribDate_ctrl(myCentralWidget *centralWidget);
+        ~DialogGribDate_ctrl(void);
 
         static time_t choose_gribDate(myCentralWidget * centralWidget,time_t current,std::set<time_t>  * listGrib);
 
     private:
-
         DialogGribDate_view * view;
 };
 

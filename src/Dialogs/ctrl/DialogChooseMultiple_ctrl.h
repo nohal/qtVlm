@@ -1,6 +1,6 @@
 /**********************************************************************
 qtVlm: Virtual Loup de mer GUI
-Copyright (C) 2011 - Christophe Thomas aka Oxygen77
+Copyright (C) 2014 - Christophe Thomas aka Oxygen77
 
 http://qtvlm.sf.net
 
@@ -18,31 +18,19 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
-#ifndef DIALOGCHOOSEMULTIPLEBARRIERSET_H
-#define DIALOGCHOOSEMULTIPLEBARRIERSET_H
+#ifndef DIALOGCHOOSEMULTIPLE_CTRL_H
+#define DIALOGCHOOSEMULTIPLE_CTRL_H
 
-#include <QDialog>
+#include <QObject>
 
 #include "class_list.h"
-#include "dataDef.h"
-#include "ui_DialogChooseMultipleBarrierSet.h"
 
-class DialogChooseMultipleBarrierSet: public QDialog, Ui::DialogChooseMultipleBarrierSet_ui
-{
+class DialogChooseMultiple_ctrl: public QObject
+{ Q_OBJECT
     public:
-        DialogChooseMultipleBarrierSet(MainWindow *parent);
-        ~DialogChooseMultipleBarrierSet();
+        static void chooseMultipleBoat(myCentralWidget *centralWidget,BarrierSet * barrierSet, QList<boat*> boatList);
+        static void chooseMultipleBarrierSet(myCentralWidget *centralWidget,QList<BarrierSet *> *activeSets, boat *myBoat);
 
-        void done(int result);
-        void init_dialog(QList<BarrierSet *> *activeSets, boat *myBoat);
-
-        static void chooseBarrierSet(MainWindow *parent, QList<BarrierSet *> *activeSets, boat *myBoat);
-
-public slots:
-        void slot_screenResize();
-private:
-        QList<BarrierSet*> * activeSets;
-        boat *myBoat;
 };
 
-#endif // DIALOGCHOOSEMULTIPLEBARRIERSET_H
+#endif // DIALOGCHOOSEMULTIPLE_CTRL_H

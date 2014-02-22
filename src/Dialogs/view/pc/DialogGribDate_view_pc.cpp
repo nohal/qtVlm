@@ -33,6 +33,10 @@ DialogGribDate_view_pc::DialogGribDate_view_pc(myCentralWidget * centralWidget, 
     dateParam->setTimeSpec(Qt::UTC);
 }
 
+DialogGribDate_view_pc::~DialogGribDate_view_pc(void) {
+
+}
+
 void DialogGribDate_view_pc::initData(time_t current,std::set<time_t>  * listGrib) {
     initialTime=current;
     time_t min=-1,max=-1;
@@ -86,12 +90,14 @@ void DialogGribDate_view_pc::initData(time_t current,std::set<time_t>  * listGri
 }
 
 time_t DialogGribDate_view_pc::launchDialog(void) {
-    Settings::saveGeometry(this);
     if(exec()==QDialog::Accepted) {
+        Settings::saveGeometry(this);
         return dateParam->dateTime().toTime_t();
     }
-    else
+    else {
+        Settings::saveGeometry(this);
         return initialTime;
+    }
 }
 
 void DialogGribDate_view_pc::slot_listChanged(int index) {
