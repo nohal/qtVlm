@@ -59,6 +59,10 @@ DialogVlmGrib_ctrl::DialogVlmGrib_ctrl(MainWindow *mainWindow, myCentralWidget *
     updateList();
 }
 
+DialogVlmGrib_ctrl::~DialogVlmGrib_ctrl(void) {
+    delete view;
+}
+
 void DialogVlmGrib_ctrl::updateList(void) {
     if(doRequest(VLM_REQUEST_GET_FOLDER)) {
         view->set_waitBoxVisibility(true);

@@ -31,6 +31,7 @@ class DialogVlmGrib_ctrl: public QObject, public inetClient
     Q_OBJECT
     public:
         DialogVlmGrib_ctrl(MainWindow * mainWindow,myCentralWidget * centralWidget,inetConnexion * inet);
+        ~DialogVlmGrib_ctrl(void);
 
         void requestFinished (QByteArray);
 
