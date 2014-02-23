@@ -139,14 +139,25 @@ boat::boat(QString      pseudo, bool activated,
 
 
     connect(this,SIGNAL(releasePolar(QString)),main,SLOT(releasePolar(QString)));
-#ifdef __ANDROID__
     if(Settings::getSetting(enable_Gesture).toString()=="1")
     {
         this->setAcceptTouchEvents(true);
         this->grabGesture(Qt::TapAndHoldGesture);
+        this->grabGesture(Qt::TapGesture);
     }
-#endif
     connect(parent,SIGNAL(shTrace(bool)),this,SLOT(slot_shTrace(bool)));
+}
+void boat::mousePressEvent(QGraphicsSceneMouseEvent* e)
+{
+    qWarning()<<"mouse press event in boat detected";
+    e->accept();
+    return;
+}
+void boat::mouseReleaseEvent(QGraphicsSceneMouseEvent* e)
+{
+    qWarning()<<"mouse release event in boat detected";
+    e->accept();
+    return;
 }
 
 boat::~boat()
@@ -1034,6 +1045,7 @@ bool boat::event(QEvent *event)
 {
     if (event->type() == QEvent::Gesture)
     {
+        qWarning()<<"gesture detected in boat";
         QGestureEvent * gestureEvent=static_cast<QGestureEvent*>(event);
         if (QGesture *pg=gestureEvent->gesture(Qt::TapAndHoldGesture))
         {
@@ -1043,9 +1055,10 @@ bool boat::event(QEvent *event)
             if(p->state()==Qt::GestureFinished)
             {
                 this->showContextualMenu(p->position().x(),p->position().y());
-                return true;
             }
         }
+        event->setAccepted(true);
+        return true;
     }
     return QGraphicsWidget::event(event);
 }

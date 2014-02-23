@@ -94,6 +94,7 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
 
 #ifdef __ANDROID__
     labelEta->setWordWrap(true);
+    this->addWidget(labelGrib,0);
 #else
     separator=new QLabel(" - ");
 #ifdef QT_V5

@@ -98,7 +98,7 @@ class MainWindow: public MainWindowInterface
         QColor getWindColorStatic(const double &v, const bool &smooth=true);
         QVariant getSettingApp(const int &key) const;
         QString get_folder(QString str) const;
-        void showContextualMenu(const int &xPos, const int &yPos);
+        void showContextualMenu(const int &xPos, const int &yPos, QPoint screenPos=QPoint(0,0));
         QPalette getOriginalPalette() const;
         void setting_saveGeometry(QWidget * obj);
         bool getWPClipboard(QString *,double * lat,double * lon, double * wph, int * tStamp);

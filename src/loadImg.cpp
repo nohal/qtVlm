@@ -52,7 +52,7 @@ loadImg::loadImg(Projection *proj, myCentralWidget *parent)
     this->proj=proj;
     this->setZValue(Z_VALUE_LOADIMG);
     gribKap->setZValue(Z_VALUE_LOADIMG+0.1);
-    //gribKap->setFlag(QGraphicsItem::ItemIgnoresParentOpacity,true);
+    //gribKap->setFlag(QGraphicsWidget::ItemIgnoresParentOpacity,true);
     gribKap->setOpacity(1);
     gribKap->setPos(0,0);
     //connect (proj,SIGNAL(projectionUpdated()),this,SLOT(slot_updateProjection()));

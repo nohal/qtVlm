@@ -121,8 +121,11 @@ protected:
     void contextMenuEvent(QGraphicsSceneContextMenuEvent * event);
     void mousePressEvent(QGraphicsSceneMouseEvent* e);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* e);
+    bool sceneEvent(QEvent *event);
 
 private:    
+    QGraphicsEllipseItem *debugGesture;
+    double fingerSize;
     //-----------------------------------------------
     int width,height;
     //-----------------------------------------------
@@ -202,6 +205,7 @@ private:
     QMutex mutex;
     QPoint scalePos;
     QTimer * timerUpdated;
+    void myClearSelectedItems();
 };
 Q_DECLARE_TYPEINFO(Terrain,Q_MOVABLE_TYPE);
 

@@ -50,6 +50,10 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "Grib.h"
 #include "GribRecord.h"
 #include "routage.h"
+#include <QGestureEvent>
+#include "StatusBar.h"
+#include <QToolTip>
+#include <QScreen>
 //#define traceTime
 
 
@@ -137,7 +141,151 @@ Terrain::Terrain(myCentralWidget *centralWidget, Projection *proj_) : QGraphicsW
     int sX=Settings::getSetting(scalePosX).toInt();
     int sY=Settings::getSetting(scalePosY).toInt();
     scalePos=QPoint(sX,sY);
-    updateGraphicsParameters();    
+    updateGraphicsParameters();
+    if(Settings::getSetting(enable_Gesture).toString()=="1")
+    {
+        this->setAcceptTouchEvents(true);
+        this->grabGesture(Qt::TapGesture);
+        this->grabGesture(Qt::TapAndHoldGesture);
+        this->grabGesture(Qt::PinchGesture);
+    }
+    QTapAndHoldGesture::setTimeout(2000);
+    QScreen * screen=QGuiApplication::primaryScreen();
+    fingerSize=10*screen->physicalDotsPerInch()*0.0393700787; //10mm approx size of a finger
+
+    debugGesture=new QGraphicsEllipseItem(-fingerSize/2.0,-fingerSize/2.0,fingerSize,fingerSize);
+    debugGesture->setZValue(150);
+    QPen pen(Qt::red);
+    QBrush brush(Qt::red);
+    debugGesture->setPen(pen);
+    debugGesture->setFlag(QGraphicsWidget::ItemIsMovable,true);
+    debugGesture->setBrush(brush);
+    //centralWidget->getScene()->addItem(debugGesture);
+}
+//---------------------------------------------------------
+// Events
+//---------------------------------------------------------
+
+void Terrain::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
+{
+    emit showContextualMenu(event);
+}
+
+void Terrain::mousePressEvent(QGraphicsSceneMouseEvent* e)
+{
+    QGraphicsWidget::mousePressEvent(e);
+    e->accept();
+    if(e->button()==Qt::LeftButton || e->button()==Qt::MidButton )
+    {
+        emit mousePress(e);
+    }
+    //centralWidget->getScene()->addItem(debugGesture);
+}
+
+void Terrain::mouseReleaseEvent(QGraphicsSceneMouseEvent* e)
+{
+    QGraphicsWidget::mouseReleaseEvent(e);
+    e->accept();
+    if(e->button()==Qt::LeftButton)
+    {
+        emit mouseRelease(e);
+    }
+    //centralWidget->getScene()->removeItem(debugGesture);
+}
+bool Terrain::sceneEvent(QEvent *event)
+{
+#if 1
+    if (event->type() == QEvent::Gesture)
+    {
+        QGestureEvent * gestureEvent=static_cast<QGestureEvent*>(event);
+        if (QGesture * p1 = gestureEvent->gesture(Qt::PinchGesture))
+        {
+            qWarning()<<"PinchGesture detected in terrain"<<p1->state();
+            QPinchGesture *pinch = static_cast<QPinchGesture *>(p1);
+            QPointF pinchCenter=pinch->centerPoint();
+            if(pinch->state()==Qt::GestureStarted)
+            {
+                centralWidget->slot_resetGestures();
+                centralWidget->getView()->myScale(pinch->totalScaleFactor(),pinchCenter.x(),pinchCenter.y(),true);
+            }
+            else if(pinch->state()==Qt::GestureUpdated)
+                centralWidget->getView()->myScale(pinch->totalScaleFactor(),pinchCenter.x(),pinchCenter.y(),true);
+            else if (pinch->state()==Qt::GestureFinished)
+            {
+                double lat,lon;
+                proj->screen2mapDouble(pinchCenter.x(),pinchCenter.y(),&lon,&lat);
+                proj->zoomKeep(lon,lat,pinch->totalScaleFactor());
+            }
+            else if (pinch->state()==Qt::GestureCanceled)
+                centralWidget->slot_resetGestures();
+            event->accept();
+        }
+        if (QGesture * p2=gestureEvent->gesture(Qt::TapGesture))
+        {
+            QTapGesture *tap = static_cast<QTapGesture *>(p2);
+            qWarning()<<"TapGesture detected in terrain"<<tap->state();
+            QPointF tapCenter=tap->position();
+            //debugGesture->setPos(tapCenter);
+            if(tap->state()==Qt::GestureFinished)
+            {
+                myClearSelectedItems();
+                double lat,lon;
+                proj->screen2mapDouble(tapCenter.x(),tapCenter.y(),&lon,&lat);
+                centralWidget->getMainWindow()->get_statusBar()->showGribData(lon, lat);
+                event->accept();
+            }
+            else
+                event->ignore();
+        }
+        if (QGesture *p3=gestureEvent->gesture(Qt::TapAndHoldGesture))
+        {
+            qWarning()<<"TapAndHoldGesture detected in terrain"<<p3->state();
+            if(p3->state()==Qt::GestureFinished)
+            {
+                //QTapAndHoldGesture *p=static_cast<QTapAndHoldGesture*>(p3);
+                QPointF tapCenter=p3->hotSpot();
+                QPoint screenPos=tapCenter.toPoint();
+                QPointF scenePos=centralWidget->mapFromGlobal(screenPos);
+                myClearSelectedItems();
+                //debugGesture->setPos(scenePos);
+                int X=qRound(scenePos.x());
+                int Y=qRound(scenePos.y());
+
+                if(centralWidget->getScene()->selectedItems().isEmpty())
+                {
+                    centralWidget->getMainWindow()->showContextualMenu(X,Y,screenPos);
+                }
+                event->accept();
+            }
+            else
+                event->ignore();
+        }
+        if (/*QGesture *p4=*/gestureEvent->gesture(Qt::PanGesture))
+        {
+            qWarning()<<"PanGesture detected in terrain";
+            event->accept();
+        }
+        if (/*QGesture *p5=*/gestureEvent->gesture(Qt::SwipeGesture))
+        {
+            qWarning()<<"SwipeGesture detected in terrain";
+            event->accept();
+        }
+        if (/*QGesture *p6=*/gestureEvent->gesture(Qt::CustomGesture))
+        {
+            qWarning()<<"CustomGesture detected in terrain ??";
+            event->accept();
+        }
+    }
+#endif
+    return QGraphicsWidget::sceneEvent(event);
+}
+void Terrain::myClearSelectedItems()
+{
+    foreach (QGraphicsItem * i,centralWidget->getScene()->selectedItems())
+    {
+        i->setSelected(false);
+        i->update();
+    }
 }
 
 //-------------------------------------------
@@ -201,6 +349,7 @@ void Terrain::draw_GSHHSandGRIB()
 //    }
 
     //qWarning() << "[draw_GSHHSandGRIB]";
+    centralWidget->getView()->setInteractive(false);
     if(centralWidget->getKap())
         centralWidget->getKap()->slot_updateProjection();
     QCursor oldcursor = cursor();
@@ -464,7 +613,7 @@ void Terrain::draw_GSHHSandGRIB()
     daylight(&pnt,vlmPoint(0,0));
     centralWidget->getView()->resetTransform();
     centralWidget->getView()->hideViewPix();
-    centralWidget->getScene()->setPinching(false);
+    centralWidget->getView()->setInteractive(true);
 #ifdef traceTime
         qWarning()<<"--------------------------------------";
 #endif
@@ -1156,30 +1305,6 @@ void Terrain::redrawGrib()
     indicateWaitingMap();
 }
 
-//---------------------------------------------------------
-// Events
-//---------------------------------------------------------
-
-void Terrain::contextMenuEvent(QGraphicsSceneContextMenuEvent * event)
-{    
-    emit showContextualMenu(event);
-}
-
-void Terrain::mousePressEvent(QGraphicsSceneMouseEvent* e)
-{
-    if(e->button()==Qt::LeftButton || e->button()==Qt::MidButton )
-    {
-        emit mousePress(e);
-    }
-}
-
-void Terrain::mouseReleaseEvent(QGraphicsSceneMouseEvent* e)
-{
-    if(e->button()==Qt::LeftButton)
-    {
-        emit mouseRelease(e);
-    }
-}
 
 void Terrain::updateSize(int width, int height)
 {

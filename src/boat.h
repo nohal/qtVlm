@@ -168,6 +168,8 @@ protected:
         void contextMenuEvent(QGraphicsSceneContextMenuEvent * event);
         void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
         bool event(QEvent * event);
+        void mousePressEvent(QGraphicsSceneMouseEvent* e);
+        void mouseReleaseEvent(QGraphicsSceneMouseEvent* e);
         /* DATA */
         int boatType;
 

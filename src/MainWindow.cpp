@@ -1908,10 +1908,15 @@ void MainWindow::slotShowContextualMenu(QGraphicsSceneContextMenuEvent * e)
 {
     showContextualMenu(e->scenePos().x(),e->scenePos().y());
 }
-void MainWindow::showContextualMenu(const int &xPos,const int &yPos)
+void MainWindow::showContextualMenu(const int &xPos, const int &yPos, QPoint screenPos)
 {
+    if(screenPos==QPoint(0,0))
+    {
+        screenPos=QCursor::pos();
+    }
     mouseClicX = xPos;
     mouseClicY = yPos;
+
     int compassMode = my_centralWidget->getCompassMode(mouseClicX,mouseClicY);
     my_centralWidget->set_cursorPositionOnPopup(QPoint(mouseClicX,mouseClicY));
 
@@ -2006,7 +2011,7 @@ void MainWindow::showContextualMenu(const int &xPos,const int &yPos)
     else
         menuBar->ac_pasteRoute->setEnabled(true);
     menuPopupBtRight->setEnabled(true);
-    menuPopupBtRight->exec(QCursor::pos());
+    menuPopupBtRight->exec(screenPos);
 }
 void MainWindow::slot_copyRoute()
 {

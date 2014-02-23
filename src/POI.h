@@ -36,7 +36,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #define POI_TYPE_WP     1
 #define POI_TYPE_BALISE 2
 
-//#define ALLOW_VBVMG_VLM_OPTIM
+#define ALLOW_VBVMG_VLM_OPTIM
 
 //===================================================================
 class POI : public QGraphicsWidget
@@ -119,7 +119,6 @@ class POI : public QGraphicsWidget
         QRectF boundingRect() const;
 
         /* event propagé par la scene */
-        bool tryMoving(int x, int y);
         time_t getPiloteDate(){return piloteDate;}
         void setPiloteDate(const time_t &t){this->piloteDate=t;}
         double getPiloteWph() {return piloteWph;}
@@ -178,6 +177,7 @@ public slots:
 
         void slot_boatCircleMenu();
         void manageBoatCircle();
+        void slot_allowToMove();
 signals:
         void chgWP(double,double,double);
         void addPOI_list(POI*);
@@ -195,28 +195,28 @@ signals:
         void  mousePressEvent(QGraphicsSceneMouseEvent * e);
         void  mouseReleaseEvent(QGraphicsSceneMouseEvent * e);
         void  contextMenuEvent(QGraphicsSceneContextMenuEvent * event);
-
+        bool sceneEvent(QEvent * event);
+        QVariant itemChange(GraphicsItemChange change, const QVariant &value);
         void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
 
     private:
         /* parent, main */
         myCentralWidget   *parent;
-        MainWindow   *owner;
+        MainWindow   *mainWin;
         Projection   *proj;
 
         /* widget component */
         QColor    bgcolor,fgcolor;
         QColor    poiColor,mwpColor,wpColor,baliseColor;
-        int       width,height;
+        int       width,height,squareSize,shapeSize;
         QString   my_str;
 
         /* data */
         QString  name;
         double   lon, lat;
         double   previousLon,previousLat;
-        double    wph;
+        double   wph;
         double   WPlon,WPlat;
-        int      pi, pj;
         time_t      timeStamp;
         time_t      routeTimeStamp;
         bool     useTstamp;
@@ -224,7 +224,6 @@ signals:
         bool     isWp;
         int      type;
         int      typeMask;
-        bool     isMoving;
         int      mouse_x,mouse_y;
         int      myBoatId;
         bool     autoRange;
@@ -292,6 +291,9 @@ signals:
         int sequence;
         QTimer * timerSimp;
         vlmLine * boatCircle;
+        void showContextMenu(const double &x, const double &y);
+        bool hasMoved;
+        void mySetPos(const double &X, const double &Y);
 };
 Q_DECLARE_TYPEINFO(POI,Q_MOVABLE_TYPE);
 

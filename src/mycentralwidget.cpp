@@ -35,6 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QVariantMap>
 #include <QVariant>
 #include <QClipboard>
+#include <QToolTip>
 
 
 #include "mycentralwidget.h"
@@ -114,15 +115,16 @@ myScene::myScene(myCentralWidget * parent) : QGraphicsScene(parent)
     wheelStrokes=0;
     QColor seaColorVal  = Settings::getSetting(seaColor).value<QColor>();
     this->setBackgroundBrush(seaColorVal);
-    this->pinching=false;
     wheelPosX=0;
     wheelPosY=0;
+
 }
 
 /* Events */
 
 void  myScene::keyPressEvent (QKeyEvent *e)
 {
+    e->accept();
     QString position;
     QStringList positions;
     switch(e->key())
@@ -218,47 +220,29 @@ void  myScene::keyPressEvent (QKeyEvent *e)
 
 void  myScene::keyReleaseEvent (QKeyEvent *e)
 {
+    e->accept();
     parent->keyModif(e);
 }
 
 void myScene::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
 {
+    e->ignore();
     if(parent->getIsStartingUp()) return;
-    if(pinching) return;
-#if 0
-    if(hasWay)
-    {
-        emit eraseWay();
-        hasWay=false;
-    }
-    if(!parent->getIsSelecting())
-    {
-        if(itemAt(e->scenePos())->data(0)==ISOPOINT)
-        {
-            vlmPointGraphic * vg=((vlmPointGraphic *) itemAt(e->scenePos()));
-            if(vg->getRoutage()->isDone() && vg->getRoutage()->getShowIso())
-            {
-                vg->drawWay();
-                hasWay=true;
-            }
-        }
-    }
-#endif
-    parent->mouseMove(e->scenePos().x(),e->scenePos().y(),itemAt(e->scenePos(),parent->getView()->transform()));
+    parent->mouseMove(e->scenePos().x(),e->scenePos().y(),itemAt(e->scenePos(),view->transform()));
     QGraphicsScene::mouseMoveEvent(e);
 }
 
 void myScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* e)
 {
-    if(pinching) return;
+    e->accept();
     if(e->button()==Qt::LeftButton)
     {
-        parent->mouseDoubleClick(e->scenePos().x(),e->scenePos().y(),itemAt(e->scenePos(),parent->getView()->transform()));
+        parent->mouseDoubleClick(e->scenePos().x(),e->scenePos().y(),itemAt(e->scenePos(),view->transform()));
     }
 }
 void myScene::wheelEvent(QGraphicsSceneWheelEvent* e)
 {
-    if(pinching) return;
+    e->accept();
     if(parent->getProj()->getFrozen()) return;
     if(e->orientation()!=Qt::Vertical) return;
     wheelTimer->stop();
@@ -279,19 +263,19 @@ void myScene::wheelEvent(QGraphicsSceneWheelEvent* e)
     {
         double X,Y;
         parent->getProj()->screen2map(e->scenePos().x(),e->scenePos().y(),&X,&Y);
-        parent->getView()->myScale(zoomDiff,X,Y);
+        view->myScale(zoomDiff,X,Y);
     }
     else
     {
         if(parent->getKeepPos() && parent->getSelectedBoat() && parent->getProj()->isPointVisible(parent->getSelectedBoat()->getLon(),parent->getSelectedBoat()->getLat()))
         {
-            parent->getView()->myScale(zoomDiff,parent->getSelectedBoat()->getLon(),parent->getSelectedBoat()->getLat());
+            view->myScale(zoomDiff,parent->getSelectedBoat()->getLon(),parent->getSelectedBoat()->getLat());
         }
         else
         {
             double X,Y;
             parent->getProj()->screen2map(e->scenePos().x(),e->scenePos().y(),&X,&Y);
-            parent->getView()->myScale(zoomDiff,X,Y);
+            view->myScale(zoomDiff,X,Y);
         }
     }
     wheelTimer->start();
@@ -303,84 +287,6 @@ void myScene::wheelTimerElapsed()
     wheelPosY=0;
     wheelStrokes=0;
     wheelCenter=false;
-}
-bool myScene::event(QEvent * event)
-{
-#if 1
-    if (event->type() == QEvent::Gesture)
-    {
-        wheelTimer->stop();
-        QGestureEvent * gestureEvent=static_cast<QGestureEvent*>(event);
-        wheelCenter=false;
-        if (QGesture *p = gestureEvent->gesture(Qt::PinchGesture))
-        {
-            QPinchGesture *pinch = static_cast<QPinchGesture *>(p);
-            if(pinch->state()!=Qt::GestureFinished)
-            {
-                if(wheelPosX==0 && wheelPosY==0)
-                {
-                    QPointF scenePos=parent->getView()->viewport()->mapFromGlobal(pinch->centerPoint().toPoint());
-                    wheelPosX=scenePos.x();
-                    wheelPosY=scenePos.y();
-                }
-                pinching=true;
-                double zoomDiff=pinch->totalScaleFactor();
-                if(parent->getKeepPos() && parent->getSelectedBoat() && parent->getProj()->isPointVisible(parent->getSelectedBoat()->getLon(),parent->getSelectedBoat()->getLat()))
-                {
-                    parent->getView()->myScale(zoomDiff,parent->getSelectedBoat()->getLon(),parent->getSelectedBoat()->getLat());
-                }
-                else
-                {
-                    double X,Y;
-                    parent->getProj()->screen2map(wheelPosX,wheelPosY,&X,&Y);
-                    parent->getView()->myScale(zoomDiff,X,Y);
-                }
-            }
-            else
-            {
-                double zoomDiff=pinch->totalScaleFactor();
-                parent->zoom_Pinch(zoomDiff,wheelPosX,wheelPosY);
-                wheelStrokes=0;
-                wheelCenter=false;
-                wheelPosX=0;
-                wheelPosY=0;
-            }
-            return true;
-        }
-        else if (gestureEvent->gesture(Qt::TapGesture))
-        {
-            qWarning()<<"TapGesture detected";
-        }
-        else if (QGesture *pg=gestureEvent->gesture(Qt::TapAndHoldGesture))
-        {
-            qWarning()<<"TapAndHoldGesture detected";
-            QTapAndHoldGesture *p=static_cast<QTapAndHoldGesture*>(pg);
-            if(p->state()==Qt::GestureFinished)
-            {
-                event->accept();
-                parent->getMainWindow()->showContextualMenu(p->position().x(),p->position().y());
-                return true;
-            }
-        }
-        else if (gestureEvent->gesture(Qt::PanGesture))
-        {
-            qWarning()<<"PanGesture detected";
-        }
-        else if (gestureEvent->gesture(Qt::SwipeGesture))
-        {
-            qWarning()<<"SwipeGesture detected";
-        }
-        else if (gestureEvent->gesture(Qt::CustomGesture))
-        {
-            qWarning()<<"CustomGesture detected??";
-        }
-        else
-        {
-            qWarning()<<"Unknown gesture detected";
-        }
-    }
-#endif
-    return QGraphicsScene::event(event);
 }
 
 /*******************/
@@ -426,35 +332,9 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
 
     view = new MyView(proj,scene,this);
     view->setGeometry(0,0,width(),height());
-    if(Settings::getSetting(enable_Gesture).toString()=="1")
-    {
-        view->viewport()->ungrabGesture(Qt::PanGesture);
-        view->viewport()->grabGesture(Qt::PinchGesture);
-#ifdef __ANDROID__
-        view->viewport()->grabGesture(Qt::PanGesture);
-        view->viewport()->grabGesture(Qt::TapGesture);
-        view->viewport()->grabGesture(Qt::TapAndHoldGesture);
-        view->viewport()->grabGesture(Qt::SwipeGesture);
-        view->viewport()->grabGesture(Qt::CustomGesture);
-#endif
-    }
-    else
-    {
-        view->viewport()->ungrabGesture(Qt::PanGesture);
-        view->viewport()->ungrabGesture(Qt::PinchGesture);
-        view->viewport()->ungrabGesture(Qt::TapGesture);
-        view->viewport()->ungrabGesture(Qt::TapAndHoldGesture);
-        view->viewport()->ungrabGesture(Qt::SwipeGesture);
-        view->viewport()->ungrabGesture(Qt::CustomGesture);
-        view->ungrabGesture(Qt::PanGesture);
-        view->ungrabGesture(Qt::PinchGesture);
-        view->ungrabGesture(Qt::TapGesture);
-        view->ungrabGesture(Qt::TapAndHoldGesture);
-        view->ungrabGesture(Qt::SwipeGesture);
-        view->ungrabGesture(Qt::CustomGesture);
-    }
     view->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
     view->setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
+    scene->setView(view);
     this->setAccessibleName("centralWidget");
     /* other child */
     inetManager = new inetConnexion(mainW);
@@ -707,7 +587,10 @@ void myCentralWidget::setCompassFollow(ROUTE * route)
     {
         menuBar->ac_compassCenterBoat->setChecked(false);
         Settings::setSetting(compassCenterBoat, 0);
+        compass->setActive(false);
     }
+    else
+        compass->setActive(Settings::getSetting(compassCenterBoat).toInt()==0);
     emitUpdateRoute(mainW->getSelectedBoat());
 }
 void myCentralWidget::centerCompass(double lon, double lat)
@@ -1082,6 +965,7 @@ void myCentralWidget::resizeEvent (QResizeEvent * /*e*/)
 
 void myCentralWidget::mouseMove(int x, int y, QGraphicsItem * )
 {
+    //qWarning()<<"mouse move detected in scene";
     StatusBar * statusBar = mainW->get_statusBar();
     if(selection->isSelecting())
     {
@@ -1099,7 +983,11 @@ void myCentralWidget::mouseMove(int x, int y, QGraphicsItem * )
     }
     if(selection->tryMoving(x,y))
         return;
-
+    if(compass->hasCompassLine())
+    {
+        compass->updateCompassLineLabels(x,y);
+        return;
+    }
     move_barrierEditLine(QPoint(x,y));
 
     QListIterator<QGraphicsItem *> it (scene->items());
@@ -1108,14 +996,14 @@ void myCentralWidget::mouseMove(int x, int y, QGraphicsItem * )
     {
         QGraphicsItem * item = it.next();
 
-        if(item->data(0) == POI_WTYPE && ((POI*)item)->tryMoving(x,y))
-        {
-            break ;
-        }
-        if(item->data(0) == COMPASS_WTYPE && ((mapCompass*)item)->tryMoving(x,y))
-        {
-            break ;
-        }
+//        if(item->data(0) == POI_WTYPE && ((POI*)item)->tryMoving(x,y))
+//        {
+//            break ;
+//        }
+//        if(item->data(0) == COMPASS_WTYPE && ((mapCompass*)item)->tryMoving(x,y))
+//        {
+//            break ;
+//        }
         if(item->data(0) == BOATREAL_WTYPE && ((boatReal*)item)->tryMoving(x,y))
         {
             break ;
@@ -1170,6 +1058,15 @@ void myCentralWidget::escapeKeyPressed(void)
 }
 void myCentralWidget::slot_mousePress(QGraphicsSceneMouseEvent* e)
 {
+    qWarning()<<"mouse pressed detected in mcw";
+//    if(this->scene->itemAt(e->scenePos(),this->view->transform()))
+//    {
+//        QGraphicsWidget * item=this->scene->itemAt(e->scenePos(),this->view->transform());
+//        double zv=item->zValue();
+//        qWarning()<<"detected item with zValue="<<zv;
+//        QPoint screenPos=this->view->viewport()->mapToGlobal(view->mapFromScene(this->mainW->getSelectedBoat()->scenePos()));
+//        QToolTip::showText(screenPos,"this is a test");
+//    }
     if(e->button()==Qt::MidButton)
         proj->setCentralPixel(e->scenePos().x(),e->scenePos().y());
     else if ((e->modifiers()!=Qt::NoModifier || selectionTool)
@@ -1183,6 +1080,7 @@ void myCentralWidget::slot_mousePress(QGraphicsSceneMouseEvent* e)
 }
 void myCentralWidget::slot_mouseRelease(QGraphicsSceneMouseEvent* e)
 {
+    qWarning()<<"mouse released detected";
     if(barrierEditMode!=BARRIER_EDIT_NO_EDIT) {
         manage_barrier();
     }

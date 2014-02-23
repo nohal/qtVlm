@@ -10,7 +10,7 @@ CONFIG += qt
 TEMPLATE = app
 TARGET = qtVlm
 DEPENDPATH += .
-INCLUDEPATH += objs \
+INCLUDEPATH += \
     Dialogs \
     Dialogs/ctrl \
     Dialogs/view \

@@ -47,6 +47,10 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "vlmLine.h"
 #include <QStyleFactory>
 #include "AngleUtil.h"
+#include <QGestureEvent>
+#include <QToolTip>
+#include "Terrain.h"
+#include <QScreen>
 
 /**************************/
 /* Init & Clean           */
@@ -58,7 +62,10 @@ POI::POI(const QString &name, const int &type, const double &lat, const double &
     : QGraphicsWidget()
 {
     this->parent = parentWindow;
-    this->owner = main;
+    this->mainWin = main;
+    QScreen * screen=QGuiApplication::primaryScreen();
+    shapeSize=10*screen->physicalDotsPerInch()*0.0393700787; //10mm approx size of a finger
+    squareSize=8;
     this->proj = proj;
     this->name = name;
     setLatitude(lat);
@@ -80,6 +87,7 @@ POI::POI(const QString &name, const int &type, const double &lat, const double &
     this->notSimplificable=false;
     this->connectedPoi=NULL;
     this->lineBetweenPois=NULL;
+    this->boatCircle=NULL;
     this->lineColor=Qt::blue;
     this->lineWidth=2;
     this->colorPilototo=0;
@@ -96,11 +104,11 @@ POI::POI(const QString &name, const int &type, const double &lat, const double &
     this->labelHidden=parentWindow->get_shLab_st();
     this->myLabelHidden=false;
     this->labelTransp=true;
+    this->hasMoved=false;
 //    qWarning() << "Init POI label: " << loxoCap<<" name: "<<name;
 
     WPlon=WPlat=-1;
     isWp=false;
-    isMoving=false;
     VLMBoardIsBusy=false;
 
     setZValue(Z_VALUE_POI);
@@ -136,21 +144,142 @@ POI::POI(const QString &name, const int &type, const double &lat, const double &
     connect(parent,SIGNAL(stopCompassLine()),this,SLOT(slot_abort()));
     if (main->getSelectedBoat() && main->getSelectedBoat()!=NULL && !parent->getPlayer()->getWrong() && main->getSelectedBoat()->get_boatType()==BOAT_VLM)
         connect(this,SIGNAL(wpChanged()),main,SIGNAL(wpChanged()));
-
-    ((MainWindow*)main)->getBoatWP(&WPlat,&WPlon);
+    main->getBoatWP(&WPlat,&WPlon);
     setName(name);
     slot_updateProjection();
     if(!parentWindow->get_shPoi_st())
         show();
     else
         hide();
-    if(Settings::getSetting(enable_Gesture).toString()=="1")
-        this->setAcceptTouchEvents(true);
     if(parent->getSelectedBoat()!=NULL)
     {
         this->slot_WPChanged(parent->getSelectedBoat()->getWPLat(),parent->getSelectedBoat()->getWPLon());
     }
-    this->boatCircle=NULL;
+    if(Settings::getSetting(enable_Gesture).toString()=="1")
+    {
+        this->setAcceptTouchEvents(true);
+        this->grabGesture(Qt::TapAndHoldGesture,Qt::ReceivePartialGestures);
+        this->grabGesture(Qt::TapGesture,Qt::ReceivePartialGestures);
+#if 0
+        this->grabGesture(Qt::SwipeGesture,Qt::ReceivePartialGestures);
+        this->grabGesture(Qt::PanGesture,Qt::ReceivePartialGestures);
+        this->grabGesture(Qt::CustomGesture,Qt::ReceivePartialGestures);
+        this->grabGesture(Qt::PinchGesture,Qt::ReceivePartialGestures);
+#endif
+    }
+    this->setFlag(QGraphicsWidget::ItemIsMovable,true);
+    this->setFlag(QGraphicsWidget::ItemSendsScenePositionChanges,true);
+    this->setFlag(QGraphicsWidget::ItemIsSelectable,true);
+    QTapAndHoldGesture::setTimeout(2000);
+}
+QVariant POI::itemChange(GraphicsItemChange change, const QVariant &value)
+{
+    if(change==ItemEnabledHasChanged)
+        update();
+    if (change!=ItemPositionHasChanged)
+        return QGraphicsWidget::itemChange(change,value);
+    QToolTip::showText(QPoint(),"");
+    double newlon,newlat;
+    QPointF newPos=value.toPointF();
+    proj->screen2mapDouble(newPos.x(),newPos.y(), &newlon, &newlat);
+    setLongitude(newlon);
+    setLatitude(newlat);
+    if(parent->getIsStartingUp()) return QGraphicsWidget::itemChange(change,value);
+    if(route!=NULL && !route->isBusy())
+        emit poiMoving();
+    if(lineBetweenPois!=NULL || boatCircle!=NULL)
+    {
+        manageLineBetweenPois();
+        manageBoatCircle();
+    }
+    hasMoved=true;
+    return QGraphicsWidget::itemChange(change,value);
+}
+void POI::mousePressEvent(QGraphicsSceneMouseEvent *e)
+{
+    qWarning()<<"mouse press detected in POI"<<scenePos()<<e->scenePos()<<pos();
+    e->accept();
+    QPoint screenPos=parent->getView()->viewport()->mapToGlobal(parent->getView()->mapFromScene(scenePos()));
+    QToolTip::showText(screenPos,this->toolTip(),0,QRect(),5000);
+    QGraphicsWidget::mousePressEvent(e);
+    this->setSelected(true);
+    parent->get_terrain()->ungrabGesture(Qt::TapGesture);
+    parent->get_terrain()->ungrabGesture(Qt::TapAndHoldGesture);
+}
+
+void POI::mouseReleaseEvent(QGraphicsSceneMouseEvent *e)
+{
+    qWarning()<<"mouse release detected in POI"<<scenePos()<<e->scenePos()<<pos();
+    if(hasMoved && this->isWp)
+        this->slot_setWP();
+    hasMoved=false;
+    e->ignore();
+    QGraphicsWidget::mouseReleaseEvent(e);
+    this->setSelected(false);
+    parent->get_terrain()->grabGesture(Qt::TapGesture);
+    parent->get_terrain()->grabGesture(Qt::TapAndHoldGesture);
+}
+
+bool POI::sceneEvent(QEvent *event)
+{
+    if (event->type() == QEvent::Gesture)
+    {
+
+        QGesture * gesture;
+        QGestureEvent * gestureEvent=static_cast<QGestureEvent*>(event);
+        qWarning()<<"gesture detected in POI";
+        gesture=gestureEvent->gesture(Qt::PanGesture);
+        if(gesture)
+        {
+            gestureEvent->setAccepted(gesture,true);
+            gesture->setGestureCancelPolicy(QGesture::CancelAllInContext);
+            qWarning()<<"pan gesture in POI"<<gesture->state();
+        }
+        gesture=gestureEvent->gesture(Qt::SwipeGesture);
+        if(gesture)
+        {
+            gestureEvent->setAccepted(gesture,true);
+            gesture->setGestureCancelPolicy(QGesture::CancelAllInContext);
+            qWarning()<<"swipe gesture in POI"<<gesture->state();
+        }
+        gesture=gestureEvent->gesture(Qt::TapGesture);
+        if(gesture)
+        {
+            gestureEvent->setAccepted(gesture,true);
+            gesture->setGestureCancelPolicy(QGesture::CancelAllInContext);
+            qWarning()<<"tap gesture in POI"<<gesture->state();
+        }
+        gesture=gestureEvent->gesture(Qt::CustomGesture);
+        if(gesture)
+        {
+            gestureEvent->setAccepted(gesture,true);
+            gesture->setGestureCancelPolicy(QGesture::CancelAllInContext);
+            qWarning()<<"custom gesture in POI"<<gesture->state();
+        }
+        gesture=gestureEvent->gesture(Qt::PinchGesture);
+        if(gesture)
+        {
+            gestureEvent->setAccepted(gesture,true);
+            gesture->setGestureCancelPolicy(QGesture::CancelAllInContext);
+            qWarning()<<"pinch gesture in POI"<<gesture->state();
+        }
+        gesture=gestureEvent->gesture(Qt::TapAndHoldGesture);
+        if (gesture)
+        {
+            gestureEvent->setAccepted(gesture,true);
+            gesture->setGestureCancelPolicy(QGesture::CancelAllInContext);
+            qWarning()<<"TapAndHoldGesture detected in poi"<<name<<gesture->state();
+            QTapAndHoldGesture *p=static_cast<QTapAndHoldGesture*>(gesture);
+            if(p->state()==Qt::GestureFinished && this->isSelected()/*due to a bug in qt-android*/)
+            {
+                if(!hasMoved)
+                    this->showContextMenu(p->position().x(),p->position().y());
+            }
+        }
+        event->accept();
+        return QGraphicsWidget::sceneEvent(event);
+    }
+    return QGraphicsWidget::sceneEvent(event);
 }
 
 POI::~POI()
@@ -189,13 +318,13 @@ void POI::rmSignal(void)
 {
     disconnect(this,SIGNAL(addPOI_list(POI*)),parent,SLOT(slot_addPOI_list(POI*)));
     disconnect(this,SIGNAL(delPOI_list(POI*)),parent,SLOT(slot_delPOI_list(POI*)));
-    disconnect(this,SIGNAL(chgWP(double,double,double)),owner,SLOT(slotChgWP(double,double,double)));
+    disconnect(this,SIGNAL(chgWP(double,double,double)),mainWin,SLOT(slotChgWP(double,double,double)));
 
-    disconnect(this,SIGNAL(setGribDate(time_t)),owner,SLOT(slotSetGribDate(time_t)));
+    disconnect(this,SIGNAL(setGribDate(time_t)),mainWin,SLOT(slotSetGribDate(time_t)));
 
-    disconnect(owner,SIGNAL(paramVLMChanged()),this,SLOT(slot_paramChanged()));
-    disconnect(owner,SIGNAL(WPChanged(double,double)),this,SLOT(slot_WPChanged(double,double)));
-    disconnect(owner,SIGNAL(boatHasUpdated(boat*)),this,SLOT(slot_updateTip()));
+    disconnect(mainWin,SIGNAL(paramVLMChanged()),this,SLOT(slot_paramChanged()));
+    disconnect(mainWin,SIGNAL(WPChanged(double,double)),this,SLOT(slot_WPChanged(double,double)));
+    disconnect(mainWin,SIGNAL(boatHasUpdated(boat*)),this,SLOT(slot_updateTip()));
 
 }
 
@@ -229,7 +358,7 @@ void POI::createPopUpMenu(void)
     ac_compassLine = new QAction(tr("Tirer un cap"),popup);
     popup->addAction(ac_compassLine);
     connect(ac_compassLine,SIGNAL(triggered()),this,SLOT(slotCompassLine()));
-    connect(this,SIGNAL(compassLine(double,double)),owner,SLOT(slotCompassLineForced(double,double)));
+    connect(this,SIGNAL(compassLine(double,double)),mainWin,SLOT(slotCompassLineForced(double,double)));
 
     ac_twaLine = new QAction(tr("Tracer une estime TWA"),popup);
     popup->addAction(ac_twaLine);
@@ -358,129 +487,16 @@ void POI::createPopUpMenu(void)
 /* Events                 */
 /**************************/
 
-void POI::mousePressEvent(QGraphicsSceneMouseEvent * e)
-{
-    if (e->button() == Qt::LeftButton && e->modifiers()==Qt::ShiftModifier)
-    {
-         if(route!=NULL)
-             if(route->getFrozen()||route->isBusy()) return;
-         if(VLMBoardIsBusy && this->isWp) return;
-         previousLon=lon;
-         previousLat=lat;
-         this->partOfTwa=false;
-         isMoving=true;
-//         if(route!=NULL)
-//            this->isPartOfBvmg=route->isPartOfBvmg(this);
-//         else
-//            this->isPartOfBvmg=false;
-         if(route!=NULL)
-             route->setFastVmgCalc(true);
-         mouse_x=e->scenePos().x();
-         mouse_y=e->scenePos().y();
-         setCursor(Qt::ClosedHandCursor);
-         update();
-     }
-    else if(!((MainWindow*)owner)->get_selPOI_instruction())
-        e->ignore();
-}
-
-bool POI::tryMoving(int x, int y)
-{
-    if(isMoving)
-    {
-        int new_x=this->x()+(x-mouse_x);
-        int new_y=this->y()+(y-mouse_y);
-
-        setPos(new_x,new_y);
-        mouse_x=x;
-        mouse_y=y;
-
-
-        if(route!=NULL &&!route->isBusy())
-        {
-            double newlon,newlat;
-            new_x=scenePos().x();
-            new_y=scenePos().y()+height/2;
-            proj->screen2map(new_x,new_y, &newlon, &newlat);
-            setLongitude(newlon);
-            setLatitude(newlat);
-            Util::computePos(proj,lat, lon, &pi, &pj);
-            emit poiMoving();
-        }
-        if(lineBetweenPois!=NULL || boatCircle!=NULL)
-        {
-            double newlon,newlat;
-            new_x=scenePos().x();
-            new_y=scenePos().y()+height/2;
-            proj->screen2map(new_x,new_y, &newlon, &newlat);
-            setLongitude(newlon);
-            setLatitude(newlat);
-            Util::computePos(proj,lat, lon, &pi, &pj);
-            manageLineBetweenPois();
-            manageBoatCircle();
-        }
-        return true;
-    }
-    return false;
-}
-
-void POI::mouseReleaseEvent(QGraphicsSceneMouseEvent * e)
-{
-    if(isMoving)
-    {
-        double newlon,newlat;
-        if(e->modifiers()==Qt::ShiftModifier)
-        {
-            int new_x=scenePos().x();
-            int new_y=scenePos().y()+height/2;
-            proj->screen2map(new_x,new_y, &newlon, &newlat);
-        }
-        else
-        {
-            newlon=previousLon;
-            newlat=previousLat;
-        }
-        setLongitude(newlon);
-        setLatitude(newlat);
-        Util::computePos(proj,lat, lon, &pi, &pj);
-        setPos(pi, pj-height/2);
-        isMoving=false;
-        setCursor(Qt::PointingHandCursor);
-        setName(this->name);
-        update();
-        if(isWp && e->modifiers()==Qt::ShiftModifier) slot_setWP();
-        if(route!=NULL)
-        {
-            route->setFastVmgCalc(false);
-            route->slot_recalculate();
-        }
-        manageLineBetweenPois();
-        manageBoatCircle();
-        return;
-    }
-
-    if(e->pos().x() < 0 || e->pos().x()>width || e->pos().y() < 0 || e->pos().y() > height)
-    {
-        e->ignore();
-        return;
-    }
-    if (e->button() == Qt::LeftButton)
-    {
-        emit clearSelection();
-        if(((MainWindow*)owner)->get_selPOI_instruction())
-            emit selectPOI(this);
-        else
-        {
-//            if(route!=NULL)
-//                if(route->getFrozen()) return;
-//            emit editPOI(this);
-            e->ignore();
-        }
-    }
-}
 
 void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
 {
+    this->showContextMenu(e->scenePos().x(),e->scenePos().y());
+}
+
+void POI::showContextMenu(const double &x, const double &y)
+{
+    QToolTip::showText(QPoint(),"");
+    this->setSelected(false);
     bool onlyLineOff = false;
     if(route==NULL || route->getLastPoi()==this || route->getFrozen())
     {
@@ -501,7 +517,7 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
     }
 
 
-    switch(parent->getCompassMode(e->scenePos().x(),e->scenePos().y()))
+    switch(parent->getCompassMode(x,y))
     {
         case 0:
             /* not showing menu line, default text*/
@@ -521,7 +537,7 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
             break;
     }
 
-    if(onlyLineOff || ((MainWindow*)owner)->get_selPOI_instruction()) /* ie only show the Arret du cap line */
+    if(onlyLineOff || ((MainWindow*)mainWin)->get_selPOI_instruction()) /* ie only show the Arret du cap line */
     {
         ac_setWp->setEnabled(false);
         ac_setGribDate->setEnabled(false);
@@ -540,7 +556,7 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
     }
     else
     {
-        ac_setWp->setEnabled(!((MainWindow*)owner)->getBoatLockStatus());
+        ac_setWp->setEnabled(!((MainWindow*)mainWin)->getBoatLockStatus());
         ac_setGribDate->setEnabled(useTstamp || useRouteTstamp);
         ac_edit->setEnabled(true);
         ac_delPoi->setEnabled(true);
@@ -994,7 +1010,7 @@ void POI::slot_optimizeRoute()
 void POI::slotCompassLine()
 {
     double i1,j1;
-    proj->map2screenDouble(lon,this->lat,&i1,&j1);
+    proj->map2screenDouble(lon,lat,&i1,&j1);
     emit compassLine(i1,j1);
 }
 void POI::slot_setHorn()
@@ -1012,12 +1028,18 @@ void POI::slot_setHorn()
 
 void POI::slot_updateProjection()
 {
-    Util::computePos(proj,lat, lon, &pi, &pj);
-    int dy = height/2;
-    setPos(pi, pj-dy);
-//    if(lineBetweenPois!=NULL)
-//        manageLineBetweenPois();
+    double X,Y;
+    proj->map2screenDouble(lon,lat,&X,&Y);
+    mySetPos(X,Y);
 }
+void POI::mySetPos(const double &X, const double &Y)
+{
+    this->setFlag(QGraphicsWidget::ItemSendsScenePositionChanges,false);
+    this->setFlag(QGraphicsWidget::ItemSendsGeometryChanges,false);
+    setPos(X, Y);
+    this->setFlag(QGraphicsWidget::ItemSendsScenePositionChanges,true);
+}
+
 void POI::slot_updateTip()
 {
     if(route==NULL) setTip("");
@@ -1068,7 +1090,20 @@ void POI::slot_setWP()
         return;
     }
     VLMBoardIsBusy=true;
-    emit chgWP(lat,lon,wph);
+    if(parent->getSelectedBoat())
+    {
+        if(parent->getSelectedBoat()->get_boatType()==BOAT_VLM)
+        {
+            boatVLM * b=(boatVLM *)parent->getSelectedBoat();
+            connect (b,SIGNAL(hasFinishedUpdating()),this,SLOT(slot_allowToMove()));
+            this->setFlag(QGraphicsWidget::ItemIsMovable,false);
+        }
+        emit chgWP(lat,lon,wph);
+    }
+}
+void POI::slot_allowToMove()
+{
+    this->setFlag(QGraphicsWidget::ItemIsMovable,true);
 }
 
 void POI::slot_setGribDate()
@@ -1280,11 +1315,11 @@ void POI::slot_finePosit(bool silent)
         if (route->getHas_eta())
         {
             tm.setTime_t(route->getEta());
-            previousMe=new POI(tr("ETA du prochain POI: ")+tm.toString("dd MMM-hh:mm"),0,savedLat,savedLon,this->proj,this->owner,this->parent,0,0,false);
+            previousMe=new POI(tr("ETA du prochain POI: ")+tm.toString("dd MMM-hh:mm"),0,savedLat,savedLon,this->proj,this->mainWin,this->parent,0,0,false);
         }
         else
             previousMe=new POI(tr("Dist. restante du prochain POI: ")+r.sprintf("%.2f milles",route->getRemain()),
-                               0,savedLat,savedLon,this->proj,this->owner,this->parent,0,0,false);
+                               0,savedLat,savedLon,this->proj,this->mainWin,this->parent,0,0,false);
         parent->slot_addPOI_list(previousMe);
     }
 
@@ -1298,20 +1333,20 @@ void POI::slot_finePosit(bool silent)
 
     /* Note that if the route did not reach the target, then getEta
      * returns the last date of the grib. */
-#define TRYPOINT(P) do {                                \
-        if ((P).lat > 88)        (P).lat = 88;          \
-        else if ((P).lat < -88)  (P).lat = -88;         \
-        setLongitude ((P).lon);                         \
-        setLatitude ((P).lat);                          \
-        route->slot_recalculate();                      \
-        (P).eta     = route->getEta();                  \
-        (P).remain  = route->getRemain();               \
-        (P).arrived = route->getHas_eta();              \
-        (P).reached = useRouteTstamp;                   \
-        Util::computePos (proj, lat, lon, &pi, &pj);    \
-        setPos (pi, pj-height/2);                       \
-        update();                                       \
-        QApplication::processEvents();                  \
+#define TRYPOINT(P) do {                                                    \
+        if ((P).lat > 88)        (P).lat = 88;                              \
+        else if ((P).lat < -88)  (P).lat = -88;                             \
+        setLongitude ((P).lon);                                             \
+        setLatitude ((P).lat);                                              \
+        route->slot_recalculate();                                          \
+        (P).eta     = route->getEta();                                      \
+        (P).remain  = route->getRemain();                                   \
+        (P).arrived = route->getHas_eta();                                  \
+        (P).reached = useRouteTstamp;                                       \
+        double X,Y;                                                         \
+        proj->map2screenDouble(lon, lat, &X, &Y);                           \
+        mySetPos (X,Y);                                                       \
+        QApplication::processEvents();                                      \
     } while (0)
 
 #define UPDATEBEST  do {                                                \
@@ -1325,7 +1360,7 @@ void POI::slot_finePosit(bool silent)
                         + QString().sprintf(" (%+.3f milles)",simplex[0].remain), \
                         0,                                              \
                         simplex[0].lat, simplex[0].lon,                 \
-                        this->proj, this->owner, this->parent, 0, 0, false); \
+                        this->proj, this->mainWin, this->parent, 0, 0, false); \
         parent->slot_addPOI_list (best);                                \
     } while (0)
 
@@ -1514,9 +1549,9 @@ void POI::slot_finePosit(bool silent)
         setLongitude(simplex[0].lon);
         setLatitude(simplex[0].lat);
     }
-    Util::computePos(proj,lat, lon, &pi, &pj);
-    setPos(pi, pj-height/2);
-    update();
+    double X,Y;
+    proj->map2screenDouble(lon,lat,&X,&Y);
+    mySetPos(X,Y);
     route->setOptimizing(false);
     route->setOptimizingPOI(false);
     route->setFastVmgCalc(false);
@@ -1536,9 +1571,8 @@ void POI::slot_finePosit(bool silent)
         qWarning()<<"wrong optimisation, restoring previous POI position";
         lon=savedLon;
         lat=savedLat;
-        Util::computePos(proj,lat, lon, &pi, &pj);
-        setPos(pi, pj-height/2);
-        update();
+        proj->screen2mapDouble(lon,lat,&X,&Y);
+        mySetPos(X,Y);
         route->slot_recalculate();
     }
     if(isWp && !silent) slot_setWP();
@@ -1547,7 +1581,7 @@ void POI::slot_finePosit(bool silent)
 }
 
 /***************************/
-/* Paint & other qGraphics */
+/* Paint & other Graphics */
 /***************************/
 
 void POI::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
@@ -1558,35 +1592,44 @@ void POI::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
         myFont.setBold(true);
     this->setFont(myFont);
     QFontMetrics fm(font());
-    width = fm.width(my_str) + 10 +2;
-    height = qMax(fm.height()+2,10);
-    int dy = height/2;
+    width = fm.width(my_str) +2;
+    height = fm.height()+1;
     if(!labelHidden && !myLabelHidden)
     {
+        if (this->isSelected())
+        {
+            QPen ps(Qt::red);
+            ps.setWidthF(3.0);
+            pnt->setBrush(Qt::NoBrush);
+            pnt->setPen(ps);
+            pnt->drawEllipse(QPoint(0,0),shapeSize,shapeSize);
+        }
+        QColor c(255,0,0,60);
         if(route==NULL)
-            pnt->fillRect(9,0, width-10,height-1, QBrush(bgcolor));
+            c=bgcolor;
         else
         {
             int alpha=160;
             if(!this->labelTransp)
                 alpha=255;
-
             switch (this->navMode)
             {
             case 0:
-                pnt->fillRect(9,0, width-10,height-1, QBrush(QColor(147,255,147,alpha)));
+                c=QColor(147,255,147,alpha);
                 break;
             case 1:
-                pnt->fillRect(9,0, width-10,height-1, QBrush(QColor(168,226,255,alpha)));
+                c=QColor(168,226,255,alpha);
                 break;
             case 2:
-                pnt->fillRect(9,0, width-10,height-1, QBrush(QColor(255,168,198,alpha)));
+                c=QColor(255,168,198,alpha);
                 break;
             default:
-                pnt->fillRect(9,0, width-10,height-1, QBrush(QColor(255,0,0,60)));
+                c=QColor(255,0,0,60);
                 break;
             }
         }
+        QPoint labelPos(squareSize/2.0+2,-height/2.0);
+        pnt->fillRect(QRect(labelPos, QSize(width, height)), QBrush(c));
         pnt->setFont(font());
         QPen pe=pnt->pen();
         if(this->notSimplificable)
@@ -1594,23 +1637,15 @@ void POI::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
         else
             pe.setColor(Qt::black);
         pnt->setPen(pe);
-        pnt->drawText(10,fm.height()-2,my_str);
+        pnt->drawText(QRect(labelPos, QSize(width, height)),Qt::AlignVCenter|Qt::AlignHCenter,my_str);
+        pe.setColor(QColor(60,60,60));
+        pe.setWidth(1);
+        pnt->setPen(pe);
+        pnt->drawRect(QRect(labelPos,QSize(width,height)));
     }
     QColor myColor;
     if(isWp)
-    {
         myColor=mwpColor;
-#if 0
-        if(parent->getSelectedBoat()->getWPHd()!=wph)
-        {
-            //qWarning()<<"wp_at"<<parent->getSelectedBoat()->getWPHd()<<wph;
-            if(myColor==Qt::red)
-                myColor=QColor(255,75,156);
-            else
-                myColor=Qt::red;
-        }
-#endif
-    }
     else
     {
         switch(type)
@@ -1628,50 +1663,50 @@ void POI::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
                 myColor=QColor(Qt::white);
                 break;
          }
-        //qWarning()<<"colorpilototo="<<this->colorPilototo;
-        QColor pColor;
         switch (this->colorPilototo)
         {
-        case 1:
-            pColor=QColor(0,250,0);
-            break;
-        case 2:
-            pColor=QColor(0,220,0);
-            break;
-        case 3:
-            pColor=QColor(0,190,0);
-            break;
-        case 4:
-            pColor=QColor(0,160,0);
-            break;
-        case 5:
-            pColor=QColor(0,130,0);
-            break;
-        default:
-            pColor=myColor;
-            break;
+            case 1:
+                myColor=QColor(0,250,0);
+                break;
+            case 2:
+                myColor=QColor(0,220,0);
+                break;
+            case 3:
+                myColor=QColor(0,190,0);
+                break;
+            case 4:
+                myColor=QColor(0,160,0);
+                break;
+            case 5:
+                myColor=QColor(0,130,0);
+                break;
         }
-        myColor=pColor;
     }
-    QPen pen(myColor);
-    pen.setWidth(4);
-    pnt->setPen(pen);
     if(!myLabelHidden)
-        pnt->fillRect(0,dy-3,7,7, QBrush(myColor));
-    pen = QPen(QColor(60,60,60));
-    pen.setWidth(1);
-    pnt->setPen(pen);
-    if(!labelHidden && !myLabelHidden)
-        pnt->drawRect(9,0,width-10,height-1);
+        pnt->fillRect(-squareSize/2.0,-squareSize/2.0,squareSize,squareSize, QBrush(myColor));
+    //pnt->drawRect(boundingRect());
 }
 
 QPainterPath POI::shape() const
 {    
     QPainterPath path;
+    path.moveTo(0,0);
     if(this->myLabelHidden)
+    {
         path.addRect(0,0,0,0);
+        return path;
+    }
+#ifdef __ANDROID__
+    path.addEllipse(0,0,shapeSize,shapeSize);
+#else
+    if(isSelected())
+    {
+        path.addEllipse(0,0,shapeSize,shapeSize);
+    }
     else
-        path.addRect(0,0,width,height);
+        path.addRect(-squareSize/2.0-1,-squareSize/2.0-1,squareSize+2,squareSize+2);
+#endif
+    path.addRect(squareSize/2.0+2,-height/2.0-2,width+4,height+4);
     return path;
 }
 
@@ -1679,8 +1714,12 @@ QRectF POI::boundingRect() const
 {
     if(this->myLabelHidden)
         return QRectF(0,0,0,0);
-    else
-        return QRectF(0,0,width,height);
+    QRectF R1;
+    int sh=shapeSize+4;
+    R1=QRectF(-sh,-sh,sh*2,sh*2);
+    //    R1=QRectF(-squareSize/2.0-1,-squareSize/2.0-1,squareSize+2,squareSize+2);
+    QRectF R2=QRectF(squareSize/2.0+2,-height/2.0-2,width+4,height+4);
+    return R1.united(R2);
 }
 void POI::slot_pilote()
 {

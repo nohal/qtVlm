@@ -19,9 +19,9 @@ Magnifier::Magnifier(myCentralWidget *parent)
     this->parent=parent;
     Projection * proj=parent->getProj();
     drawMask();
-    this->setFlags(QGraphicsItem::ItemIsMovable |
-                   QGraphicsItem::ItemIgnoresTransformations |
-                   QGraphicsItem::ItemSendsScenePositionChanges);
+    this->setFlags(QGraphicsWidget::ItemIsMovable |
+                   QGraphicsWidget::ItemIgnoresTransformations |
+                   QGraphicsWidget::ItemSendsScenePositionChanges);
     QGraphicsDropShadowEffect * effect=new QGraphicsDropShadowEffect();
     QColor color=effect->color();
     color.setAlpha(100);
@@ -116,7 +116,7 @@ void Magnifier::contextMenuEvent(QGraphicsSceneContextMenuEvent *)
 }
 QVariant Magnifier::itemChange(GraphicsItemChange change, const QVariant &value)
 {
-    if(change==QGraphicsItem::ItemPositionHasChanged)
+    if(change==QGraphicsWidget::ItemPositionHasChanged)
     {
         double X=this->pos().x();
         double Y=this->pos().y();

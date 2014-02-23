@@ -165,6 +165,7 @@ int main(int argc, char *argv[])
 //        p.setColor(QPalette::WindowText, QColor(255,255,255));
 //        app->setPalette(p);
 //    }
+    //qApp->setAttribute(Qt::AA_SynthesizeMouseForUnhandledTouchEvents,false);
     double fontInc=Settings::getSetting(defaultFontSizeInc).toDouble();
     if(Settings::getSetting(defaultFontName).toString()=="-1")
         Settings::setSetting(defaultFontName,Settings::getSettingDefault(defaultFontName));

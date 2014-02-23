@@ -26,7 +26,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #define BARRIER_H
 
 #include <QGraphicsScene>
-#include <QGraphicsItem>
+#include <QGraphicsRectItem>
 #include <QList>
 #include <QMenu>
 #include <QColor>
@@ -85,7 +85,7 @@ class BarrierPoint: public QObject, public QGraphicsRectItem {
 
         Barrier * barrier;
 
-        //QVariant itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value);
+        //QVariant itemChange(QGraphicsWidget::GraphicsItemChange change, const QVariant &value);
 
         /*** move management **/
         bool isMoving;

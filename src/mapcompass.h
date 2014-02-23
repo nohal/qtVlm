@@ -35,10 +35,9 @@ class mapCompass : public QGraphicsWidget
 { Q_OBJECT
     public:
         mapCompass(Projection * proj,MainWindow * main,myCentralWidget * parent);
-        double getWindAngle(void) { return wind_angle; }
-        bool tryMoving(int x, int y);
         bool hasCompassLine(void) { return drawCompassLine; }
         void compassCenter(double lon, double lat);
+        void updateCompassLineLabels(int x, int y);
         ~mapCompass();
 
     signals:
@@ -58,10 +57,9 @@ class mapCompass : public QGraphicsWidget
 
         void mousePressEvent(QGraphicsSceneMouseEvent *);
         void mouseReleaseEvent(QGraphicsSceneMouseEvent *e);
-        void slotMouseDblClicked(QGraphicsSceneMouseEvent * e);
+        QVariant itemChange(GraphicsItemChange change, const QVariant &value);
         QPainterPath shape() const;
         QRectF boundingRect() const;
-        //void contextMenuEvent(QGraphicsSceneContextMenuEvent * event);
 
     private:
         void setBr();
@@ -88,10 +86,10 @@ class mapCompass : public QGraphicsWidget
         orthoSegment * compassLine;
         QGraphicsTextItem * hdg_label;
         QGraphicsTextItem * windAngle_label;
-        void updateCompassLineLabels(int x, int y);
         bool polarModeVac;
         QRectF boundingR;
-        bool busy;
+        void mySetPos();
+        bool clickInside;
 };
 Q_DECLARE_TYPEINFO(mapCompass,Q_MOVABLE_TYPE);
 

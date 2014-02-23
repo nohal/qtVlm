@@ -39,16 +39,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "MainWindow.h"
 #include "Magnifier.h"
 #include "DataManager.h"
+#include "MyView.h"
 
 #include <qdatetime.h>
 
 
 /* Z value according to type */
 #define Z_VALUE_TERRE      0
-#define Z_VALUE_LOADIMG    0.4
-#define Z_VALUE_FAXMETEO   0.5
-#define Z_VALUE_ROUTAGE    1
-#define Z_VALUE_BOATCIRCLE 1.2
+#define Z_VALUE_LOADIMG    1
+#define Z_VALUE_FAXMETEO   1.1
+#define Z_VALUE_ROUTAGE    1.2
+#define Z_VALUE_BOATCIRCLE 1.3
 #define Z_VALUE_OPP        2
 #define Z_VALUE_GATE       3
 #define Z_VALUE_NEXT_GATE  3.5
@@ -84,8 +85,9 @@ class myScene : public QGraphicsScene
 { Q_OBJECT
     public:
         myScene(myCentralWidget * parent = 0);
-        void setPinching(const bool &b){this->pinching=b;}
-        bool getPinching() const {return this->pinching;}
+//        void setPinching(const bool &b){this->pinching=b;}
+//        bool getPinching() const {return this->pinching;}
+        void setView(MyView * v){this->view=v;}
 
     protected:
         void keyPressEvent (QKeyEvent *e);
@@ -93,7 +95,6 @@ class myScene : public QGraphicsScene
         void mouseMoveEvent (QGraphicsSceneMouseEvent * event);
         void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* e);
         void wheelEvent(QGraphicsSceneWheelEvent* e);
-        bool event(QEvent * event);
     signals:
         void paramVLMChanged();
         void eraseWay();
@@ -101,13 +102,13 @@ class myScene : public QGraphicsScene
         void wheelTimerElapsed();
     private:
         myCentralWidget * parent;
+        MyView * view;
         bool hasWay;
         int  wheelStrokes;
         QTimer *wheelTimer;
         int wheelPosX;
         int wheelPosY;
         bool wheelCenter;
-        bool pinching;
 };
 
 class myCentralWidget : public QWidget
@@ -205,8 +206,8 @@ class myCentralWidget : public QWidget
         void fileInfo_GRIB(Grib * grib);
 
         /* events */
-        void mouseMove(int x, int y, QGraphicsItem * item);
-        void mouseDoubleClick(int x, int y, QGraphicsItem * item);
+        void mouseMove(int x, int y, QGraphicsItem *item);
+        void mouseDoubleClick(int x, int y, QGraphicsItem *item);
         void keyModif(QKeyEvent *e);
         void escapeKeyPressed(void);
         bool getAboutToQuit(void){return aboutToQuit;}
