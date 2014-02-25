@@ -1685,6 +1685,7 @@ void POI::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
     if(!myLabelHidden)
         pnt->fillRect(-squareSize/2.0,-squareSize/2.0,squareSize,squareSize, QBrush(myColor));
     //pnt->drawRect(boundingRect());
+    //pnt->drawPath(shape());
 }
 
 QPainterPath POI::shape() const
@@ -1696,12 +1697,14 @@ QPainterPath POI::shape() const
         path.addRect(0,0,0,0);
         return path;
     }
+    int sh=shapeSize+4;
+    QRectF R1=QRectF(-sh,-sh,sh*2,sh*2);
 #ifdef __ANDROID__
-    path.addEllipse(0,0,shapeSize,shapeSize);
+    path.addEllipse(R1);
 #else
     if(isSelected())
     {
-        path.addEllipse(0,0,shapeSize,shapeSize);
+        path.addEllipse(R1);
     }
     else
         path.addRect(-squareSize/2.0-1,-squareSize/2.0-1,squareSize+2,squareSize+2);
