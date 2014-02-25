@@ -64,7 +64,12 @@ POI::POI(const QString &name, const int &type, const double &lat, const double &
     this->parent = parentWindow;
     this->mainWin = main;
     QScreen * screen=QGuiApplication::primaryScreen();
-    shapeSize=10*screen->physicalDotsPerInch()*0.0393700787; //10mm approx size of a finger
+#ifdef __ANDROID__
+    int finger=6;
+#else
+    int finger =10;
+#endif
+    shapeSize=finger*screen->physicalDotsPerInch()*0.0393700787; //10mm approx size of a finger
     squareSize=8;
     this->proj = proj;
     this->name = name;

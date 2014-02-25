@@ -202,7 +202,7 @@ bool Terrain::sceneEvent(QEvent *event)
         {
             qWarning()<<"PinchGesture detected in terrain"<<p1->state();
             QPinchGesture *pinch = static_cast<QPinchGesture *>(p1);
-            QPointF pinchCenter=pinch->centerPoint();
+            QPointF pinchCenter=centralWidget->mapFromGlobal(pinch->centerPoint().toPoint());
             if(pinch->state()==Qt::GestureStarted)
             {
                 centralWidget->slot_resetGestures();

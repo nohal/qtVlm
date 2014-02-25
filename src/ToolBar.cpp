@@ -122,7 +122,6 @@ ToolBar::ToolBar(MainWindow *mainWindow)
                               tr("Grib drawing config"),appFolder.value("img")+"wind.png",gribToolBar);
     acGrib_dialog->setCheckable(true);
     cbGribStep = new QComboBox(gribToolBar);
-    cbGribStep->setSizeAdjustPolicy(QComboBox::AdjustToContents);
     cbGribStep->setFont(font);
     cbGribStep->addItem(tr("5 m"),300);
     cbGribStep->addItem(tr("15 m"),900);
@@ -132,6 +131,7 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     cbGribStep->addItem(tr("3 h"),10800);
     cbGribStep->addItem(tr("6 h"),21600);
     cbGribStep->addItem(tr("12 h"),43200);
+    cbGribStep->setSizeAdjustPolicy(QComboBox::AdjustToContents);
     //FontManagement::setFontDialog(cbGribStep);
     cbGribStep->setCurrentIndex(Settings::getSetting(gribDateStep).toInt());
 
@@ -150,10 +150,12 @@ ToolBar::ToolBar(MainWindow *mainWindow)
 
     /* Map toolBar */
 
+#ifndef __ANDROID__
     acMap_Zoom_In = init_Action(tr("Augmenter l'echelle de la carte"), tr(""),
                               tr("Augmenter l'echelle de la carte"), appFolder.value("img")+"viewmag+.png",mapToolBar);
     acMap_Zoom_Out = init_Action( tr("Diminuer l'echelle de la carte"), tr(""),
                                tr("Diminuer l'echelle de la carte"), appFolder.value("img")+"viewmag-.png",mapToolBar);
+#endif
     acMap_Zoom_Sel = init_Action(tr("Zoom (selection ou fichier Grib)"),
                                tr("Ctrl+Z"),tr("Zoomer sur la zone selectionnee ou sur la surface du fichier Grib"),
                                appFolder.value("img")+"viewmagfit.png",mapToolBar);
@@ -164,8 +166,10 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     selectionMode->setCheckable(true);
     magnify = init_Action(tr("Loupe"),tr(""),tr(""),appFolder.value("img")+"magnify.png",mapToolBar);
     magnify->setCheckable(true);
+#ifndef __ANDROID__
     mapToolBar->addAction(acMap_Zoom_In);
     mapToolBar->addAction(acMap_Zoom_Out);
+#endif
     mapToolBar->addAction(acMap_Zoom_Sel);
     mapToolBar->addAction(acMap_Zoom_All);
     mapToolBar->addSeparator();
@@ -179,10 +183,12 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     spnEstime->setMaximum(999);
     spnEstime->setMinimum(1);
     spnEstime->setAlignment(Qt::AlignRight);
+    spnEstime->setValue(999);
     cbEstime=new QComboBox(estimeToolBar);
     cbEstime->addItem(tr("mins"));
     cbEstime->addItem(tr("vacs"));
     cbEstime->addItem(tr("NM"));
+    cbEstime->setSizeAdjustPolicy(QComboBox::AdjustToContents);
     slot_loadEstimeParam();
     chkEstime = new QCheckBox(estimeToolBar);
     chkEstime->setToolTip(tr("Si cette option est cochee<br>l'estime calcule la vitesse du bateau<br>a la prochaine vac.<br>Sinon elle utilise la vitesse du bateau<br>telle que donnee par VLM"));
@@ -233,8 +239,10 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     connect(acGrib_play,SIGNAL(triggered()),this,SLOT(slot_gribPlay()));
 
     /* Map ToolBar */
+#ifndef __ANDROID__
     connect(acMap_Zoom_In, SIGNAL(triggered()),centralWidget,  SLOT(slot_Zoom_In()));
     connect(acMap_Zoom_Out, SIGNAL(triggered()),centralWidget,  SLOT(slot_Zoom_Out()));
+#endif
     connect(acMap_Zoom_Sel, SIGNAL(triggered()),centralWidget,  SLOT(slot_Zoom_Sel()));
     connect(acMap_Zoom_All, SIGNAL(triggered()),centralWidget,  SLOT(slot_Zoom_All()));
     connect(selectionMode,SIGNAL(triggered()),centralWidget,SLOT(slot_selectionTool()));
