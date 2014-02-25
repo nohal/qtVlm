@@ -56,7 +56,7 @@ DialogRealBoatPosition::DialogRealBoatPosition(myCentralWidget * parent) : QDial
 }
 void DialogRealBoatPosition::slot_screenResize()
 {
-    Util::setWidgetSize(this,this->sizeHint());
+    Util::setWidgetSize(this);
 }
 void DialogRealBoatPosition::formatLatLon()
 {

@@ -106,7 +106,7 @@ class MainWindow: public MainWindowInterface
         QString pos2String(const int &type,const double &value);
         QString formatLongitude(const double &x);
         QString formatLatitude(const double &y);
-        void setFontDialog(QWidget * o);
+        void setFontDialog(QObject * o);
         void manageWPDialog(BoatInterface *myBoat, QObject *boardPlugin);
 public slots:
         void slot_POI_input();

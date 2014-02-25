@@ -612,6 +612,13 @@ MainWindow::MainWindow(QWidget *parent)
         qApp->setPalette(p);
         qApp->setStyleSheet(customStyle);
     }
+    double fontInc=Settings::getSetting(defaultFontSizeInc).toDouble();
+    if(Settings::getSetting(defaultFontName).toString()=="-1")
+        Settings::setSetting(defaultFontName,Settings::getSettingDefault(defaultFontName));
+    QFont def(Settings::getSetting(defaultFontName).toString());
+    double fontSize=8.0+fontInc;
+    def.setPointSizeF(fontSize);
+    QApplication::setFont(def);
 #endif
 #endif
     isStartingUp=true;
@@ -713,7 +720,7 @@ void MainWindow::continueSetup()
     toolBar = new ToolBar(this);
     my_centralWidget->set_toolBar(toolBar);
 
-    Util::setFontDialog(menuBar);
+    Util::setFontObject(menuBar);
 
     //--------------------------------------------------
     progress->newStep(25,tr("Creating context menus"));
@@ -797,7 +804,7 @@ void MainWindow::continueSetup()
             closeProgress();
             my_centralWidget->emitUpdateRoute(NULL);
         }
-        Util::setFontDialog(menuBar);
+        Util::setFontObject(menuBar);
         return;
     }
 //********************************************
@@ -850,7 +857,7 @@ void MainWindow::continueSetup()
     }
 
     closeProgress();
-    Util::setFontDialog(menuBar);
+    Util::setFontObject(menuBar);
 }
 
 QString MainWindow::get_OSVersion(void) {
@@ -1103,7 +1110,7 @@ MainWindow::~MainWindow()
 QMenu * MainWindow::createPopupMenu(void) {
 
     QMenu * menu = new QMenu;
-    Util::setFontDialog(menu);
+    Util::setFontObject(menu);
     int entry=0;
 
     if(use_old_board)
@@ -3209,8 +3216,8 @@ QPalette MainWindow::getOriginalPalette() const
     return originalPalette;
 }
 
-void MainWindow::setFontDialog(QWidget * o) {
-    Util::setFontDialog(o);
+void MainWindow::setFontDialog(QObject * o) {
+    Util::setFontObject(o);
 }
 void MainWindow::manageWPDialog(BoatInterface * myBoat, QObject * boardPlugin)
 {

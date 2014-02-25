@@ -46,7 +46,7 @@ DialogEditBarrier::DialogEditBarrier(MainWindow * parent): QDialog(parent) {
 }
 void DialogEditBarrier::slot_screenResize()
 {
-    Util::setWidgetSize(this,this->sizeHint());
+    Util::setWidgetSize(this);
 }
 
 DialogEditBarrier::~DialogEditBarrier(void) {

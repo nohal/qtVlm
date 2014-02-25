@@ -26,6 +26,8 @@ public slots:
     void drawIt();
     void reloadPolar();
     void slot_screenResize();
+protected:
+    void resizeEvent(QResizeEvent *);
 private:
     QPixmap image;
     QPen pen;

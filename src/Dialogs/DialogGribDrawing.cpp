@@ -64,7 +64,7 @@ DialogGribDrawing::DialogGribDrawing(QWidget *parent, myCentralWidget *centralWi
 }
 void DialogGribDrawing::slot_screenResize()
 {
-    Util::setWidgetSize(this,this->sizeHint());
+    Util::setWidgetSize(this);
 }
 
 DialogGribDrawing::~DialogGribDrawing(void) {
@@ -77,6 +77,7 @@ DialogGribDrawing::~DialogGribDrawing(void) {
 void DialogGribDrawing::showDialog(void) {
     if(init_state()) {
         show();
+        Util::setWidgetSize(this);
     }
 }
 

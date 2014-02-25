@@ -34,7 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
     this->mainWindow=mainWindow;
     my_centralWidget = mainWindow->getMy_centralWidget();
-    Util::setFontDialog(this);
+    Util::setFontObject(this);
 #ifdef __MAC_QTVLM
     QFont font(Settings::getSetting(defaultFontName).toString());
     double fontSize=Settings::getSetting(applicationFontSize).toDouble();

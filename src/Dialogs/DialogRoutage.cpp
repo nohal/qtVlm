@@ -59,6 +59,7 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent, POI *endP
     if(endPOI)
         routage->setToPOI(endPOI);
     setupUi(this);
+    this->tabWidget->setCurrentIndex(1);
 #ifdef QT_V5
     QScroller::grabGesture(this->scrollArea->viewport());
     QScroller::grabGesture(this->scrollArea->viewport(),QScroller::LeftMouseButtonGesture);
@@ -269,11 +270,13 @@ DialogRoutage::DialogRoutage(ROUTAGE *routage,myCentralWidget *parent, POI *endP
     this->multi_days->setValue(routage->get_multiDays());
     this->multi_hours->setValue(routage->get_multiHours());
     this->multi_min->setValue(routage->get_multiMin());
+    Util::setWidgetSize(this);
+    this->tabWidget->setCurrentIndex(0);
     connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
 }
 void DialogRoutage::slot_screenResize()
 {
-    Util::setWidgetSize(this,this->sizeHint());
+    Util::setWidgetSize(this);
 }
 
 

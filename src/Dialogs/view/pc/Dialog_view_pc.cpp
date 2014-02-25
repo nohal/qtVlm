@@ -35,7 +35,7 @@ Dialog_view_pc::~Dialog_view_pc() {
 }
 
 void Dialog_view_pc::slot_screenResize() {
-    Util::setWidgetSize(this,this->sizeHint());
+    Util::setWidgetSize(this);
 }
 
 void Dialog_view_pc::initDialog(void) {

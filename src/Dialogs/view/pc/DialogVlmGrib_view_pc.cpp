@@ -69,6 +69,7 @@ void DialogVlmGrib_view_pc::updateList(QStringList lst) {
     }
 
     listRadio[lst.size()-1]->setChecked(true);
+    Util::setFontDialog(this);
 }
 
 void DialogVlmGrib_view_pc::closeEvent(QCloseEvent * ) {

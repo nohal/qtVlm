@@ -45,7 +45,7 @@ DialogRealBoatConfig::DialogRealBoatConfig(myCentralWidget *parent) : QDialog(pa
 }
 void DialogRealBoatConfig::slot_screenResize()
 {
-    Util::setWidgetSize(this,this->sizeHint());
+    Util::setWidgetSize(this);
 }
 
 void DialogRealBoatConfig::launch(boatReal * boat)

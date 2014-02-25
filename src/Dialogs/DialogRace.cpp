@@ -128,7 +128,7 @@ DialogRace::DialogRace(MainWindow * main,myCentralWidget * parent, inetConnexion
 }
 void DialogRace::slot_screenResize()
 {
-    Util::setWidgetSize(this,this->sizeHint());
+    Util::setWidgetSize(this);
 }
 
 DialogRace::~DialogRace()

@@ -55,7 +55,7 @@ DialogProxy::DialogProxy(myCentralWidget * parent) : QDialog(parent->getMainWind
 }
 void DialogProxy::slot_screenResize()
 {
-    Util::setWidgetSize(this,this->sizeHint());
+    Util::setWidgetSize(this);
 }
 
 void DialogProxy::slot_useProxy_changed()

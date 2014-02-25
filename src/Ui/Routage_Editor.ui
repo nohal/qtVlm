@@ -6,26 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>732</width>
+    <width>746</width>
     <height>525</height>
    </rect>
-  </property>
-  <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-    <horstretch>0</horstretch>
-    <verstretch>0</verstretch>
-   </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
     <width>0</width>
     <height>0</height>
-   </size>
-  </property>
-  <property name="maximumSize">
-   <size>
-    <width>10000000</width>
-    <height>10000000</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -42,7 +30,7 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>712</width>
+        <width>726</width>
         <height>505</height>
        </rect>
       </property>
@@ -50,9 +38,9 @@
        <item>
         <widget class="QTabWidget" name="tabWidget">
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
-         <widget class="QWidget" name="tab">
+         <widget class="QWidget" name="generalTab">
           <attribute name="title">
            <string>Parametres Generaux</string>
           </attribute>
@@ -71,7 +59,23 @@
                 <property name="enabled">
                  <bool>false</bool>
                 </property>
+                <property name="sizeAdjustPolicy">
+                 <enum>QComboBox::AdjustToContents</enum>
+                </property>
                </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_9">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
               </item>
              </layout>
             </widget>
@@ -478,7 +482,7 @@ avec ce prefixe</string>
            </item>
           </layout>
          </widget>
-         <widget class="QWidget" name="tab_2">
+         <widget class="QWidget" name="advanced_tab">
           <attribute name="title">
            <string>Parametres avances</string>
           </attribute>
@@ -1210,15 +1214,22 @@ La différence est surtout sensible lors d'un routage en diagonale.</string>
         </widget>
        </item>
        <item>
+        <spacer name="horizontalSpacer_10">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
           <widget class="QDialogButtonBox" name="buttonBox">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
            <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>

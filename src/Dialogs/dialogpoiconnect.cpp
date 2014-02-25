@@ -35,7 +35,7 @@ DialogPoiConnect::DialogPoiConnect(POI * poi,myCentralWidget *parent) :
 }
 void DialogPoiConnect::slot_screenResize()
 {
-    Util::setWidgetSize(this,this->sizeHint());
+    Util::setWidgetSize(this);
 }
 
 DialogPoiConnect::~DialogPoiConnect()

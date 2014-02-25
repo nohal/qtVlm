@@ -48,7 +48,7 @@ routeInfo::routeInfo(myCentralWidget *parent, ROUTE *route) :
 }
 void routeInfo::slot_screenResize()
 {
-    Util::setWidgetSize(this,this->sizeHint());
+    Util::setWidgetSize(this);
 }
 void routeInfo::setValues(double twd, double tws, double twa, double bs, double hdg, double cnm, double dnm, bool engineUsed,
                           bool south, double cog, double sog, double cs, double cd, double wh, double wd, bool night, double wsh)

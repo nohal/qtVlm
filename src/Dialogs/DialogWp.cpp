@@ -62,7 +62,7 @@ DialogWp::~DialogWp()
 
 void DialogWp::slot_screenResize()
 {
-    Util::setWidgetSize(this,this->sizeHint());
+    Util::setWidgetSize(this);
 }
 void DialogWp::setLocked(const bool &locked)
 {

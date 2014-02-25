@@ -417,19 +417,6 @@
              </property>
             </widget>
            </item>
-           <item>
-            <spacer name="verticalSpacer">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
           </layout>
          </widget>
          <widget class="QWidget" name="tab_iso">
@@ -745,6 +732,19 @@
          </item>
         </layout>
        </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
       </layout>
      </widget>
     </widget>
@@ -962,22 +962,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>pushButton</sender>
-   <signal>clicked()</signal>
-   <receiver>DialogGribDrawing_ui</receiver>
-   <slot>slot_finished()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>399</x>
-     <y>376</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>241</x>
-     <y>282</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>bgDataAlt</sender>
    <signal>currentIndexChanged(int)</signal>
    <receiver>DialogGribDrawing_ui</receiver>
@@ -1102,6 +1086,22 @@
     <hint type="destinationlabel">
      <x>90</x>
      <y>353</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>DialogGribDrawing_ui</receiver>
+   <slot>slot_finished()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>399</x>
+     <y>376</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>241</x>
+     <y>282</y>
     </hint>
    </hints>
   </connection>

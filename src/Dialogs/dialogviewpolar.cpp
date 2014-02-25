@@ -12,6 +12,7 @@
 DialogViewPolar::DialogViewPolar(myCentralWidget *parent) :
     QDialog(parent->getMainWindow())
 {
+    myBoat=NULL;
     setupUi(this);
 #ifdef QT_V5
     QScroller::grabGesture(this->scrollArea->viewport());
@@ -39,9 +40,15 @@ DialogViewPolar::DialogViewPolar(myCentralWidget *parent) :
     connect(this->closeButton,SIGNAL(clicked()),this,SLOT(close()));
     this->doubleSpinBox->installEventFilter(this);
 }
+void DialogViewPolar::resizeEvent(QResizeEvent *)
+{
+    drawIt();
+}
+
 void DialogViewPolar::slot_screenResize()
 {
-    Util::setWidgetSize(this,this->sizeHint());
+    Util::setWidgetSize(this);
+    drawIt();
 }
 
 bool DialogViewPolar::eventFilter(QObject *obj, QEvent *event)
@@ -120,7 +127,7 @@ bool DialogViewPolar::eventFilter(QObject *obj, QEvent *event)
     double aws=sqrt(a*a+bb*bb);
     double awa=90-radToDeg(atan(bb/a));
     double vmg=polarValues.at(angle)*cos(degToRad(angle));
-    s=s.sprintf("TWA %ddeg, BS %.2fnds\nAWA %.2fdeg, AWS %.2fnds\nVMG %.2fnds",angle,polarValues.at(angle),awa,aws,vmg);
+    s=s.sprintf("TWA %ddeg\nBS %.2fnds\nAWA %.2fdeg\nAWS %.2fnds\nVMG %.2fnds",angle,polarValues.at(angle),awa,aws,vmg);
     s=s.replace("deg",tr("deg"));
     imageContainer->setPixmap(i2);
     info->setText(s);
@@ -147,6 +154,16 @@ void DialogViewPolar::reloadPolar()
 
 void DialogViewPolar::drawIt()
 {
+    if (!myBoat) return;
+    pnt.end();
+    image=QPixmap(this->imageContainer->size());
+    image.fill(Qt::red);
+    pnt.begin(&image);
+    QFont myFont(Settings::getSetting(defaultFontName).toString());
+    myFont.setPointSizeF(8.0);
+    pnt.setFont(myFont);
+    pnt.setRenderHint(QPainter::Antialiasing);
+    this->imageContainer->setPixmap(image);
     Polar * polar=myBoat->getPolarData();
     if(!polar) return;
     image.fill(Qt::white);

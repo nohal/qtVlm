@@ -51,8 +51,9 @@ class Util
     public:
 
     //-------------------------------------------------
-    static void setFontDialog(QObject * o);
-    static void setFontDialog(QWidget * o);
+    static void setFontObject(QObject * o);
+    //static void setFontDialog(QWidget * o);
+    static void setFontDialog(QDialog * o);
     static void setSpecificFont(QMap<QWidget *, QFont> widgets);
     static QString formatDegres(const double &x);           // 123.4 -> 123°24.00'
     static QString formatPosition(const double &x, const double &y);    // 123°24.00'W 45°67.89'N
@@ -145,7 +146,7 @@ class Util
 
         static double getOrthoDistance(const double &latitude1, const double &longitude1, const double &latitude2, const double &longitude2);
         static void getCoordFromDistanceAngle3(const double &latitude, const double &longitude, const double &distance, const double &heading, double *res_lat, double *res_lon);
-        static void setWidgetSize(QWidget *o, const QSize &s);
+        static void setWidgetSize(QDialog *o);
 };
 
 inline int Util::kmhToBeaufort(const double &v) {

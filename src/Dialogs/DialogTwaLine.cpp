@@ -28,6 +28,7 @@ DialogTwaLine::DialogTwaLine(QPointF start, myCentralWidget *parent, MainWindow 
     this->setWindowFlags(Qt::Tool);
     connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     setupUi(this);
+    this->tabWidget->setCurrentIndex(4);
     Util::setFontDialog(this);
 #ifdef QT_V5
     QScroller::grabGesture(this->scrollArea->viewport());
@@ -53,11 +54,13 @@ DialogTwaLine::DialogTwaLine(QPointF start, myCentralWidget *parent, MainWindow 
     connect(TWA3,SIGNAL(toggled(bool)),this,SLOT(slotTwa3(bool)));
     connect(TWA4,SIGNAL(toggled(bool)),this,SLOT(slotTwa4(bool)));
     connect(TWA5,SIGNAL(toggled(bool)),this,SLOT(slotTwa5(bool)));
+    Util::setWidgetSize(this);
+    this->tabWidget->setCurrentIndex(0);
     traceIt();
 }
 void DialogTwaLine::slot_screenResize()
 {
-    Util::setWidgetSize(this,this->sizeHint());
+    Util::setWidgetSize(this);
 }
 void DialogTwaLine::slotTwa1(bool b)
 {

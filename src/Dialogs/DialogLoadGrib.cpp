@@ -37,6 +37,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "MainWindow.h"
 #include "mycentralwidget.h"
 #include <QScrollArea>
+#include <QScrollBar>
 
 
 
@@ -124,24 +125,26 @@ DialogLoadGrib::DialogLoadGrib(MainWindow *main) : QDialog(main)
     connect(chkAltitude850, SIGNAL(stateChanged(int)), 	this,  SLOT(slotParameterUpdated()));
     connect(chkAltitudeAll, SIGNAL(stateChanged(int)), 	this,  SLOT(slotAltitudeAll()));
     this->setParent(main);
-    this->resize(sbSouth->x()+sbSouth->width()+10,this->btOK->y()+this->btOK->height()+10);
-    QFrame * frame=new QFrame(this);
-    frame->setLayout(lay);
     scrollarea=new QScrollArea(this);
-    scrollarea->setWidget(frame);
+    scrollarea->setWidgetResizable(true);
     scrollarea->setLayout(new QVBoxLayout(this));
+    QFrame * f=new QFrame(this);
+    f->setLayout(lay);
+    scrollarea->setWidget(f);
     this->setLayout(new QVBoxLayout(this));
     this->layout()->addWidget(scrollarea);
-    this->resize(scrollarea->size());
 #ifdef QT_V5
     QScroller::grabGesture(scrollarea->viewport());
 #endif
     Util::setFontDialog(this);
-
+//    int ws=scrollarea->verticalScrollBar()->height();
+//    QSize s = QSize(scrollarea->widget()->sizeHint().width()+ws,scrollarea->widget()->sizeHint().height()+ws);
+//    this->resize(s);
+//    Util::setWidgetSize(this);
 }
 void DialogLoadGrib::slot_screenResize()
 {
-    Util::setWidgetSize(this,this->sizeHint());
+    //Util::setWidgetSize(this);
 }
 
 //-------------------------------------------------------------------------------
@@ -516,8 +519,7 @@ void DialogLoadGrib::setZone(double x0, double y0, double x1, double y1)
         sbEast->setValue(x1);
         sbEast->setSuffix(tr(" degE"));
     }
-    this->resize(sbSouth->x()+sbSouth->width()+10,this->btOK->y()+this->btOK->height()+10);
-    Util::setFontDialog(this);
+    //Util::setFontDialog(this);
     slotParameterUpdated();
 }
 

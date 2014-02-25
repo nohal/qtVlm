@@ -54,7 +54,7 @@ DialogFinePosit::DialogFinePosit(POI * poi,myCentralWidget *parent)
 }
 void DialogFinePosit::slot_screenResize()
 {
-    Util::setWidgetSize(this,this->sizeHint());
+    Util::setWidgetSize(this);
 }
 DialogFinePosit::~DialogFinePosit()
 {

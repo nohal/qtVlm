@@ -77,7 +77,7 @@ DialogPoi::DialogPoi(MainWindow * main,myCentralWidget * parent)
 }
 void DialogPoi::slot_screenResize()
 {
-    Util::setWidgetSize(this,this->sizeHint());
+    Util::setWidgetSize(this);
 }
 void DialogPoi::formatLatLon()
 {

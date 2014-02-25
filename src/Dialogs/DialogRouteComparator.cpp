@@ -17,8 +17,8 @@ DialogRouteComparator::DialogRouteComparator(myCentralWidget *parent) : QDialog(
 #ifdef QT_V5
     QScroller::grabGesture(this->scrollArea->viewport());
 #endif
-    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     this->mcw=parent;
     connect(this->closeButton,SIGNAL(clicked()),this,SLOT(close()));
     model= new QStandardItemModel(this);
@@ -74,18 +74,21 @@ DialogRouteComparator::DialogRouteComparator(myCentralWidget *parent) : QDialog(
     routesCombo->setCurrentIndex(0);
     connect(routesCombo,SIGNAL(currentIndexChanged(int)),this,SLOT(slot_insertRoute(int)));
     connect(routesTable,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(slot_contextMenu(QPoint)));
+//    routesTable->adjustSize();
+//    frame->resize(routesTable->viewport()->sizeHint());
+    Util::setWidgetSize(this);
     routesTable->setContextMenuPolicy(Qt::CustomContextMenu);
 }
 void DialogRouteComparator::slot_screenResize()
 {
-    Util::setWidgetSize(this,this->sizeHint());
+    Util::setWidgetSize(this);
 }
 void DialogRouteComparator::slot_contextMenu(QPoint P)
 {
     item = model->itemFromIndex(routesTable->indexAt(P));
     if(!item) return;
     QMenu *menu = new QMenu;
-    Util::setFontDialog(menu);
+    Util::setFontObject(menu);
     int currentRouteIndex=item->data().toInt();
     menu->addAction(tr("Remove route")+" "+mcw->getRouteList().at(currentRouteIndex)->getName()+" "+tr("from comparator"), this, SLOT(slot_removeRoute()));
     menu->addAction(tr("Delete route")+" "+mcw->getRouteList().at(currentRouteIndex)->getName(), this, SLOT(slot_deleteRoute()));

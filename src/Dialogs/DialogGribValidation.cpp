@@ -59,7 +59,7 @@ DialogGribValidation::DialogGribValidation(myCentralWidget * my_centralWidget,Ma
 }
 void DialogGribValidation::slot_screenResize()
 {
-    Util::setWidgetSize(this,this->sizeHint());
+    Util::setWidgetSize(this);
 }
 
 DialogGribValidation::~DialogGribValidation()

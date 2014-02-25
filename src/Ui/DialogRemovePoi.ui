@@ -16,6 +16,9 @@
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <widget class="QScrollArea" name="scrollArea">
+     <property name="sizeAdjustPolicy">
+      <enum>QAbstractScrollArea::AdjustToContents</enum>
+     </property>
      <property name="widgetResizable">
       <bool>true</bool>
      </property>
@@ -28,68 +31,66 @@
         <height>215</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
+      <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout">
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout">
-             <item>
-              <widget class="QPushButton" name="pushButton">
-               <property name="text">
-                <string>All</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="pushButton_3">
-               <property name="text">
-                <string>None</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="nbSelected">
-               <property name="toolTip">
-                <string/>
-               </property>
-               <property name="text">
-                <string notr="true">TextLabel</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <widget class="QListWidget" name="ls_poiList">
-             <property name="editTriggers">
-              <set>QAbstractItemView::NoEditTriggers</set>
-             </property>
-             <property name="selectionMode">
-              <enum>QAbstractItemView::MultiSelection</enum>
-             </property>
-             <property name="sortingEnabled">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
+          <widget class="QPushButton" name="pushButton">
+           <property name="text">
+            <string>All</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_3">
+           <property name="text">
+            <string>None</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="nbSelected">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string/>
+           </property>
+           <property name="text">
+            <string notr="true">TextLabel</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
+       </item>
+       <item>
+        <widget class="QListWidget" name="ls_poiList">
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+         <property name="selectionMode">
+          <enum>QAbstractItemView::MultiSelection</enum>
+         </property>
+         <property name="sortingEnabled">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_3">

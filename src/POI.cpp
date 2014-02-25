@@ -331,7 +331,7 @@ void POI::rmSignal(void)
 void POI::createPopUpMenu(void)
 {
     popup = new QMenu(parent);
-    Util::setFontDialog(popup);
+    Util::setFontObject(popup);
     connect(this->popup,SIGNAL(aboutToShow()),parent,SLOT(slot_resetGestures()));
     connect(this->popup,SIGNAL(aboutToHide()),parent,SLOT(slot_resetGestures()));
 
@@ -376,7 +376,7 @@ void POI::createPopUpMenu(void)
     popup->addSeparator();
 
     ac_routeList = new QMenu(tr("Routes"));
-    Util::setFontDialog(ac_routeList);
+    Util::setFontObject(ac_routeList);
     connect(ac_routeList,SIGNAL(triggered(QAction*)),this,SLOT(slot_routeMenu(QAction*)));
     popup->addMenu(ac_routeList);
 
@@ -399,7 +399,7 @@ void POI::createPopUpMenu(void)
     connect(ac_copyRoute,SIGNAL(triggered()),this,SLOT(slot_copyRoute()));
 
     menuSimplify=new QMenu(tr("Simplifier la route "),popup);
-    Util::setFontDialog(menuSimplify);
+    Util::setFontObject(menuSimplify);
     ac_simplifyRouteMax = new QAction(tr("Maximum"),menuSimplify);
     ac_simplifyRouteMin = new QAction(tr("Minimum"),menuSimplify);
     menuSimplify->addAction(ac_simplifyRouteMax);
@@ -433,7 +433,7 @@ void POI::createPopUpMenu(void)
     popup->addAction(ac_simplifiable);
 
     ac_modeList = new QMenu(tr("Mode de navigation vers ce POI"));
-    Util::setFontDialog(ac_modeList);
+    Util::setFontObject(ac_modeList);
     QActionGroup * ptr_group = new QActionGroup(ac_modeList);
 
     ac_modeList1 = new QAction(tr("VB-VMG"),popup);

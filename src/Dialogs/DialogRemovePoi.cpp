@@ -43,12 +43,6 @@ DialogRemovePoi::DialogRemovePoi(QWidget * parent,myCentralWidget * centralWidge
     QScroller::grabGesture(this->scrollArea->viewport());
 #endif
     connect(centralWidget,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
-    Util::setFontDialog(this);
-    QMap<QWidget *,QFont> exceptions;
-    QFont wfont=QApplication::font();
-    wfont.setPointSizeF(9.0);
-    exceptions.insert(ls_poiList,wfont);
-    Util::setSpecificFont(exceptions);
 
     this->centralWidget=centralWidget;
     poiList=centralWidget->getPois();
@@ -63,10 +57,17 @@ DialogRemovePoi::DialogRemovePoi(QWidget * parent,myCentralWidget * centralWidge
     }
 
     updateNbSelected();
+    Util::setFontDialog(this);
+    QMap<QWidget *,QFont> exceptions;
+    QFont wfont=QApplication::font();
+    wfont.setPointSizeF(9.0);
+    exceptions.insert(ls_poiList,wfont);
+    Util::setSpecificFont(exceptions);
+    Util::setWidgetSize(this);
 }
 void DialogRemovePoi::slot_screenResize()
 {
-    Util::setWidgetSize(this,this->sizeHint());
+    Util::setWidgetSize(this);
 }
 
 void DialogRemovePoi::updateNbSelected(void) {

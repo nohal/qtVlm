@@ -33,7 +33,7 @@ DialogVlmLog::DialogVlmLog(myCentralWidget *parent) :
 }
 void DialogVlmLog::slot_screenResize()
 {
-    Util::setWidgetSize(this,this->sizeHint());
+    Util::setWidgetSize(this);
 }
 void DialogVlmLog::done(int result)
 {

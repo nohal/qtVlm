@@ -40,7 +40,7 @@ DialogPoiInput::DialogPoiInput(myCentralWidget * parent) : QDialog(parent)
 }
 void DialogPoiInput::slot_screenResize()
 {
-    Util::setWidgetSize(this,this->sizeHint());
+    Util::setWidgetSize(this);
 }
 
 void DialogPoiInput::slot_showPOI_input(void)

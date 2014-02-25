@@ -19,7 +19,7 @@ class MainWindowInterface: public QMainWindow
         virtual QString pos2String(const int &type,const double &value) =0;
         virtual QString formatLongitude(const double &x) =0;
         virtual QString formatLatitude(const double &y) =0;
-        virtual void setFontDialog(QWidget * o) =0;
+        virtual void setFontDialog(QObject * o) =0;
         virtual int get_nxtVac_cnt()=0;
        /* Note: the `boardPlugin` parameter may be any object that
         * defines the `void slot_selectWP_POI()` slot. The function

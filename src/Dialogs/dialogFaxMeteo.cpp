@@ -52,7 +52,7 @@ dialogFaxMeteo::dialogFaxMeteo(faxMeteo * fax, myCentralWidget *parent)
 }
 void dialogFaxMeteo::slot_screenResize()
 {
-    Util::setWidgetSize(this,this->sizeHint());
+    Util::setWidgetSize(this);
 }
 
 dialogFaxMeteo::~dialogFaxMeteo()

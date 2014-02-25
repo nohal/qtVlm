@@ -35,204 +35,8 @@
           <string>Informations Vent/Courant</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
-          <item row="0" column="0">
-           <widget class="QLabel" name="lTWD">
-            <property name="text">
-             <string>TWD</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QDoubleSpinBox" name="TWD">
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-            <property name="buttonSymbols">
-             <enum>QAbstractSpinBox::NoButtons</enum>
-            </property>
-            <property name="suffix">
-             <string>deg</string>
-            </property>
-            <property name="decimals">
-             <number>1</number>
-            </property>
-            <property name="maximum">
-             <double>500.000000000000000</double>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QLabel" name="lTWS">
-            <property name="text">
-             <string>TWS</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="3">
-           <widget class="QDoubleSpinBox" name="TWS">
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-            <property name="buttonSymbols">
-             <enum>QAbstractSpinBox::NoButtons</enum>
-            </property>
-            <property name="suffix">
-             <string> nds</string>
-            </property>
-            <property name="decimals">
-             <number>1</number>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="lTWA">
-            <property name="text">
-             <string>TWA</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QDoubleSpinBox" name="TWA">
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-            <property name="buttonSymbols">
-             <enum>QAbstractSpinBox::NoButtons</enum>
-            </property>
-            <property name="suffix">
-             <string>deg</string>
-            </property>
-            <property name="decimals">
-             <number>1</number>
-            </property>
-            <property name="maximum">
-             <double>500.000000000000000</double>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="2">
-           <widget class="QLabel" name="lAWS">
-            <property name="text">
-             <string>AWS</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="3">
-           <widget class="QDoubleSpinBox" name="AWS">
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-            <property name="buttonSymbols">
-             <enum>QAbstractSpinBox::NoButtons</enum>
-            </property>
-            <property name="suffix">
-             <string> nds</string>
-            </property>
-            <property name="decimals">
-             <number>1</number>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="lAWA">
-            <property name="text">
-             <string>AWA</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QDoubleSpinBox" name="AWA">
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-            <property name="buttonSymbols">
-             <enum>QAbstractSpinBox::NoButtons</enum>
-            </property>
-            <property name="suffix">
-             <string>deg</string>
-            </property>
-            <property name="decimals">
-             <number>1</number>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="2">
-           <widget class="QLabel" name="amure">
-            <property name="text">
-             <string>Amure</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="3">
-           <widget class="QLabel" name="iconWind">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>40</width>
-              <height>40</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>40</width>
-              <height>40</height>
-             </size>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="lTWA_6">
-            <property name="text">
-             <string>CD</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QDoubleSpinBox" name="CD">
+          <item row="5" column="3">
+           <widget class="QDoubleSpinBox" name="sig_wave_height">
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
@@ -246,7 +50,7 @@
              <string notr="true">N/A</string>
             </property>
             <property name="suffix">
-             <string>deg</string>
+             <string> m</string>
             </property>
             <property name="decimals">
              <number>1</number>
@@ -259,38 +63,16 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="2">
-           <widget class="QLabel" name="sogLab">
+          <item row="5" column="2">
+           <widget class="QLabel" name="lTWA_10">
             <property name="text">
-             <string>CS</string>
+             <string>Significant waves height (combined)</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
-           </widget>
-          </item>
-          <item row="3" column="3">
-           <widget class="QDoubleSpinBox" name="CS">
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="readOnly">
+            <property name="wordWrap">
              <bool>true</bool>
-            </property>
-            <property name="buttonSymbols">
-             <enum>QAbstractSpinBox::NoButtons</enum>
-            </property>
-            <property name="specialValueText">
-             <string notr="true">N/A</string>
-            </property>
-            <property name="suffix">
-             <string> nds</string>
-            </property>
-            <property name="decimals">
-             <number>1</number>
-            </property>
-            <property name="minimum">
-             <double>-1.000000000000000</double>
             </property>
            </widget>
           </item>
@@ -298,6 +80,19 @@
            <widget class="QLabel" name="lTWA_9">
             <property name="text">
              <string>Max waves direction</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="2">
+           <widget class="QLabel" name="sogLab_2">
+            <property name="text">
+             <string>Max waves height</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -335,19 +130,6 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="2">
-           <widget class="QLabel" name="sogLab_2">
-            <property name="text">
-             <string>Max waves height</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="wordWrap">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
           <item row="4" column="3">
            <widget class="QDoubleSpinBox" name="wave_height">
             <property name="alignment">
@@ -373,21 +155,88 @@
             </property>
            </widget>
           </item>
-          <item row="5" column="2">
-           <widget class="QLabel" name="lTWA_10">
+          <item row="2" column="0">
+           <widget class="QLabel" name="lAWA">
             <property name="text">
-             <string>Significant waves height (combined)</string>
+             <string>AWA</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
-            <property name="wordWrap">
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QDoubleSpinBox" name="AWA">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="readOnly">
              <bool>true</bool>
+            </property>
+            <property name="buttonSymbols">
+             <enum>QAbstractSpinBox::NoButtons</enum>
+            </property>
+            <property name="suffix">
+             <string>deg</string>
+            </property>
+            <property name="decimals">
+             <number>1</number>
             </property>
            </widget>
           </item>
-          <item row="5" column="3">
-           <widget class="QDoubleSpinBox" name="sig_wave_height">
+          <item row="1" column="2">
+           <widget class="QLabel" name="lAWS">
+            <property name="text">
+             <string>AWS</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3">
+           <widget class="QDoubleSpinBox" name="AWS">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="buttonSymbols">
+             <enum>QAbstractSpinBox::NoButtons</enum>
+            </property>
+            <property name="suffix">
+             <string> nds</string>
+            </property>
+            <property name="decimals">
+             <number>1</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QDoubleSpinBox" name="TWA">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="buttonSymbols">
+             <enum>QAbstractSpinBox::NoButtons</enum>
+            </property>
+            <property name="suffix">
+             <string>deg</string>
+            </property>
+            <property name="decimals">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <double>500.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="3">
+           <widget class="QDoubleSpinBox" name="CS">
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
@@ -401,7 +250,52 @@
              <string notr="true">N/A</string>
             </property>
             <property name="suffix">
-             <string> m</string>
+             <string> nds</string>
+            </property>
+            <property name="decimals">
+             <number>1</number>
+            </property>
+            <property name="minimum">
+             <double>-1.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="lTWA_6">
+            <property name="text">
+             <string>CD</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="2">
+           <widget class="QLabel" name="sogLab">
+            <property name="text">
+             <string>CS</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QDoubleSpinBox" name="CD">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="buttonSymbols">
+             <enum>QAbstractSpinBox::NoButtons</enum>
+            </property>
+            <property name="specialValueText">
+             <string notr="true">N/A</string>
+            </property>
+            <property name="suffix">
+             <string>deg</string>
             </property>
             <property name="decimals">
              <number>1</number>
@@ -411,6 +305,103 @@
             </property>
             <property name="maximum">
              <double>500.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="QLabel" name="amure">
+            <property name="text">
+             <string>Amure</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="lTWA">
+            <property name="text">
+             <string>TWA</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="lTWS">
+            <property name="text">
+             <string>TWS</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QDoubleSpinBox" name="TWD">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="buttonSymbols">
+             <enum>QAbstractSpinBox::NoButtons</enum>
+            </property>
+            <property name="suffix">
+             <string>deg</string>
+            </property>
+            <property name="decimals">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <double>500.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="lTWD">
+            <property name="text">
+             <string>TWD</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QDoubleSpinBox" name="TWS">
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="buttonSymbols">
+             <enum>QAbstractSpinBox::NoButtons</enum>
+            </property>
+            <property name="suffix">
+             <string> nds</string>
+            </property>
+            <property name="decimals">
+             <number>1</number>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="3">
+           <widget class="QLabel" name="iconWind">
+            <property name="minimumSize">
+             <size>
+              <width>40</width>
+              <height>40</height>
+             </size>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>

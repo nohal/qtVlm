@@ -28,7 +28,7 @@ Magnifier::Magnifier(myCentralWidget *parent)
     effect->setColor(color);
     this->setGraphicsEffect(effect);
     this->popup=new QMenu();
-    Util::setFontDialog(popup);
+    Util::setFontObject(popup);
     changeSize = new QAction(tr("Change magnifier size"),popup);
     popup->addAction(changeSize);
     connect(changeSize,SIGNAL(triggered()),this,SLOT(slot_changeSize()));

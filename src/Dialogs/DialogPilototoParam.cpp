@@ -55,7 +55,7 @@ DialogPilototoParam::DialogPilototoParam(myCentralWidget *parent) : QDialog(pare
 }
 void DialogPilototoParam::slot_screenResize()
 {
-    Util::setWidgetSize(this,this->sizeHint());
+    Util::setWidgetSize(this);
 }
 
 void DialogPilototoParam::editInstruction(DialogPilototoInstruction * instruction)

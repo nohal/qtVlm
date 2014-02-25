@@ -42,12 +42,6 @@ DialogRemoveRoute::DialogRemoveRoute(QWidget * parent,myCentralWidget * centralW
     QScroller::grabGesture(this->scrollArea->viewport());
 #endif
     connect(centralWidget,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
-    Util::setFontDialog(this);
-    QMap<QWidget *,QFont> exceptions;
-    QFont wfont=QApplication::font();
-    wfont.setPointSizeF(9.0);
-    exceptions.insert(ls_poiList,wfont);
-    Util::setSpecificFont(exceptions);
     this->setWindowTitle(tr("Supprimer des routes"));
     this->centralWidget=centralWidget;
     routeList=centralWidget->getRouteList();
@@ -65,10 +59,17 @@ DialogRemoveRoute::DialogRemoveRoute(QWidget * parent,myCentralWidget * centralW
     }
 
     updateNbSelected();
+    Util::setFontDialog(this);
+    QMap<QWidget *,QFont> exceptions;
+    QFont wfont=QApplication::font();
+    wfont.setPointSizeF(9.0);
+    exceptions.insert(ls_poiList,wfont);
+    Util::setSpecificFont(exceptions);
+    Util::setWidgetSize(this);
 }
 void DialogRemoveRoute::slot_screenResize()
 {
-    Util::setWidgetSize(this,this->sizeHint());
+    Util::setWidgetSize(this);
 }
 
 void DialogRemoveRoute::updateNbSelected(void) {

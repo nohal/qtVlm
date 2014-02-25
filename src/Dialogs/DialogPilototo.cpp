@@ -91,7 +91,7 @@ DialogPilototo::DialogPilototo(MainWindow *main,myCentralWidget * parent,inetCon
 }
 void DialogPilototo::slot_screenResize()
 {
-    Util::setWidgetSize(this,this->sizeHint());
+    Util::setWidgetSize(this);
 }
 
 void DialogPilototo::updateDrawList(void)
@@ -102,8 +102,8 @@ void DialogPilototo::updateDrawList(void)
     /* remove all instruction from screen */
     for(int i=0;i<drawList.count();++i)
     {
-	drawList[i]->hide();
-	frameLayout->removeWidget(drawList[i]);
+        drawList[i]->hide();
+        frameLayout->removeWidget(drawList[i]);
     }
 
     drawList.clear();
@@ -178,9 +178,10 @@ void DialogPilototo::updateDrawList(void)
 
     for(int j=0;j<drawList.count();++j)
     {
-	frameLayout->addWidget(drawList[j], j, 0);
-	drawList[j]->show();
+        frameLayout->addWidget(drawList[j], j, 0);
+        drawList[j]->show();
     }
+    Util::setFontDialog(this);
 }
 
 /* init pilototo editor */

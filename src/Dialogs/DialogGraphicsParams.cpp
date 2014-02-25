@@ -238,7 +238,7 @@ DialogGraphicsParams::~DialogGraphicsParams()
 
 void DialogGraphicsParams::slot_screenResize()
 {
-    Util::setWidgetSize(this,this->sizeHint());
+    Util::setWidgetSize(this);
 }
 
 //-------------------------------------------------------------------------------

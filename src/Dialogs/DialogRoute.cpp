@@ -299,7 +299,7 @@ DialogRoute::DialogRoute(ROUTE *route, myCentralWidget *parent, bool createMode)
 }
 void DialogRoute::slot_screenResize()
 {
-    Util::setWidgetSize(this,this->sizeHint());
+    Util::setWidgetSize(this);
 }
 void DialogRoute::slot_hideShowWarning()
 {

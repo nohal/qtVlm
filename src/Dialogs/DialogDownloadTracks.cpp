@@ -58,7 +58,7 @@ DialogDownloadTracks::DialogDownloadTracks(MainWindow * ,myCentralWidget * paren
 }
 void DialogDownloadTracks::slot_screenResize()
 {
-    Util::setWidgetSize(this,this->sizeHint());
+    Util::setWidgetSize(this);
 }
 
 DialogDownloadTracks::~DialogDownloadTracks()

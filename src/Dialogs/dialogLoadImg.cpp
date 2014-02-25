@@ -44,7 +44,7 @@ dialogLoadImg::dialogLoadImg(loadImg * carte, myCentralWidget *parent)
 }
 void dialogLoadImg::slot_screenResize()
 {
-    Util::setWidgetSize(this,this->sizeHint());
+    Util::setWidgetSize(this);
 }
 void dialogLoadImg::resizeEvent(QResizeEvent *)
 {

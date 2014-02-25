@@ -39,7 +39,7 @@ DialogSailDocs::DialogSailDocs(QString param, myCentralWidget * parent) : QDialo
 }
 void DialogSailDocs::slot_screenResize()
 {
-    Util::setWidgetSize(this,this->sizeHint());
+    Util::setWidgetSize(this);
 }
 DialogSailDocs::~DialogSailDocs()
 {

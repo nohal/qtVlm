@@ -282,7 +282,7 @@ void DialogBoatAccount::setBoatItemName(QListWidgetItem * item,boatVLM * boat)
 }
 void DialogBoatAccount::slot_screenResize()
 {
-    Util::setWidgetSize(this,this->sizeHint());
+    Util::setWidgetSize(this);
 }
 
 void  DialogBoatAccount::slot_selectItem_boat(QListWidgetItem * item, QListWidgetItem * old)

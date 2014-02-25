@@ -185,7 +185,7 @@ boat::~boat()
 void boat::createPopUpMenu(void)
 {
     popup = new QMenu(parent);
-    Util::setFontDialog(popup);
+    Util::setFontObject(popup);
     connect(this->popup,SIGNAL(aboutToShow()),parent,SLOT(slot_resetGestures()));
     connect(this->popup,SIGNAL(aboutToHide()),parent,SLOT(slot_resetGestures()));
 

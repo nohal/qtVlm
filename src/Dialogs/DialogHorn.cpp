@@ -26,7 +26,7 @@ DialogHorn::DialogHorn(myCentralWidget *parent) : QDialog(parent)
 }
 void DialogHorn::slot_screenResize()
 {
-    Util::setWidgetSize(this,this->sizeHint());
+    Util::setWidgetSize(this);
 }
 
 DialogHorn::~DialogHorn()

@@ -41,6 +41,8 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "dataDef.h"
 #include <QDesktopWidget>
 #include "AngleUtil.h"
+#include <QScrollArea>
+#include <QScrollBar>
 
 QString Util::generateKey(int size) {
     QString s;
@@ -214,7 +216,7 @@ void Util::setSpecificFont(QMap<QWidget *,QFont> widgets)
     }
 }
 
-void Util::setFontDialog(QObject * o)
+void Util::setFontObject(QObject * o)
 {
 
     QFont myFont(Settings::getSetting(defaultFontName).toString());
@@ -228,66 +230,58 @@ void Util::setFontDialog(QObject * o)
         widget->setFont(myFont);
         widget->setLocale(QLocale::system());
     }
-    foreach(QObject * object,o->children())
-    {
-        Util::setFontDialog(object); /*recursion*/
-    }
+    foreach(QObject * object,o->findChildren<QObject*>(QString(),Qt::FindDirectChildrenOnly))
+        Util::setFontObject(object); /*recursion*/
 }
-void Util::setFontDialog(QWidget * o)
+void Util::setFontDialog(QDialog * o)
 {
-    QObject * object=qobject_cast<QObject*>(o);
-#ifdef __ANDROID__
-    setFontDialog(object);
-    QFont myFont(Settings::getSetting(defaultFontName).toString());
-    myFont.setPointSizeF(Settings::getSetting(applicationFontSize).toDouble());
-    myFont.setStyle(o->font().style());
-    myFont.setBold(o->font().bold());
-    myFont.setItalic(o->font().italic());
-    o->setFont(myFont);
-    o->setLocale(QLocale::system());
-    Util::setWidgetSize(o,o->sizeHint());
-#else
+    QObject *obj = qobject_cast<QObject *>(o);
+    setFontObject(obj);
     int h,w,px,py;
     Settings::restoreGeometry(o,&h,&w,&px,&py);
-    if(h<=0)
-        h=o->height();
-    if(w<=0)
-        w=o->width();
-    QDesktopWidget * desktopWidget = QApplication::desktop();
-    QRect screenRect = desktopWidget->screenGeometry();
-    if(o->maximumWidth()>10000)
+    bool pureTactil=false;
+#ifdef __ANDROID__
+    pureTactil=true;
+#endif
+    if(pureTactil || h<=0 || w<=0)
     {
-        o->setMaximumHeight(screenRect.height()-50);
-        o->setMaximumWidth(screenRect.width()-20);
+        setWidgetSize(o);
     }
-    o->resize(w,h);
-    if(px>-1 && py>-1)
+    else
+        o->resize(w,h);
+    if(!pureTactil && px>-1 && py>-1)
     {
         o->move(px,py);
-//        qWarning()<<"moving"<<o->objectName()<<"at"<<px<<py;
     }
     else if (o->parentWidget())
         o->move(o->parentWidget()->window()->frameGeometry().topLeft() +
             o->parentWidget()->window()->rect().center() -
             o->rect().center());
-    setFontDialog(object);
-#endif
 }
-void Util::setWidgetSize(QWidget *o, const QSize &s)
+void Util::setWidgetSize(QDialog *dialog)
 {
-#ifndef __ANDROID__
-    return;
-#endif
     QDesktopWidget * desktopWidget = QApplication::desktop();
     QRect screenRect = desktopWidget->screenGeometry();
-    int H=screenRect.height()-1;
-    int W=screenRect.width()-1;
-    o->setMaximumHeight(H);
-    o->setMaximumWidth(W);
-    o->resize(qMin(s.width(),W),qMin(s.height(),H));
-    QRect oRect=o->rect();
-    oRect.moveCenter(screenRect.center());
-    o->move(oRect.topLeft());
+    dialog->setMaximumHeight(screenRect.height()-50);
+    dialog->setMaximumWidth(screenRect.width()-20);
+    QList<QScrollArea *> scrolls=dialog->findChildren<QScrollArea *>(QString(),Qt::FindDirectChildrenOnly);
+    qWarning()<<"nb of scrollArea for"<<dialog->objectName()<<scrolls.size();
+    if(!scrolls.isEmpty())
+    {
+        QScrollArea * scrollarea=scrolls.at(0);
+        int ws=scrollarea->horizontalScrollBar()->height();
+        int ws1=scrollarea->verticalScrollBar()->height();
+        ws=qMin(ws,ws1);
+        scrollarea->setWidgetResizable(true);
+        scrollarea->widget()->adjustSize();
+        qWarning()<<scrollarea->widget()->sizeHint()<<scrollarea->widget()->size()<<ws<<ws1;
+        QSize s = QSize(scrollarea->widget()->sizeHint().width()+ws,scrollarea->widget()->sizeHint().height()+ws);
+        if(s.height()>dialog->maximumHeight())
+            s.setHeight(dialog->maximumHeight());
+        if(s.width()>dialog->maximumWidth())
+            s.setWidth(dialog->maximumWidth());
+        dialog->resize(s);
+    }
 }
 
 QString Util::formatTemperature(const double &tempKelvin)

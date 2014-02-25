@@ -283,7 +283,7 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
 }
 void DialogParamVlm::slot_screenResize()
 {
-    Util::setWidgetSize(this,this->sizeHint());
+    Util::setWidgetSize(this);
 }
 
 void DialogParamVlm::initEstime(void) {

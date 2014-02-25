@@ -48,7 +48,7 @@ DialogPoiDelete::DialogPoiDelete(myCentralWidget * parent) : QDialog(parent->get
 }
 void DialogPoiDelete::slot_screenResize()
 {
-    Util::setWidgetSize(this,this->sizeHint());
+    Util::setWidgetSize(this);
 }
 
 void DialogPoiDelete::done(int result)

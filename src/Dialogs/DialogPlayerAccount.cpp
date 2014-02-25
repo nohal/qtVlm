@@ -141,7 +141,7 @@ DialogPlayerAccount::DialogPlayerAccount(Projection * proj, MainWindow * main,
 }
 void DialogPlayerAccount::slot_screenResize()
 {
-    Util::setWidgetSize(this,this->sizeHint());
+    Util::setWidgetSize(this);
 }
 
 void DialogPlayerAccount::initList(QList<Player*> * player_list)
