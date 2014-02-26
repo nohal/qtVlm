@@ -1282,7 +1282,7 @@ void MainWindow::closeProgress(void)
 //    qml->show();
 
 #ifdef __ANDROID__
-    menuBar->setNativeMenuBar(true);
+    //menuBar->setNativeMenuBar(true);
     menuBar->hide();
 #endif
 }
