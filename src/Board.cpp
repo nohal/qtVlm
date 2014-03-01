@@ -123,8 +123,8 @@ void board::slot_hideShowCompass(void)
 
 void board::boatUpdated(boat* myBoat)
 {
-    if(curBoat!=NULL && curBoat->get_boatType()==BOAT_REAL && myBoat!=curBoat)
-        curBoat->setSelected(false);
+//    if(curBoat!=NULL && curBoat->get_boatType()==BOAT_REAL && myBoat!=curBoat)
+//        curBoat->setSelected(false);
     curBoat=myBoat;
     if(playerType!=BOAT_NOBOAT)
     {

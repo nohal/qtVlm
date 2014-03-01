@@ -141,6 +141,7 @@ class mapCompass;
 class MenuBar;
 class ToolBar;
 class StatusBar;
+class InfoView;
 
 
 /* mycentralwidget.h */

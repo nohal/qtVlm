@@ -93,6 +93,7 @@ class myScene : public QGraphicsScene
         void keyPressEvent (QKeyEvent *e);
         void keyReleaseEvent (QKeyEvent *e);
         void mouseMoveEvent (QGraphicsSceneMouseEvent * event);
+        //bool event(QEvent *e);
         void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* e);
         void wheelEvent(QGraphicsSceneWheelEvent* e);
     signals:
@@ -242,6 +243,8 @@ class myCentralWidget : public QWidget
         Magnifier * getMagnifier(){return this->magnifier;}        
 
         void imgKap_open(const QString &kapname);
+        void showToolTip(const QString &tt, const bool &animate=true);
+        void clearOtherSelected(QGraphicsItem *i);
 public slots :
         /* Zoom & position */
         void slot_Zoom_All();
@@ -513,6 +516,7 @@ signals:
         bool selectionTool;
         Magnifier * magnifier;
         bool noSave;
+        InfoView * infoView;
 };
 
 #endif // MYCENTRALWIDGET_H

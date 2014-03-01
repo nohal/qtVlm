@@ -28,37 +28,12 @@ MyView::MyView(Projection *proj, myScene *scene, myCentralWidget * mcw) :
     backPix->setZValue(90);
     viewPix->setActive(false);
     backPix->setActive(false);
-#if 0
-    if(Settings::getSetting(enable_Gesture).toString()=="1")
-    {
-        this->setAttribute(Qt::WA_AcceptTouchEvents);
-#ifdef __ANDROID__
-        this->viewport()->grabGesture(Qt::PinchGesture);
-        this->viewport()->grabGesture(Qt::PanGesture);
-        this->viewport()->grabGesture(Qt::TapGesture);
-        this->viewport()->grabGesture(Qt::TapAndHoldGesture);
-        this->viewport()->grabGesture(Qt::SwipeGesture);
-        this->viewport()->grabGesture(Qt::CustomGesture);
-#else
-        this->viewport()->ungrabGesture(Qt::PanGesture);
-        this->viewport()->grabGesture(Qt::PinchGesture);
-#endif
-    }
-    else
-    {
-        this->viewport()->ungrabGesture(Qt::PanGesture);
-        this->viewport()->ungrabGesture(Qt::PinchGesture);
-        this->viewport()->ungrabGesture(Qt::TapGesture);
-        this->viewport()->ungrabGesture(Qt::TapAndHoldGesture);
-        this->viewport()->ungrabGesture(Qt::SwipeGesture);
-        this->viewport()->ungrabGesture(Qt::CustomGesture);
-    }
-#endif
 }
 void MyView::startPaning(const QGraphicsSceneMouseEvent *e)
 {
     if(pinching) return;
     if(proj->getFrozen()) return;
+    qWarning()<<"inside start paning";
     px=e->scenePos().x();
     py=e->scenePos().y();
     QPixmap pix(proj->getW(),proj->getH());
@@ -98,10 +73,14 @@ void MyView::stopPaning(const int &x, const int &y)
         proj->setCentralPixel(r.center());
     }
     else
+    {
+        qWarning()<<"anomaly 1 in myView";
         hideViewPix();
+    }
 }
 void MyView::hideViewPix()
 {
+    qWarning()<<"inside hideViewPix";
     if(paning || pinching)
     {
         scene->removeItem(backPix);
@@ -130,6 +109,7 @@ void MyView::myScale(const double &scale, const double &lon, const double &lat, 
         viewPix->resetTransform();
         viewPix->setPixmap(pix);
         viewPix->setPos(0,0);
+        qWarning()<<"inside start pinching";
         scene->addItem(backPix);
         scene->addItem(viewPix);
     }

@@ -44,7 +44,7 @@ Projection::Projection(int w, int h, double cx, double cy):
     this->timer = new QTimer(this);
     assert(timer);
     timer->setSingleShot(true);
-    connect(timer, SIGNAL(timeout()), this, SIGNAL(projectionUpdated()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(slot_timer()));
     useTempo=true;
 }
 
@@ -303,6 +303,13 @@ void Projection::emit_projectionUpdated()
     if(useTempo)
         timer->start(200);
     else
+    {
         emit projectionUpdated();
+        emit projectionUpdatedLast(); //to make sure terrain is the last one updated, to avoid some flicking
+    }
 }
-
+void Projection::slot_timer()
+{
+    emit projectionUpdated();
+    emit projectionUpdatedLast(); //to make sure terrain is the last one updated, to avoid some flicking
+}

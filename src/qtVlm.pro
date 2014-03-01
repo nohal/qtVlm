@@ -5,6 +5,7 @@ contains ( QT_VERSION, "^5.*"){
     DEFINES += QT_V5
     CONFIG += QT_V5
     QT+=core gui widgets multimedia concurrent uitools
+#    QT+= qml quick
 }
 CONFIG += qt
 TEMPLATE = app
@@ -190,7 +191,8 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     Dialogs/ctrl/DialogChooseBarrierSet_ctrl.h \
     Dialogs/view/DialogChooseMultiple_view.h \
     Dialogs/view/pc/DialogChooseMultiple_view_pc.h \
-    Dialogs/ctrl/DialogChooseMultiple_ctrl.h
+    Dialogs/ctrl/DialogChooseMultiple_ctrl.h \
+    InfoView.h
 
 
 FORMS += Ui/boatAccount_dialog.ui \
@@ -347,7 +349,8 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/ctrl/DialogChooseBarrierSet_ctrl.cpp \
     Dialogs/view/DialogChooseMultiple_view.cpp \
     Dialogs/view/pc/DialogChooseMultiple_view_pc.cpp \
-    Dialogs/ctrl/DialogChooseMultiple_ctrl.cpp
+    Dialogs/ctrl/DialogChooseMultiple_ctrl.cpp \
+    InfoView.cpp
 
 
 
@@ -375,6 +378,7 @@ ICON = qtVlm.icns
 #DEFINES += __REAL_BOAT_ONLY
 
 OTHER_FILES += \
+#    qml_ui.qml \
     android/AndroidManifest.xml \
     android/res/layout/splash.xml \
     android/res/values/libs.xml \

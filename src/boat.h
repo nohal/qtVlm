@@ -165,9 +165,10 @@ signals:
         void showMessage(QString,int);
 
 protected:
+        QVariant itemChange(GraphicsItemChange change, const QVariant &value);
         void contextMenuEvent(QGraphicsSceneContextMenuEvent * event);
         void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
-        bool event(QEvent * event);
+        bool sceneEvent(QEvent * event);
         void mousePressEvent(QGraphicsSceneMouseEvent* e);
         void mouseReleaseEvent(QGraphicsSceneMouseEvent* e);
         /* DATA */
@@ -265,6 +266,8 @@ protected:
         double declinaison;
         double minSpeedForEngine;
         double speedWithEngine;
+        int shapeSize;
+        QSize squareSize;
 };
 Q_DECLARE_TYPEINFO(boat,Q_MOVABLE_TYPE);
 #endif // BOAT_H

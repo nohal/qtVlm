@@ -99,6 +99,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogChooseBarrierSet_ctrl.h"
 #include "DialogGribDrawing.h"
 #include "orthoSegment.h"
+#include "InfoView.h"
 
 /*******************/
 /*    myScene      */
@@ -121,6 +122,13 @@ myScene::myScene(myCentralWidget * parent) : QGraphicsScene(parent)
 }
 
 /* Events */
+//bool myScene::event(QEvent *e)
+//{
+//    if ( e->type() == QEvent::GraphicsSceneMousePress )
+//        foreach(QGraphicsItem * i,this->selectedItems())
+//            i->setSelected(false);
+//    return QGraphicsScene::event(e);
+//}
 
 void  myScene::keyPressEvent (QKeyEvent *e)
 {
@@ -478,6 +486,9 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     scene->addItem(barrierEditLine);
     barrierEditLine->setZValue(Z_VALUE_SELECTION);
     barrierEditLine->hide();
+    /* infoView */
+    infoView=new InfoView(this);
+
 }
 
 void myCentralWidget::loadGshhs(void) {
@@ -1067,6 +1078,7 @@ void myCentralWidget::slot_mousePress(QGraphicsSceneMouseEvent* e)
 //        QPoint screenPos=this->view->viewport()->mapToGlobal(view->mapFromScene(this->mainW->getSelectedBoat()->scenePos()));
 //        QToolTip::showText(screenPos,"this is a test");
 //    }
+    this->clearOtherSelected(NULL);
     if(e->button()==Qt::MidButton)
         proj->setCentralPixel(e->scenePos().x(),e->scenePos().y());
     else if ((e->modifiers()!=Qt::NoModifier || selectionTool)
@@ -1080,7 +1092,7 @@ void myCentralWidget::slot_mousePress(QGraphicsSceneMouseEvent* e)
 }
 void myCentralWidget::slot_mouseRelease(QGraphicsSceneMouseEvent* e)
 {
-    qWarning()<<"mouse released detected";
+    qWarning()<<"mouse released detected in mcw";
     if(barrierEditMode!=BARRIER_EDIT_NO_EDIT) {
         manage_barrier();
     }
@@ -4581,7 +4593,6 @@ void myCentralWidget::slot_playerSelected(Player * player)
             if(reselected)
             {
                 mainW->slotSelectBoat(boat_list->at(thisOne));
-                boat_list->at(thisOne)->setSelected(true);
             }
             emit shRouBis();
         }
@@ -4859,6 +4870,7 @@ void myCentralWidget::slotImg_close()
 }
 void myCentralWidget::slot_resetGestures()
 {
+    qWarning()<<"slot reset gestures";
     view->hideViewPix();
 }
 void myCentralWidget::slot_graphicParams()
@@ -4871,4 +4883,18 @@ void myCentralWidget::slot_graphicParams()
             mainW->getSelectedBoat()->slot_updateGraphicsParameters();
     }
     delete dial;
+}
+void myCentralWidget::clearOtherSelected(QGraphicsItem * i)
+{
+    foreach (QGraphicsItem * item,scene->selectedItems())
+    {
+        if(item!=i)
+            item->setSelected(false);
+    }
+}
+void myCentralWidget::showToolTip(const QString &tt, const bool &animate)
+{
+#ifdef __ANDROID__
+    infoView->showView(tt,animate);
+#endif
 }

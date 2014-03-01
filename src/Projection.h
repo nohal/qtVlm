@@ -94,9 +94,12 @@ Q_OBJECT
         void setFrozen(const bool &b){this->frozen=b;}
         bool getFrozen(void) const {return this->frozen;}
         void setUseTempo(const bool &b){this->useTempo=b;}
+public slots:
+        void slot_timer();
 signals:
         void newZoom(double);
         void projectionUpdated(void);
+        void projectionUpdatedLast(void);
 
     private:
         double mySignedDiffAngle(const double &a1, const double &a2) const;

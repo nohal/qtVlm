@@ -265,7 +265,6 @@ void Util::setWidgetSize(QDialog *dialog)
     dialog->setMaximumHeight(screenRect.height()-50);
     dialog->setMaximumWidth(screenRect.width()-20);
     QList<QScrollArea *> scrolls=dialog->findChildren<QScrollArea *>(QString(),Qt::FindDirectChildrenOnly);
-    qWarning()<<"nb of scrollArea for"<<dialog->objectName()<<scrolls.size();
     if(!scrolls.isEmpty())
     {
         QScrollArea * scrollarea=scrolls.at(0);
@@ -274,7 +273,6 @@ void Util::setWidgetSize(QDialog *dialog)
         ws=qMin(ws,ws1);
         scrollarea->setWidgetResizable(true);
         scrollarea->widget()->adjustSize();
-        qWarning()<<scrollarea->widget()->sizeHint()<<scrollarea->widget()->size()<<ws<<ws1;
         QSize s = QSize(scrollarea->widget()->sizeHint().width()+ws,scrollarea->widget()->sizeHint().height()+ws);
         if(s.height()>dialog->maximumHeight())
             s.setHeight(dialog->maximumHeight());

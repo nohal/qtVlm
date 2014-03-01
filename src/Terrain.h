@@ -205,7 +205,6 @@ private:
     QMutex mutex;
     QPoint scalePos;
     QTimer * timerUpdated;
-    void myClearSelectedItems();
 };
 Q_DECLARE_TYPEINFO(Terrain,Q_MOVABLE_TYPE);
 

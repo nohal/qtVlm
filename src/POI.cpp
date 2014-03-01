@@ -48,7 +48,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QStyleFactory>
 #include "AngleUtil.h"
 #include <QGestureEvent>
-#include <QToolTip>
+//#include <QToolTip>
 #include "Terrain.h"
 #include <QScreen>
 
@@ -163,8 +163,8 @@ POI::POI(const QString &name, const int &type, const double &lat, const double &
     if(Settings::getSetting(enable_Gesture).toString()=="1")
     {
         this->setAcceptTouchEvents(true);
-        this->grabGesture(Qt::TapAndHoldGesture,Qt::ReceivePartialGestures);
-        this->grabGesture(Qt::TapGesture,Qt::ReceivePartialGestures);
+        this->grabGesture(Qt::TapAndHoldGesture);
+        this->grabGesture(Qt::TapGesture);
 #if 0
         this->grabGesture(Qt::SwipeGesture,Qt::ReceivePartialGestures);
         this->grabGesture(Qt::PanGesture,Qt::ReceivePartialGestures);
@@ -179,48 +179,61 @@ POI::POI(const QString &name, const int &type, const double &lat, const double &
 }
 QVariant POI::itemChange(GraphicsItemChange change, const QVariant &value)
 {
-    if(change==ItemEnabledHasChanged)
-        update();
-    if (change!=ItemPositionHasChanged)
-        return QGraphicsWidget::itemChange(change,value);
-    QToolTip::showText(QPoint(),"");
-    double newlon,newlat;
-    QPointF newPos=value.toPointF();
-    proj->screen2mapDouble(newPos.x(),newPos.y(), &newlon, &newlat);
-    setLongitude(newlon);
-    setLatitude(newlat);
-    if(parent->getIsStartingUp()) return QGraphicsWidget::itemChange(change,value);
-    if(route!=NULL && !route->isBusy())
-        emit poiMoving();
-    if(lineBetweenPois!=NULL || boatCircle!=NULL)
+    if(change==ItemToolTipHasChanged)
     {
-        manageLineBetweenPois();
-        manageBoatCircle();
+        if(isSelected())
+            parent->showToolTip(toolTip(),false);
     }
-    hasMoved=true;
+    if(change==ItemSelectedHasChanged)
+    {
+        if(!isSelected())
+            parent->showToolTip("");
+        else
+        {
+            parent->clearOtherSelected(this);
+            parent->showToolTip(toolTip());
+        }
+    }
+    if (change==ItemPositionHasChanged)
+    {
+        //QToolTip::showText(QPoint(),"");
+        double newlon,newlat;
+        QPointF newPos=value.toPointF();
+        proj->screen2mapDouble(newPos.x(),newPos.y(), &newlon, &newlat);
+        setLongitude(newlon);
+        setLatitude(newlat);
+        if(parent->getIsStartingUp()) return QGraphicsWidget::itemChange(change,value);
+        if(route!=NULL && !route->isBusy())
+            emit poiMoving();
+        if(lineBetweenPois!=NULL || boatCircle!=NULL)
+        {
+            manageLineBetweenPois();
+            manageBoatCircle();
+        }
+        hasMoved=true;
+    }
+    prepareGeometryChange();
+    update();
     return QGraphicsWidget::itemChange(change,value);
 }
 void POI::mousePressEvent(QGraphicsSceneMouseEvent *e)
 {
-    qWarning()<<"mouse press detected in POI"<<scenePos()<<e->scenePos()<<pos();
-    e->accept();
-    QPoint screenPos=parent->getView()->viewport()->mapToGlobal(parent->getView()->mapFromScene(scenePos()));
-    QToolTip::showText(screenPos,this->toolTip(),0,QRect(),5000);
+    qWarning()<<"mouse press detected in POI";
+    //QPoint screenPos=parent->getView()->viewport()->mapToGlobal(parent->getView()->mapFromScene(scenePos()));
+    //QToolTip::showText(screenPos,this->toolTip(),0,QRect(),5000);
     QGraphicsWidget::mousePressEvent(e);
-    this->setSelected(true);
+    e->accept();
     parent->get_terrain()->ungrabGesture(Qt::TapGesture);
     parent->get_terrain()->ungrabGesture(Qt::TapAndHoldGesture);
 }
 
 void POI::mouseReleaseEvent(QGraphicsSceneMouseEvent *e)
-{
-    qWarning()<<"mouse release detected in POI"<<scenePos()<<e->scenePos()<<pos();
+{ /*accepting-ignoring mouse release events does nothing according to documentation*/
     if(hasMoved && this->isWp)
         this->slot_setWP();
     hasMoved=false;
-    e->ignore();
     QGraphicsWidget::mouseReleaseEvent(e);
-    this->setSelected(false);
+    qWarning()<<"mouse release detected in POI";
     parent->get_terrain()->grabGesture(Qt::TapGesture);
     parent->get_terrain()->grabGesture(Qt::TapAndHoldGesture);
 }
@@ -229,60 +242,25 @@ bool POI::sceneEvent(QEvent *event)
 {
     if (event->type() == QEvent::Gesture)
     {
-
-        QGesture * gesture;
+        QGraphicsWidget::sceneEvent(event);
+        event->accept();
         QGestureEvent * gestureEvent=static_cast<QGestureEvent*>(event);
-        qWarning()<<"gesture detected in POI";
-        gesture=gestureEvent->gesture(Qt::PanGesture);
-        if(gesture)
+        foreach (QGesture * gesture, gestureEvent->gestures())
         {
-            gestureEvent->setAccepted(gesture,true);
-            gesture->setGestureCancelPolicy(QGesture::CancelAllInContext);
-            qWarning()<<"pan gesture in POI"<<gesture->state();
-        }
-        gesture=gestureEvent->gesture(Qt::SwipeGesture);
-        if(gesture)
-        {
-            gestureEvent->setAccepted(gesture,true);
-            gesture->setGestureCancelPolicy(QGesture::CancelAllInContext);
-            qWarning()<<"swipe gesture in POI"<<gesture->state();
-        }
-        gesture=gestureEvent->gesture(Qt::TapGesture);
-        if(gesture)
-        {
-            gestureEvent->setAccepted(gesture,true);
-            gesture->setGestureCancelPolicy(QGesture::CancelAllInContext);
-            qWarning()<<"tap gesture in POI"<<gesture->state();
-        }
-        gesture=gestureEvent->gesture(Qt::CustomGesture);
-        if(gesture)
-        {
-            gestureEvent->setAccepted(gesture,true);
-            gesture->setGestureCancelPolicy(QGesture::CancelAllInContext);
-            qWarning()<<"custom gesture in POI"<<gesture->state();
-        }
-        gesture=gestureEvent->gesture(Qt::PinchGesture);
-        if(gesture)
-        {
-            gestureEvent->setAccepted(gesture,true);
-            gesture->setGestureCancelPolicy(QGesture::CancelAllInContext);
-            qWarning()<<"pinch gesture in POI"<<gesture->state();
-        }
-        gesture=gestureEvent->gesture(Qt::TapAndHoldGesture);
-        if (gesture)
-        {
-            gestureEvent->setAccepted(gesture,true);
-            gesture->setGestureCancelPolicy(QGesture::CancelAllInContext);
-            qWarning()<<"TapAndHoldGesture detected in poi"<<name<<gesture->state();
-            QTapAndHoldGesture *p=static_cast<QTapAndHoldGesture*>(gesture);
-            if(p->state()==Qt::GestureFinished && this->isSelected()/*due to a bug in qt-android*/)
+            gestureEvent->accept(gesture);
+            if(gesture->gestureType()==Qt::TapGesture)
+                qWarning()<<"tap gesture in POI"<<gesture->state();
+            else if (gesture->gestureType()==Qt::TapAndHoldGesture)
             {
-                if(!hasMoved)
+                qWarning()<<"tapAndHold gesture in POI"<<gesture->state();
+                QTapAndHoldGesture *p=static_cast<QTapAndHoldGesture*>(gesture);
+                if(p->state()==Qt::GestureFinished && !hasMoved)
                     this->showContextMenu(p->position().x(),p->position().y());
             }
+            else
+                qWarning()<<"unexpected gesture in POI:"<<gesture->gestureType()<<gesture->state();
         }
-        event->accept();
-        return QGraphicsWidget::sceneEvent(event);
+        return true;
     }
     return QGraphicsWidget::sceneEvent(event);
 }
@@ -500,8 +478,7 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
 
 void POI::showContextMenu(const double &x, const double &y)
 {
-    QToolTip::showText(QPoint(),"");
-    this->setSelected(false);
+    //QToolTip::showText(QPoint(),"");
     bool onlyLineOff = false;
     if(route==NULL || route->getLastPoi()==this || route->getFrozen())
     {
@@ -1603,7 +1580,7 @@ void POI::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
     {
         if (this->isSelected())
         {
-            QPen ps(Qt::red);
+            QPen ps(Qt::blue);
             ps.setWidthF(3.0);
             pnt->setBrush(Qt::NoBrush);
             pnt->setPen(ps);
@@ -1704,17 +1681,14 @@ QPainterPath POI::shape() const
     }
     int sh=shapeSize+4;
     QRectF R1=QRectF(-sh,-sh,sh*2,sh*2);
-#ifdef __ANDROID__
-    path.addEllipse(R1);
-#else
     if(isSelected())
     {
         path.addEllipse(R1);
     }
     else
         path.addRect(-squareSize/2.0-1,-squareSize/2.0-1,squareSize+2,squareSize+2);
-#endif
     path.addRect(squareSize/2.0+2,-height/2.0-2,width+4,height+4);
+    path.setFillRule(Qt::WindingFill);
     return path;
 }
 
