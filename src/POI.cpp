@@ -240,6 +240,7 @@ void POI::mouseReleaseEvent(QGraphicsSceneMouseEvent *e)
 
 bool POI::sceneEvent(QEvent *event)
 {
+    //qWarning()<<"event detected in POI"<<event->type();
     if (event->type() == QEvent::Gesture)
     {
         QGraphicsWidget::sceneEvent(event);
@@ -254,7 +255,7 @@ bool POI::sceneEvent(QEvent *event)
             {
                 qWarning()<<"tapAndHold gesture in POI"<<gesture->state();
                 QTapAndHoldGesture *p=static_cast<QTapAndHoldGesture*>(gesture);
-                if(p->state()==Qt::GestureFinished && !hasMoved)
+                if(p->state()==Qt::GestureFinished && !hasMoved && this->scene()->mouseGrabberItem()==this)
                     this->showContextMenu(p->position().x(),p->position().y());
             }
             else
@@ -1682,11 +1683,16 @@ QPainterPath POI::shape() const
     int sh=shapeSize+4;
     QRectF R1=QRectF(-sh,-sh,sh*2,sh*2);
     if(isSelected())
+        path.addEllipse(R1);
+    else
+#ifdef __ANDROID__
     {
+        R1=QRectF(-sh/2,-sh/2,sh,sh);
         path.addEllipse(R1);
     }
-    else
+#else
         path.addRect(-squareSize/2.0-1,-squareSize/2.0-1,squareSize+2,squareSize+2);
+#endif
     path.addRect(squareSize/2.0+2,-height/2.0-2,width+4,height+4);
     path.setFillRule(Qt::WindingFill);
     return path;

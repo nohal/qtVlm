@@ -152,7 +152,6 @@ boat::boat(QString      pseudo, bool activated,
     connect(this,SIGNAL(releasePolar(QString)),main,SLOT(releasePolar(QString)));
     if(Settings::getSetting(enable_Gesture).toString()=="1")
     {
-        this->setAcceptTouchEvents(true);
         this->grabGesture(Qt::TapAndHoldGesture);
         this->grabGesture(Qt::TapGesture);
     }
@@ -625,11 +624,16 @@ QPainterPath boat::shape() const
     int sh=shapeSize+4;
     QRectF R1=QRectF(-sh,-sh,sh*2,sh*2);
     if(isSelected())
+        path.addEllipse(R1);
+    else
+#ifdef __ANDROID__
     {
+        R1=QRectF(-sh/2,-sh/2,sh,sh);
         path.addEllipse(R1);
     }
-    else
+#else
         path.addRect(-squareSize.width()/2.0-1,-squareSize.height()/2.0-1,squareSize.width()+2,squareSize.height()+2);
+#endif
     path.addRect(squareSize.width()/2.0+2,-height/2.0-2,width+4,height+4);
     path.setFillRule(Qt::WindingFill);
     return path;
@@ -1075,6 +1079,7 @@ void boat::showContextualMenu(const int &xPos, const int &yPos)
 }
 bool boat::sceneEvent(QEvent *event)
 {
+    //qWarning()<<"event detected in BOAT"<<event->type();
     if (event->type() == QEvent::Gesture)
     {
         QGraphicsWidget::sceneEvent(event);
@@ -1089,7 +1094,7 @@ bool boat::sceneEvent(QEvent *event)
             {
                 qWarning()<<"tapAndHold gesture in boat"<<gesture->state();
                 QTapAndHoldGesture *p=static_cast<QTapAndHoldGesture*>(gesture);
-                if(p->state()==Qt::GestureFinished)
+                if(p->state()==Qt::GestureFinished && this->scene()->mouseGrabberItem()==this)
                     this->showContextualMenu(p->position().x(),p->position().y());
             }
             else
