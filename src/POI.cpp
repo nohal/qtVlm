@@ -192,6 +192,7 @@ QVariant POI::itemChange(GraphicsItemChange change, const QVariant &value)
         {
             parent->clearOtherSelected(this);
             parent->showToolTip(toolTip());
+            mainWin->slot_POIselected(this);
         }
     }
     if (change==ItemPositionHasChanged)

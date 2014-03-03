@@ -628,6 +628,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     updateTitle();
     selectedBoat = NULL;
+    lastUpdateTime=QDateTime::currentDateTimeUtc().toTime_t();
 
     INTERPOLATION_DEFAULT=Settings::getSetting(defaultInterpolation).toInt();
 
@@ -1895,9 +1896,12 @@ void MainWindow::updateNxtVac(void)
     }
     else
     {
-        nxtVac_cnt--;
-        if(nxtVac_cnt<0) {
-            nxtVac_cnt=selectedBoat->getVacLen();
+        boatVLM * b=(boatVLM *)selectedBoat;
+        nxtVac_cnt=lastUpdateTime+b->getNextVac()-QDateTime::currentDateTimeUtc().toTime_t();
+        //qWarning()<<nxtVac_cnt<<b->getPrevVac()<<b->getNextVac()<<QDateTime::currentDateTimeUtc().toTime_t();
+        if(nxtVac_cnt<0)
+        {
+            nxtVac_cnt=b->getVacLen()+(nxtVac_cnt%b->getVacLen());
             emit outDatedVlmData();
             if(use_old_board)
                 myBoard->outdatedVLM();
@@ -2349,6 +2353,7 @@ void MainWindow::slotBoatUpdated(boat * upBoat,bool newRace,bool doingSync)
 
         if(boat == selectedBoat)
         {
+            lastUpdateTime=QDateTime::currentDateTimeUtc().toTime_t();
             bool found=false;
             //qWarning() << "selected boat update: " << boat->getName();
             timer->stop();
@@ -2407,6 +2412,7 @@ void MainWindow::slotBoatUpdated(boat * upBoat,bool newRace,bool doingSync)
 
             /* updating Vac info */
             nxtVac_cnt=boat->getNextVac();
+            //qWarning()<<nxtVac_cnt;
             emit drawVacInfo();
             timer->start(1000);
 
@@ -2638,12 +2644,14 @@ void MainWindow::slotSelectPOI(DialogPilototoInstruction * instruction)
     toolBar->boatList->setEnabled(false);
     updatePilototo_Btn((boatVLM*)selectedBoat);
     slotBoatLockStatusChanged(selectedBoat,selectedBoat->getLockStatus());
+    my_centralWidget->clearOtherSelected(NULL);
 }
 
 void MainWindow::slotSelectWP_POI()
 {
     isSelectingWP=true;
     toolBar->boatList->setEnabled(false);
+    my_centralWidget->clearOtherSelected(NULL);
     slotBoatLockStatusChanged(selectedBoat,selectedBoat->getLockStatus());
 }
 

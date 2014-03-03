@@ -108,6 +108,8 @@ class MainWindow: public MainWindowInterface
         QString formatLatitude(const double &y);
         void setFontDialog(QObject * o);
         void manageWPDialog(BoatInterface *myBoat, QObject *boardPlugin);
+        void stopTimer(){this->timer->stop();}
+        void startTimer(){this->timer->start(1000);}
 public slots:
         void slot_POI_input();
         void slot_showPOI_input(POI *poi=NULL, const bool &fromMenu=false);        
@@ -313,6 +315,7 @@ signals:
 
         QString get_OSVersion(void);
         QPalette originalPalette;
+        time_t lastUpdateTime;
         //QPluginLoader * pluginLoader;
 };
 

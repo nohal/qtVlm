@@ -417,7 +417,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
                     emit hasFinishedUpdating();
                     return;
                 }
-
+                //qWarning()<<result;
                 boat_id     = result["IDU"].toInt();
                 race_id     = result["RAC"].toInt();
                 name        = result["IDB"].toString();

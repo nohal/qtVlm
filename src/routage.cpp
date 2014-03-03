@@ -1376,6 +1376,7 @@ void ROUTAGE::slot_calculate()
     if(angleRange>=180) angleRange=179;
     arrivalIsClosest=false;
     time_t realEta=eta;
+    parent->getMainWindow()->stopTimer();
     while(!aborted)
     {
 #ifdef traceTime
@@ -2495,6 +2496,7 @@ void ROUTAGE::slot_calculate()
             break;
         }
     }
+    parent->getMainWindow()->startTimer();
     if(!i_iso)
     {
         if(!arrived)
