@@ -116,7 +116,6 @@ QVariant vlmLine::itemChange(GraphicsItemChange change, const QVariant &value)
     }
     if(change==ItemSelectedHasChanged)
     {
-        prepareGeometryChange();
         if(!isSelected())
         {
             myscene->getMcp()->showToolTip("");
@@ -160,7 +159,7 @@ vlmLine::~vlmLine()
 void vlmLine::slot_replay(int i)
 {
     this->replayStep=i;
-    calculatePoly();
+    prepareGeometryChange();
     update();
 }
 
@@ -186,7 +185,7 @@ void vlmLine::removeVlmPoint(const int &index)
 void vlmLine::setPoly(const QList<vlmPoint> & points)
 {
     line=points;
-    calculatePoly();
+    prepareGeometryChange();
     update();
 }
 
@@ -197,14 +196,14 @@ void vlmLine::slot_showMe()
 //    {
 //        n=1;
 //    }
-    calculatePoly();
+    prepareGeometryChange();
     update();
 }
 
 void vlmLine::setLineMode()
 {
     mode = VLMLINE_LINE_MODE;
-    calculatePoly();
+    prepareGeometryChange();
     update();
 }
 
@@ -212,14 +211,14 @@ void vlmLine::setPointMode(const QColor &pt_color)
 {
     mode = VLMLINE_POINT_MODE;
     this->pt_color = pt_color;
-    calculatePoly();
+    prepareGeometryChange();
     update();
 }
 void vlmLine::setGateMode(const QString &desc)
 {
     mode = VLMLINE_GATE_MODE;
     this->desc=desc;
-    calculatePoly();
+    prepareGeometryChange();
     update();
 }
 void vlmLine::setTip(QString tip)
@@ -233,28 +232,26 @@ void vlmLine::setHidden(const bool &hidden)
 {
     this->hidden=hidden;
     this->setVisible(!hidden);
-    calculatePoly();
+    prepareGeometryChange();
     update();
 }
 void vlmLine::calculatePoly(void)
 {
     collision.clear();
+    qDeleteAll(polyList);
     polyList.clear();
+    coastDetected=false;
+    if(myscene->getMcp()->getIsStartingUp()) return;
     if(hidden) return;
     int n=0;
     double X,Y,previousX=0,previousY=0;
     QPainterPath myPath2;
-    collision.clear();
     QRectF tempBound;
     tempBound.setRect(0,0,0,0);
-
-    qDeleteAll(polyList);
-    polyList.clear();
     QPolygon * poly=new QPolygon();
     polyList.append(poly);
     vlmPoint previousWorldPoint(0,0);
     bool coasted=false;
-    coastDetected=false;
     int cc=-1;
     GshhsReader * map=NULL;
     if(mcp)
@@ -379,7 +376,7 @@ void vlmLine::calculatePoly(void)
             myPath2.addPolygon(*pol);
     }
     if(drawingInMagnifier) return;
-    prepareGeometryChange();
+    //prepareGeometryChange();
     boundingR=tempBound;
     myPath=myPath2;
 }
@@ -389,7 +386,7 @@ void vlmLine::drawInMagnifier(QPainter * pnt, Projection * tempProj)
     drawingInMagnifier=true;
     Projection * myProj=proj;
     proj=tempProj;
-    calculatePoly();
+    //calculatePoly();
     paint(pnt,NULL,NULL);
     proj=myProj;
     drawingInMagnifier=false;
@@ -425,7 +422,7 @@ void vlmLine::hoverLeaveEvent(QGraphicsSceneHoverEvent *e)
 void vlmLine::deleteAll()
 {
     line.clear();
-    calculatePoly();
+    prepareGeometryChange();
     update();
 }
 
@@ -434,6 +431,7 @@ void vlmLine::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
 //    int debug;
 //    if(this->desc=="WP1: Latitude Cap Vert") //for debug point
 //        debug=0;
+    calculatePoly();
     if(!this->isVisible() || this->hidden) return;
     pnt->setRenderHint(QPainter::Antialiasing);
     pnt->setPen(linePen);
