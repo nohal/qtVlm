@@ -848,7 +848,7 @@ inline int ROUTAGE::calculateTimeRoute(const vlmPoint &routeFrom,const vlmPoint 
     return qAbs(etaRoute-dataThread->Eta);
 }
 
-ROUTAGE::ROUTAGE(QString name, Projection *proj, DataManager *dataManager, QGraphicsScene * myScene, myCentralWidget *parentWindow)
+ROUTAGE::ROUTAGE(QString name, Projection *proj, DataManager *dataManager, myScene * myscene, myCentralWidget *parentWindow)
         : QObject()
 {
     timerTempo=new QTimer(this);
@@ -857,7 +857,7 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, DataManager *dataManager, QGrap
     connect(timerTempo,SIGNAL(timeout()),this,SLOT(slot_calculate()));
     this->proj=proj;
     this->name=name;
-    this->myscene=myScene;
+    this->myscene=myscene;
     this->isPivot=false;
     fromRoutage=NULL;
     this->isNewPivot=false;
@@ -865,7 +865,7 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, DataManager *dataManager, QGrap
         this->useMultiThreading=false;
     else
         this->useMultiThreading=true;
-    connect(myScene,SIGNAL(eraseWay()),this,SLOT(eraseWay()));
+    connect(myscene,SIGNAL(eraseWay()),this,SLOT(eraseWay()));
     this->dataManager=dataManager;
     this->parent=parentWindow;
     map=parent->get_gshhsReader();

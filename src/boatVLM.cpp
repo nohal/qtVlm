@@ -707,6 +707,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
                             tip=tip+tr("<br>Il est autorise de couper cette ligne plusieurs fois");
                     }
                     porte->setTip(tip);
+                    porte->setFlag(QGraphicsWidget::ItemIsSelectable,true);
                     gates.append(porte);
 
                 }

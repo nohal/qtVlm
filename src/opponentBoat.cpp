@@ -74,6 +74,10 @@ void opponent::init(QColor color,bool isQtBoat,QString idu,QString race, double 
     this->isReal=false;
     this->lastUpdate=0;
     this->updateRequired=true;
+    if(Settings::getSetting(showFlag).toInt()==1)
+        squareSize=QSize(30,20);
+    else
+        squareSize=QSize(6,6);
 
     this->oppTrace=1;
     this->labelHidden=parentWindow->get_shLab_st();
@@ -123,6 +127,32 @@ void opponent::init(QColor color,bool isQtBoat,QString idu,QString race, double 
     this->rank=0;
     updatePosition();
     trace_drawing->setHidden(Settings::getSetting(hideTrace).toInt()==1);
+    if(Settings::getSetting(enable_Gesture).toString()=="1")
+    {
+        this->grabGesture(Qt::TapAndHoldGesture);
+        this->grabGesture(Qt::TapGesture);
+    }
+    this->setFlag(QGraphicsWidget::ItemIsSelectable,true);
+}
+QVariant opponent::itemChange(GraphicsItemChange change, const QVariant &value)
+{
+    if(change==ItemToolTipHasChanged)
+    {
+        if(isSelected())
+            parentWindow->showToolTip(toolTip(),false);
+    }
+    if(change==ItemSelectedHasChanged)
+    {
+        prepareGeometryChange();
+        if(!isSelected())
+            parentWindow->showToolTip("");
+        else
+        {
+            parentWindow->clearOtherSelected(this);
+            parentWindow->showToolTip(toolTip());
+        }
+    }
+    return QGraphicsWidget::itemChange(change,value);
 }
 
 opponent::~opponent(void)
@@ -144,11 +174,37 @@ void opponent::slot_resetTraceCache()
 /**************************/
 QRectF opponent::boundingRect() const
 {
-    if(!drawFlag)
-        return QRectF(0,0,width,height);
-    else
-        return QRectF(-12,height/2-10,width+30,25);
+    QRectF R1(squareSize.width()/2.0+2,-height/2.0-2,width+4,height+4); //label
+    QRectF R2=R1;
+    if(isSelected())
+    {
+        int sh=Util::getFingerSize()+4;
+        R2=QRectF(-sh,-sh,sh*2,sh*2);
+    }
+    QRectF R3(-squareSize.width()/2.0-1,-squareSize.height()/2.0-1,squareSize.width()+2,squareSize.height()+2);
+    return R1.united(R2).united(R3);
 }
+QPainterPath opponent::shape() const
+{
+    QPainterPath path;
+    int sh=Util::getFingerSize()+4;
+    QRectF R1=QRectF(-sh,-sh,sh*2,sh*2);
+    if(isSelected())
+        path.addEllipse(R1);
+    else
+#ifdef __ANDROID__
+    {
+        R1=QRectF(-sh/2,-sh/2,sh,sh);
+        path.addEllipse(R1);
+    }
+#else
+        path.addRect(-squareSize.width()/2.0-1,-squareSize.height()/2.0-1,squareSize.width()+2,squareSize.height()+2);
+#endif
+    path.addRect(squareSize.width()/2.0+2,-height/2.0-2,width+4,height+4);
+    path.setFillRule(Qt::WindingFill);
+    return path;
+}
+
 
 void opponent::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
 {
@@ -168,29 +224,42 @@ void opponent::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget 
             {
                 flag=flag.scaled(30,20,Qt::KeepAspectRatio);
                 drawFlag=true;
-                prepareGeometryChange();
+                squareSize=QSize(30,20);
             }
             else
+            {
                 drawFlag=false;
+                squareSize=QSize(6,6);
+            }
         }
         else
         {
-            if(!drawFlag)
-                prepareGeometryChange();
             drawFlag=true;
+            squareSize=QSize(30,20);
         }
     }
     else
     {
-        if(drawFlag)
-            prepareGeometryChange();
         drawFlag=false;
+        squareSize=QSize(6,6);
     }
-    int dy = height/2;
-
-    QFontMetrics fm(font());
+    QFont font=(QFont(QApplication::font()));
+    pnt->setFont(font);
+    QFontMetrics fm(font);
+    width = fm.width(my_str) + 10 +2;
+    height = qMax(fm.height()+2,10);
     if(!labelHidden)
     {
+        if (this->isSelected())
+        {
+            QPen ps(Qt::white);
+            ps.setWidthF(3.0);
+            pnt->setBrush(Qt::NoBrush);
+            pnt->setPen(ps);
+            int fingerSize=Util::getFingerSize();
+            pnt->drawEllipse(QPoint(0,0),fingerSize,fingerSize);
+            pnt->setPen(Qt::NoPen);
+        }
         if(this->isReal)
         {
             if(myColor.name()=="#000000")
@@ -203,44 +272,32 @@ void opponent::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget 
             bgcolor=QColor(239,48,36,150);
         else
             bgcolor = QColor(255,255,255,150);
-        QPen p=pnt->pen();
+        pnt->setPen(Qt::NoPen);
+        if(!drawFlag)
+            pnt->fillRect(-squareSize.width()/2,-squareSize.height()/2,squareSize.width(),squareSize.height(),QBrush(myColor));
+        else
+            pnt->drawImage(-squareSize.width()/2,-squareSize.height()/2,flag);
+        pnt->setBrush(QBrush(bgcolor));
+        QPoint labelPos(squareSize.width()/2.0+2,-height/2.0);
+        QRect R=QRect(labelPos, QSize(width, height));
+        pnt->drawRect(R);
+        pnt->setBrush(Qt::NoBrush);
+        QPen p;
         p.setColor(Qt::black);
         pnt->setPen(p);
-        if(!drawFlag)
-        {
-            pnt->fillRect(9,0, width-10,height-1, QBrush(bgcolor));
-            pnt->setFont(font());
-            pnt->drawText(10,fm.height()-2,my_str);
-        }
-        else
-        {
-            pnt->fillRect(21,0, width-10,height-1, QBrush(bgcolor));
-            pnt->setFont(font());
-            pnt->drawText(22,fm.height()-2,my_str);
-        }
-    }
-    QPen pen(myColor);
-    if(!drawFlag)
-    {
-        pen.setWidth(4);
-        pnt->setPen(pen);
-        pnt->fillRect(0,dy-3,7,7, QBrush(myColor));
-    }
-    else
-    {
-        pnt->drawImage(-11,dy-9,flag);
+        pnt->drawText(R,Qt::AlignVCenter|Qt::AlignHCenter,my_str);
     }
     int g = 60;
+    QPen pen;
     pen = QPen(QColor(g,g,g));
     pen.setWidth(1);
     pnt->setPen(pen);
+    QPoint labelPos(squareSize.width()/2.0+2,-height/2.0);
+    QRect R=QRect(labelPos, QSize(width, height));
     if(!labelHidden)
-    {
-        if(!drawFlag)
-            pnt->drawRect(9,0,width-10,height-1);
-        else
-            pnt->drawRect(21,0,width-10,height-1);
-    }
+        pnt->drawRect(R);
+    //pnt->drawRect(boundingRect());
+    //pnt->drawPath(shape());
 }
 void opponent::updateProjection()
 {
@@ -567,13 +624,16 @@ void opponent::setIsQtBoat(bool status)
 
 void opponent::paramChanged()
 {
+    prepareGeometryChange();
+    if(Settings::getSetting(showFlag).toInt()==1)
+        squareSize=QSize(30,20);
+    else
+        squareSize=QSize(6,6);
     label_type = Settings::getSetting(opp_labelType).toInt();
     oppTrace = Settings::getSetting(opp_trace).toInt();
 
     updatePosition();
     updateName();
-    if(!isQtBoat)
-        update();
 }
 
 void opponent::slot_shOpp(bool isHidden) {

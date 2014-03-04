@@ -50,7 +50,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QGestureEvent>
 //#include <QToolTip>
 #include "Terrain.h"
-#include <QScreen>
+#include "ToolBar.h"
 
 /**************************/
 /* Init & Clean           */
@@ -63,13 +63,6 @@ POI::POI(const QString &name, const int &type, const double &lat, const double &
 {
     this->parent = parentWindow;
     this->mainWin = main;
-    QScreen * screen=QGuiApplication::primaryScreen();
-#ifdef __ANDROID__
-    int finger=6;
-#else
-    int finger =10;
-#endif
-    shapeSize=finger*screen->physicalDotsPerInch()*0.0393700787; //10mm approx size of a finger
     squareSize=8;
     this->proj = proj;
     this->name = name;
@@ -162,7 +155,6 @@ POI::POI(const QString &name, const int &type, const double &lat, const double &
     }
     if(Settings::getSetting(enable_Gesture).toString()=="1")
     {
-        this->setAcceptTouchEvents(true);
         this->grabGesture(Qt::TapAndHoldGesture);
         this->grabGesture(Qt::TapGesture);
 #if 0
@@ -172,9 +164,13 @@ POI::POI(const QString &name, const int &type, const double &lat, const double &
         this->grabGesture(Qt::PinchGesture,Qt::ReceivePartialGestures);
 #endif
     }
-    this->setFlag(QGraphicsWidget::ItemIsMovable,true);
     this->setFlag(QGraphicsWidget::ItemSendsScenePositionChanges,true);
     this->setFlag(QGraphicsWidget::ItemIsSelectable,true);
+    this->setFlag(QGraphicsWidget::ItemIsMovable,false);
+    timerMoveable=new QTimer(this);
+    timerMoveable->setSingleShot(true);
+    timerMoveable->setInterval(500);
+    connect(timerMoveable,SIGNAL(timeout()),this,SLOT(slot_moveable()));
     QTapAndHoldGesture::setTimeout(2000);
 }
 QVariant POI::itemChange(GraphicsItemChange change, const QVariant &value)
@@ -186,13 +182,19 @@ QVariant POI::itemChange(GraphicsItemChange change, const QVariant &value)
     }
     if(change==ItemSelectedHasChanged)
     {
+        prepareGeometryChange();
         if(!isSelected())
+        {
             parent->showToolTip("");
+            timerMoveable->stop();
+            this->setFlag(QGraphicsWidget::ItemIsMovable,false);
+        }
         else
         {
             parent->clearOtherSelected(this);
             parent->showToolTip(toolTip());
             mainWin->slot_POIselected(this);
+            timerMoveable->start();
         }
     }
     if (change==ItemPositionHasChanged)
@@ -211,21 +213,26 @@ QVariant POI::itemChange(GraphicsItemChange change, const QVariant &value)
             manageLineBetweenPois();
             manageBoatCircle();
         }
-        hasMoved=true;
+        if(this->flags() & QGraphicsItem::ItemIsMovable)
+            hasMoved=true;
     }
-    prepareGeometryChange();
-    update();
     return QGraphicsWidget::itemChange(change,value);
 }
 void POI::mousePressEvent(QGraphicsSceneMouseEvent *e)
 {
     qWarning()<<"mouse press detected in POI";
-    //QPoint screenPos=parent->getView()->viewport()->mapToGlobal(parent->getView()->mapFromScene(scenePos()));
-    //QToolTip::showText(screenPos,this->toolTip(),0,QRect(),5000);
     QGraphicsWidget::mousePressEvent(e);
     e->accept();
-    parent->get_terrain()->ungrabGesture(Qt::TapGesture);
-    parent->get_terrain()->ungrabGesture(Qt::TapAndHoldGesture);
+}
+void POI::mouseMoveEvent(QGraphicsSceneMouseEvent *e)
+{
+    if(isSelected() && (flags() & QGraphicsItem::ItemIsMovable))
+        QGraphicsItem::mouseMoveEvent(e);
+    else
+    {
+        this->setSelected(false);
+        e->ignore();
+    }
 }
 
 void POI::mouseReleaseEvent(QGraphicsSceneMouseEvent *e)
@@ -235,8 +242,6 @@ void POI::mouseReleaseEvent(QGraphicsSceneMouseEvent *e)
     hasMoved=false;
     QGraphicsWidget::mouseReleaseEvent(e);
     qWarning()<<"mouse release detected in POI";
-    parent->get_terrain()->grabGesture(Qt::TapGesture);
-    parent->get_terrain()->grabGesture(Qt::TapAndHoldGesture);
 }
 
 bool POI::sceneEvent(QEvent *event)
@@ -265,6 +270,18 @@ bool POI::sceneEvent(QEvent *event)
         return true;
     }
     return QGraphicsWidget::sceneEvent(event);
+}
+void POI::slot_moveable()
+{
+    if(this->isSelected())
+    {
+        double X,Y;
+        proj->map2screenDouble(lon,lat,&X,&Y);
+        mySetPos(X,Y);
+        prepareGeometryChange();
+        this->setFlag(QGraphicsWidget::ItemIsMovable,true);
+   }
+   update();
 }
 
 POI::~POI()
@@ -570,7 +587,7 @@ void POI::showContextMenu(const double &x, const double &y)
         }
         else
         {
-            QPixmap iconI(20,10);
+            QPixmap iconI(parent->get_toolBar()->getIconSize());
             iconI.fill(route->getColor());
             QIcon icon(iconI);
             ac_delRoute->setEnabled(true);
@@ -872,6 +889,7 @@ void POI::slot_relier()
             QPen pen(lineColor);
             pen.setWidthF(lineWidth);
             lineBetweenPois=new orthoSegment(proj,parent->getScene(),Z_VALUE_LINE_POI,false);
+            lineBetweenPois->setFlag(QGraphicsWidget::ItemIsSelectable,true);
             connectedPoi->setLineBetweenPois(lineBetweenPois);
             lineBetweenPois->setLinePen(pen);
             manageLineBetweenPois();
@@ -1081,13 +1099,16 @@ void POI::slot_setWP()
             boatVLM * b=(boatVLM *)parent->getSelectedBoat();
             connect (b,SIGNAL(hasFinishedUpdating()),this,SLOT(slot_allowToMove()));
             this->setFlag(QGraphicsWidget::ItemIsMovable,false);
+            update();
         }
         emit chgWP(lat,lon,wph);
     }
 }
 void POI::slot_allowToMove()
 {
-    this->setFlag(QGraphicsWidget::ItemIsMovable,true);
+    boatVLM * b=(boatVLM *)parent->getSelectedBoat();
+    disconnect (b,SIGNAL(hasFinishedUpdating()),this,SLOT(slot_allowToMove()));
+    this->slot_moveable();
 }
 
 void POI::slot_setGribDate()
@@ -1582,11 +1603,15 @@ void POI::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
     {
         if (this->isSelected())
         {
-            QPen ps(Qt::blue);
+            QPen ps(Qt::darkYellow);
+            if(flags()&QGraphicsWidget::ItemIsMovable)
+                ps=QPen(Qt::blue);
+
             ps.setWidthF(3.0);
             pnt->setBrush(Qt::NoBrush);
             pnt->setPen(ps);
-            pnt->drawEllipse(QPoint(0,0),shapeSize,shapeSize);
+            int fingerSize=Util::getFingerSize();
+            pnt->drawEllipse(QPoint(0,0),fingerSize,fingerSize);
         }
         QColor c(255,0,0,60);
         if(route==NULL)
@@ -1681,7 +1706,7 @@ QPainterPath POI::shape() const
         path.addRect(0,0,0,0);
         return path;
     }
-    int sh=shapeSize+4;
+    int sh=Util::getFingerSize()+4;
     QRectF R1=QRectF(-sh,-sh,sh*2,sh*2);
     if(isSelected())
         path.addEllipse(R1);
@@ -1704,7 +1729,7 @@ QRectF POI::boundingRect() const
     if(this->myLabelHidden)
         return QRectF(0,0,0,0);
     QRectF R1;
-    int sh=shapeSize+4;
+    int sh=Util::getFingerSize()+4;
     R1=QRectF(-sh,-sh,sh*2,sh*2);
     //    R1=QRectF(-squareSize/2.0-1,-squareSize/2.0-1,squareSize+2,squareSize+2);
     QRectF R2=QRectF(squareSize/2.0+2,-height/2.0-2,width+4,height+4);

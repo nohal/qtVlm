@@ -64,7 +64,7 @@ class ROUTAGE : public QObject
 { Q_OBJECT
     public:
         /* constructeurs, destructeurs */
-        ROUTAGE(QString name, Projection *proj, DataManager * dataManager, QGraphicsScene * myScene, myCentralWidget *parentWindow);
+        ROUTAGE(QString name, Projection *proj, DataManager * dataManager, myScene *myscene, myCentralWidget *parentWindow);
 
         ~ROUTAGE();
         void setName(const QString &name){this->name=name;}
@@ -237,7 +237,7 @@ public slots:
     private:
         /* parent, main */
         myCentralWidget *parent;
-        QGraphicsScene *myscene;
+        myScene *myscene;
         Projection *proj;
 
         /* widget component */

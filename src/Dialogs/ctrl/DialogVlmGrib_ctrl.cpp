@@ -60,7 +60,10 @@ DialogVlmGrib_ctrl::DialogVlmGrib_ctrl(MainWindow *mainWindow, myCentralWidget *
 }
 
 DialogVlmGrib_ctrl::~DialogVlmGrib_ctrl(void) {
-    delete view;
+    qWarning()<<"inside ~DialogVlmGrib_ctrl";
+    if(view)
+        delete view;
+    qWarning()<<"end of ~DialogVlmGrib_ctrl";
 }
 
 void DialogVlmGrib_ctrl::updateList(void) {
@@ -79,8 +82,11 @@ void DialogVlmGrib_ctrl::downloadGrib(int itemIndex) {
 }
 
 void DialogVlmGrib_ctrl::exitDialog(void) {
+    qWarning()<<"step 1";
     if(view) view->set_dialogVisibility(false);
+    qWarning()<<"step 2";
     deleteLater();
+    qWarning()<<"step 3";
 }
 
 QStringList DialogVlmGrib_ctrl::parseFolderListing(QString data)

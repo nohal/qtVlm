@@ -48,20 +48,22 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #define USE_VBVMG_VLM
 
-ROUTE::ROUTE(QString name, Projection *proj, DataManager *dataManager, QGraphicsScene * myScene, myCentralWidget *parentWindow)
+ROUTE::ROUTE(QString name, Projection *proj, DataManager *dataManager, myScene * myscene, myCentralWidget *parentWindow)
             : QObject()
 
 {
     this->proj=proj;
     this->name=name;
-    this->myscene=myScene;
+    this->myscene=myscene;
     this->dataManager=dataManager;
     this->parent=parentWindow;
     this->color=Settings::getSetting(routeLineColor).value<QColor>();
     this->width=Settings::getSetting(routeLineWidth).toDouble();
     this->startFromBoat=true;
     this->startTimeOption=1;
-    this->line=new vlmLine(proj,myScene,Z_VALUE_ROUTE);
+    this->line=new vlmLine(proj,myscene,Z_VALUE_ROUTE);
+    line->grabGesture(Qt::TapAndHoldGesture);
+    line->setFlag(QGraphicsWidget::ItemIsSelectable,true);
     connect(line,SIGNAL(hovered()),this,SLOT(hovered()));
     connect(line,SIGNAL(unHovered()),this,SLOT(unHovered()));
     line->setParent(this);

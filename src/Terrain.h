@@ -124,8 +124,6 @@ protected:
     bool sceneEvent(QEvent *event);
 
 private:    
-    QGraphicsEllipseItem *debugGesture;
-    double fingerSize;
     //-----------------------------------------------
     int width,height;
     //-----------------------------------------------

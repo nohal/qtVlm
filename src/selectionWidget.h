@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class selectionWidget : public QGraphicsWidget
 { Q_OBJECT
     public:
-        selectionWidget(myCentralWidget * centralWidget,Projection * proj, QGraphicsScene * myScene);
+        selectionWidget(myCentralWidget * centralWidget, Projection * proj, myScene *myscene);
 
         QPainterPath shape() const;
         QRectF boundingRect() const;

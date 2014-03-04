@@ -82,7 +82,6 @@ class opponent : public QGraphicsWidget
         void setIsReal(bool b){this->isReal=b;}
 
         /* graphicsWidget */
-        QRectF boundingRect() const;
         QString getAuthLogin(bool * ok=NULL) {if(ok) *ok=true;
             return "test";}
         QString getAuthPass(bool * ok=NULL) {if(ok) *ok=true;
@@ -101,10 +100,12 @@ public slots:
         void slot_shTrace(bool);
         void slot_resetTraceCache();
 
-    protected:
+protected:
         void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
-
-    private:
+        QRectF boundingRect() const;
+        QPainterPath shape() const;
+        QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+private:
         double lat,lon;
         QString name;
         QString pseudo;
@@ -137,6 +138,7 @@ public slots:
         bool isReal;
         time_t lastUpdate;
         bool updateRequired;
+        QSize squareSize;
 
 };
 Q_DECLARE_TYPEINFO(opponent,Q_MOVABLE_TYPE);

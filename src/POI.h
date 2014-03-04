@@ -178,6 +178,7 @@ public slots:
         void slot_boatCircleMenu();
         void manageBoatCircle();
         void slot_allowToMove();
+        void slot_moveable();
 signals:
         void chgWP(double,double,double);
         void addPOI_list(POI*);
@@ -192,14 +193,14 @@ signals:
         void wpChanged();
 
     protected:
-        void  mousePressEvent(QGraphicsSceneMouseEvent * e);
-        void  mouseReleaseEvent(QGraphicsSceneMouseEvent * e);
-        void  contextMenuEvent(QGraphicsSceneContextMenuEvent * event);
+        void mousePressEvent(QGraphicsSceneMouseEvent * e);
+        void mouseMoveEvent(QGraphicsSceneMouseEvent *e);
+        void mouseReleaseEvent(QGraphicsSceneMouseEvent * e);
+        void contextMenuEvent(QGraphicsSceneContextMenuEvent * event);
         bool sceneEvent(QEvent * event);
         QVariant itemChange(GraphicsItemChange change, const QVariant &value);
         void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
-
-    private:
+private:
         /* parent, main */
         myCentralWidget   *parent;
         MainWindow   *mainWin;
@@ -208,7 +209,7 @@ signals:
         /* widget component */
         QColor    bgcolor,fgcolor;
         QColor    poiColor,mwpColor,wpColor,baliseColor;
-        int       width,height,squareSize,shapeSize;
+        int       width,height,squareSize;
         QString   my_str;
 
         /* data */
@@ -294,6 +295,7 @@ signals:
         void showContextMenu(const double &x, const double &y);
         bool hasMoved;
         void mySetPos(const double &X, const double &Y);
+        QTimer * timerMoveable;
 };
 Q_DECLARE_TYPEINFO(POI,Q_MOVABLE_TYPE);
 

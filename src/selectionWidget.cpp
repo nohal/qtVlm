@@ -29,10 +29,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "mycentralwidget.h"
 #include "orthoSegment.h"
 
-selectionWidget::selectionWidget(myCentralWidget *centralWidget, Projection * proj, QGraphicsScene * myScene) : QGraphicsWidget() {
+selectionWidget::selectionWidget(myCentralWidget *centralWidget, Projection * proj, myScene * myscene) : QGraphicsWidget() {
     this->centralWidget=centralWidget;
     this->proj=proj;
-    seg=new orthoSegment(proj,myScene,Z_VALUE_SELECTION);
+    seg=new orthoSegment(proj,myscene,Z_VALUE_SELECTION);
 
     setZValue(Z_VALUE_SELECTION);
     setData(0,SELECTION_WTYPE);

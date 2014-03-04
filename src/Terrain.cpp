@@ -149,17 +149,6 @@ Terrain::Terrain(myCentralWidget *centralWidget, Projection *proj_) : QGraphicsW
         this->grabGesture(Qt::PinchGesture);
     }
     QTapAndHoldGesture::setTimeout(2000);
-    QScreen * screen=QGuiApplication::primaryScreen();
-    fingerSize=10*screen->physicalDotsPerInch()*0.0393700787; //10mm approx size of a finger
-
-    debugGesture=new QGraphicsEllipseItem(-fingerSize/2.0,-fingerSize/2.0,fingerSize,fingerSize);
-    debugGesture->setZValue(150);
-    QPen pen(Qt::red);
-    QBrush brush(Qt::red);
-    debugGesture->setPen(pen);
-    debugGesture->setFlag(QGraphicsWidget::ItemIsMovable,true);
-    debugGesture->setBrush(brush);
-    //centralWidget->getScene()->addItem(debugGesture);
 }
 //---------------------------------------------------------
 // Events
@@ -212,13 +201,12 @@ bool Terrain::sceneEvent(QEvent *event)
             else if (gesture->gestureType()==Qt::TapAndHoldGesture)
             {
                 qWarning()<<"tapAndHold gesture in Terrain"<<gesture->state();
-                if(gesture->state()==Qt::GestureFinished)
+                if(gesture->state()==Qt::GestureFinished && this->scene()->mouseGrabberItem()==this)
                 {
                     QPointF tapCenter=gesture->hotSpot();
                     QPoint screenPos=tapCenter.toPoint();
                     QPointF scenePos=centralWidget->mapFromGlobal(screenPos);
                     centralWidget->clearOtherSelected(NULL);
-                    //debugGesture->setPos(scenePos);
                     int X=qRound(scenePos.x());
                     int Y=qRound(scenePos.y());
                     centralWidget->getMainWindow()->showContextualMenu(X,Y,screenPos);

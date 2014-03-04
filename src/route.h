@@ -61,7 +61,7 @@ class ROUTE : public QObject
 { Q_OBJECT
     public:
         /* constructeurs, destructeurs */
-        ROUTE(QString name, Projection *proj, DataManager *dataManager, QGraphicsScene * myScene, myCentralWidget *parentWindow);
+        ROUTE(QString name, Projection *proj, DataManager *dataManager, myScene *myscene, myCentralWidget *parentWindow);
 
         ~ROUTE();
 
@@ -184,7 +184,7 @@ public slots:
     private:
         /* parent, main */
         myCentralWidget *parent;
-        QGraphicsScene *myscene;
+        myScene *myscene;
         Projection *proj;
 
         /* widget component */

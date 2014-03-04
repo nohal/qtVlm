@@ -42,6 +42,10 @@ DialogVlmGrib_view_pc::DialogVlmGrib_view_pc(myCentralWidget * centralWidget,Dia
                              tr("VLM Grib"),
                              tr("Chargement de la liste de grib"),QMessageBox::NoButton,this);
 }
+DialogVlmGrib_view_pc::~DialogVlmGrib_view_pc()
+{
+    delete waitBox;
+}
 
 void DialogVlmGrib_view_pc::set_waitBoxVisibility(bool visible) {
     if(visible)

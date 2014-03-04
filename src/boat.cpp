@@ -41,8 +41,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef QT_V5
 #include <QTapAndHoldGesture>
 #endif
-#include <QScreen>
-#include <QGestureRecognizer>
 boat::boat(QString      pseudo, bool activated,
            Projection * proj,MainWindow * main,myCentralWidget * parent):
    boatType (BOAT_NOBOAT),
@@ -54,13 +52,6 @@ boat::boat(QString      pseudo, bool activated,
     this->setParent(parent);
     this->mainWindow=main;
     this->parent=parent;
-    QScreen * screen=QGuiApplication::primaryScreen();
-#ifdef __ANDROID__
-    int finger=6;
-#else
-    int finger =10;
-#endif
-    shapeSize=finger*screen->physicalDotsPerInch()*0.0393700787; //10mm approx size of a finger
     squareSize=QSize(8,8);
 
     polar_list = main->getPolarList();
@@ -150,15 +141,13 @@ boat::boat(QString      pseudo, bool activated,
 
 
     connect(this,SIGNAL(releasePolar(QString)),main,SLOT(releasePolar(QString)));
+    connect(parent,SIGNAL(shTrace(bool)),this,SLOT(slot_shTrace(bool)));
     if(Settings::getSetting(enable_Gesture).toString()=="1")
     {
         this->grabGesture(Qt::TapAndHoldGesture);
         this->grabGesture(Qt::TapGesture);
     }
-    connect(parent,SIGNAL(shTrace(bool)),this,SLOT(slot_shTrace(bool)));
     this->setFlag(QGraphicsWidget::ItemIsSelectable,true);
-    //this->setFlag(QGraphicsWidget::ItemSendsScenePositionChanges,true);
-    //this->setFlag(QGraphicsWidget::ItemIsMovable,true);
 }
 
 boat::~boat()
@@ -359,7 +348,8 @@ void boat::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
             ps.setWidthF(3.0);
             pnt->setBrush(Qt::NoBrush);
             pnt->setPen(ps);
-            pnt->drawEllipse(QPoint(0,0),shapeSize,shapeSize);
+            int fingerSize=Util::getFingerSize();
+            pnt->drawEllipse(QPoint(0,0),fingerSize,fingerSize);
             pnt->setPen(Qt::NoPen);
         }
         pnt->setBrush(QBrush(bgcolor));
@@ -369,10 +359,6 @@ void boat::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
         pnt->setBrush(Qt::NoBrush);
         pnt->setPen(pen);
         pnt->drawText(R,Qt::AlignVCenter|Qt::AlignHCenter,my_str);
-//        if(!drawFlag)
-//            pnt->drawText(w+9,height-height/4,my_str);
-//        else
-//            pnt->drawText(w+21,height-height/4,my_str);
     }
     pen.setColor(selected?selColor:myColor);
     pen.setWidth(4);
@@ -390,6 +376,7 @@ void boat::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
     if(!labelHidden)
         pnt->drawRoundRect(R, 50,50);
     //pnt->drawPath(shape());
+    //pnt->drawRect(boundingRect());
 }
 
 void boat::updateTraceColor(void)
@@ -621,7 +608,7 @@ void boat::slotCompassLine()
 QPainterPath boat::shape() const
 {
     QPainterPath path;
-    int sh=shapeSize+4;
+    int sh=Util::getFingerSize()+4;
     QRectF R1=QRectF(-sh,-sh,sh*2,sh*2);
     if(isSelected())
         path.addEllipse(R1);
@@ -641,18 +628,15 @@ QPainterPath boat::shape() const
 
 QRectF boat::boundingRect() const
 {
-    QRectF R1;
-    if(!drawFlag)
-        R1= QRectF(0,0,width+10,height+2);
-    else
-        R1= QRectF(-12,height/2-10,width+30,25);
-    if(selected)
+    QRectF R1(squareSize.width()/2.0+2,-height/2.0-2,width+4,height+4); //label
+    QRectF R2=R1;
+    if(isSelected())
     {
-        int sh=shapeSize+4;
-        QRectF R2=QRectF(-sh,-sh,sh*2,sh*2);
-        return R1.united(R2);
+        int sh=Util::getFingerSize()+4;
+        R2=QRectF(-sh,-sh,sh*2,sh*2);
     }
-    return R1;
+    QRectF R3(-squareSize.width()/2.0-1,-squareSize.height()/2.0-1,squareSize.width()+2,squareSize.height()+2);
+    return R1.united(R2).united(R3);
 }
 
 /**************************/
@@ -1001,6 +985,7 @@ QVariant boat::itemChange(GraphicsItemChange change, const QVariant &value)
     }
     if(change==ItemSelectedHasChanged)
     {
+        prepareGeometryChange();
         if(!isSelected())
             parent->showToolTip("");
         else
@@ -1009,8 +994,6 @@ QVariant boat::itemChange(GraphicsItemChange change, const QVariant &value)
             parent->showToolTip(toolTip());
         }
     }
-    prepareGeometryChange();
-    update();
     return QGraphicsWidget::itemChange(change,value);
 }
 void boat::mousePressEvent(QGraphicsSceneMouseEvent* e)
@@ -1018,15 +1001,15 @@ void boat::mousePressEvent(QGraphicsSceneMouseEvent* e)
     qWarning()<<"mouse press event in boat detected";
     QGraphicsWidget::mousePressEvent(e);
     e->accept();
-    parent->get_terrain()->ungrabGesture(Qt::TapGesture);
-    parent->get_terrain()->ungrabGesture(Qt::TapAndHoldGesture);
+//    parent->get_terrain()->ungrabGesture(Qt::TapGesture);
+//    parent->get_terrain()->ungrabGesture(Qt::TapAndHoldGesture);
     return;
 }
 void boat::mouseReleaseEvent(QGraphicsSceneMouseEvent* e)
 {
     QGraphicsWidget::mouseReleaseEvent(e);
-    parent->get_terrain()->grabGesture(Qt::TapGesture);
-    parent->get_terrain()->grabGesture(Qt::TapAndHoldGesture);
+//    parent->get_terrain()->grabGesture(Qt::TapGesture);
+//    parent->get_terrain()->grabGesture(Qt::TapAndHoldGesture);
     return;
 }
 

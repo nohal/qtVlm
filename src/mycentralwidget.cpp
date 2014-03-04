@@ -4892,9 +4892,17 @@ void myCentralWidget::clearOtherSelected(QGraphicsItem * i)
             item->setSelected(false);
     }
 }
+
 void myCentralWidget::showToolTip(const QString &tt, const bool &animate)
 {
-#ifdef __ANDROID__
+#if 1
     infoView->showView(tt,animate);
+#else
+#ifndef __ANDROID__
+    infoView->showView(tt,animate);
+#else
+    Q_UNUSED(tt);
+    Q_UNUSED(animate);
+#endif
 #endif
 }

@@ -43,7 +43,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class vlmLine : public QGraphicsWidget
 { Q_OBJECT
     public:
-        vlmLine(Projection * proj, QGraphicsScene * myScene,double z_level);
+        vlmLine(Projection * proj, myScene * myscene,double z_level);
 
         void addPoint(const double &lat,const double &lon);
         void addVlmPoint(const vlmPoint &point);
@@ -97,12 +97,11 @@ protected:
         void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
         QRectF boundingRect() const;
         QPainterPath shape() const;
-        void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
-        void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
-//        void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
-//        void  mousePressEvent(QGraphicsSceneMouseEvent * e);
-//        void  mouseReleaseEvent(QGraphicsSceneMouseEvent * e);
-    public slots:
+        void hoverEnterEvent(QGraphicsSceneHoverEvent *e);
+        void hoverLeaveEvent(QGraphicsSceneHoverEvent *e);
+        QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+        bool sceneEvent(QEvent *e);
+public slots:
         void slot_compassLineToggle(bool b);
         void slot_showMe(void);
         void slot_shLab(bool state){this->labelHidden=state;update();}
@@ -122,7 +121,7 @@ protected:
         void calculatePoly(void);
         int nbVacPerHour;
         Projection * proj;
-        QGraphicsScene * myScene;
+        myScene * myscene;
         QString desc;
         QRectF boundingR;
         bool hidden;
@@ -145,6 +144,7 @@ protected:
         myCentralWidget * mcp;
         bool drawingInMagnifier;
         QString myToolTip;
+        void hover(const bool &isHovered);
 };
 Q_DECLARE_TYPEINFO(vlmLine,Q_MOVABLE_TYPE);
 

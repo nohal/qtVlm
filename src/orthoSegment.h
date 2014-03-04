@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class orthoSegment : public QGraphicsWidget
 {Q_OBJECT
     public:
-        orthoSegment(Projection * proj, QGraphicsScene * myScene,int z_level,bool roundedEnd=false);
+        orthoSegment(Projection * proj, myScene *myscene, int z_level, bool roundedEnd=false);
         ~orthoSegment();
         void initSegment(const double &lon1,const double &lat1,const double &lon2, const double &lat2);
         void moveSegment(const double &lon2,const double &lat2);

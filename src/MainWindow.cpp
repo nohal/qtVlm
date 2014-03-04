@@ -1965,7 +1965,7 @@ void MainWindow::showContextualMenu(const int &xPos, const int &yPos, QPoint scr
     if(my_centralWidget->getRouteToClipboard()!=NULL)
     {
         QString routeName=my_centralWidget->getRouteToClipboard()->getName();
-        QPixmap iconI(20,10);
+        QPixmap iconI(toolBar->getIconSize());
         iconI.fill(my_centralWidget->getRouteToClipboard()->getColor());
         QIcon icon(iconI);
         menuBar->ac_editRoute->setVisible(true);

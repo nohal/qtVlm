@@ -43,6 +43,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "AngleUtil.h"
 #include <QScrollArea>
 #include <QScrollBar>
+#include <QScreen>
 
 QString Util::generateKey(int size) {
     QString s;
@@ -982,4 +983,14 @@ double Util::distToSegment(const QPointF point,const QLineF line) {
                                    line.p1().y()+t*(line.p2().y()-line.p1().y()))
                      ));
 
+}
+int Util::getFingerSize()
+{
+    QScreen * screen=QGuiApplication::primaryScreen();
+#ifdef __ANDROID__
+    int finger=6;
+#else
+    int finger =10;
+#endif
+    return finger*screen->physicalDotsPerInch()*0.0393700787; //10mm approx size of a finger
 }

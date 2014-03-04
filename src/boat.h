@@ -266,7 +266,6 @@ protected:
         double declinaison;
         double minSpeedForEngine;
         double speedWithEngine;
-        int shapeSize;
         QSize squareSize;
 };
 Q_DECLARE_TYPEINFO(boat,Q_MOVABLE_TYPE);

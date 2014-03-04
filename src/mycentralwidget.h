@@ -88,6 +88,7 @@ class myScene : public QGraphicsScene
 //        void setPinching(const bool &b){this->pinching=b;}
 //        bool getPinching() const {return this->pinching;}
         void setView(MyView * v){this->view=v;}
+        myCentralWidget * getMcp(){return parent;}
 
     protected:
         void keyPressEvent (QKeyEvent *e);

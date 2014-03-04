@@ -40,7 +40,7 @@ class DialogVlmGrib_view_pc: public Dialog_view_pc, public DialogVlmGrib_view, p
 { Q_OBJECT
     public:
         DialogVlmGrib_view_pc(myCentralWidget * centralWidget,DialogVlmGrib_ctrl * ctrl);
-        ~DialogVlmGrib_view_pc(void) { }
+        ~DialogVlmGrib_view_pc(void);
 
         void updateList(QStringList lst);
         void set_waitBoxVisibility(bool visible);

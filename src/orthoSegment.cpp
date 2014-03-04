@@ -24,17 +24,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Orthodromie.h"
 #include "orthoSegment.h"
 #include "Projection.h"
+#include <mycentralwidget.h>
 
-orthoSegment::orthoSegment(Projection * proj, QGraphicsScene * myScene,int z_level,bool roundedEnd) : QGraphicsWidget()
+orthoSegment::orthoSegment(Projection * proj, myScene * myscene,int z_level,bool roundedEnd) : QGraphicsWidget()
 {
     lon1=lon2=lat1=lat2=0;
     this->proj=proj;
     this->roundedEnd=roundedEnd;
-    myScene->addItem(this);
+    myscene->addItem(this);
     this->setZValue(z_level);
     this->alsoDrawLoxo=false;
     isOrtho=true;
-    myLine = new vlmLine(proj,myScene,z_level);
+    myLine = new vlmLine(proj,myscene,z_level);
     myLine->setRoundedEnd(roundedEnd);
     myLine->setParent(this);
     hide();
