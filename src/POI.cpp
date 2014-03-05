@@ -1592,6 +1592,7 @@ void POI::slot_finePosit(bool silent)
 
 void POI::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
 {
+    qWarning()<<"poi inside paint"<<name<<QDateTime::currentMSecsSinceEpoch();
     QFont myFont=(QFont(QApplication::font()));
 
     if(this->piloteSelected || !labelTransp)

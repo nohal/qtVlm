@@ -100,6 +100,7 @@ protected:
         void hoverLeaveEvent(QGraphicsSceneHoverEvent *e);
         QVariant itemChange(GraphicsItemChange change, const QVariant &value);
         bool sceneEvent(QEvent *e);
+        bool event(QEvent *event);
 public slots:
         void slot_compassLineToggle(bool b);
         void slot_showMe(void);

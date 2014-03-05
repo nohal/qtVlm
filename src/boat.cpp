@@ -305,6 +305,7 @@ void boat::slot_toggleEstime()
 
 void boat::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
 {
+    qWarning()<<"boat inside paint"<<this->my_str<<QDateTime::currentMSecsSinceEpoch();
     QPen pen(selected?Qt::darkRed:Qt::darkBlue);
     pnt->setFont(QApplication::font());
     if(!labelHidden)
