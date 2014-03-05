@@ -227,7 +227,6 @@ public slots:
         void slot_createPivotM();
         void slot_drawWay();
         void slot_calculate();
-        void slot_calculate_with_tempo();
         void eraseWay();
         void slot_gribDateChanged();
         void slot_deleteRoutage(void);
@@ -341,7 +340,6 @@ public slots:
         double minPres,minPortant;
         double maxWaveHeight;
         bool visibleOnly;
-        QTimer * timerTempo;
         bool approaching;
         int zoomLevel;
         QList<vlmPointGraphic *> isoPointList;

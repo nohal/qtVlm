@@ -33,7 +33,6 @@ void MyView::startPaning(const QGraphicsSceneMouseEvent *e)
 {
     if(pinching) return;
     if(proj->getFrozen()) return;
-    qWarning()<<"inside start paning";
     px=e->scenePos().x();
     py=e->scenePos().y();
     QPixmap pix(proj->getW(),proj->getH());
@@ -80,7 +79,6 @@ void MyView::stopPaning(const int &x, const int &y)
 }
 void MyView::hideViewPix()
 {
-    qWarning()<<"inside hideViewPix";
     if(paning || pinching)
     {
         scene->removeItem(backPix);
@@ -109,7 +107,6 @@ void MyView::myScale(const double &scale, const double &lon, const double &lat, 
         viewPix->resetTransform();
         viewPix->setPixmap(pix);
         viewPix->setPos(0,0);
-        qWarning()<<"inside start pinching";
         scene->addItem(backPix);
         scene->addItem(viewPix);
     }

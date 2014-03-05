@@ -851,10 +851,6 @@ inline int ROUTAGE::calculateTimeRoute(const vlmPoint &routeFrom,const vlmPoint 
 ROUTAGE::ROUTAGE(QString name, Projection *proj, DataManager *dataManager, myScene * myscene, myCentralWidget *parentWindow)
         : QObject()
 {
-    timerTempo=new QTimer(this);
-    timerTempo->setSingleShot(true);
-    timerTempo->setInterval(300);
-    connect(timerTempo,SIGNAL(timeout()),this,SLOT(slot_calculate()));
     this->proj=proj;
     this->name=name;
     this->myscene=myscene;
@@ -1171,17 +1167,12 @@ void ROUTAGE::calculate()
         qWarning() << "-- East:     " << xE;
 #endif
         proj->zoomOnZone(xW,yN,xE,yS);
-        connect(proj,SIGNAL(projectionUpdated()),this,SLOT(slot_calculate_with_tempo()));
+        connect(parent->get_terrain(),SIGNAL(terrainUpdated()),this,SLOT(slot_calculate()));
         proj->setScale(proj->getScale()*.9);
         QApplication::processEvents();
     }
     else
         slot_calculate();
-}
-void ROUTAGE::slot_calculate_with_tempo()
-{
-    disconnect(proj,SIGNAL(projectionUpdated()),this,SLOT(slot_calculate_with_tempo()));
-    timerTempo->start();
 }
 void ROUTAGE::calculateMaxDist()
 {
@@ -1200,7 +1191,7 @@ void ROUTAGE::calculateMaxDist()
 
 void ROUTAGE::slot_calculate()
 {
-    disconnect(proj,SIGNAL(projectionUpdated()),this,SLOT(slot_calculate()));
+    disconnect(parent->get_terrain(),SIGNAL(terrainUpdated()),this,SLOT(slot_calculate()));
     calculateMaxDist();
     double   cap;
     QTime timeTotal;

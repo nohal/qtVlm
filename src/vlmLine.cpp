@@ -28,17 +28,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "GshhsReader.h"
 #include "mycentralwidget.h"
 #include <QGestureEvent>
+#include "Terrain.h"
 
 
 vlmLine::vlmLine(Projection * proj, myScene *myscene, double z_level) :
    QGraphicsWidget(),
    roundedEnd (false)
 {
+    this->mcp=myscene->getMcp();
     this->myZvalue=z_level;
     this->proj=proj;
     this->myscene=myscene;
     drawingInMagnifier=false;
-    connect(proj,SIGNAL(projectionUpdated()),this,SLOT(slot_showMe()));
+    connect(mcp->get_terrain(),SIGNAL(terrainUpdated()),this,SLOT(slot_showMe()));
+    connect(mcp,SIGNAL(compassLineToggle(bool)),this,SLOT(slot_compassLineToggle(bool)));
     myscene->addItem(this);
     this->setZValue(z_level);
     this->linePen=QPen(Qt::red);
@@ -61,7 +64,6 @@ vlmLine::vlmLine(Projection * proj, myScene *myscene, double z_level) :
     this->replayStep=0;
     this->coastDetected=false;
     this->coastDetection=false;
-    this->mcp=NULL;
     if(myZvalue==Z_VALUE_ROUTE || myZvalue==Z_VALUE_BOAT || myZvalue==Z_VALUE_OPP || myZvalue==Z_VALUE_LINE_POI)
         this->setAcceptHoverEvents(true);
     if(Settings::getSetting(enable_Gesture).toString()=="1")
@@ -91,12 +93,12 @@ bool vlmLine::sceneEvent(QEvent *event)
                 {
                     QPointF tapCenter=gesture->hotSpot();
                     QPoint screenPos=tapCenter.toPoint();
-                    QPointF scenePos=myscene->getMcp()->mapFromGlobal(screenPos);
-                    myscene->getMcp()->clearOtherSelected(NULL);
+                    QPointF scenePos=mcp->mapFromGlobal(screenPos);
+                    mcp->clearOtherSelected(NULL);
                     int X=qRound(scenePos.x());
                     int Y=qRound(scenePos.y());
                     hover(true);
-                    myscene->getMcp()->getMainWindow()->showContextualMenu(X,Y,screenPos);
+                    mcp->getMainWindow()->showContextualMenu(X,Y,screenPos);
                     hover(false);
                 }
             }
@@ -112,30 +114,25 @@ QVariant vlmLine::itemChange(GraphicsItemChange change, const QVariant &value)
     if(change==ItemToolTipHasChanged)
     {
         if(isSelected())
-            myscene->getMcp()->showToolTip(toolTip(),false);
+            mcp->showToolTip(toolTip(),false);
     }
     if(change==ItemSelectedHasChanged)
     {
         if(!isSelected())
         {
-            myscene->getMcp()->showToolTip("");
+            mcp->showToolTip("");
             hover(false);
         }
         else
         {
-            myscene->getMcp()->clearOtherSelected(this);
-            myscene->getMcp()->showToolTip(toolTip());
+            mcp->clearOtherSelected(this);
+            mcp->showToolTip(toolTip());
             hover(true);
         }
     }
     return QGraphicsWidget::itemChange(change,value);
 }
 
-void vlmLine::setMcp(myCentralWidget * mcp)
-{
-    this->mcp=mcp;
-    connect(mcp,SIGNAL(compassLineToggle(bool)),this,SLOT(slot_compassLineToggle(bool)));
-}
 void vlmLine::slot_compassLineToggle(bool b)
 {
     if(!b)
@@ -152,15 +149,14 @@ void vlmLine::set_zValue(const double &z)
 
 vlmLine::~vlmLine()
 {
-//    myScene->removeItem(this);
+    setSelected(false);
     qDeleteAll(polyList);
     polyList.clear();
 }
 void vlmLine::slot_replay(int i)
 {
     this->replayStep=i;
-    prepareGeometryChange();
-    update();
+    calculatePoly();
 }
 
 QRectF vlmLine::boundingRect() const
@@ -185,41 +181,31 @@ void vlmLine::removeVlmPoint(const int &index)
 void vlmLine::setPoly(const QList<vlmPoint> & points)
 {
     line=points;
-    prepareGeometryChange();
-    update();
+    calculatePoly();
 }
 
 void vlmLine::slot_showMe()
 {
-//    int n=0;
-//    if(this->zValue()==4)
-//    {
-//        n=1;
-//    }
-    prepareGeometryChange();
-    update();
+    calculatePoly();
 }
 
 void vlmLine::setLineMode()
 {
     mode = VLMLINE_LINE_MODE;
-    prepareGeometryChange();
-    update();
+    calculatePoly();
 }
 
 void vlmLine::setPointMode(const QColor &pt_color)
 {
     mode = VLMLINE_POINT_MODE;
     this->pt_color = pt_color;
-    prepareGeometryChange();
-    update();
+    calculatePoly();
 }
 void vlmLine::setGateMode(const QString &desc)
 {
     mode = VLMLINE_GATE_MODE;
     this->desc=desc;
-    prepareGeometryChange();
-    update();
+    calculatePoly();
 }
 void vlmLine::setTip(QString tip)
 {
@@ -232,8 +218,7 @@ void vlmLine::setHidden(const bool &hidden)
 {
     this->hidden=hidden;
     this->setVisible(!hidden);
-    prepareGeometryChange();
-    update();
+    calculatePoly();
 }
 void vlmLine::calculatePoly(void)
 {
@@ -241,8 +226,13 @@ void vlmLine::calculatePoly(void)
     qDeleteAll(polyList);
     polyList.clear();
     coastDetected=false;
-    if(myscene->getMcp()->getIsStartingUp()) return;
-    if(hidden) return;
+    if(hidden || mcp->getIsStartingUp())
+    {
+        prepareGeometryChange();
+        boundingR=QRectF();
+        myPath=QPainterPath();
+        return;
+    }
     int n=0;
     double X,Y,previousX=0,previousY=0;
     QPainterPath myPath2;
@@ -376,7 +366,7 @@ void vlmLine::calculatePoly(void)
             myPath2.addPolygon(*pol);
     }
     if(drawingInMagnifier) return;
-    //prepareGeometryChange();
+    prepareGeometryChange();
     boundingR=tempBound;
     myPath=myPath2;
 }
@@ -386,7 +376,7 @@ void vlmLine::drawInMagnifier(QPainter * pnt, Projection * tempProj)
     drawingInMagnifier=true;
     Projection * myProj=proj;
     proj=tempProj;
-    //calculatePoly();
+    calculatePoly();
     paint(pnt,NULL,NULL);
     proj=myProj;
     drawingInMagnifier=false;
@@ -422,17 +412,13 @@ void vlmLine::hoverLeaveEvent(QGraphicsSceneHoverEvent *e)
 void vlmLine::deleteAll()
 {
     line.clear();
-    prepareGeometryChange();
-    update();
+    calculatePoly();
 }
 
 void vlmLine::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
 {
-//    int debug;
-//    if(this->desc=="WP1: Latitude Cap Vert") //for debug point
-//        debug=0;
-    calculatePoly();
-    if(!this->isVisible() || this->hidden) return;
+    if(this->hidden || polyList.isEmpty()) return;
+    //qWarning()<<"inside paint"<<QDateTime::currentDateTime().toTime_t();
     pnt->setRenderHint(QPainter::Antialiasing);
     pnt->setPen(linePen);
     QPen coastedPen=linePen;
@@ -566,14 +552,6 @@ void vlmLine::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
         pnt->setPen(linePen);
     }
     //pnt->drawPath(shape());
-//    if(this->zValue()==4) //uncomment to see the boundingRect for routes
-//    {
-//        QPen linePenBis(Qt::black,1);
-//        linePenBis.setWidthF(1);
-//        pnt->setPen(linePenBis);
-//        pnt->drawRect(boundingR);
-//        pnt->setPen(linePen);
-//    }
 }
 
 QPainterPath vlmLine::shape() const

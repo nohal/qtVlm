@@ -157,6 +157,7 @@ QVariant opponent::itemChange(GraphicsItemChange change, const QVariant &value)
 
 opponent::~opponent(void)
 {
+    setSelected(false);
     if(trace_drawing)
     {
         if(!parentWindow->getAboutToQuit())

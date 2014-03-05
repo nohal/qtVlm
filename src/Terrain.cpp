@@ -71,10 +71,6 @@ Terrain::Terrain(myCentralWidget *centralWidget, Projection *proj_) : QGraphicsW
     connect(centralWidget,SIGNAL(redrawGrib()),this,SLOT(redrawGrib()));
     connect(this,SIGNAL(mousePress(QGraphicsSceneMouseEvent*)),centralWidget,SLOT(slot_mousePress(QGraphicsSceneMouseEvent*)));
     connect(this,SIGNAL(mouseRelease(QGraphicsSceneMouseEvent*)),centralWidget,SLOT(slot_mouseRelease(QGraphicsSceneMouseEvent*)));
-    timerUpdated=new QTimer(this);
-    timerUpdated->setSingleShot(true);
-    timerUpdated->setInterval(200);
-    connect(timerUpdated,SIGNAL(timeout()),this,SIGNAL(terrainUpdated()));
     setZValue(Z_VALUE_TERRE);
     setData(0,TERRE_WTYPE);
 
@@ -651,6 +647,7 @@ void Terrain::draw_GSHHSandGRIB()
     daylight(&pnt,vlmPoint(0,0));
     //centralWidget->getView()->resetTransform();
     centralWidget->getView()->setInteractive(true);
+    updateRoutine();
     centralWidget->getView()->hideViewPix();
 #ifdef traceTime
         qWarning()<<"--------------------------------------";
@@ -1373,10 +1370,10 @@ void Terrain::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget *
 {    
     pnt->setRenderHint(QPainter::Antialiasing,true);
     pnt->drawPixmap(0,0, *imgAll);
-    if(receivers(SIGNAL(terrainUpdated()))>0)
-    {
-        timerUpdated->start();
-    }
+//    if(receivers(SIGNAL(terrainUpdated()))>0)
+//    {
+//        timerUpdated->start();
+//    }
 }
 void Terrain::indicateWaitingMap()
 {
@@ -1426,7 +1423,8 @@ void Terrain::indicateWaitingMap()
         isWindMapValid = true;
         mustRedraw = false;
     }
-    updateRoutine();
+    else
+        updateRoutine();
     mustRedraw = false;
     if(toBeRestarted)
     {
@@ -1442,6 +1440,7 @@ void Terrain::updateRoutine()
     update();
     QCoreApplication::sendPostedEvents();
     QCoreApplication::processEvents(QEventLoop::AllEvents);
+    emit terrainUpdated();
 }
 void Terrain::setRoutageGrib(ROUTAGE * routage)
 {

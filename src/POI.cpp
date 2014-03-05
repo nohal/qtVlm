@@ -286,6 +286,7 @@ void POI::slot_moveable()
 
 POI::~POI()
 {
+    this->setSelected(false);
     if(route!=NULL) this->setRoute(NULL);
     if(lineBetweenPois!=NULL && !parent->getAboutToQuit())
     {

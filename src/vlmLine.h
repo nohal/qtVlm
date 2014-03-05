@@ -49,7 +49,7 @@ class vlmLine : public QGraphicsWidget
         void addVlmPoint(const vlmPoint &point);
         void removeVlmPoint(const int &index);
         void deleteAll(void);
-        void setLinePen ( const QPen & pen ) {linePen = pen;lineWidth=linePen.widthF();update(); }
+        void setLinePen ( const QPen & pen ) {linePen = pen;lineWidth=linePen.widthF();calculatePoly(); }
         const QPen getLinePen () const {return this->linePen;}
         void setPoly(const QList<vlmPoint> & points);
 
@@ -83,14 +83,13 @@ class vlmLine : public QGraphicsWidget
         void setLastPointIsPoi(){this->line[line.count()-1].isPOI=true;}
         vlmPoint * getOrigin(const int &n) {return this->line[n].origin;}
         vlmPoint * getPoint(const int &n) {return & line[n];}
-        void setInterpolated(const double &lon,const double &lat){this->interpolatedLon=lon;this->interpolatedLat=lat;update();}
-        void setHasInterpolated(const bool &b){this->hasInterpolated=b;update();}
+        void setInterpolated(const double &lon,const double &lat){this->interpolatedLon=lon;this->interpolatedLat=lat;calculatePoly();}
+        void setHasInterpolated(const bool &b){this->hasInterpolated=b;calculatePoly();}
         vlmPoint * getLastPoint() {return & line.last();}
         void setRoundedEnd(const bool &b){this->roundedEnd=b;}
         void setCoastDetection(const bool &b){this->coastDetection=b;}
         bool getCoastDetected(){return this->coastDetected;}
         ~vlmLine();
-        void setMcp(myCentralWidget * mcp);
         void set_zValue(const double &z);
         void drawInMagnifier(QPainter *pnt, Projection *tempProj);
 protected:
@@ -104,7 +103,7 @@ protected:
 public slots:
         void slot_compassLineToggle(bool b);
         void slot_showMe(void);
-        void slot_shLab(bool state){this->labelHidden=state;update();}
+        void slot_shLab(bool state){this->labelHidden=state;calculatePoly();}
         void slot_startReplay(bool b){this->replayMode=b;slot_showMe();}
         void slot_replay(int i);
     signals:

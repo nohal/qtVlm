@@ -997,7 +997,6 @@ void ROUTE::slot_recalculate(boat * boat)
     if(this->detectCoasts && !optimizingPOI && !this->imported && !this->frozen)
     {
         line->setCoastDetection(true);
-        line->setMcp(parent);
     }
     else
         line->setCoastDetection(false);

@@ -152,6 +152,7 @@ boat::boat(QString      pseudo, bool activated,
 
 boat::~boat()
 {
+    setSelected(false);
     disconnect();
     if(!parent->getAboutToQuit())
     {

@@ -202,7 +202,6 @@ private:
     ROUTAGE * routageGrib;
     QMutex mutex;
     QPoint scalePos;
-    QTimer * timerUpdated;
 };
 Q_DECLARE_TYPEINFO(Terrain,Q_MOVABLE_TYPE);
 
