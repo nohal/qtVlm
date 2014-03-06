@@ -94,10 +94,9 @@ class myScene : public QGraphicsScene
         void keyPressEvent (QKeyEvent *e);
         void keyReleaseEvent (QKeyEvent *e);
         void mouseMoveEvent (QGraphicsSceneMouseEvent * event);
-        //bool event(QEvent *e);
         void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* e);
         void wheelEvent(QGraphicsSceneWheelEvent* e);
-    signals:
+signals:
         void paramVLMChanged();
         void eraseWay();
     private slots:

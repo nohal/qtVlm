@@ -431,8 +431,8 @@ void vlmLine::deleteAll()
 void vlmLine::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
 {
     if(this->hidden || polyList.isEmpty()) return;
-    if(this->zValue()==Z_VALUE_ROUTE)
-        qWarning()<<"route inside paint"<<QDateTime::currentMSecsSinceEpoch();
+//    if(this->zValue()==Z_VALUE_ROUTE)
+//        qWarning()<<"route inside paint"<<QDateTime::currentMSecsSinceEpoch();
     pnt->setRenderHint(QPainter::Antialiasing);
     pnt->setPen(linePen);
     QPen coastedPen=linePen;

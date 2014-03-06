@@ -232,9 +232,10 @@ void MainWindow::slot_gribFileReceived(QString fileName)
 }
 
 //=============================================================
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(QWidget *parent) :timer(NULL), selectedBoat(NULL)
 {
     this->setParent(parent);
+    //qApp->installEventFilter(this);
     setWindowIcon (QIcon (appFolder.value("icon")+"qtVlm_48x48.png"));
     noSave=false;
     originalPalette=QApplication::palette();
@@ -1138,7 +1139,17 @@ void MainWindow::closeEvent(QCloseEvent * /*event*/) {
 
     QApplication::quit();
 }
-
+bool MainWindow::eventFilter( QObject * watched, QEvent * event )
+{
+    if(watched==qApp && selectedBoat && selectedBoat->get_boatType()==BOAT_VLM)
+    {
+        if(event->type()==QEvent::ApplicationActivate)
+            timer->start(1000);
+        else if (event->type()==QEvent::ApplicationDeactivate)
+            timer->stop();
+    }
+    return QMainWindow::eventFilter(watched,event) ;
+}
 void MainWindow::keyPressEvent ( QKeyEvent  * /* event */ )
 {
     //qWarning() << "Key pressed in main: " << event->key();

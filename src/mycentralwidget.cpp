@@ -122,13 +122,6 @@ myScene::myScene(myCentralWidget * parent) : QGraphicsScene(parent)
 }
 
 /* Events */
-//bool myScene::event(QEvent *e)
-//{
-//    if ( e->type() == QEvent::GraphicsSceneMousePress )
-//        foreach(QGraphicsItem * i,this->selectedItems())
-//            i->setSelected(false);
-//    return QGraphicsScene::event(e);
-//}
 
 void  myScene::keyPressEvent (QKeyEvent *e)
 {

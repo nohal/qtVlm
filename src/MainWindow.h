@@ -237,8 +237,8 @@ signals:
     protected:
         void closeEvent(QCloseEvent *event);
         void keyPressEvent ( QKeyEvent * event );
-
-    private:
+        bool eventFilter(QObject *watched, QEvent *event);
+private:
         Projection  *proj;
 
         bool finishStart;

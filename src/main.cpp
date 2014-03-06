@@ -231,6 +231,7 @@ int main(int argc, char *argv[])
 
     if(win.getFinishStart())
     {
+        app->installEventFilter(&win);
         win.show();
 
         app->installTranslator(NULL);
