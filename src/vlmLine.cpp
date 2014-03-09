@@ -75,15 +75,15 @@ vlmLine::vlmLine(Projection * proj, myScene *myscene, double z_level) :
 }
 bool vlmLine::event(QEvent *event)
 {
-    if(this->zValue()==Z_VALUE_ROUTE)
-        qWarning()<<"event in vlmLine (route)"<<event->type();
+//    if(this->zValue()==Z_VALUE_ROUTE)
+//        qWarning()<<"event in vlmLine (route)"<<event->type();
     return QGraphicsWidget::event(event);
 }
 
 bool vlmLine::sceneEvent(QEvent *event)
 {
-    if(this->zValue()==Z_VALUE_ROUTE)
-        qWarning()<<"sceneEvent in vlmLine (route)"<<event->type();
+//    if(this->zValue()==Z_VALUE_ROUTE)
+//        qWarning()<<"sceneEvent in vlmLine (route)"<<event->type();
     if (event->type() == QEvent::Gesture)
     {
         QGraphicsWidget::sceneEvent(event);
@@ -120,8 +120,8 @@ bool vlmLine::sceneEvent(QEvent *event)
 }
 QVariant vlmLine::itemChange(GraphicsItemChange change, const QVariant &value)
 {
-    if(this->zValue()==Z_VALUE_ROUTE)
-        qWarning()<<"itemChange in vlmLine (route)"<<change;
+//    if(this->zValue()==Z_VALUE_ROUTE)
+//        qWarning()<<"itemChange in vlmLine (route)"<<change;
     if(change==ItemToolTipHasChanged)
     {
         if(isSelected())
@@ -233,8 +233,8 @@ void vlmLine::setHidden(const bool &hidden)
 }
 void vlmLine::calculatePoly(void)
 {
-    if(this->zValue()==Z_VALUE_ROUTE)
-        qWarning()<<"calculatePoly in vlmLine (route)";
+//    if(this->zValue()==Z_VALUE_ROUTE)
+//        qWarning()<<"calculatePoly in vlmLine (route)";
     collision.clear();
     qDeleteAll(polyList);
     polyList.clear();
