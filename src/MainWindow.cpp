@@ -705,7 +705,7 @@ void MainWindow::continueSetup()
 //--------------------------------------------------
     progress->newStep(5,tr("Initializing menus"));
     menuBar = new MenuBar(this);
-    setMenuBar(menuBar);
+    //setMenuBar(menuBar);
 
 //--------------------------------------------------
     progress->newStep(10,tr("Initializing maps drawing"));
@@ -1287,15 +1287,16 @@ void MainWindow::closeProgress(void)
         emit paramVLMChanged();
     }
     statusBar->show();
-    menuBar->show();
     this->showDashBoard();
 //    QQuickView *qml = new QQuickView;
 //    qml->setSource(QUrl::fromLocalFile("src/qml_ui.qml"));
 //    qml->show();
-
 #ifdef __ANDROID__
     //menuBar->setNativeMenuBar(true);
-    menuBar->hide();
+    //menuBar->hide();
+#else
+    this->setMenuBar(menuBar);
+    menuBar->show();
 #endif
 }
 
