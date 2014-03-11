@@ -22,11 +22,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define DIALOGVLMGRIB_VIEW_H
 
 #include "class_list.h"
-
 class DialogVlmGrib_view{
     public:
         DialogVlmGrib_view(myCentralWidget *centralWidget, DialogVlmGrib_ctrl * ctrl);
-        virtual ~DialogVlmGrib_view(void) { }
+        virtual ~DialogVlmGrib_view(){}
 
         virtual void updateList(QStringList lst) = 0;
         virtual void set_waitBoxVisibility(bool visible) = 0;

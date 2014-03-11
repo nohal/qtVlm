@@ -45,7 +45,7 @@ class DialogVlmGrib_ctrl: public QObject, public inetClient
         void signalGribFileReceived(QString);
 
     private:
-        DialogVlmGrib_view * view;
+        DialogVlmGrib_view * view; /*will be constructed with a derived class*/
         myCentralWidget * centralWidget;
 
         QString filename;
@@ -54,7 +54,6 @@ class DialogVlmGrib_ctrl: public QObject, public inetClient
         bool doRequest(int reqType, int param=-1);
         QStringList parseFolderListing(QString data);
         bool gribFileReceived(QByteArray * content);
-
         void updateList(void);
 
 };

@@ -49,7 +49,7 @@ DialogVlmGrib_view_pc::~DialogVlmGrib_view_pc()
 
 void DialogVlmGrib_view_pc::set_waitBoxVisibility(bool visible) {
     if(visible)
-        waitBox->exec();
+        waitBox->show();
     else
         waitBox->hide();
 }

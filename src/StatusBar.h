@@ -52,10 +52,10 @@ signals:
         QString compute_dataTxt(DataManager * dataManager, MapDataDrawer* mapDrawer, QMap<int,QStringList> * mapDataTypes,
                                 int mode, int levelType, int levelValue, double x, double y);
 
-        QLabel       *labelOrtho;
         QLabel       *labelGrib;
-        QLabel       *labelEta;
 #ifndef __ANDROID__
+        QLabel       *labelEta;
+        QLabel       *labelOrtho;
         QLabel       *separator;
 #endif
     

@@ -50,20 +50,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 DialogVlmGrib_ctrl::DialogVlmGrib_ctrl(MainWindow *mainWindow, myCentralWidget * centralWidget, inetConnexion * inet):  inetClient(inet)
 {
     view = new DialogVlmGrib_view_pc(centralWidget,this);
-    if(!view) return;
     this->centralWidget=centralWidget;
 
     connect(this,SIGNAL(signalGribFileReceived(QString)),mainWindow,SLOT(slot_gribFileReceived(QString)));
     filename="";
-
     updateList();
 }
 
 DialogVlmGrib_ctrl::~DialogVlmGrib_ctrl(void) {
-    qWarning()<<"inside ~DialogVlmGrib_ctrl";
     if(view)
         delete view;
-    qWarning()<<"end of ~DialogVlmGrib_ctrl";
 }
 
 void DialogVlmGrib_ctrl::updateList(void) {
@@ -82,11 +78,8 @@ void DialogVlmGrib_ctrl::downloadGrib(int itemIndex) {
 }
 
 void DialogVlmGrib_ctrl::exitDialog(void) {
-    qWarning()<<"step 1";
     if(view) view->set_dialogVisibility(false);
-    qWarning()<<"step 2";
     deleteLater();
-    qWarning()<<"step 3";
 }
 
 QStringList DialogVlmGrib_ctrl::parseFolderListing(QString data)
@@ -237,7 +230,7 @@ void DialogVlmGrib_ctrl::requestFinished (QByteArray data)
                 updateList();
             else
             {
-                emit signalGribFileReceived(filename);                
+                emit signalGribFileReceived(filename);
                 exitDialog();
             }
             break;

@@ -57,15 +57,6 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
     this->setFont(font);
     //this->setTextFormat(Qt::RichText);
 
-    labelOrtho = new QLabel("Welcome in QtVlm", this);
-#ifdef QT_V5
-    if(Settings::getSetting(fusionStyle).toInt()==1)
-        labelOrtho->setStyleSheet("color: rgb(234, 221, 21);");
-    else
-#endif
-        labelOrtho->setStyleSheet("color: rgb(0, 0, 255);");
-    labelOrtho->setFont(font);
-    labelOrtho->setTextFormat(Qt::RichText);
 
     labelGrib = new QLabel("", this);
 #ifdef QT_V5
@@ -76,10 +67,16 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
         labelGrib->setStyleSheet("color: rgb(255, 0, 0);");
     labelGrib->setFont(font);
     labelGrib->setTextFormat(Qt::RichText);
-    /*font=labelGrib->font();
-    font.setBold(true);
-    labelGrib->setFont(font);*/
-
+#ifndef __ANDROID__
+    labelOrtho = new QLabel("Welcome in QtVlm", this);
+#ifdef QT_V5
+    if(Settings::getSetting(fusionStyle).toInt()==1)
+        labelOrtho->setStyleSheet("color: rgb(234, 221, 21);");
+    else
+#endif
+        labelOrtho->setStyleSheet("color: rgb(0, 0, 255);");
+    labelOrtho->setFont(font);
+    labelOrtho->setTextFormat(Qt::RichText);
     labelEta=new QLabel("",this);
 #ifdef QT_V5
     if(Settings::getSetting(fusionStyle).toInt()==1)
@@ -90,7 +87,7 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
     labelEta->setFont(font);
     labelEta->setTextFormat(Qt::RichText);
     labelEta->setAlignment(Qt::AlignRight);
-
+#endif
 
 #ifdef __ANDROID__
     this->addWidget(labelGrib,0);
@@ -108,8 +105,6 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
     this->addWidget(labelOrtho,0);
 
     separator->setVisible(false);
-#endif
-#ifndef __ANDROID__
     this->addPermanentWidget(labelEta,0);
 #endif
     mainWindow->setStatusBar(this);
@@ -119,98 +114,10 @@ void StatusBar::showGribData(double x,double y)
 {
     if(mainWindow->getMy_centralWidget()->isSelecting()) return;
     clearMessage();
-#if 0 /*unflag to visualize closest point to next gate from mouse position*/
-    if(!selectedBoat) return;
-    QList<vlmLine*> gates=((boatVLM*)mainWindow->selectedBoat)->getGates();
-    int nWP=this->selectedBoat->getNWP();
-
-    if(gates.isEmpty() || nWP<=0 || nWP>gates.count())
-    {
-    }
-    else
-    {
-        vlmLine *porte=NULL;
-        for (int i=nWP-1;i<gates.count();++i)
-        {
-            porte=gates.at(i);
-            if (!porte->isIceGate()) break;
-        }
-        double X,Y;
-        proj->map2screenDouble(x,y,&X,&Y);
-        double cx=X;
-        double cy=Y;
-        proj->map2screenDouble(porte->getPoints()->first().lon,porte->getPoints()->first().lat,&X,&Y);
-        double ax=X;
-        double ay=Y;
-        proj->map2screenDouble(porte->getPoints()->last().lon,porte->getPoints()->last().lat,&X,&Y);
-        double bx=X;
-        double by=Y;
-    #if 1 /*remove 1 pixel at each end to make sure we cross*/
-        QLineF porteLine(ax,ay,bx,by);
-        QLineF p1(porteLine.pointAt(0.5),porteLine.p1());
-        p1.setLength(p1.length()-1);
-        QLineF p2(porteLine.pointAt(0.5),porteLine.p2());
-        p2.setLength(p2.length()-1);
-        ax=p1.p2().x();
-        ay=p1.p2().y();
-        bx=p2.p2().x();
-        by=p2.p2().y();
-    #endif
-        double r_numerator = (cx-ax)*(bx-ax) + (cy-ay)*(by-ay);
-        double r_denomenator = (bx-ax)*(bx-ax) + (by-ay)*(by-ay);
-        double r = r_numerator / r_denomenator;
-    //
-        double px = ax + r*(bx-ax);
-        double py = ay + r*(by-ay);
-    //
-
-
-    //
-    // (xx,yy) is the point on the lineSegment closest to (cx,cy)
-    //
-        double xx = px;
-        double yy = py;
-        if ( (r >= 0) && (r <= 1) )
-        {
-        }
-        else
-        {
-            double dist1 = (cx-ax)*(cx-ax) + (cy-ay)*(cy-ay);
-            double dist2 = (cx-bx)*(cx-bx) + (cy-by)*(cy-by);
-            if (dist1 < dist2)
-            {
-                    xx = ax;
-                    yy = ay;
-            }
-            else
-            {
-                    xx = bx;
-                    yy = by;
-            }
-
-        }
-        double a,b;
-        proj->screen2mapDouble(xx,yy,&a,&b);
-//        closest=vlmPoint(a,b);
-//        Orthodromie oo(lon,lat,a,b);
-//        closest.distArrival=oo.getDistance();
-//        closest.capArrival=oo.getAzimutDeg();
-        if(debugPOI==NULL)
-            debugPOI = this->my_centralWidget->slot_addPOI("debug",0,b,a,-1,false,false);
-        else
-        {
-            debugPOI->setLatitude(b);
-            debugPOI->setLongitude(a);
-            debugPOI->slot_updateProjection();
-            QApplication::processEvents();
-        }
-
-    }
-#endif
     QString res;
+
+#ifndef __ANDROID__
     bool hasGribData = false;
-
-
     QString label1= Util::pos2String(TYPE_LAT,y) + " " + Util::pos2String(TYPE_LON,x);
     if(mainWindow->getSelectedBoat())
     {
@@ -219,7 +126,7 @@ void StatusBar::showGribData(double x,double y)
                 QString().sprintf(" %7.2fNM",oo.getDistance());
     }
     labelOrtho->setText(label1.replace(" ","&nbsp;"));
-
+#endif
     DataManager * dataManager=my_centralWidget->get_dataManager();
     Terrain * terrain=my_centralWidget->get_terrain();
     MapDataDrawer * mapDrawer=my_centralWidget->get_mapDataDrawer();
@@ -235,7 +142,9 @@ void StatusBar::showGribData(double x,double y)
 
         if(mode!=DATA_NOTDEF) {
             res = compute_dataTxt(dataManager,mapDrawer,dataManager->get_dataTypes(),mode,levelType,levelValue,x,y);
+#ifndef __ANDROID__
             hasGribData=!res.isEmpty();
+#endif
         }
 
         /* frst arrow */
@@ -246,7 +155,9 @@ void StatusBar::showGribData(double x,double y)
         if(arwMode!=DATA_NOTDEF && (arwMode!=mode || arwLevelType!=levelType || arwLevelValue!=levelValue)) {
             QString s=compute_dataTxt(dataManager,mapDrawer,dataManager->get_arrowTypesFst(),arwMode,arwLevelType,arwLevelValue,x,y);
             if(!s.isEmpty()) {
+#ifndef __ANDROID__
                 hasGribData=true;
+#endif
                 if(!res.isEmpty()) res += " - ";
                 res += s;
             }
@@ -260,7 +171,9 @@ void StatusBar::showGribData(double x,double y)
         if(arwMode!=DATA_NOTDEF && (arwMode!=mode || arwLevelType!=levelType || arwLevelValue!=levelValue)) {
             QString s=compute_dataTxt(dataManager,mapDrawer,dataManager->get_arrowTypesSec(),arwMode,arwLevelType,arwLevelValue,x,y);
             if(!s.isEmpty()) {
+#ifndef __ANDROID__
                 hasGribData=true;
+#endif
                 if(!res.isEmpty()) res += " - ";
                 res += s;
             }
@@ -337,12 +250,15 @@ void StatusBar::showSelectedZone(double x0, double y0, double x1, double y1)
 /**********************************************************************/
 
 void StatusBar::clear_eta(void) {
+#ifndef __ANDROID__
     labelEta->setText("<b>"+tr("No WP")+"</b>");
     this->labelEta->setMinimumSize(labelEta->sizeHint());
+#endif
 }
 
 void StatusBar::update_eta(QDateTime eta_dtm)
 {
+#ifndef __ANDROID__
     int nbS,j,h,m;
     QString txt;
     eta_dtm.setTimeSpec(Qt::UTC);
@@ -361,4 +277,7 @@ void StatusBar::update_eta(QDateTime eta_dtm)
     myEta.replace(" ","&nbsp;");
     txt.replace(" ","&nbsp;");
     labelEta->setText("<b>"+myEta+" "+txt+"</b>");
+#else
+    Q_UNUSED(eta_dtm);
+#endif
 }

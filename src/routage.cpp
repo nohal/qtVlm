@@ -3217,6 +3217,7 @@ void ROUTAGE::convertToRoute()
     if(!multiRoutage)
     {
         int answ=msgBox.exec();
+        QApplication::processEvents();
         if(answ==QMessageBox::Cancel) return;
         if(deleteOther.isChecked())
         {
