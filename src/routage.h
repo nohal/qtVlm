@@ -118,7 +118,6 @@ class ROUTAGE : public QObject
         bool isDone(void) const {return this->done;}
         bool isConverted(void) const {return this->converted;}
         void setConverted(void) {this->converted=true;}
-        void convertToRoute(void);
         const QDateTime getFinalEta(void) const {return finalEta;}
         bool getCheckCoast() const {return this->checkCoast;}
         void setCheckCoast(const bool &b){this->checkCoast=b;}
@@ -222,6 +221,7 @@ class ROUTAGE : public QObject
 public slots:
         void calculate();
         void slot_edit();
+        void convertToRoute(void);
         void slot_abort(){this->aborted=true;}
         void slot_createPivot();
         void slot_createPivotM();

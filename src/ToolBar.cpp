@@ -64,13 +64,15 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     toolBarList.append(mapToolBar);
 
     estimeToolBar=new MyToolBar("Estime",tr("Estime"),this,mainWindow);
+#ifndef __ANDROID__
     toolBarList.append(estimeToolBar);
-
+#endif
     boatToolBar=new MyToolBar("Boat",tr("Boat"),this,mainWindow);
     toolBarList.append(boatToolBar);
     barrierToolBar=new MyToolBar("BarrierSet",tr("Barrier Set"),this,mainWindow);
+#ifndef __ANDROID__
     toolBarList.append(barrierToolBar);
-
+#endif
     /* adding all toolBar to mainWindow dock */
     for(int i=0;i<toolBarList.count();++i)
         mainWindow->addToolBar(Qt::TopToolBarArea,toolBarList.at(i));
@@ -122,7 +124,9 @@ ToolBar::ToolBar(MainWindow *mainWindow)
                               tr("Grib drawing config"),appFolder.value("img")+"wind.png",gribToolBar);
     acGrib_dialog->setCheckable(true);
     cbGribStep = new QComboBox(gribToolBar);
+#ifndef DO_NOT_USE_STYLE
     cbGribStep->setFont(font);
+#endif
     cbGribStep->addItem(tr("5 m"),300);
     cbGribStep->addItem(tr("15 m"),900);
     cbGribStep->addItem(tr("30 m"),1800);
@@ -134,13 +138,16 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     cbGribStep->setSizeAdjustPolicy(QComboBox::AdjustToContents);
     //FontManagement::setFontDialog(cbGribStep);
     cbGribStep->setCurrentIndex(Settings::getSetting(gribDateStep).toInt());
-
+#ifndef __ANDROID__
     gribToolBar->addWidget(gribDwnld);
     gribToolBar->addAction(acOpenGrib);
     gribToolBar->addSeparator();
     gribToolBar->addAction(datesGrib_sel);
+#endif
     gribToolBar->addAction(datesGrib_now);
+#ifndef __ANDROID__
     gribToolBar->addSeparator();
+#endif
     gribToolBar->addAction(acGrib_dialog);
     gribToolBar->addSeparator();
     gribToolBar->addAction(acDatesGrib_prev);
@@ -172,9 +179,13 @@ ToolBar::ToolBar(MainWindow *mainWindow)
 #endif
     mapToolBar->addAction(acMap_Zoom_Sel);
     mapToolBar->addAction(acMap_Zoom_All);
+#ifndef __ANDROID__
     mapToolBar->addSeparator();
+#endif
     mapToolBar->addAction(selectionMode);
+#ifndef __ANDROID__
     mapToolBar->addSeparator();
+#endif
     mapToolBar->addAction(magnify);
 
     /* Estime toolBar */
@@ -193,25 +204,25 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     chkEstime = new QCheckBox(estimeToolBar);
     chkEstime->setToolTip(tr("Si cette option est cochee<br>l'estime calcule la vitesse du bateau<br>a la prochaine vac.<br>Sinon elle utilise la vitesse du bateau<br>telle que donnee par VLM"));
     chkEstime->setChecked(Settings::getSetting(startSpeedEstime).toInt()==1);
-
+#ifndef __ANDROID__
     estimeToolBar->addWidget(lbEstime);
     estimeToolBar->addWidget(spnEstime);
     estimeToolBar->addWidget(cbEstime);
     estimeToolBar->addWidget(chkEstime);
-
+#endif
     /* Boat toolBar */
     acLock=init_Action(tr("Verrouiller"), "", tr("Verrouiller l'envoi d'ordre a VLM"), appFolder.value("img")+"unlock.png",boatToolBar);
     boatList = new QComboBox();
     boatList->setSizeAdjustPolicy(QComboBox::AdjustToContents);
     boatToolBar->addAction(acLock);
     boatToolBar->addWidget((boatList));
-
+#ifndef __ANDROID__
     /* BarrierSet toolBar */
     barrierAdd = init_Action(tr("Add Barrier"),tr(""),tr(""),appFolder.value("img")+"add_barrier.png",barrierToolBar);
     barrierAdd->setCheckable(true);
 
     barrierToolBar->addAction(barrierAdd);
-
+#endif
     /*********************/
     /* init signal/slots */
     /*********************/
@@ -249,18 +260,20 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     connect(magnify,SIGNAL(triggered()),centralWidget,SLOT(slot_magnify()));
 
     /* Estime ToolBar */
+#ifndef __ANDROID__
     connect(spnEstime, SIGNAL(valueChanged(int)),this, SLOT(slot_estimeValueChanged(int)));
     connect(cbEstime,SIGNAL(currentIndexChanged(int)),this,SLOT(slot_estimeTypeChanged(int)));
     connect(chkEstime,SIGNAL(stateChanged(int)),this,SLOT(slot_estimeStartChanged(int)));
-
+#endif
     /* Boat ToolBar */
     connect(acLock, SIGNAL(triggered()), mainWindow, SLOT(slotFile_Lock()));
     connect(mainWindow,SIGNAL(updateLockIcon(QString)),this,SLOT(slot_updateLockIcon(QString)));
     connect(boatList, SIGNAL(activated(int)),mainWindow, SLOT(slotChgBoat(int)));
 
+#ifndef __ANDROID__
     /* BarrierSet ToolBar */
     connect(barrierAdd,SIGNAL(triggered()),mainWindow,SLOT(slot_barrierAddMenu()));
-
+#endif
     //load_settings();
     Util::setFontObject(this);
 }

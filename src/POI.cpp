@@ -50,7 +50,6 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QGestureEvent>
 //#include <QToolTip>
 #include "Terrain.h"
-#include "ToolBar.h"
 
 /**************************/
 /* Init & Clean           */
@@ -89,7 +88,6 @@ POI::POI(const QString &name, const int &type, const double &lat, const double &
     this->lineColor=Qt::blue;
     this->lineWidth=2;
     this->colorPilototo=0;
-    this->piloteSelected=false;
     this->piloteDate=-1;
     this->piloteWph=-1;
     this->sequence=0;
@@ -103,6 +101,7 @@ POI::POI(const QString &name, const int &type, const double &lat, const double &
     this->myLabelHidden=false;
     this->labelTransp=true;
     this->hasMoved=false;
+    this->routeSubMenu=NULL;
 //    qWarning() << "Init POI label: " << loxoCap<<" name: "<<name;
 
     WPlon=WPlat=-1;
@@ -192,7 +191,8 @@ QVariant POI::itemChange(GraphicsItemChange change, const QVariant &value)
         else
         {
             parent->clearOtherSelected(this);
-            parent->showToolTip(toolTip());
+            this->showContextMenu(-1,-1,false);
+            parent->showToolTip(toolTip(),true,&poiMenu);
             mainWin->slot_POIselected(this);
             timerMoveable->start();
         }
@@ -304,6 +304,8 @@ POI::~POI()
         delete boatCircle;
     if(popup && !parent->getAboutToQuit())
         popup->deleteLater();
+//    if(!poiMenu.isEmpty())
+//        qDeleteAll(poiMenu);
     delete timerSimp;
 }
 void POI::setLongitude(double lon)
@@ -333,8 +335,9 @@ void POI::rmSignal(void)
 
 void POI::createPopUpMenu(void)
 {
-    popup = new QMenu(parent);
-    Util::setFontObject(popup);
+//#ifndef  __ANDROID__
+#if 1
+    popup = new QMenu(tr("Poi menu"),parent);
     connect(this->popup,SIGNAL(aboutToShow()),parent,SLOT(slot_resetGestures()));
     connect(this->popup,SIGNAL(aboutToHide()),parent,SLOT(slot_resetGestures()));
 
@@ -353,10 +356,6 @@ void POI::createPopUpMenu(void)
     ac_setGribDate = new QAction(tr("Set Date"),popup);
     popup->addAction(ac_setGribDate);
     connect(ac_setGribDate,SIGNAL(triggered()),this,SLOT(slot_setGribDate()));
-
-    ac_setHorn= new QAction(tr("Activer la corne de brume 10mn avant le passage"),popup);
-    popup->addAction(ac_setHorn);
-    connect(ac_setHorn,SIGNAL(triggered()),this,SLOT(slot_setHorn()));
 
     ac_compassLine = new QAction(tr("Tirer un cap"),popup);
     popup->addAction(ac_compassLine);
@@ -377,58 +376,54 @@ void POI::createPopUpMenu(void)
     popup->addAction(ac_setWp);
     connect(ac_setWp,SIGNAL(triggered()),this,SLOT(slot_setWP_ask()));
     popup->addSeparator();
-
-    ac_routeList = new QMenu(tr("Routes"));
-    Util::setFontObject(ac_routeList);
+    mn_route=new QMenu(tr("Route"));
+    popup->addMenu(mn_route);
+    ac_routeList = new QMenu(tr("Select"));
     connect(ac_routeList,SIGNAL(triggered(QAction*)),this,SLOT(slot_routeMenu(QAction*)));
-    popup->addMenu(ac_routeList);
+    mn_route->addMenu(ac_routeList);
 
 
     ac_editRoute = new QAction(tr("Editer la route "),popup);
     ac_editRoute->setData(QVariant(QMetaType::VoidStar, &route));
-    popup->addAction(ac_editRoute);
-    ac_editRoute->setEnabled(false);
+    mn_route->addAction(ac_editRoute);
     connect(ac_editRoute,SIGNAL(triggered()),this,SLOT(slot_editRoute()));
     ac_poiRoute = new QAction(tr("Montrer les pois intermediaires de la route "),popup);
     ac_poiRoute->setCheckable(true);
     ac_poiRoute->setData(QVariant(QMetaType::VoidStar, &route));
-    popup->addAction(ac_poiRoute);
-    ac_poiRoute->setEnabled(false);;
+    mn_route->addAction(ac_poiRoute);
     connect(ac_poiRoute,SIGNAL(triggered()),this,SLOT(slot_poiRoute()));
     ac_copyRoute = new QAction(tr("Copier la route "),popup);
     ac_copyRoute->setData(QVariant(QMetaType::VoidStar, &route));
-    popup->addAction(ac_copyRoute);
-    ac_copyRoute->setEnabled(false);;
+    mn_route->addAction(ac_copyRoute);
     connect(ac_copyRoute,SIGNAL(triggered()),this,SLOT(slot_copyRoute()));
 
     menuSimplify=new QMenu(tr("Simplifier la route "),popup);
-    Util::setFontObject(menuSimplify);
     ac_simplifyRouteMax = new QAction(tr("Maximum"),menuSimplify);
     ac_simplifyRouteMin = new QAction(tr("Minimum"),menuSimplify);
     menuSimplify->addAction(ac_simplifyRouteMax);
     menuSimplify->addAction(ac_simplifyRouteMin);
-    menuSimplify->setEnabled(false);
     connect(ac_simplifyRouteMax,SIGNAL(triggered()),this,SLOT(slot_simplifyRouteMax()));
     connect(ac_simplifyRouteMin,SIGNAL(triggered()),this,SLOT(slot_simplifyRouteMin()));
-    popup->addMenu(menuSimplify);
+    mn_route->addMenu(menuSimplify);
     ac_optimizeRoute = new QAction(tr("Optimiser la route "),popup);
-    popup->addAction(ac_optimizeRoute);
-    ac_optimizeRoute->setEnabled(false);;
+    mn_route->addAction(ac_optimizeRoute);
     connect(ac_optimizeRoute,SIGNAL(triggered()),this,SLOT(slot_optimizeRoute()));
-    ac_zoomRoute = new QAction(tr("Zoom sur la route "),popup);
-    ac_zoomRoute->setEnabled(false);
-    popup->addAction(ac_zoomRoute);
-    connect(ac_zoomRoute,SIGNAL(triggered()),this,SLOT(slot_zoomRoute()));
-
-    ac_delRoute = new QAction(tr("Supprimer la route "),popup);
-    ac_delRoute->setData(QVariant(QMetaType::VoidStar, &route));
-    ac_delRoute->setEnabled(false);
-    connect(ac_delRoute,SIGNAL(triggered()),parent,SLOT(slot_deleteRoute()));
-
     ac_finePosit = new QAction(tr("Optimiser le placement sur la route"),popup);
     connect(ac_finePosit,SIGNAL(triggered()),this,SLOT(slot_finePosit()));
-    popup->addAction(ac_finePosit);
+    mn_route->addAction(ac_finePosit);
+    ac_zoomRoute = new QAction(tr("Zoom sur la route "),popup);
+    mn_route->addAction(ac_zoomRoute);
+    connect(ac_zoomRoute,SIGNAL(triggered()),this,SLOT(slot_zoomRoute()));
+    ac_setHorn= new QAction(tr("Activer la corne de brume 10mn avant le passage"),popup);
+    mn_route->addAction(ac_setHorn);
+    connect(ac_setHorn,SIGNAL(triggered()),this,SLOT(slot_setHorn()));
 
+    mn_route->addSeparator();
+    ac_delRoute = new QAction(tr("Supprimer la route "),popup);
+    ac_delRoute->setData(QVariant(QMetaType::VoidStar, &route));
+    connect(ac_delRoute,SIGNAL(triggered()),parent,SLOT(slot_deleteRoute()));
+    mn_route->addAction(ac_delRoute);
+    popup->addSeparator();
     ac_simplifiable = new QAction(tr("Non simplifiable"),popup);
     ac_simplifiable->setCheckable(true);
     ac_simplifiable->setChecked(this->notSimplificable);
@@ -436,39 +431,28 @@ void POI::createPopUpMenu(void)
     popup->addAction(ac_simplifiable);
 
     ac_modeList = new QMenu(tr("Mode de navigation vers ce POI"));
-    Util::setFontObject(ac_modeList);
     QActionGroup * ptr_group = new QActionGroup(ac_modeList);
 
     ac_modeList1 = new QAction(tr("VB-VMG"),popup);
-    ac_modeList1->setCheckable  (true);
+    ac_modeList1->setCheckable(true);
     ac_modeList->addAction(ac_modeList1);
     ptr_group->addAction(ac_modeList1);
     ac_modeList1->setData(0);
 
     ac_modeList2 = new QAction(tr("B-VMG"),popup);
-    ac_modeList2->setCheckable  (true);
+    ac_modeList2->setCheckable(true);
     ac_modeList->addAction(ac_modeList2);
     ptr_group->addAction(ac_modeList2);
     ac_modeList2->setData(1);
 
     ac_modeList3 = new QAction(tr("ORTHO"),popup);
-    ac_modeList3->setCheckable  (true);
+    ac_modeList3->setCheckable(true);
     ac_modeList->addAction(ac_modeList3);
     ptr_group->addAction(ac_modeList3);
     ac_modeList3->setData(2);
     ac_modeList1->setChecked(true);
     connect(ac_modeList,SIGNAL(triggered(QAction*)),this,SLOT(slot_setMode(QAction*)));
     popup->addMenu(ac_modeList);
-
-    popup->addSeparator();
-    popup->addAction(ac_delRoute);
-    popup->addSeparator();
-
-    ac_pilot=new QAction(tr("Pre-selectionner pour le pilototo"),popup);
-    ac_pilot->setCheckable(true);
-    ac_pilot->setChecked(this->piloteSelected);
-    connect(ac_pilot,SIGNAL(triggered()),this,SLOT(slot_pilote()));
-    popup->addAction(ac_pilot);
 
     ac_routage=new QAction(tr("Routage vers ce POI"),popup);
     connect(ac_routage,SIGNAL(triggered()),this,SLOT(slot_routage()));
@@ -484,6 +468,147 @@ void POI::createPopUpMenu(void)
     connect(ac_boatCircle,SIGNAL(triggered()),this,SLOT(slot_boatCircleMenu()));
     ac_boatCircle->setCheckable(true);
     ac_boatCircle->setChecked(false);
+    Util::setFontObject(popup);
+    poiMenu.append(popup);
+#else
+    popup=new QMenu("Poi Menu");
+    poiSubMenu=new QMenu(tr("Poi"));
+    popup->addMenu(poiSubMenu);
+    ac_edit = new QAction(tr("Editer"),this);
+    poiSubMenu->addAction(ac_edit);
+    connect(ac_edit,SIGNAL(triggered()),this,SLOT(slot_editPOI()));
+
+    ac_delPoi = new QAction(tr("Supprimer"),this);
+    poiSubMenu->addAction(ac_delPoi);
+    connect(ac_delPoi,SIGNAL(triggered()),this,SLOT(slot_delPoi()));
+
+    ac_copy = new QAction(tr("Copier"),this);
+    poiSubMenu->addAction(ac_copy);
+    connect(ac_copy,SIGNAL(triggered()),this,SLOT(slot_copy()));
+    poiSubMenu->addSeparator();
+    ac_simplifiable = new QAction(tr("Non simplifiable"),this);
+    ac_simplifiable->setCheckable(true);
+    ac_simplifiable->setChecked(this->notSimplificable);
+    connect(ac_simplifiable,SIGNAL(toggled(bool)),this,SLOT(slot_notSimplificable(bool)));
+    poiSubMenu->addAction(ac_simplifiable);
+
+    ac_modeList = new QMenu(tr("Mode de navigation vers ce POI"));
+    QActionGroup * ptr_group = new QActionGroup(ac_modeList);
+
+    ac_modeList1 = new QAction(tr("VB-VMG"),this);
+    ac_modeList1->setCheckable(true);
+    ac_modeList->addAction(ac_modeList1);
+    ptr_group->addAction(ac_modeList1);
+    ac_modeList1->setData(0);
+
+    ac_modeList2 = new QAction(tr("B-VMG"),this);
+    ac_modeList2->setCheckable(true);
+    ac_modeList->addAction(ac_modeList2);
+    ptr_group->addAction(ac_modeList2);
+    ac_modeList2->setData(1);
+
+    ac_modeList3 = new QAction(tr("ORTHO"),this);
+    ac_modeList3->setCheckable(true);
+    ac_modeList->addAction(ac_modeList3);
+    ptr_group->addAction(ac_modeList3);
+    ac_modeList3->setData(2);
+    ac_modeList1->setChecked(true);
+    connect(ac_modeList,SIGNAL(triggered(QAction*)),this,SLOT(slot_setMode(QAction*)));
+    poiSubMenu->addMenu(ac_modeList);
+
+    gribSubMenu=new QMenu(tr("Grib"));
+    popup->addMenu(gribSubMenu);
+    ac_setGribDate = new QAction(tr("Set Date"),this);
+    gribSubMenu->addAction(ac_setGribDate);
+    connect(ac_setGribDate,SIGNAL(triggered()),this,SLOT(slot_setGribDate()));
+
+    ac_twaLine = new QAction(tr("Tracer une estime TWA"),this);
+    gribSubMenu->addAction(ac_twaLine);
+    connect(ac_twaLine,SIGNAL(triggered()),this,SLOT(slot_twaLine()));
+
+
+    mapSubMenu=new QMenu(tr("Carte"));
+    popup->addMenu(mapSubMenu);
+
+    ac_centerOnPOI = new QAction(tr("Center on POI"),this);
+    mapSubMenu->addAction(ac_centerOnPOI);
+    connect(ac_centerOnPOI,SIGNAL(triggered()),this,SLOT(slot_centerOnBoat()));
+
+    ac_compassLine = new QAction(tr("Tirer un cap"),this);
+    mapSubMenu->addAction(ac_compassLine);
+    connect(ac_compassLine,SIGNAL(triggered()),this,SLOT(slotCompassLine()));
+    connect(this,SIGNAL(compassLine(double,double)),mainWin,SLOT(slotCompassLineForced(double,double)));
+
+    ac_connect=new QAction(tr("Tracer/Editer une ligne avec un autre POI"),this);
+    connect(ac_connect,SIGNAL(triggered()),this,SLOT(slot_relier()));
+    mapSubMenu->addAction(ac_connect);
+
+    ac_boatCircle = new QAction(tr("Tracer un cerce orthodromique au bateau"),this);
+    mapSubMenu->addAction(ac_boatCircle);
+    connect(ac_boatCircle,SIGNAL(triggered()),this,SLOT(slot_boatCircleMenu()));
+    ac_boatCircle->setCheckable(true);
+    ac_boatCircle->setChecked(false);
+
+
+    routeSubMenu=new QMenu(tr("Route"));
+    popup->addMenu(routeSubMenu);
+    ac_routeList = new QMenu(tr("Select"));
+    connect(ac_routeList,SIGNAL(triggered(QAction*)),this,SLOT(slot_routeMenu(QAction*)));
+    routeSubMenu->addMenu(ac_routeList);
+
+    ac_editRoute = new QAction(tr("Editer la route "),this);
+    ac_editRoute->setData(QVariant(QMetaType::VoidStar, &route));
+    routeSubMenu->addAction(ac_editRoute);
+    connect(ac_editRoute,SIGNAL(triggered()),this,SLOT(slot_editRoute()));
+    ac_poiRoute = new QAction(tr("Montrer les pois intermediaires de la route "),this);
+    ac_poiRoute->setCheckable(true);
+    ac_poiRoute->setData(QVariant(QMetaType::VoidStar, &route));
+    routeSubMenu->addAction(ac_poiRoute);
+    connect(ac_poiRoute,SIGNAL(triggered()),this,SLOT(slot_poiRoute()));
+    ac_copyRoute = new QAction(tr("Copier la route "),this);
+    ac_copyRoute->setData(QVariant(QMetaType::VoidStar, &route));
+    routeSubMenu->addAction(ac_copyRoute);
+    connect(ac_copyRoute,SIGNAL(triggered()),this,SLOT(slot_copyRoute()));
+
+    menuSimplify=new QMenu(tr("Simplifier la route "));
+    ac_simplifyRouteMax = new QAction(tr("Maximum"),menuSimplify);
+    ac_simplifyRouteMin = new QAction(tr("Minimum"),menuSimplify);
+    menuSimplify->addAction(ac_simplifyRouteMax);
+    menuSimplify->addAction(ac_simplifyRouteMin);
+    connect(ac_simplifyRouteMax,SIGNAL(triggered()),this,SLOT(slot_simplifyRouteMax()));
+    connect(ac_simplifyRouteMin,SIGNAL(triggered()),this,SLOT(slot_simplifyRouteMin()));
+    routeSubMenu->addMenu(menuSimplify);
+    ac_optimizeRoute = new QAction(tr("Optimiser la route "),this);
+    routeSubMenu->addAction(ac_optimizeRoute);
+    connect(ac_optimizeRoute,SIGNAL(triggered()),this,SLOT(slot_optimizeRoute()));
+
+    ac_finePosit = new QAction(tr("Optimiser le placement sur la route"),this);
+    connect(ac_finePosit,SIGNAL(triggered()),this,SLOT(slot_finePosit()));
+    routeSubMenu->addAction(ac_finePosit);
+
+    ac_zoomRoute = new QAction(tr("Zoom sur la route "),this);
+    ac_zoomRoute->setEnabled(false);
+    routeSubMenu->addAction(ac_zoomRoute);
+    connect(ac_zoomRoute,SIGNAL(triggered()),this,SLOT(slot_zoomRoute()));
+    ac_setHorn= new QAction(tr("Activer la corne de brume 10mn avant le passage"),this);
+    routeSubMenu->addAction(ac_setHorn);
+    connect(ac_setHorn,SIGNAL(triggered()),this,SLOT(slot_setHorn()));
+    routeSubMenu->addSeparator();
+    ac_delRoute = new QAction(tr("Supprimer la route "),this);
+    ac_delRoute->setData(QVariant(QMetaType::VoidStar, &route));
+    connect(ac_delRoute,SIGNAL(triggered()),parent,SLOT(slot_deleteRoute()));
+    routeSubMenu->addAction(ac_delRoute);
+    ac_setWp = new QAction(tr("Marque->WP"),this);
+    ac_setWp->setCheckable(true);
+    connect(ac_setWp,SIGNAL(triggered()),this,SLOT(slot_setWP_ask()));
+
+    ac_routage=new QAction(tr("Routage vers ce POI"),this);
+    connect(ac_routage,SIGNAL(triggered()),this,SLOT(slot_routage()));
+    popup->addSeparator();
+    popup->addAction(ac_setWp);
+    popup->addAction(ac_routage);
+    poiMenu.append(popup);
+#endif
 }
 
 /**************************/
@@ -496,7 +621,7 @@ void POI::contextMenuEvent(QGraphicsSceneContextMenuEvent * e)
     this->showContextMenu(e->scenePos().x(),e->scenePos().y());
 }
 
-void POI::showContextMenu(const double &x, const double &y)
+void POI::showContextMenu(const double &x, const double &y, const bool &popItUp)
 {
     //QToolTip::showText(QPoint(),"");
     bool onlyLineOff = false;
@@ -541,20 +666,22 @@ void POI::showContextMenu(const double &x, const double &y)
 
     if(onlyLineOff || ((MainWindow*)mainWin)->get_selPOI_instruction()) /* ie only show the Arret du cap line */
     {
-        ac_setWp->setEnabled(false);
-        ac_setGribDate->setEnabled(false);
-        ac_edit->setEnabled(false);
-        ac_delPoi->setEnabled(false);
-        ac_copy->setEnabled(false);
-        ac_routeList->setEnabled(false);
-        ac_delRoute->setEnabled(false);
+        ac_setWp->setVisible(false);
+        ac_setGribDate->setVisible(false);
+        ac_edit->setVisible(false);
+        ac_delPoi->setVisible(false);
+        ac_copy->setVisible(false);
+        ac_routeList->setVisible(false);
+        ac_delRoute->setVisible(false);
         ac_delRoute->setData(QVariant(QMetaType::VoidStar, &route));
-        ac_editRoute->setEnabled(false);
-        ac_poiRoute->setEnabled(false);
-        ac_copyRoute->setEnabled(false);
-        menuSimplify->setEnabled(false);
-        ac_optimizeRoute->setEnabled(false);
-        ac_zoomRoute->setEnabled(false);
+        ac_editRoute->setVisible(false);
+        ac_poiRoute->setVisible(false);
+        ac_copyRoute->setVisible(false);
+        menuSimplify->menuAction()->setVisible(false);
+        ac_optimizeRoute->setVisible(false);
+        ac_zoomRoute->setVisible(false);
+        ac_setHorn->setVisible(false);
+        ac_finePosit->setVisible(false);
     }
     else
     {
@@ -578,33 +705,47 @@ void POI::showContextMenu(const double &x, const double &y)
         ac_zoomRoute->setText(tr("Zoom sur la route ")+routeName);
         if(route==NULL)
         {
-            ac_delRoute->setEnabled(false);
-            ac_editRoute->setEnabled(false);
-            ac_poiRoute->setEnabled(false);
-            ac_copyRoute->setEnabled(false);
-            menuSimplify->setEnabled(false);
-            ac_optimizeRoute->setEnabled(false);
-            ac_zoomRoute->setEnabled(false);
+            ac_delRoute->setVisible(false);
+            ac_editRoute->setVisible(false);
+            ac_poiRoute->setVisible(false);
+            ac_copyRoute->setVisible(false);
+            menuSimplify->menuAction()->setVisible(false);
+            ac_optimizeRoute->setVisible(false);
+            ac_zoomRoute->setVisible(false);
+            ac_finePosit->setVisible(false);
+            ac_setHorn->setVisible(false);
+#ifndef __ANDROID__
+            mn_route->setIcon(QIcon());
+#endif
         }
         else
         {
-            QPixmap iconI(parent->get_toolBar()->getIconSize());
+            QPixmap iconI(parent->getIconSize());
             iconI.fill(route->getColor());
             QIcon icon(iconI);
-            ac_delRoute->setEnabled(true);
+#ifndef __ANDROID__
+            mn_route->setIcon(icon);
+#endif
+//            if(routeSubMenu!=NULL)
+//                routeSubMenu->setIcon(icon);
+            ac_delRoute->setVisible(true);
             ac_delRoute->setIcon(icon);
-            ac_editRoute->setEnabled(true);
+            ac_editRoute->setVisible(true);
             ac_editRoute->setIcon(icon);
             ac_poiRoute->setChecked(!route->getHidePois());
-            ac_poiRoute->setEnabled(true);
+            ac_poiRoute->setVisible(true);
             ac_poiRoute->setIcon(icon);
-            ac_copyRoute->setEnabled(true);
+            ac_copyRoute->setVisible(true);
             ac_copyRoute->setIcon(icon);
-            menuSimplify->setEnabled(true);
+            menuSimplify->menuAction()->setVisible(true);
             menuSimplify->setIcon(icon);
-            ac_optimizeRoute->setEnabled(true);
+            ac_optimizeRoute->setVisible(true);
             ac_optimizeRoute->setIcon(icon);
-            ac_zoomRoute->setEnabled(true);
+            ac_finePosit->setIcon(icon);
+            ac_finePosit->setVisible(true);
+            ac_setHorn->setIcon(icon);
+            ac_setHorn->setVisible(true);
+            ac_zoomRoute->setVisible(true);
             ac_zoomRoute->setIcon(icon);
         }
         /*clear current actions */
@@ -662,7 +803,8 @@ void POI::showContextMenu(const double &x, const double &y)
         ac_setWp->setChecked(true);
     else
         ac_setWp->setChecked(false);
-    popup->exec(QCursor::pos());
+    if(popup!=NULL && popItUp)
+        popup->exec(QCursor::pos());
 }
 
 /*********************/
@@ -762,8 +904,6 @@ void POI::update_myStr(void)
     else
         my_str=this->name;
     QFont myFont=(QFont(QApplication::font()));
-    if(this->piloteSelected)
-        myFont.setBold(true);
     this->setFont(myFont);
     QFontMetrics fm(font());
     prepareGeometryChange();
@@ -838,6 +978,7 @@ void POI::setWph(double wph)
 
 void POI::setRoute(ROUTE *route)
 {
+    this->setSelected(false);
     this->partOfTwa=false;
     if(this->route!=NULL)
     {
@@ -1595,7 +1736,7 @@ void POI::paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * )
     //qWarning()<<"poi inside paint"<<name<<QDateTime::currentMSecsSinceEpoch();
     QFont myFont=(QFont(QApplication::font()));
 
-    if(this->piloteSelected || !labelTransp)
+    if(!labelTransp)
         myFont.setBold(true);
     this->setFont(myFont);
     QFontMetrics fm(font());
@@ -1736,11 +1877,6 @@ QRectF POI::boundingRect() const
     //    R1=QRectF(-squareSize/2.0-1,-squareSize/2.0-1,squareSize+2,squareSize+2);
     QRectF R2=QRectF(squareSize/2.0+2,-height/2.0-2,width+4,height+4);
     return R1.united(R2);
-}
-void POI::slot_pilote()
-{
-    this->piloteSelected=ac_pilot->isChecked();
-    update();
 }
 void POI::slot_copyRoute()
 {
@@ -1928,7 +2064,6 @@ void POI::importGeoData(myCentralWidget * centralWidget) {
 #define POI_NAVMODE       "NavMode"
 #define POI_LABEL_HIDDEN  "LabelHidden"
 #define POI_NOT_SIMPLIFICABLE "IsSimplificable"
-#define POI_PILOTE         "Pilote"
 #define POI_SEQUENCE       "Sequence"
 
 void POI::read_POIData(myCentralWidget * centralWidget) {
@@ -1968,7 +2103,6 @@ void POI::read_POIData(myCentralWidget * centralWidget) {
              bool labelHidden=false;
              int navMode=0;
              bool notSimplificable=false;
-             bool pilote=false;
              QColor lineColor=Qt::blue;
              double lineWidth=2;
              int sequence=0;
@@ -2092,12 +2226,6 @@ void POI::read_POIData(myCentralWidget * centralWidget) {
                           notSimplificable = dataNode.toText().data().toInt()==1;
                   }
 
-                  if(subNode.toElement().tagName() == POI_PILOTE) {
-                      dataNode = subNode.firstChild();
-                      if(dataNode.nodeType() == QDomNode::TextNode)
-                          pilote = dataNode.toText().data().toInt()==1;
-                  }
-
                   if(subNode.toElement().tagName() == POI_ROUTE) {
                       dataNode = subNode.firstChild();
                       if(dataNode.nodeType() == QDomNode::TextNode)
@@ -2119,7 +2247,6 @@ void POI::read_POIData(myCentralWidget * centralWidget) {
                   poi->setNavMode(navMode);
                   poi->setMyLabelHidden(labelHidden);
                   poi->setNotSimplificable(notSimplificable);
-                  poi->setPiloteSelected(pilote);
                   poi->setPosConnected(lonConnected,latConnected);
                   poi->set_drawLineOrtho(lineOrtho);
                   poi->setLineColor(lineColor);
@@ -2266,11 +2393,6 @@ void POI::write_POIData(QList<POI*> & poi_list,myCentralWidget * /*centralWidget
          tag = doc.createElement(POI_NOT_SIMPLIFICABLE);
          group.appendChild(tag);
          t = doc.createTextNode(QString().setNum(poi->getNotSimplificable()?1:0));
-         tag.appendChild(t);
-
-         tag = doc.createElement(POI_PILOTE);
-         group.appendChild(tag);
-         t = doc.createTextNode(QString().setNum(poi->getPiloteSelected()?1:0));
          tag.appendChild(t);
 
          tag = doc.createElement(POI_ROUTE);

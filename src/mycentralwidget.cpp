@@ -151,6 +151,9 @@ void  myScene::keyPressEvent (QKeyEvent *e)
         case Qt::Key_Escape:
             parent->escapeKeyPressed();
             break;
+        case Qt::Key_Back:
+            parent->escapeKeyPressed();
+            break;
         case Qt::Key_Delete:
             parent->slot_delSelPOIs();
             break;
@@ -4885,17 +4888,22 @@ void myCentralWidget::clearOtherSelected(QGraphicsItem * i)
             item->setSelected(false);
     }
 }
-
-void myCentralWidget::showToolTip(const QString &tt, const bool &animate)
+QSize myCentralWidget::getIconSize() const
+{
+    return this->toolBar->getIconSize() ;
+}
+void myCentralWidget::showToolTip(const QString &tt, const bool &animate, QList<QMenu*> *newMenu)
 {
 #if 1
-    infoView->showView(tt,animate);
+    infoView->showView(tt,animate,newMenu);
+
 #else
 #ifndef __ANDROID__
-    infoView->showView(tt,animate);
+    infoView->showView(tt,animate,newMenu);
 #else
     Q_UNUSED(tt);
     Q_UNUSED(animate);
+    Q_UNUSED(newMenu);
 #endif
 #endif
 }

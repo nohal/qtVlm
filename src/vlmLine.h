@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QGraphicsSceneHoverEvent>
 
 #include "class_list.h"
-
+#include "route.h"
 #include "vlmPoint.h"
 
 
@@ -92,6 +92,7 @@ class vlmLine : public QGraphicsWidget
         ~vlmLine();
         void set_zValue(const double &z);
         void drawInMagnifier(QPainter *pnt, Projection *tempProj);
+        void setRoute(ROUTE * r){this->route=r;}
 protected:
         void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
         QRectF boundingRect() const;
@@ -100,6 +101,7 @@ protected:
         void hoverLeaveEvent(QGraphicsSceneHoverEvent *e);
         QVariant itemChange(GraphicsItemChange change, const QVariant &value);
         bool sceneEvent(QEvent *e);
+        void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
         bool event(QEvent *event);
 public slots:
         void slot_compassLineToggle(bool b);
@@ -145,6 +147,7 @@ public slots:
         bool drawingInMagnifier;
         QString myToolTip;
         void hover(const bool &isHovered);
+        ROUTE * route;
 };
 Q_DECLARE_TYPEINFO(vlmLine,Q_MOVABLE_TYPE);
 

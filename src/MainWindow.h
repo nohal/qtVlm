@@ -185,16 +185,8 @@ public slots:
         void slot_positScale();
         void slot_boatHasUpdated(void);
         void slot_updPlayerFinished(bool res_ok, Player * player);
-        void slot_copyRoute();
-        void slot_deleteRoute();
-        void slot_editRoute();
-        void slot_poiRoute();
         void slot_pasteRoute();
         void slot_routeComparator();
-        void slot_zoomRoute();
-        void slot_optimizeRoute();
-        void slot_simplifyRouteMax();
-        void slot_simplifyRouteMin();
 
         /*** Barrier ***/
         void slot_newBarrierSet();

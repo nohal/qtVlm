@@ -81,7 +81,7 @@ MenuBar::MenuBar(MainWindow *parent)
         acReplay=addAction(menuFile,tr("Rejouer l'historique des traces"),"Y","",tr(""));
         acScreenshot=addAction(menuFile,tr("Photo d'ecran"),"Ctrl+E","",tr(""));
 
-    addMenu(menuFile);
+    mainMenu.append(menuFile);
 
     menuView = new QMenu(tr("View"));
     Util::setFontObject(menuView);
@@ -139,7 +139,7 @@ MenuBar::MenuBar(MainWindow *parent)
     acOptions_SH_Tdb = addAction(menuView, tr("Montrer le tableau de bord"), "T", tr(""));
     acOptions_SH_Tdb->setCheckable(true);
 
-    addMenu(menuView);
+    mainMenu.append(menuView);
 
     //-------------------------------------
     menuGrib = new QMenu(tr("Fichier GRIB"));
@@ -194,7 +194,7 @@ MenuBar::MenuBar(MainWindow *parent)
         menuGrib->addSeparator();
         acCombineGrib = addAction(menuGrib,tr("Combine grib files"),"","","");
 
-    addMenu(menuGrib);
+    mainMenu.append(menuGrib);
 
     //-------------------------------------
     menuBoat = new QMenu(tr("Bateau"));
@@ -210,7 +210,7 @@ MenuBar::MenuBar(MainWindow *parent)
         acShowLog=addAction(menuBoat,tr("Historique VLM"),"Ctrl+Shift+E","",tr(""));
         acGetTrack=addAction(menuBoat,tr("Telecharger trace"),"Ctrl+Shift+T","",tr(""));
         acShowPolar=addAction(menuBoat,tr("Etudier la polaire"),"","");
-    addMenu(menuBoat);
+    mainMenu.append(menuBoat);
 
     //-------------------------------------
     //Porte
@@ -243,7 +243,7 @@ MenuBar::MenuBar(MainWindow *parent)
         menuRoute->addSeparator();
         menuRoute->addMenu(mnRoute_delete);
         acRouteRemove = addAction(menuRoute,tr("Supprimer des routes"),"","","");
-    addMenu(menuRoute);
+    mainMenu.append(menuRoute);
 
     menuRoutage = new QMenu(tr("Routages"));
     Util::setFontObject(menuRoutage);
@@ -258,7 +258,7 @@ MenuBar::MenuBar(MainWindow *parent)
         menuRoutage->addMenu(mnRoutage_edit);
         menuRoutage->addSeparator();
         menuRoutage->addMenu(mnRoutage_delete);
-    addMenu(menuRoutage);
+    mainMenu.append(menuRoutage);
 
     menuPOI = new QMenu(tr("Marques"));
     Util::setFontObject(menuPOI);
@@ -290,7 +290,7 @@ MenuBar::MenuBar(MainWindow *parent)
         Util::setFontObject(subSubMenuDelBarrierSet);
         subMenuBarrier->addMenu(subSubMenuDelBarrierSet);
 
-    addMenu(menuPOI);
+    mainMenu.append(menuPOI);
 
 
 
@@ -364,7 +364,7 @@ MenuBar::MenuBar(MainWindow *parent)
         acGribInterpolation = addAction(menuOptions,"Test interpolation","","","");
 #endif
 
-        addMenu(menuOptions);
+        mainMenu.append(menuOptions);
 
     //-------------------------------------
     menuHelp = new QMenu(tr("Aide"));
@@ -373,13 +373,37 @@ MenuBar::MenuBar(MainWindow *parent)
         acHelp_APropos = addAction(menuHelp, tr("A propos de qtVlm"),tr(""),tr(""),"");
         acHelp_AProposQT = addAction(menuHelp, tr("A propos de QT"),tr(""),tr(""),"");
         acHelp_Forum = addAction(menuHelp, tr("QtVlm forum"),tr(""),tr(""),"");
-    addMenu(menuHelp);
+    mainMenu.append(menuHelp);
     foreach (QAction * act, this->actions())
     {
         setRules(act);
         Util::setFontObject(act);
     }
     acFile_Quit->setMenuRole(QAction::QuitRole);
+    currentMenu=NULL;
+    setNewMenu(&mainMenu);
+    for(int n=0;n<mainMenu.size();++n)
+        this->addMenu(mainMenu.at(n));
+    currentMenu=&mainMenu;
+}
+void MenuBar::setNewMenu(QList<QMenu *> *newMenu)
+{
+//#ifndef __ANDROID__
+#if 0
+    Q_UNUSED(newMenu);
+    return;
+#else
+    if(currentMenu)
+    {
+        for (int n=0;n<currentMenu->size();++n)
+            this->removeAction(currentMenu->at(n)->menuAction());
+    }
+    if(newMenu==NULL || newMenu->isEmpty())
+        newMenu=&mainMenu;
+    for(int n=0;n<newMenu->size();++n)
+        this->addMenu(newMenu->at(n));
+    currentMenu=newMenu;
+#endif
 }
 
 void MenuBar::setRules(QAction * act)
@@ -428,19 +452,7 @@ QMenu * MenuBar::createPopupBtRight(QWidget *parent)
     ac_moveBoatSep = popup->addSeparator();
     ac_moveBoat = addAction(popup, tr("Deplacer le bateau ici"),tr(""),tr(""),"");
 
-    popup->addSeparator();
-    ac_editRoute=addAction(popup,tr("Editer la route"),"","","");
-    ac_poiRoute=addActionCheck(popup,tr("Montrer les POIs intermediaires de la route"),"","","");
-    mn_simplifyRoute=new QMenu(tr("Simplifier la route"),popup);
-    ac_simplifyRouteMax=addAction(mn_simplifyRoute,tr("Maximum"),"","","");
-    ac_simplifyRouteMin=addAction(mn_simplifyRoute,tr("Minimum"),"","","");
-    popup->addMenu(mn_simplifyRoute);
-    ac_optimizeRoute=addAction(popup,tr("Optimiser la route"),"","","");
-    ac_copyRoute=addAction(popup,tr("Copier la route au format kml"),"","","");
-    ac_zoomRoute=addAction(popup,tr("Zoom sur la route "),"","","");
-    ac_deleteRoute=addAction(popup,tr("Supprimer la route"),"","","");
     ac_pasteRoute=addAction(popup,tr("Coller une route"),"","","");
-    Util::setFontObject(popup);
     return popup;
 }
 

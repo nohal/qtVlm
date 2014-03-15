@@ -61,7 +61,42 @@ ROUTE::ROUTE(QString name, Projection *proj, DataManager *dataManager, myScene *
     this->width=Settings::getSetting(routeLineWidth).toDouble();
     this->startFromBoat=true;
     this->startTimeOption=1;
+
+    popup=new QMenu(tr("Route"));
+    ac_editRoute=new QAction(tr("Editer la route"),popup);
+    popup->addAction(ac_editRoute);
+    ac_poiRoute=new QAction(tr("Montrer les POIs intermediaires de la route"),popup);
+    ac_poiRoute->setCheckable(true);
+    popup->addAction(ac_poiRoute);
+    mn_simplifyRoute=new QMenu(tr("Simplifier la route"),popup);
+    ac_simplifyRouteMax=new QAction(tr("Maximum"),popup);
+    ac_simplifyRouteMin=new QAction(tr("Minimum (best)"),popup);
+    mn_simplifyRoute->addAction(ac_simplifyRouteMax);
+    mn_simplifyRoute->addAction(ac_simplifyRouteMin);
+    popup->addMenu(mn_simplifyRoute);
+    ac_optimizeRoute=new QAction(tr("Optimiser la route"),popup);
+    popup->addAction(ac_optimizeRoute);
+    ac_copyRoute=new QAction(tr("Copier la route au format kml"),popup);
+    popup->addAction(ac_copyRoute);
+    ac_zoomRoute=new QAction(tr("Zoom sur la route "),popup);
+    popup->addAction(ac_zoomRoute);
+    popup->addSeparator();
+    ac_deleteRoute=new QAction(tr("Supprimer la route"),popup);
+    popup->addAction(ac_deleteRoute);
+    Util::setFontObject(popup);
+    connect(ac_copyRoute,SIGNAL(triggered()), this, SLOT(slot_copyRoute()));
+    connect(ac_deleteRoute,SIGNAL(triggered()),this, SLOT(slot_deleteRoute()));
+    connect(ac_editRoute,SIGNAL(triggered()), this, SLOT(slot_edit()));
+    connect(ac_poiRoute,SIGNAL(triggered()), this, SLOT(slot_poiRoute()));
+    connect(ac_simplifyRouteMax,SIGNAL(triggered()), this, SLOT(slot_simplifyRouteMax()));
+    connect(ac_simplifyRouteMin,SIGNAL(triggered()), this, SLOT(slot_simplifyRouteMin()));
+    connect(ac_optimizeRoute,SIGNAL(triggered()), this, SLOT(slot_optimizeRoute()));
+    connect(ac_zoomRoute,SIGNAL(triggered()), this, SLOT(slot_zoomRoute()));
+    routeMenu.append(popup);
+
+
     this->line=new vlmLine(proj,myscene,Z_VALUE_ROUTE);
+    line->setRoute(this);
     line->grabGesture(Qt::TapAndHoldGesture);
     line->setFlag(QGraphicsWidget::ItemIsSelectable,true);
     connect(line,SIGNAL(hovered()),this,SLOT(hovered()));
@@ -123,6 +158,7 @@ ROUTE::ROUTE(QString name, Projection *proj, DataManager *dataManager, myScene *
     delay=10;
     forceComparator=false;
     fastSpeed=NULL;
+    this->setContextualMenu();
 }
 
 ROUTE::~ROUTE()
@@ -148,6 +184,8 @@ ROUTE::~ROUTE()
     }
     if(fastSpeed)
         delete fastSpeed;
+    if(popup)
+        delete popup;
 }
 void ROUTE::setShowInterpolData(bool b)
 {
@@ -200,6 +238,7 @@ void ROUTE::setColor(QColor color)
     pen.setColor(color);
     pen.setBrush(color);
     line->setLinePen(pen);
+    this->setContextualMenu();
 }
 void ROUTE::insertPoi(POI *poi)
 {
@@ -270,6 +309,27 @@ void ROUTE::zoom()
    //qWarning() << "Zooming to" << xW << "-" << xE << "by" << yS << "-" << yN;
    proj->zoomOnZone (xW,yN,xE,yS);
    proj->setScale (proj->getScale()*.9);
+}
+void ROUTE::setContextualMenu()
+{
+    QPixmap iconI(parent->getIconSize());
+    iconI.fill(this->getColor());
+    QIcon icon(iconI);
+    ac_editRoute->setText(tr("Editer la route")+" "+name);
+    ac_editRoute->setIcon(icon);
+    ac_poiRoute->setText(tr("Montrer les POIs intermediaires de la route")+" "+name);
+    ac_poiRoute->setIcon(icon);
+    ac_poiRoute->setChecked(!getHidePois());
+    mn_simplifyRoute->setTitle(tr("Simplifier la route")+" "+name);
+    mn_simplifyRoute->setIcon(icon);
+    ac_optimizeRoute->setText(tr("Optimiser la route")+" "+name);
+    ac_optimizeRoute->setIcon(icon);
+    ac_copyRoute->setText(tr("Copier la route")+" "+name);
+    ac_copyRoute->setIcon(icon);
+    ac_zoomRoute->setText(tr("Zoom sur la route ")+" "+name);
+    ac_zoomRoute->setIcon(icon);
+    ac_deleteRoute->setText(tr("Supprimer la route")+" "+name);
+    ac_deleteRoute->setIcon(icon);
 }
 
 void ROUTE::slot_recalculate(boat * boat)
@@ -1107,6 +1167,7 @@ void ROUTE::setHidePois(bool b)
                 poi->setMyLabelHidden(true);
         }
     }
+    this->ac_poiRoute->setChecked(!hidePois);
 }
 void ROUTE::do_vbvmg_context(double dist,double wanted_heading,
                              double w_speed,double w_angle,
@@ -2152,4 +2213,43 @@ void ROUTE::write_routeData(QList<ROUTE*>& route_list,myCentralWidget * /*centra
         qWarning() << "Error saving Route in " << fname;
         return ;
     }
+}
+void ROUTE::slot_copyRoute()
+{
+    parent->exportRouteFromMenuKML(this,"",true);
+}
+void ROUTE::slot_deleteRoute()
+{
+    parent->myDeleteRoute(this);
+}
+void ROUTE::slot_poiRoute()
+{
+    this->setHidePois(!this->getHidePois());
+    this->ac_poiRoute->setChecked(!this->getHidePois());
+}
+void ROUTE::slot_simplifyRouteMax()
+{
+    this->setSimplify(true);
+    this->set_strongSimplify(true);
+    parent->treatRoute(this);
+}
+void ROUTE::slot_simplifyRouteMin()
+{
+    this->setSimplify(true);
+    this->set_strongSimplify(false);
+    parent->treatRoute(this);
+}
+void ROUTE::slot_optimizeRoute()
+{
+    this->setOptimize(true);
+    parent->treatRoute(this);
+}
+void ROUTE::slot_zoomRoute()
+{
+    zoom();
+}
+void ROUTE::contextMenu()
+{
+    this->setContextualMenu();
+    popup->exec(QCursor::pos());
 }

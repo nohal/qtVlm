@@ -107,8 +107,6 @@ class POI : public QGraphicsWidget
         void setConnectedPoi(POI * p){connectedPoi=p;}
         void setPosConnected(double lon,double lat){lonConnected=lon;latConnected=lat;}
         void setLineBetweenPois(orthoSegment * line){this->lineBetweenPois=line;}
-        bool getPiloteSelected(){return piloteSelected;}
-        void setPiloteSelected(bool b){this->piloteSelected=b;this->ac_pilot->setChecked(b);}
         void setAutoRange (bool b) { autoRange = b; }
         /* comparateur de classe pour le tri */
         static bool byName(POI * POI_1,POI* POI_2) {return POI_1->name < POI_2->name;}
@@ -169,7 +167,6 @@ public slots:
         void slot_copyRoute();
         void slot_zoomRoute();
         void slot_relier();
-        void slot_pilote();
         void slot_notSimplificable(bool b){this->notSimplificable=b;update();}
         void slot_routage(void) { ROUTAGE * routage=parent->addRoutage(); parent->slot_editRoutage(routage,true,this); }
         void slot_timerSimp();
@@ -232,35 +229,45 @@ private:
         void update_myStr();
 
         QMenu *popup;
+        QMenu *mn_route;
+
+        QMenu *poiSubMenu;
         QAction * ac_edit;
-        QAction * ac_setWp;
-        QAction * ac_setGribDate;
         QAction * ac_delPoi;
-        QAction * ac_delRoute;
-        QAction * ac_editRoute;
-        QAction * ac_poiRoute;
-        QMenu   * menuSimplify;
-        QAction * ac_simplifyRouteMax;
-        QAction * ac_simplifyRouteMin;
-        QAction * ac_optimizeRoute;
-        QAction * ac_copyRoute;
-        QAction * ac_zoomRoute;
         QAction * ac_copy;
-        QAction * ac_compassLine;
-        QAction * ac_twaLine;
-        QAction * ac_centerOnPOI;
-        QAction * ac_setHorn;
-        QMenu * ac_routeList;
-        QAction * ac_finePosit;
+        QAction * ac_simplifiable;
         QMenu * ac_modeList;
         QAction * ac_modeList1;
         QAction * ac_modeList2;
         QAction * ac_modeList3;
+
+        QMenu *gribSubMenu;
+        QAction * ac_setGribDate;
+        QAction * ac_twaLine;
+
+        QMenu *mapSubMenu;
+        QAction * ac_centerOnPOI;
+        QAction * ac_compassLine;
         QAction * ac_connect;
         QAction * ac_boatCircle;
-        QAction * ac_pilot;
+
+        QMenu *routeSubMenu;
+        QMenu * ac_routeList;
+        QAction * ac_editRoute;
+        QAction * ac_poiRoute;
+        QAction * ac_copyRoute;
+        QMenu   * menuSimplify;
+        QAction * ac_simplifyRouteMax;
+        QAction * ac_simplifyRouteMin;
+        QAction * ac_optimizeRoute;
+        QAction * ac_finePosit;
+        QAction * ac_zoomRoute;
+        QAction * ac_setHorn;
+        QAction * ac_delRoute;
+
+
+        QAction * ac_setWp;
         QAction * ac_routage;
-        QAction * ac_simplifiable;
         void createPopUpMenu(void);
 
         void rmSignal(void);
@@ -284,7 +291,6 @@ private:
         QColor lineColor;
         double lineWidth;
         int colorPilototo;
-        bool piloteSelected;
         time_t piloteDate;
         double piloteWph;
         bool labelTransp;
@@ -292,10 +298,11 @@ private:
         int sequence;
         QTimer * timerSimp;
         vlmLine * boatCircle;
-        void showContextMenu(const double &x, const double &y);
+        void showContextMenu(const double &x, const double &y, const bool &popItUp=true);
         bool hasMoved;
         void mySetPos(const double &X, const double &Y);
         QTimer * timerMoveable;
+        QList<QMenu*> poiMenu;
 };
 Q_DECLARE_TYPEINFO(POI,Q_MOVABLE_TYPE);
 

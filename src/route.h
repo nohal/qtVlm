@@ -163,10 +163,11 @@ class ROUTE : public QObject
         FCT_SETGET_CST(bool,strongSimplify)
         FCT_SETGET_CST(bool,forceComparator)
         routeStats getStats();
-
+        void contextMenu();
         static void read_routeData(myCentralWidget * centralWidget);
         static void write_routeData(QList<ROUTE*>& route_list,myCentralWidget * centralWidget);
         static void cleanFile(QString fname);
+        QList<QMenu*> * getRouteMenu(){return &routeMenu;}
 
 public slots:
         void slot_recalculate(boat * boat=NULL);
@@ -179,7 +180,14 @@ public slots:
         void hovered();
         void unHovered();
         void slot_calculateWithDelay();
-    signals:
+        void slot_copyRoute();
+        void slot_deleteRoute();
+        void slot_poiRoute();
+        void slot_simplifyRouteMin();
+        void slot_optimizeRoute();
+        void slot_simplifyRouteMax();
+        void slot_zoomRoute();
+signals:
         void editMe(ROUTE *);
     private:
         /* parent, main */
@@ -266,6 +274,19 @@ public slots:
         bool strongSimplify;
         bool forceComparator;
         QCache<int,double> * fastSpeed;
+        /*contextual menu*/
+        QMenu * popup;
+        QAction * ac_copyRoute;
+        QAction * ac_deleteRoute;
+        QAction * ac_editRoute;
+        QAction * ac_poiRoute;
+        QAction * ac_simplifyRouteMax;
+        QAction * ac_simplifyRouteMin;
+        QMenu   * mn_simplifyRoute;
+        QAction * ac_optimizeRoute;
+        QAction * ac_zoomRoute;
+        QList<QMenu*> routeMenu;
+        void setContextualMenu();
 };
 Q_DECLARE_TYPEINFO(ROUTE,Q_MOVABLE_TYPE);
 #endif // ROUTE_H

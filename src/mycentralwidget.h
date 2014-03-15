@@ -52,16 +52,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define Z_VALUE_BOATCIRCLE 1.3
 #define Z_VALUE_OPP        2
 #define Z_VALUE_GATE       3
-#define Z_VALUE_NEXT_GATE  3.5
-#define Z_VALUE_ESTIME     4
-#define Z_VALUE_ROUTE      5
-#define Z_VALUE_LINE_POI   6
-#define Z_VALUE_POI        7
+#define Z_VALUE_NEXT_GATE  4
+#define Z_VALUE_ESTIME     5
+#define Z_VALUE_SELECTION  6
+#define Z_VALUE_ROUTE      7
+#define Z_VALUE_LINE_POI   8
+#define Z_VALUE_POI        9
 #define Z_VALUE_BOAT       10
 #define Z_VALUE_COMPASS    11
 #define Z_VALUE_ISOPOINT   12
 
-#define Z_VALUE_SELECTION  15
 #define Z_VALUE_MAGNIFIER  80
 
 /* graphicsWidget type */
@@ -180,6 +180,7 @@ class myCentralWidget : public QWidget
         void setRouteToClipboard(ROUTE * route){this->routeClipboard=route;}
         ROUTE * getRouteToClipboard(){return this->routeClipboard;}
         bool myDeleteRoute(ROUTE * route, bool silent=false);
+        QSize getIconSize() const;
 /* routage */
         QList<ROUTAGE*> & getRoutageList(){ return this->routage_list;}
         bool freeRoutageName(QString name, ROUTAGE * routage);
@@ -243,7 +244,7 @@ class myCentralWidget : public QWidget
         Magnifier * getMagnifier(){return this->magnifier;}        
 
         void imgKap_open(const QString &kapname);
-        void showToolTip(const QString &tt, const bool &animate=true);
+        void showToolTip(const QString &tt, const bool &animate=true, QList<QMenu *> *newMenu=NULL);
         void clearOtherSelected(QGraphicsItem *i);
 public slots :
         /* Zoom & position */

@@ -40,6 +40,7 @@ vlmLine::vlmLine(Projection * proj, myScene *myscene, double z_level) :
     this->proj=proj;
     this->myscene=myscene;
     drawingInMagnifier=false;
+    this->route=NULL;
     connect(mcp->get_terrain(),SIGNAL(terrainUpdated()),this,SLOT(slot_showMe()));
     connect(mcp,SIGNAL(compassLineToggle(bool)),this,SLOT(slot_compassLineToggle(bool)));
     myscene->addItem(this);
@@ -120,8 +121,6 @@ bool vlmLine::sceneEvent(QEvent *event)
 }
 QVariant vlmLine::itemChange(GraphicsItemChange change, const QVariant &value)
 {
-//    if(this->zValue()==Z_VALUE_ROUTE)
-//        qWarning()<<"itemChange in vlmLine (route)"<<change;
     if(change==ItemToolTipHasChanged)
     {
         if(isSelected())
@@ -137,11 +136,22 @@ QVariant vlmLine::itemChange(GraphicsItemChange change, const QVariant &value)
         else
         {
             mcp->clearOtherSelected(this);
-            mcp->showToolTip(toolTip());
+            mcp->showToolTip(toolTip(),true,route?route->getRouteMenu():NULL);
             hover(true);
         }
     }
     return QGraphicsWidget::itemChange(change,value);
+}
+void vlmLine::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+{
+    if(route)
+        route->contextMenu();
+    else
+    {
+        QGraphicsItem::contextMenuEvent(event);
+        event->ignore();
+    }
+
 }
 
 void vlmLine::slot_compassLineToggle(bool b)

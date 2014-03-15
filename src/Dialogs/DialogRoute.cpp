@@ -210,7 +210,6 @@ DialogRoute::DialogRoute(ROUTE *route, myCentralWidget *parent, bool createMode)
     pilotView->header()->setAlternatingRowColors(true);
     pilotView->header()->setDefaultAlignment(Qt::AlignCenter|Qt::AlignVCenter);
     connect(this->defaultOrders,SIGNAL(clicked()),this,SLOT(slotLoadPilototo()));
-    connect(this->customOrders,SIGNAL(clicked()),this,SLOT(slotLoadPilototoCustom()));
     this->pilotView->resizeColumnToContents(2);
     this->pilotView->setColumnWidth(1,pilotView->columnWidth(2));
     this->pilotView->resizeColumnToContents(0);
@@ -930,7 +929,7 @@ void DialogRoute::slotLoadPilototo()
         this->slotApply();
         keepModel=false;
     }
-    this->fillPilotView(true);
+    this->fillPilotView();
     if(forceVbvmg)
     {
         switch(state)
@@ -957,47 +956,7 @@ void DialogRoute::slotLoadPilototo()
     this->Simplifier->setChecked(false);
     this->Optimiser->setChecked(false);
 }
-void DialogRoute::slotLoadPilototoCustom()
-{
-    if(route->getPoiList().isEmpty())
-    {
-        return;
-    }
-    if(!route->getStartFromBoat())
-    {
-        QMessageBox::critical(0,tr("Pilototo"),tr("Pour utiliser cette action il faut que la route parte du bateau"));
-        return;
-    }
-    bool forceVbvmg=false;
-    int state=0;
-    if(!route->getUseVbvmgVlm())
-    {
-        forceVbvmg=true;
-        state=useVbvmgVlm->checkState();
-        useVbvmgVlm->setChecked(true);
-        this->slotApply();
-    }
-    this->fillPilotView(false);
-    if(forceVbvmg)
-    {
-        switch(state)
-        {
-            case Qt::PartiallyChecked:
-                useVbvmgVlm->setCheckState(Qt::PartiallyChecked);
-                break;
-            case Qt::Checked:
-                useVbvmgVlm->setCheckState(Qt::Checked);
-                break;
-            default:
-                useVbvmgVlm->setCheckState(Qt::Unchecked);
-                break;
-        }
-        keepModel=true;
-        this->slotApply();
-        keepModel=false;
-    }
-}
-void DialogRoute::fillPilotView(bool def)
+void DialogRoute::fillPilotView()
 {
     if(!(route->getStartFromBoat() &&
          route->getUseVbvmgVlm()))
@@ -1015,7 +974,6 @@ void DialogRoute::fillPilotView(bool def)
     {
         if(model->rowCount()==6) break;
         POI * poi=route->getPoiList().at(n);
-        if(!def && !poi->getPiloteSelected()) continue;
         //if(!poi->getHas_eta()) break;
         listPois.append(poi);
         time_t eta;

@@ -102,18 +102,7 @@ public:
 
     QAction * ac_moveBoat;
     QAction * ac_moveBoatSep;
-
-    QAction * ac_copyRoute;
-    QAction * ac_deleteRoute;
-    QAction * ac_editRoute;
-    QAction * ac_poiRoute;
-    QAction * acRouteRemove;
-    QAction * ac_simplifyRouteMax;
-    QAction * ac_simplifyRouteMin;
-    QMenu   * mn_simplifyRoute;
-    QAction * ac_optimizeRoute;
     QAction * ac_pasteRoute;
-    QAction * ac_zoomRoute;
 
     QAction *acFile_Open;
     QAction *acFile_Reopen;
@@ -141,6 +130,7 @@ public:
     QAction *acRoute_add;
     QMenu   *mnRoute_edit;
     QMenu   *mnRoute_delete;
+    QAction * acRouteRemove;
     QMenu   *mnRoute_import;
     QAction   *acRoute_import;
     QAction   *acRoute_import2;
@@ -225,6 +215,7 @@ public:
     QAction *acRace;
 
     void setPlayerType(const int &type);
+    void setNewMenu(QList<QMenu*> *newMenu);
 public slots:
     void slot_updateLockIcon(QString ic);
     void slot_setChangeStatus(bool status,bool pilototo,bool syncBtn);
@@ -261,7 +252,8 @@ private:
     QMenu *menuRoutage;
     QMenu *menuPOI;
     QMenu *menuHelp;
-
+    QList<QMenu*> mainMenu;
+    QList<QMenu*> * currentMenu;
     //QMenu * boardMenu;
     QMenu * toolBarMenu;
 

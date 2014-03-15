@@ -497,7 +497,7 @@ void DialogRoutage::done(int result)
                     }
                     if(rep==QMessageBox::Yes)
                     {
-                        routage->convertToRoute();
+                        connect(this,SIGNAL(destroyed()),routage,SLOT(convertToRoute()));
                     }
                 }
                 else

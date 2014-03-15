@@ -1,6 +1,7 @@
 #include "InfoView.h"
 #include "mycentralwidget.h"
 #include <QLayout>
+#include "MenuBar.h"
 InfoView::InfoView(myCentralWidget *parent) :
     QLabel(parent)
 {
@@ -16,8 +17,15 @@ InfoView::InfoView(myCentralWidget *parent) :
     connect(animation,SIGNAL(finished()),this,SLOT(slot_finished()));
     Util::setFontObject(this);
 }
-void InfoView::showView(const QString &text, const bool &animate)
+void InfoView::showView(const QString &text, const bool &animate, QList<QMenu*> *newMenu)
 {
+#ifndef __ANDROID__
+    Q_UNUSED(text);
+    Q_UNUSED(animate);
+    Q_UNUSED(newMenu);
+    return;
+#endif
+    parent->get_menuBar()->setNewMenu(newMenu);
     if(text.isEmpty())
     {
         if(!this->text().isEmpty())
@@ -36,6 +44,7 @@ void InfoView::showView(const QString &text, const bool &animate)
 }
 void InfoView::hideView()
 {
+    parent->get_menuBar()->setNewMenu(NULL);
     animation->setEndValue(QPoint(this->pos().x(),parent->height()));
     animation->setStartValue(this->pos());
     animation->start();

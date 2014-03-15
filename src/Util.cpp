@@ -204,6 +204,9 @@ QString Util::formatSimpleData(int type,double val) {
 //======================================================================
 void Util::setSpecificFont(QMap<QWidget *,QFont> widgets)
 {
+#ifdef DO_NOT_USE_STYLE
+    Q_UNUSED(widgets);
+#else
     QFont myFont(Settings::getSetting(defaultFontName).toString());
     double fontSize=Settings::getSetting(applicationFontSize).toDouble();
     QMapIterator<QWidget *,QFont> it(widgets);
@@ -215,11 +218,14 @@ void Util::setSpecificFont(QMap<QWidget *,QFont> widgets)
         myFont.setPointSizeF(fontSize+font.pointSizeF()-8.0);
         it.key()->setFont(myFont);
     }
+#endif
 }
 
 void Util::setFontObject(QObject * o)
 {
-
+#ifdef DO_NOT_USE_STYLE
+    Q_UNUSED(o);
+#else
     QFont myFont(Settings::getSetting(defaultFontName).toString());
     if(o->isWidgetType())
     {
@@ -233,11 +239,14 @@ void Util::setFontObject(QObject * o)
     }
     foreach(QObject * object,o->findChildren<QObject*>(QString(),Qt::FindDirectChildrenOnly))
         Util::setFontObject(object); /*recursion*/
+#endif
 }
 void Util::setFontDialog(QDialog * o)
 {
+#ifndef DO_NOT_USE_STYLE
     QObject *obj = qobject_cast<QObject *>(o);
     setFontObject(obj);
+#endif
     int h,w,px,py;
     Settings::restoreGeometry(o,&h,&w,&px,&py);
     bool pureTactil=false;
@@ -261,6 +270,10 @@ void Util::setFontDialog(QDialog * o)
 }
 void Util::setWidgetSize(QDialog *dialog)
 {
+//#ifdef DO_NOT_USE_STYLE
+#if 0
+    Q_UNUSED(dialog)
+#else
     QDesktopWidget * desktopWidget = QApplication::desktop();
     QRect screenRect = desktopWidget->screenGeometry();
     dialog->setMaximumHeight(screenRect.height()-50);
@@ -281,6 +294,7 @@ void Util::setWidgetSize(QDialog *dialog)
             s.setWidth(dialog->maximumWidth());
         dialog->resize(s);
     }
+#endif
 }
 
 QString Util::formatTemperature(const double &tempKelvin)

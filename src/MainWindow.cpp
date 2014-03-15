@@ -171,19 +171,11 @@ void MainWindow::connectSignals()
     connect(mb->ac_compassCenterWp,SIGNAL(triggered()), this, SLOT(slotCompassCenterWp()));
     connect(mb->ac_centerMap,SIGNAL(triggered()), this, SLOT(slot_centerMap()));
     connect(mb->ac_positScale,SIGNAL(triggered()), this, SLOT(slot_positScale()));
-
-    connect(mb->ac_copyRoute,SIGNAL(triggered()), this, SLOT(slot_copyRoute()));
-    connect(mb->ac_deleteRoute,SIGNAL(triggered()), this, SLOT(slot_deleteRoute()));
-    connect(mb->ac_editRoute,SIGNAL(triggered()), this, SLOT(slot_editRoute()));
-    connect(mb->ac_poiRoute,SIGNAL(triggered()), this, SLOT(slot_poiRoute()));
-    connect(mb->ac_simplifyRouteMax,SIGNAL(triggered()), this, SLOT(slot_simplifyRouteMax()));
-    connect(mb->ac_simplifyRouteMin,SIGNAL(triggered()), this, SLOT(slot_simplifyRouteMin()));
-    connect(mb->ac_optimizeRoute,SIGNAL(triggered()), this, SLOT(slot_optimizeRoute()));
     connect(mb->ac_pasteRoute,SIGNAL(triggered()), this, SLOT(slot_pasteRoute()));
     connect(mb->acRoute_paste,SIGNAL(triggered()), this, SLOT(slot_pasteRoute()));
     connect(mb->acRoute_comparator,SIGNAL(triggered()), this, SLOT(slot_routeComparator()));
     connect(mb->acRouteRemove, SIGNAL(triggered()), this, SLOT(slot_removeRoute()));
-    connect(mb->ac_zoomRoute,SIGNAL(triggered()), this, SLOT(slot_zoomRoute()));
+
 #ifdef __QTVLM_WITH_TEST
     if(mb->acVLMTest)
         connect(mb->acVLMTest, SIGNAL(triggered()), this, SLOT(slotVLM_Test()));
@@ -241,6 +233,8 @@ MainWindow::MainWindow(QWidget *parent) :timer(NULL), selectedBoat(NULL)
     originalPalette=QApplication::palette();
     loadVLM_grib=NULL;
     qWarning()<<QStyleFactory::keys();
+//#ifndef DO_NOT_USE_STYLE
+#if 1
 #ifdef QT_V5
 #ifdef __ANDROID__
     QStyle * android=QStyleFactory::create("Android");
@@ -620,6 +614,7 @@ MainWindow::MainWindow(QWidget *parent) :timer(NULL), selectedBoat(NULL)
     double fontSize=8.0+fontInc;
     def.setPointSizeF(fontSize);
     QApplication::setFont(def);
+#endif
 #endif
 #endif
     isStartingUp=true;
@@ -1291,10 +1286,7 @@ void MainWindow::closeProgress(void)
 //    QQuickView *qml = new QQuickView;
 //    qml->setSource(QUrl::fromLocalFile("src/qml_ui.qml"));
 //    qml->show();
-#ifdef __ANDROID__
-    //menuBar->setNativeMenuBar(true);
-    //menuBar->hide();
-#else
+#ifndef __ANDROID__
     this->setMenuBar(menuBar);
     menuBar->show();
 #endif
@@ -1974,60 +1966,6 @@ void MainWindow::showContextualMenu(const int &xPos, const int &yPos, QPoint scr
             menuBar->ac_compassCenterWp->setEnabled(true);
             break;
     }
-    if(my_centralWidget->getRouteToClipboard()!=NULL)
-    {
-        QString routeName=my_centralWidget->getRouteToClipboard()->getName();
-        QPixmap iconI(toolBar->getIconSize());
-        iconI.fill(my_centralWidget->getRouteToClipboard()->getColor());
-        QIcon icon(iconI);
-        menuBar->ac_editRoute->setVisible(true);
-        menuBar->ac_editRoute->setText(tr("Editer la route")+" "+routeName);
-        menuBar->ac_editRoute->setIcon(icon);
-        menuBar->ac_editRoute->setData(my_centralWidget->getRouteToClipboard()->getName());
-        menuBar->ac_poiRoute->setVisible(true);
-        menuBar->ac_poiRoute->setText(tr("Montrer les POIs intermediaires de la route")+" "+routeName);
-        menuBar->ac_poiRoute->setIcon(icon);
-        menuBar->ac_poiRoute->setChecked(!my_centralWidget->getRouteToClipboard()->getHidePois());
-        menuBar->ac_poiRoute->setData(my_centralWidget->getRouteToClipboard()->getName());
-        menuBar->mn_simplifyRoute->menuAction()->setVisible(true);
-        menuBar->mn_simplifyRoute->setTitle(tr("Simplifier la route")+" "+routeName);
-        menuBar->mn_simplifyRoute->setIcon(icon);
-        menuBar->ac_simplifyRouteMax->setData(my_centralWidget->getRouteToClipboard()->getName());
-        menuBar->ac_simplifyRouteMin->setData(my_centralWidget->getRouteToClipboard()->getName());
-        menuBar->ac_optimizeRoute->setVisible(true);
-        menuBar->ac_optimizeRoute->setText(tr("Optimiser la route")+" "+routeName);
-        menuBar->ac_optimizeRoute->setIcon(icon);
-        menuBar->ac_optimizeRoute->setData(my_centralWidget->getRouteToClipboard()->getName());
-        menuBar->ac_copyRoute->setVisible(true);
-        menuBar->ac_copyRoute->setText(tr("Copier la route")+" "+routeName);
-        menuBar->ac_copyRoute->setIcon(icon);
-        menuBar->ac_copyRoute->setData(my_centralWidget->getRouteToClipboard()->getName());
-        menuBar->ac_zoomRoute->setVisible(true);
-        menuBar->ac_zoomRoute->setText(tr("Zoom sur la route ")+" "+routeName);
-        menuBar->ac_zoomRoute->setIcon(icon);
-        menuBar->ac_deleteRoute->setVisible(true);
-        menuBar->ac_deleteRoute->setText(tr("Supprimer la route")+" "+routeName);
-        menuBar->ac_deleteRoute->setIcon(icon);
-        menuBar->ac_deleteRoute->setData(my_centralWidget->getRouteToClipboard()->getName());
-    }
-    else
-    {
-        menuBar->ac_editRoute->setVisible(false);
-        menuBar->ac_editRoute->setData(QString());
-        menuBar->ac_poiRoute->setVisible(false);
-        menuBar->ac_poiRoute->setData(QString());
-        menuBar->mn_simplifyRoute->menuAction()->setVisible(false);
-        menuBar->ac_simplifyRouteMax->setData(QString());
-        menuBar->ac_simplifyRouteMin->setData(QString());
-        menuBar->ac_optimizeRoute->setVisible(false);
-        menuBar->ac_optimizeRoute->setData(QString());
-        menuBar->ac_copyRoute->setVisible(false);
-        menuBar->ac_copyRoute->setData(QString());
-        menuBar->ac_zoomRoute->setVisible(false);
-        menuBar->ac_zoomRoute->setData(QString());
-        menuBar->ac_deleteRoute->setVisible(false);
-        menuBar->ac_deleteRoute->setData(QString());
-    }
     QString clipboard=QApplication::clipboard()->text();
     if(clipboard.isEmpty() || !clipboard.contains("<kml") || !clipboard.contains("Placemark"))
         menuBar->ac_pasteRoute->setEnabled(false);
@@ -2036,133 +1974,7 @@ void MainWindow::showContextualMenu(const int &xPos, const int &yPos, QPoint scr
     menuPopupBtRight->setEnabled(true);
     menuPopupBtRight->exec(screenPos);
 }
-void MainWindow::slot_copyRoute()
-{
-    ROUTE *route=NULL;
-    for (int n=0;n<my_centralWidget->getRouteList().count();++n)
-    {
-        if(my_centralWidget->getRouteList().at(n)->getName()==menuBar->ac_copyRoute->data().toString())
-        {
-            route=my_centralWidget->getRouteList().at(n);
-            break;
-        }
-    }
-    if(route!=NULL)
-        my_centralWidget->exportRouteFromMenuKML(route,"",true);
-}
-void MainWindow::slot_deleteRoute()
-{
-    ROUTE *route=NULL;
-    for (int n=0;n<my_centralWidget->getRouteList().count();++n)
-    {
-        if(my_centralWidget->getRouteList().at(n)->getName()==menuBar->ac_copyRoute->data().toString())
-        {
-            route=my_centralWidget->getRouteList().at(n);
-            break;
-        }
-    }
-    if(route!=NULL)
-        my_centralWidget->myDeleteRoute(route);
-}
-void MainWindow::slot_editRoute()
-{
-    ROUTE *route=NULL;
-    for (int n=0;n<my_centralWidget->getRouteList().count();++n)
-    {
-        if(my_centralWidget->getRouteList().at(n)->getName()==menuBar->ac_copyRoute->data().toString())
-        {
-            route=my_centralWidget->getRouteList().at(n);
-            break;
-        }
-    }
-    if(route!=NULL)
-        route->slot_edit();
-}
-void MainWindow::slot_poiRoute()
-{
-    ROUTE *route=NULL;
-    for (int n=0;n<my_centralWidget->getRouteList().count();++n)
-    {
-        if(my_centralWidget->getRouteList().at(n)->getName()==menuBar->ac_copyRoute->data().toString())
-        {
-            route=my_centralWidget->getRouteList().at(n);
-            break;
-        }
-    }
-    if(route!=NULL)
-    {
-        route->setHidePois(!route->getHidePois());
-        menuBar->ac_poiRoute->setChecked(!route->getHidePois());
-    }
-}
 
-void MainWindow::slot_simplifyRouteMax()
-{
-    ROUTE *route=NULL;
-    for (int n=0;n<my_centralWidget->getRouteList().count();++n)
-    {
-        if(my_centralWidget->getRouteList().at(n)->getName()==menuBar->ac_copyRoute->data().toString())
-        {
-            route=my_centralWidget->getRouteList().at(n);
-            break;
-        }
-    }
-    if(route!=NULL)
-    {
-        route->setSimplify(true);
-        route->set_strongSimplify(true);
-        my_centralWidget->treatRoute(route);
-    }
-}
-void MainWindow::slot_simplifyRouteMin()
-{
-    ROUTE *route=NULL;
-    for (int n=0;n<my_centralWidget->getRouteList().count();++n)
-    {
-        if(my_centralWidget->getRouteList().at(n)->getName()==menuBar->ac_copyRoute->data().toString())
-        {
-            route=my_centralWidget->getRouteList().at(n);
-            break;
-        }
-    }
-    if(route!=NULL)
-    {
-        route->setSimplify(true);
-        route->set_strongSimplify(false);
-        my_centralWidget->treatRoute(route);
-    }
-}
-void MainWindow::slot_optimizeRoute()
-{
-    ROUTE *route=NULL;
-    for (int n=0;n<my_centralWidget->getRouteList().count();++n)
-    {
-        if(my_centralWidget->getRouteList().at(n)->getName()==menuBar->ac_copyRoute->data().toString())
-        {
-            route=my_centralWidget->getRouteList().at(n);
-            break;
-        }
-    }
-    if(route!=NULL)
-    {
-        route->setOptimize(true);
-        my_centralWidget->treatRoute(route);
-    }
-}
-void MainWindow::slot_zoomRoute()
-{
-    ROUTE *route=NULL;
-    for (int n=0;n<my_centralWidget->getRouteList().count();++n)
-    {
-        if(my_centralWidget->getRouteList().at(n)->getName()==menuBar->ac_copyRoute->data().toString())
-        {
-            route=my_centralWidget->getRouteList().at(n);
-            break;
-        }
-    }
-    if(route!=NULL)
-        route->zoom();
-}
 void MainWindow::slot_pasteRoute()
 {
     my_centralWidget->importRouteFromMenuKML("",true);

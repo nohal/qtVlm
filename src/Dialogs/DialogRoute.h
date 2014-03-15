@@ -39,13 +39,12 @@ class DialogRoute : public QDialog, public Ui::ROUTE_Editor_ui
         DialogRoute(ROUTE *route, myCentralWidget *parent, bool createMode=false);
         ~DialogRoute();
         void done(int result);
-        void fillPilotView(bool f=false);
+        void fillPilotView();
 
 public slots:
         void slot_hideShowWarning();
         void GybeTack(int i);
         void slotLoadPilototo();
-        void slotLoadPilototoCustom();
         void slotEnvoyer();
         void slotApply();
         void slotIntervalTimer(int);
