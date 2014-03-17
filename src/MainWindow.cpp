@@ -1139,9 +1139,9 @@ bool MainWindow::eventFilter( QObject * watched, QEvent * event )
     if(watched==qApp && selectedBoat && selectedBoat->get_boatType()==BOAT_VLM)
     {
         if(event->type()==QEvent::ApplicationActivate)
-            timer->start(1000);
+            startTimer();
         else if (event->type()==QEvent::ApplicationDeactivate)
-            timer->stop();
+            stopTimer();
     }
     return QMainWindow::eventFilter(watched,event) ;
 }
@@ -1273,7 +1273,7 @@ void MainWindow::closeProgress(void)
                 statusBar->clear_eta();
             else
                 statusBar->update_eta(dtm);
-            timer->start(1000);
+            startTimer();
         }
         if(use_old_board)
             myBoard->boatUpdated(selectedBoat);
@@ -2238,7 +2238,7 @@ void MainWindow::slotBoatUpdated(boat * upBoat,bool newRace,bool doingSync)
             nxtVac_cnt=boat->getNextVac();
             //qWarning()<<nxtVac_cnt;
             emit drawVacInfo();
-            timer->start(1000);
+            startTimer();
 
 
             /* Updating ETA */            
@@ -3060,4 +3060,9 @@ void MainWindow::manageWPDialog(BoatInterface * myBoat, QObject * boardPlugin)
     connect(this,SIGNAL(editWP_POI(POI*)),wpDialog,SLOT(slot_selectPOI(POI*)));
     connect(wpDialog,SIGNAL(finished(int)),wpDialog,SLOT(deleteLater()));
     wpDialog->show_WPdialog((boat*)myBoat);
+}
+void MainWindow::startTimer()
+{
+    if(selectedBoat && selectedBoat->get_boatType()==BOAT_VLM)
+        timer->start(1000);
 }

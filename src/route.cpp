@@ -70,9 +70,9 @@ ROUTE::ROUTE(QString name, Projection *proj, DataManager *dataManager, myScene *
     popup->addAction(ac_poiRoute);
     mn_simplifyRoute=new QMenu(tr("Simplifier la route"),popup);
     ac_simplifyRouteMax=new QAction(tr("Maximum"),popup);
-    ac_simplifyRouteMin=new QAction(tr("Minimum (best)"),popup);
-    mn_simplifyRoute->addAction(ac_simplifyRouteMax);
+    ac_simplifyRouteMin=new QAction(tr("Optimum"),popup);
     mn_simplifyRoute->addAction(ac_simplifyRouteMin);
+    mn_simplifyRoute->addAction(ac_simplifyRouteMax);
     popup->addMenu(mn_simplifyRoute);
     ac_optimizeRoute=new QAction(tr("Optimiser la route"),popup);
     popup->addAction(ac_optimizeRoute);
@@ -163,11 +163,12 @@ ROUTE::ROUTE(QString name, Projection *proj, DataManager *dataManager, myScene *
 
 ROUTE::~ROUTE()
 {
-    //qWarning() << "Deleting route: " << name<<"busy="<<busy;
+    qWarning() << "Deleting route: " << name<<"busy="<<busy;
     delete roadInfo;
 
     if(line)
     {
+        line->setSelected(false);
         if(!parent->getAboutToQuit())
         {
             disconnect(line,SIGNAL(hovered()),this,SLOT(hovered()));
@@ -186,6 +187,7 @@ ROUTE::~ROUTE()
         delete fastSpeed;
     if(popup)
         delete popup;
+    qWarning()<<"end of deleting route";
 }
 void ROUTE::setShowInterpolData(bool b)
 {
@@ -312,9 +314,12 @@ void ROUTE::zoom()
 }
 void ROUTE::setContextualMenu()
 {
+    QIcon icon;
+#ifndef __ANDROID__
     QPixmap iconI(parent->getIconSize());
     iconI.fill(this->getColor());
-    QIcon icon(iconI);
+    icon=QIcon(iconI);
+#endif
     ac_editRoute->setText(tr("Editer la route")+" "+name);
     ac_editRoute->setIcon(icon);
     ac_poiRoute->setText(tr("Montrer les POIs intermediaires de la route")+" "+name);

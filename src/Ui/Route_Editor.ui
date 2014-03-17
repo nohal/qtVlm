@@ -43,14 +43,14 @@
         <x>0</x>
         <y>0</y>
         <width>603</width>
-        <height>565</height>
+        <height>581</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
        <item row="0" column="0">
         <widget class="QTabWidget" name="tabWidget">
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="tab">
           <attribute name="title">
@@ -133,16 +133,35 @@
                 </widget>
                </item>
                <item>
-                <widget class="QCheckBox" name="Simplifier">
-                 <property name="toolTip">
-                  <string>Simplifie la route en supprimant les POIs qui ne changent pas l'eta finale.</string>
-                 </property>
-                 <property name="text">
+                <widget class="QGroupBox" name="simp_groupBox">
+                 <property name="title">
                   <string>Simplifier</string>
                  </property>
-                 <property name="tristate">
+                 <property name="checkable">
                   <bool>true</bool>
                  </property>
+                 <property name="checked">
+                  <bool>false</bool>
+                 </property>
+                 <layout class="QVBoxLayout" name="verticalLayout_10">
+                  <item>
+                   <widget class="QRadioButton" name="simpMin">
+                    <property name="text">
+                     <string>Optimum</string>
+                    </property>
+                    <property name="checked">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QRadioButton" name="simpMax">
+                    <property name="text">
+                     <string>Maximum</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </widget>
                </item>
                <item>
@@ -861,11 +880,17 @@ p, li { white-space: pre-wrap; }
   <tabstop>navTime</tabstop>
   <tabstop>engineTime</tabstop>
   <tabstop>btOk</tabstop>
-  <tabstop>Simplifier</tabstop>
+  <tabstop>simp_groupBox</tabstop>
+  <tabstop>simpMin</tabstop>
+  <tabstop>simpMax</tabstop>
   <tabstop>Optimiser</tabstop>
   <tabstop>btAppliquer</tabstop>
   <tabstop>btCopy</tabstop>
   <tabstop>btCancel</tabstop>
+  <tabstop>scrollArea</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>editCoasts</tabstop>
+  <tabstop>pilotView</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -882,22 +907,6 @@ p, li { white-space: pre-wrap; }
     <hint type="destinationlabel">
      <x>486</x>
      <y>270</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>Simplifier</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>Optimiser</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>567</x>
-     <y>93</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>567</x>
-     <y>113</y>
     </hint>
    </hints>
   </connection>

@@ -856,6 +856,7 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, DataManager *dataManager, mySce
     this->myscene=myscene;
     this->isPivot=false;
     fromRoutage=NULL;
+    this->waitBox=NULL;
     this->isNewPivot=false;
     if(QThread::idealThreadCount()<=1)
         this->useMultiThreading=false;
@@ -970,6 +971,14 @@ ROUTAGE::~ROUTAGE()
     while(!isoRoutes.isEmpty())
         delete isoRoutes.takeFirst();
     deleteAlternative();
+    if(waitBox)
+    {
+        waitBox->hide();
+        delete waitBox;
+    }
+    parent->getMainWindow()->startTimer();
+    QApplication::processEvents();
+    //qWarning()<<name<<"deleted";
 }
 void ROUTAGE::setBoat(boat *myBoat)
 {
@@ -3208,6 +3217,7 @@ void ROUTAGE::convertToRoute()
     msgBox.addButton(&simplify,QMessageBox::ActionRole);
     msgBox.addButton(&deleteOther,QMessageBox::ActionRole);
     msgBox.setStandardButtons(QMessageBox::Yes|QMessageBox::No|QMessageBox::Cancel);
+    msgBox.setModal(true);
     if(!parentRoutage->getRouteFromBoat())
     {
         msgBox.button(QMessageBox::Yes)->hide();
@@ -3216,9 +3226,18 @@ void ROUTAGE::convertToRoute()
     }
     if(!multiRoutage)
     {
+#ifdef __ANDROID__
+        simplify.setChecked(false);
+        deleteOther.setChecked(false);
+#endif
         int answ=msgBox.exec();
         QApplication::processEvents();
         if(answ==QMessageBox::Cancel) return;
+        waitBox = new QMessageBox(QMessageBox::Information,tr("Conversion d'un routage en route"),
+                                  tr("Veuillez patienter..."));
+        waitBox->setStandardButtons(QMessageBox::NoButton);
+        waitBox->show();
+        parent->getMainWindow()->stopTimer();
         if(deleteOther.isChecked())
         {
             QList<ROUTAGE *>rList=parent->getRoutageList();
@@ -3331,7 +3350,19 @@ void ROUTAGE::convertToRoute()
         return;
     }
     else if (multiNb>0)
+    {
         parent->addPivot(this,false);
+        waitBox->hide();
+        delete waitBox;
+        waitBox=NULL;
+    }
+    else
+    {
+        waitBox->hide();
+        delete waitBox;
+        waitBox=NULL;
+    }
+    QApplication::processEvents();
 }
 vlmPoint ROUTAGE::multiThreadedContains(const vlmPoint &p)
 {
@@ -4854,10 +4885,10 @@ void ROUTAGE::calculateAlternative()
     Settings::setSetting(nb_Alternative,nbAlternative);
     if(nbAlternative==0) return;
     if(i_iso || !arrived) return;
-    QMessageBox * waitBox = new QMessageBox(QMessageBox::Information,tr("Calcul des routes alternatives"),
+    QMessageBox * wb = new QMessageBox(QMessageBox::Information,tr("Calcul des routes alternatives"),
                               tr("Veuillez patienter..."));
-    waitBox->setStandardButtons(QMessageBox::NoButton);
-    waitBox->show();
+    wb->setStandardButtons(QMessageBox::NoButton);
+    wb->show();
     QApplication::processEvents();
     vlmPoint to(this->toPOI->getLongitude(),this->toPOI->getLatitude());
     datathread dataThread;
@@ -4882,7 +4913,7 @@ void ROUTAGE::calculateAlternative()
     //qWarning()<<"(1) limitNb="<<limitNb<<"count="<<tempResult.size()<<optionThreshold;
     if(limitNb<0 || limitNb>=tempResult.size())
     {
-        delete waitBox;
+        delete wb;
         return;
     }
     vlmPoint t=tempResult.at(limitNb);
@@ -4893,7 +4924,7 @@ void ROUTAGE::calculateAlternative()
     int i=qRound(((double)isochrones.size()-1)*.85);
     if(i<0 || i>=isochrones.size())
     {
-        delete waitBox;
+        delete wb;
         return;
     }
     vlmLine *isoc=isochrones.at(i);
@@ -4962,7 +4993,7 @@ void ROUTAGE::calculateAlternative()
         limits.append(t);
     }
     QApplication::processEvents();
-    delete waitBox;
+    delete wb;
 }
 bool ROUTAGE::checkIceGate(const vlmPoint &p) const
 {

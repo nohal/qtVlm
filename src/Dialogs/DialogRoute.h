@@ -57,7 +57,10 @@ public slots:
         void slot_screenResize();
 signals:
 
-    private:
+private slots:
+        void slot_simpToggled(bool b);
+        void slot_optimToggled(bool b);
+private:
         QTimer  * intervalTimer;
         QStandardItemModel *rmModel;
         ROUTE   *route;

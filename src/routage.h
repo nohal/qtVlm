@@ -27,6 +27,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QPainter>
 #include <QGraphicsWidget>
 #include <QGraphicsScene>
+#include <QMessageBox>
 #include <QMenu>
 #include <QDateTime>
 #include <cmath>
@@ -382,6 +383,7 @@ public slots:
         double maxDist;
         void calculateMaxDist();
         bool threaded;
+        QMessageBox *waitBox;
 };
 Q_DECLARE_TYPEINFO(ROUTAGE,Q_MOVABLE_TYPE);
 #endif // ROUTAGE_H

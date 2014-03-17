@@ -335,8 +335,6 @@ void POI::rmSignal(void)
 
 void POI::createPopUpMenu(void)
 {
-//#ifndef  __ANDROID__
-#if 1
     popup = new QMenu(tr("Poi menu"),parent);
     connect(this->popup,SIGNAL(aboutToShow()),parent,SLOT(slot_resetGestures()));
     connect(this->popup,SIGNAL(aboutToHide()),parent,SLOT(slot_resetGestures()));
@@ -353,6 +351,7 @@ void POI::createPopUpMenu(void)
     popup->addAction(ac_copy);
     connect(ac_copy,SIGNAL(triggered()),this,SLOT(slot_copy()));
 
+    popup->addSeparator();
     ac_setGribDate = new QAction(tr("Set Date"),popup);
     popup->addAction(ac_setGribDate);
     connect(ac_setGribDate,SIGNAL(triggered()),this,SLOT(slot_setGribDate()));
@@ -376,6 +375,9 @@ void POI::createPopUpMenu(void)
     popup->addAction(ac_setWp);
     connect(ac_setWp,SIGNAL(triggered()),this,SLOT(slot_setWP_ask()));
     popup->addSeparator();
+    ac_routage=new QAction(tr("Routage vers ce POI"),popup);
+    connect(ac_routage,SIGNAL(triggered()),this,SLOT(slot_routage()));
+    popup->addAction(ac_routage);
     mn_route=new QMenu(tr("Route"));
     popup->addMenu(mn_route);
     ac_routeList = new QMenu(tr("Select"));
@@ -399,9 +401,9 @@ void POI::createPopUpMenu(void)
 
     menuSimplify=new QMenu(tr("Simplifier la route "),popup);
     ac_simplifyRouteMax = new QAction(tr("Maximum"),menuSimplify);
-    ac_simplifyRouteMin = new QAction(tr("Minimum"),menuSimplify);
-    menuSimplify->addAction(ac_simplifyRouteMax);
+    ac_simplifyRouteMin = new QAction(tr("Optimum"),menuSimplify);
     menuSimplify->addAction(ac_simplifyRouteMin);
+    menuSimplify->addAction(ac_simplifyRouteMax);
     connect(ac_simplifyRouteMax,SIGNAL(triggered()),this,SLOT(slot_simplifyRouteMax()));
     connect(ac_simplifyRouteMin,SIGNAL(triggered()),this,SLOT(slot_simplifyRouteMin()));
     mn_route->addMenu(menuSimplify);
@@ -454,9 +456,6 @@ void POI::createPopUpMenu(void)
     connect(ac_modeList,SIGNAL(triggered(QAction*)),this,SLOT(slot_setMode(QAction*)));
     popup->addMenu(ac_modeList);
 
-    ac_routage=new QAction(tr("Routage vers ce POI"),popup);
-    connect(ac_routage,SIGNAL(triggered()),this,SLOT(slot_routage()));
-    popup->addAction(ac_routage);
 
     popup->addSeparator();
     ac_connect=new QAction(tr("Tracer/Editer une ligne avec un autre POI"),popup);
@@ -470,145 +469,6 @@ void POI::createPopUpMenu(void)
     ac_boatCircle->setChecked(false);
     Util::setFontObject(popup);
     poiMenu.append(popup);
-#else
-    popup=new QMenu("Poi Menu");
-    poiSubMenu=new QMenu(tr("Poi"));
-    popup->addMenu(poiSubMenu);
-    ac_edit = new QAction(tr("Editer"),this);
-    poiSubMenu->addAction(ac_edit);
-    connect(ac_edit,SIGNAL(triggered()),this,SLOT(slot_editPOI()));
-
-    ac_delPoi = new QAction(tr("Supprimer"),this);
-    poiSubMenu->addAction(ac_delPoi);
-    connect(ac_delPoi,SIGNAL(triggered()),this,SLOT(slot_delPoi()));
-
-    ac_copy = new QAction(tr("Copier"),this);
-    poiSubMenu->addAction(ac_copy);
-    connect(ac_copy,SIGNAL(triggered()),this,SLOT(slot_copy()));
-    poiSubMenu->addSeparator();
-    ac_simplifiable = new QAction(tr("Non simplifiable"),this);
-    ac_simplifiable->setCheckable(true);
-    ac_simplifiable->setChecked(this->notSimplificable);
-    connect(ac_simplifiable,SIGNAL(toggled(bool)),this,SLOT(slot_notSimplificable(bool)));
-    poiSubMenu->addAction(ac_simplifiable);
-
-    ac_modeList = new QMenu(tr("Mode de navigation vers ce POI"));
-    QActionGroup * ptr_group = new QActionGroup(ac_modeList);
-
-    ac_modeList1 = new QAction(tr("VB-VMG"),this);
-    ac_modeList1->setCheckable(true);
-    ac_modeList->addAction(ac_modeList1);
-    ptr_group->addAction(ac_modeList1);
-    ac_modeList1->setData(0);
-
-    ac_modeList2 = new QAction(tr("B-VMG"),this);
-    ac_modeList2->setCheckable(true);
-    ac_modeList->addAction(ac_modeList2);
-    ptr_group->addAction(ac_modeList2);
-    ac_modeList2->setData(1);
-
-    ac_modeList3 = new QAction(tr("ORTHO"),this);
-    ac_modeList3->setCheckable(true);
-    ac_modeList->addAction(ac_modeList3);
-    ptr_group->addAction(ac_modeList3);
-    ac_modeList3->setData(2);
-    ac_modeList1->setChecked(true);
-    connect(ac_modeList,SIGNAL(triggered(QAction*)),this,SLOT(slot_setMode(QAction*)));
-    poiSubMenu->addMenu(ac_modeList);
-
-    gribSubMenu=new QMenu(tr("Grib"));
-    popup->addMenu(gribSubMenu);
-    ac_setGribDate = new QAction(tr("Set Date"),this);
-    gribSubMenu->addAction(ac_setGribDate);
-    connect(ac_setGribDate,SIGNAL(triggered()),this,SLOT(slot_setGribDate()));
-
-    ac_twaLine = new QAction(tr("Tracer une estime TWA"),this);
-    gribSubMenu->addAction(ac_twaLine);
-    connect(ac_twaLine,SIGNAL(triggered()),this,SLOT(slot_twaLine()));
-
-
-    mapSubMenu=new QMenu(tr("Carte"));
-    popup->addMenu(mapSubMenu);
-
-    ac_centerOnPOI = new QAction(tr("Center on POI"),this);
-    mapSubMenu->addAction(ac_centerOnPOI);
-    connect(ac_centerOnPOI,SIGNAL(triggered()),this,SLOT(slot_centerOnBoat()));
-
-    ac_compassLine = new QAction(tr("Tirer un cap"),this);
-    mapSubMenu->addAction(ac_compassLine);
-    connect(ac_compassLine,SIGNAL(triggered()),this,SLOT(slotCompassLine()));
-    connect(this,SIGNAL(compassLine(double,double)),mainWin,SLOT(slotCompassLineForced(double,double)));
-
-    ac_connect=new QAction(tr("Tracer/Editer une ligne avec un autre POI"),this);
-    connect(ac_connect,SIGNAL(triggered()),this,SLOT(slot_relier()));
-    mapSubMenu->addAction(ac_connect);
-
-    ac_boatCircle = new QAction(tr("Tracer un cerce orthodromique au bateau"),this);
-    mapSubMenu->addAction(ac_boatCircle);
-    connect(ac_boatCircle,SIGNAL(triggered()),this,SLOT(slot_boatCircleMenu()));
-    ac_boatCircle->setCheckable(true);
-    ac_boatCircle->setChecked(false);
-
-
-    routeSubMenu=new QMenu(tr("Route"));
-    popup->addMenu(routeSubMenu);
-    ac_routeList = new QMenu(tr("Select"));
-    connect(ac_routeList,SIGNAL(triggered(QAction*)),this,SLOT(slot_routeMenu(QAction*)));
-    routeSubMenu->addMenu(ac_routeList);
-
-    ac_editRoute = new QAction(tr("Editer la route "),this);
-    ac_editRoute->setData(QVariant(QMetaType::VoidStar, &route));
-    routeSubMenu->addAction(ac_editRoute);
-    connect(ac_editRoute,SIGNAL(triggered()),this,SLOT(slot_editRoute()));
-    ac_poiRoute = new QAction(tr("Montrer les pois intermediaires de la route "),this);
-    ac_poiRoute->setCheckable(true);
-    ac_poiRoute->setData(QVariant(QMetaType::VoidStar, &route));
-    routeSubMenu->addAction(ac_poiRoute);
-    connect(ac_poiRoute,SIGNAL(triggered()),this,SLOT(slot_poiRoute()));
-    ac_copyRoute = new QAction(tr("Copier la route "),this);
-    ac_copyRoute->setData(QVariant(QMetaType::VoidStar, &route));
-    routeSubMenu->addAction(ac_copyRoute);
-    connect(ac_copyRoute,SIGNAL(triggered()),this,SLOT(slot_copyRoute()));
-
-    menuSimplify=new QMenu(tr("Simplifier la route "));
-    ac_simplifyRouteMax = new QAction(tr("Maximum"),menuSimplify);
-    ac_simplifyRouteMin = new QAction(tr("Minimum"),menuSimplify);
-    menuSimplify->addAction(ac_simplifyRouteMax);
-    menuSimplify->addAction(ac_simplifyRouteMin);
-    connect(ac_simplifyRouteMax,SIGNAL(triggered()),this,SLOT(slot_simplifyRouteMax()));
-    connect(ac_simplifyRouteMin,SIGNAL(triggered()),this,SLOT(slot_simplifyRouteMin()));
-    routeSubMenu->addMenu(menuSimplify);
-    ac_optimizeRoute = new QAction(tr("Optimiser la route "),this);
-    routeSubMenu->addAction(ac_optimizeRoute);
-    connect(ac_optimizeRoute,SIGNAL(triggered()),this,SLOT(slot_optimizeRoute()));
-
-    ac_finePosit = new QAction(tr("Optimiser le placement sur la route"),this);
-    connect(ac_finePosit,SIGNAL(triggered()),this,SLOT(slot_finePosit()));
-    routeSubMenu->addAction(ac_finePosit);
-
-    ac_zoomRoute = new QAction(tr("Zoom sur la route "),this);
-    ac_zoomRoute->setEnabled(false);
-    routeSubMenu->addAction(ac_zoomRoute);
-    connect(ac_zoomRoute,SIGNAL(triggered()),this,SLOT(slot_zoomRoute()));
-    ac_setHorn= new QAction(tr("Activer la corne de brume 10mn avant le passage"),this);
-    routeSubMenu->addAction(ac_setHorn);
-    connect(ac_setHorn,SIGNAL(triggered()),this,SLOT(slot_setHorn()));
-    routeSubMenu->addSeparator();
-    ac_delRoute = new QAction(tr("Supprimer la route "),this);
-    ac_delRoute->setData(QVariant(QMetaType::VoidStar, &route));
-    connect(ac_delRoute,SIGNAL(triggered()),parent,SLOT(slot_deleteRoute()));
-    routeSubMenu->addAction(ac_delRoute);
-    ac_setWp = new QAction(tr("Marque->WP"),this);
-    ac_setWp->setCheckable(true);
-    connect(ac_setWp,SIGNAL(triggered()),this,SLOT(slot_setWP_ask()));
-
-    ac_routage=new QAction(tr("Routage vers ce POI"),this);
-    connect(ac_routage,SIGNAL(triggered()),this,SLOT(slot_routage()));
-    popup->addSeparator();
-    popup->addAction(ac_setWp);
-    popup->addAction(ac_routage);
-    poiMenu.append(popup);
-#endif
 }
 
 /**************************/

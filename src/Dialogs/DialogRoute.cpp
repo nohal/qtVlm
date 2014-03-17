@@ -67,8 +67,6 @@ DialogRoute::DialogRoute(ROUTE *route, myCentralWidget *parent, bool createMode)
     connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     this->warning_icon->setPixmap(QPixmap(appFolder.value("img")+"warning.png"));
     connect(this->useVbvmgVlm,SIGNAL(stateChanged(int)),this,SLOT(slot_hideShowWarning()));
-    QString tip=tr("Ce bouton a 3 etats:<br><b>Non coche:</b> La route ne sera pas simplifiee.<br><b>Partiellement coche:</b> La route sera simplifiee en mode minimum, c'est le meilleur mode.<br><b>Completement coche:</b> La route sera simplifiee au maximum. Ce mode peut degrader la qualite du routage.");
-    Simplifier->setToolTip(tip.replace(" ","&nbsp;"));
     Util::setFontDialog(this);
     if(Settings::getSetting(fusionStyle).toInt()==1)
     {
@@ -117,6 +115,8 @@ DialogRoute::DialogRoute(ROUTE *route, myCentralWidget *parent, bool createMode)
     connect(this->Envoyer,SIGNAL(clicked()),this,SLOT(slotEnvoyer()));
     connect(this->btCopy,SIGNAL(clicked()),this,SLOT(slotCopy()));
     connect(this->exportCSV,SIGNAL(clicked()),this,SLOT(slotExportCSV()));
+    connect(this->simp_groupBox,SIGNAL(toggled(bool)),this,SLOT(slot_simpToggled(bool)));
+    connect(this->Optimiser,SIGNAL(toggled(bool)),this,SLOT(slot_optimToggled(bool)));
     if(route->getUseVbvmgVlm())
     {
         if(route->getNewVbvmgVlm())
@@ -338,7 +338,6 @@ void DialogRoute::slotInterval()
                               tr("Veuillez patienter..."));
     waitBox->setStandardButtons(QMessageBox::NoButton);
     waitBox->show();
-    waitBox->setFixedWidth(400);
     QApplication::processEvents();
     this->roadMapInterval->blockSignals(true);
     this->roadMapHDG->blockSignals(true);
@@ -848,10 +847,10 @@ void DialogRoute::done(int result)
         route->getLine()->setCoastDetection(editCoasts->isChecked());
         if(hidePois->isChecked()!=route->getHidePois())
             route->setHidePois(hidePois->isChecked());
-        if(this->Simplifier->checkState()!=Qt::Unchecked)
+        if(this->simp_groupBox->isChecked())
         {
             route->setSimplify(true);
-            route->set_strongSimplify(Simplifier->checkState()!=Qt::PartiallyChecked);
+            route->set_strongSimplify(simpMax->isChecked());
         }
         else
         {
@@ -884,7 +883,7 @@ void DialogRoute::slotApply()
     this->btCancel->setEnabled(false);
     this->btOk->setEnabled(false);
     this->tabWidget->setEnabled(false);
-    if(this->Simplifier->isChecked() || this->Optimiser->isChecked())
+    if(this->simp_groupBox->isChecked() || this->Optimiser->isChecked())
         this->hide();
     this->done(99);
 //    qWarning()<<"here3";
@@ -953,7 +952,7 @@ void DialogRoute::slotLoadPilototo()
     this->btCancel->setEnabled(true);
     this->btOk->setEnabled(true);
     this->tabWidget->setEnabled(true);
-    this->Simplifier->setChecked(false);
+    this->simp_groupBox->setChecked(false);
     this->Optimiser->setChecked(false);
 }
 void DialogRoute::fillPilotView()
@@ -1088,6 +1087,20 @@ void DialogRoute::slotExportCSV()
         stream<<line<<endl;
     }
     routeFile.close();
+}
+void DialogRoute::slot_simpToggled(bool b)
+{
+    if(!b) return;
+    this->Optimiser->blockSignals(true);
+    this->Optimiser->setChecked(false);
+    this->Optimiser->blockSignals(false);
+}
+void DialogRoute::slot_optimToggled(bool b)
+{
+    if(!b) return;
+    this->simp_groupBox->blockSignals(true);
+    this->simp_groupBox->setChecked(false);
+    this->simp_groupBox->blockSignals(false);
 }
 
 void DialogRoute::slotEnvoyer()

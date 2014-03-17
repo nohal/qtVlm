@@ -3745,6 +3745,7 @@ void myCentralWidget::treatRoute(ROUTE* route)
     update_menuRoute();
     route->slot_recalculate();
     QApplication::processEvents();
+    mainW->stopTimer();
     if((route->getSimplify() || route->getOptimize()) && !route->isBusy())
     {
         this->abortRequest=false;
@@ -3791,8 +3792,11 @@ void myCentralWidget::treatRoute(ROUTE* route)
                 mb.setText(result);
                 mb.setWindowTitle(QObject::tr("Resultat de la simplification"));
                 mb.setIcon(QMessageBox::Information);
-                QPushButton *optim = mb.addButton(tr("Optimiser"),QMessageBox::YesRole);
-                mb.addButton(QMessageBox::Close);
+//                QPushButton *optim = mb.addButton(tr("Optimiser"),QMessageBox::YesRole);
+//                mb.addButton(QMessageBox::Close);
+                mb.setStandardButtons(QMessageBox::Ok|QMessageBox::Close);
+                QAbstractButton * optim=mb.button(QMessageBox::Ok);
+                optim->setText(tr("Optimiser"));
                 mb.exec();
                 if(mb.clickedButton()==optim)
                     optimize=true;
@@ -3944,6 +3948,7 @@ void myCentralWidget::treatRoute(ROUTE* route)
         }
         route->setHidePois(poiShown);
     }
+    mainW->startTimer();
 }
 void myCentralWidget::slot_abortRequest()
 {

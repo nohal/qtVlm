@@ -109,7 +109,7 @@ class MainWindow: public MainWindowInterface
         void setFontDialog(QObject * o);
         void manageWPDialog(BoatInterface *myBoat, QObject *boardPlugin);
         void stopTimer(){this->timer->stop();}
-        void startTimer(){this->timer->start(1000);}
+        void startTimer();
 public slots:
         void slot_POI_input();
         void slot_showPOI_input(POI *poi=NULL, const bool &fromMenu=false);        
