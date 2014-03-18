@@ -716,7 +716,7 @@ void interpolation::get_wind_info_latlong_hybrid_compute(double longitude,  doub
         _speed_u_v(u3, v3, ro3);
     }
     else {
-        SA_2_UV(u0,v1,ro0);
+        SA_2_UV(u0,v0,ro0);
         SA_2_UV(u1,v1,ro1);
         SA_2_UV(u2,v2,ro2);
         SA_2_UV(u3,v3,ro3);
