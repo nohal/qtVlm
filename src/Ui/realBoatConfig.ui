@@ -24,8 +24,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>327</width>
-        <height>435</height>
+        <width>310</width>
+        <height>450</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -240,6 +240,13 @@
            <widget class="QRadioButton" name="rdGPSd">
             <property name="text">
              <string>Utiliser GPSd</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="rdInternal">
+            <property name="text">
+             <string>GPS Interne ou autre methode interne </string>
             </property>
            </widget>
           </item>

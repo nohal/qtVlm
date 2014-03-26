@@ -65,7 +65,7 @@ void Settings::initSettingArray(void) {
 
     /* Main settings */
     INIT_SETTING(defaultFontName,        "defaultFontName",        "main", QApplication::font().family());
-#ifndef __ANDROID__
+#ifndef __ANDROID_QTVLM
     INIT_SETTING(applicationFontSize,    "applicationFontSize",    "main", 8.0);
 #else
     INIT_SETTING(applicationFontSize,    "applicationFontSize",    "main", 12.0);

@@ -615,7 +615,7 @@ QPainterPath boat::shape() const
     if(isSelected())
         path.addEllipse(R1);
     else
-#ifdef __ANDROID__
+#ifdef __ANDROID_QTVLM
     {
         R1=QRectF(-sh/2,-sh/2,sh,sh);
         path.addEllipse(R1);

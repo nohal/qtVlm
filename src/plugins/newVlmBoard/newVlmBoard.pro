@@ -13,7 +13,7 @@ CONFIG += plugin
 TEMPLATE = lib
 TARGET = newVlmBoard
 DEPENDPATH += .
-INCLUDEPATH += . ../.. ../../Dialogs
+INCLUDEPATH += . ../.. ../../Dialogs ../../objs
 
 
 asan {

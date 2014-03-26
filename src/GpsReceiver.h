@@ -21,22 +21,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef GPSRECEIVER_H
 #define GPSRECEIVER_H
 
+#include "class_list.h"
 #include <QThread>
 #include <QListWidget>
 #include <QFile>
 #include <QDateTime>
-
+#include <QGeoPositionInfoSource>
 #include <qextserialport.h>
 #include <nmea.h>
 
 #ifdef __UNIX_QTVLM
-#ifndef __ANDROID__
 #include "libgps.h"
 #include "gps.h"
 #endif
-#endif
 
-#include "class_list.h"
 #include "dataDef.h"
 
 enum {
@@ -44,6 +42,7 @@ enum {
     GPS_SERIAL,
     GPS_FILE,
     GPS_GPSD,
+    GPS_INTERNAL,
     GPS_MAX_TYPE
 };
 
@@ -146,7 +145,6 @@ class SerialReceiverThread : public ReceiverThread
 };
 
 #ifdef __UNIX_QTVLM
-#ifndef __ANDROID__
 class GPSdReceiverThread : public ReceiverThread
 { Q_OBJECT
     public:
@@ -163,7 +161,6 @@ class GPSdReceiverThread : public ReceiverThread
         bool ok;
 
 };
-#endif
 #endif
 
 inline void nmea2gps(nmeaINFO * info,GpsData * data) {
@@ -199,5 +196,17 @@ inline void clearGpsData(GpsData * data) {
     data->sig=0;
     data->fix=1;
 }
+class InternalReceiverThread : public ReceiverThread
+{ Q_OBJECT
+    public:
+        InternalReceiverThread(boatReal * parent);
+        ~InternalReceiverThread(void);
+        void run();
 
+        bool initDevice(void);
+
+    private:
+        QGeoPositionInfoSource * geoPositionInfoSource;
+        QGeoPositionInfo geoPositionInfo;
+};
 #endif // GPSRECEIVER_H

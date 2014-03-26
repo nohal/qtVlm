@@ -445,6 +445,7 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     dialogLoadGrib = new DialogLoadGrib(this->mainW);
     connect(dialogLoadGrib,SIGNAL(clearSelection()),this,SLOT(slot_clearSelection()));
     connect(this,SIGNAL(geometryChanged()),dialogLoadGrib,SLOT(slot_screenResize()));
+    connect(this,SIGNAL(geometryChanged()),mainW,SIGNAL(geometryChanged()));
     dialogLoadGrib->checkQtvlmVersion();
     connect(dialogLoadGrib, SIGNAL(signalGribFileReceived(QString)),parent,  SLOT(slot_gribFileReceived(QString)));
     connect(menuBar->acOptions_GraphicsParams, SIGNAL(triggered()), this, SLOT(slot_graphicParams()));
@@ -4903,7 +4904,7 @@ void myCentralWidget::showToolTip(const QString &tt, const bool &animate, QList<
     infoView->showView(tt,animate,newMenu);
 
 #else
-#ifndef __ANDROID__
+#ifndef __ANDROID_QTVLM
     infoView->showView(tt,animate,newMenu);
 #else
     Q_UNUSED(tt);

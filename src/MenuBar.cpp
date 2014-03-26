@@ -388,8 +388,7 @@ MenuBar::MenuBar(MainWindow *parent)
 }
 void MenuBar::setNewMenu(QList<QMenu *> *newMenu)
 {
-//#ifndef __ANDROID__
-#if 0
+#ifndef __ANDROID_QTVLM
     Q_UNUSED(newMenu);
     return;
 #else

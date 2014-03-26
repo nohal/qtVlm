@@ -315,7 +315,7 @@ void ROUTE::zoom()
 void ROUTE::setContextualMenu()
 {
     QIcon icon;
-#ifndef __ANDROID__
+#ifndef __ANDROID_QTVLM
     QPixmap iconI(parent->getIconSize());
     iconI.fill(this->getColor());
     icon=QIcon(iconI);

@@ -120,7 +120,7 @@ bool QextSerialPortPrivate::close_sys()
 
 bool QextSerialPortPrivate::flush_sys()
 {
-#ifndef __ANDROID__
+#ifndef __ANDROID_QTVLM
     ::tcdrain(fd);
 #endif
     return true;

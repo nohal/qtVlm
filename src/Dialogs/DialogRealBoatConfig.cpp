@@ -92,6 +92,9 @@ void DialogRealBoatConfig::launch(boatReal * boat)
         case GPS_FILE:
             rdFile->setChecked(true);
             break;
+        case GPS_INTERNAL:
+            rdInternal->setChecked(true);
+            break;
     }
 
     this->displayNMEA->setChecked(boat->getDisplayNMEA());
@@ -150,6 +153,8 @@ void DialogRealBoatConfig::done(int result)
         // GPSd
 
         // GPS mode
+        if(rdInternal->isChecked())
+            gpsSource=GPS_INTERNAL;
         Settings::setSetting(deviceType,gpsSource);
 
         curBoat->setDisplayNMEA(this->displayNMEA->isChecked());

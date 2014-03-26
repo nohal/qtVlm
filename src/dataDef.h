@@ -100,7 +100,7 @@ FCT_GET_CST(TYPE,VARNAME)
 #define BOAT_NOBOAT -1
 
 /* styles */
-#ifdef __ANDROID__
+#ifdef __ANDROID_QTVLM
 #define DO_NOT_USE_STYLE
 #endif
 

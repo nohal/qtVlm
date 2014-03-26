@@ -92,6 +92,10 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "DialogRouteComparator.h"
 #include "DialogWp.h"
 #include <QStyleFactory>
+//#define __ANDROID1__
+#ifdef __ANDROID1__
+#include "BoardVlmMobile.h"
+#endif
 //#include <QtQuick/QQuickView>
 //#include <QPluginLoader>
 int INTERPOLATION_DEFAULT=INTERPOLATION_HYBRID;
@@ -227,18 +231,24 @@ void MainWindow::slot_gribFileReceived(QString fileName)
 MainWindow::MainWindow(QWidget *parent) :timer(NULL), selectedBoat(NULL)
 {
     this->setParent(parent);
+    myBoard=NULL;
+    boardPlugin=NULL;
     //qApp->installEventFilter(this);
     setWindowIcon (QIcon (appFolder.value("icon")+"qtVlm_48x48.png"));
     noSave=false;
     originalPalette=QApplication::palette();
     loadVLM_grib=NULL;
-    qWarning()<<QStyleFactory::keys();
+    qWarning()<<"Available styles:"<<QStyleFactory::keys();
 //#ifndef DO_NOT_USE_STYLE
 #if 1
 #ifdef QT_V5
-#ifdef __ANDROID__
-    QStyle * android=QStyleFactory::create("Android");
-    qApp->setStyle(android);
+#ifdef __ANDROID_QTVLM
+    if(QStyleFactory::keys().contains("Android",Qt::CaseInsensitive))
+    {
+        qWarning()<<"loading android style";
+        QStyle * android=QStyleFactory::create("Android");
+        qApp->setStyle(android);
+    }
 #if 0
     QPalette p=qApp->palette();
     p.setColor(QPalette::Window, QColor(53,53,53));
@@ -784,7 +794,7 @@ void MainWindow::continueSetup()
     QList<Player*> players=my_centralWidget->getPlayers();
     if(players.count()==1)
     {
-        if(use_old_board)
+        if(use_old_board && myBoard)
             myBoard->playerChanged(players.at(0));
         if(players.at(0)->getType()==BOAT_VLM)
         {
@@ -861,9 +871,9 @@ QString MainWindow::get_OSVersion(void) {
     QString ver="";
 #ifdef __UNIX_QTVLM
     ver=" (UNIX)";
-#ifdef __ANDROID__
-    ver=" (ANDROID)";
 #endif
+#ifdef __ANDROID_QTVLM
+    ver=" (ANDROID)";
 #endif
 #ifdef __WIN_QTVLM
     QString OS_versionName;
@@ -972,10 +982,15 @@ QString MainWindow::get_OSVersion(void) {
 
 void MainWindow::loadBoard()
 {
+    if(!my_centralWidget->getPlayer()) return;
     qWarning()<<"loading board";
     use_old_board=true;
     if(my_centralWidget->getPlayer() && my_centralWidget->getPlayer()->getType()==BOAT_VLM && Settings::getSetting(vlmBoardType).toString()!="0")
         use_old_board=false;
+#ifdef __ANDROID_QTVLM
+    if(my_centralWidget->getPlayer() && my_centralWidget->getPlayer()->getType()==BOAT_VLM)
+        use_old_board=false;
+#endif
     if(use_old_board && myBoard)
     {
         myBoard->playerChanged(my_centralWidget->getPlayer());
@@ -1023,6 +1038,7 @@ void MainWindow::loadBoard()
     }
     else
     {
+#ifndef __ANDROID1__
         QFile       uiFile (Settings::getSetting(vlmBoardType).toString());
         // Load the associated resources if they exist
         QFileInfo   uiFileInfo (uiFile);
@@ -1047,6 +1063,11 @@ void MainWindow::loadBoard()
            Settings::setSetting(vlmBoardType,"0");
            loadBoard();
         }
+#else
+        qWarning()<<"loading boardVlmMobile";
+        boardPlugin=new BoardVlmMobile();
+        boardPlugin->initBoard(this);
+#endif
     }
     this->showDashBoard();
 }
@@ -1275,7 +1296,7 @@ void MainWindow::closeProgress(void)
                 statusBar->update_eta(dtm);
             startTimer();
         }
-        if(use_old_board)
+        if(use_old_board && myBoard)
             myBoard->boatUpdated(selectedBoat);
         emit WPChanged(selectedBoat->getWPLat(),selectedBoat->getWPLon());
         emit boatChanged(selectedBoat);
@@ -1286,7 +1307,7 @@ void MainWindow::closeProgress(void)
 //    QQuickView *qml = new QQuickView;
 //    qml->setSource(QUrl::fromLocalFile("src/qml_ui.qml"));
 //    qml->show();
-#ifndef __ANDROID__
+#ifndef __ANDROID_QTVLM
     this->setMenuBar(menuBar);
     menuBar->show();
 #endif
@@ -1839,7 +1860,7 @@ void MainWindow::updatePilototo_Btn(boatVLM * boat)
         QStringList lst = boat->getPilototo();
         QString pilototo_txt=tr("Pilototo");
         QString pilototo_toolTip="";
-        if(use_old_board)
+        if(use_old_board && myBoard)
             myBoard->VLMBoard()->set_style(myBoard->VLMBoard()->btn_Pilototo,QColor(255, 255, 127));
         if(boat->getHasPilototo())
         {
@@ -1860,7 +1881,7 @@ void MainWindow::updatePilototo_Btn(boatVLM * boat)
             if(nb!=0)
             {
                 pilototo_txt=pilototo_txt+" ("+QString().setNum(nbPending)+"/"+QString().setNum(nb)+")";
-                if(use_old_board)
+                if(use_old_board && myBoard)
                 {
                     if(nbPending!=0)
                     {
@@ -1877,7 +1898,7 @@ void MainWindow::updatePilototo_Btn(boatVLM * boat)
         }
         menuBar->acPilototo->setText(pilototo_txt);
         menuBar->acPilototo->setToolTip(pilototo_toolTip);
-        if(use_old_board)
+        if(use_old_board && myBoard)
         {
             myBoard->VLMBoard()->btn_Pilototo->setText(pilototo_txt);
             myBoard->VLMBoard()->btn_Pilototo->setToolTip(pilototo_toolTip);
@@ -1887,7 +1908,7 @@ void MainWindow::updatePilototo_Btn(boatVLM * boat)
     {
         emit selectPOI(true);
         menuBar->acPilototo->setText(tr("Selection d'une marque"));
-        if(use_old_board)
+        if(use_old_board && myBoard)
             myBoard->VLMBoard()->btn_Pilototo->setText(tr("Selection d'une marque"));
     }
 }
@@ -1901,17 +1922,18 @@ void MainWindow::updateNxtVac(void)
     else
     {
         boatVLM * b=(boatVLM *)selectedBoat;
+        if(b->getNextVac()==0 || b->getPrevVac()==0) return;
         nxtVac_cnt=lastUpdateTime+b->getNextVac()-QDateTime::currentDateTimeUtc().toTime_t();
         //qWarning()<<nxtVac_cnt<<b->getPrevVac()<<b->getNextVac()<<QDateTime::currentDateTimeUtc().toTime_t();
         if(nxtVac_cnt<0)
         {
             nxtVac_cnt=b->getVacLen()+(nxtVac_cnt%b->getVacLen());
             emit outDatedVlmData();
-            if(use_old_board)
+            if(use_old_board && myBoard)
                 myBoard->outdatedVLM();
         }
+        emit drawVacInfo();
     }
-    emit drawVacInfo();
 }
 
 QList<POI*> * MainWindow::getPois()
@@ -2030,7 +2052,7 @@ void MainWindow::slotCompassCenterWp(void)
 void MainWindow::slotVLM_Param(void)
 {
     param = new DialogParamVlm(this,my_centralWidget);
-    if(use_old_board)
+    if(use_old_board && myBoard)
         connect(param,SIGNAL(paramVLMChanged()),myBoard,SLOT(paramChanged()));
 
     connect(param,SIGNAL(paramVLMChanged()),this,SLOT(slot_updateGribMono()));
@@ -2407,7 +2429,7 @@ void MainWindow::slotChgBoat(int num)
                     }
                 }
                 slotFile_Lock(true);
-                if(use_old_board)
+                if(use_old_board && myBoard)
                     myBoard->VLMBoard()->setChangeStatus(!selectedBoat->getLockStatus());
                 break;
             }
@@ -2532,7 +2554,7 @@ void MainWindow::slotChgWP(double lat,double lon, double wph)
 
     selectedBoat->setWP(QPointF(lon,lat),wph);
     emit WPChanged(lat,lon);
-    if(use_old_board)
+    if(use_old_board && myBoard)
     {
         if(this->selectedBoat->get_boatType()==BOAT_VLM)
         {
@@ -2572,19 +2594,19 @@ void MainWindow::slotBoatLockStatusChanged(boat* boat,bool status)
         if(selPOI_instruction)
         {
             emit setChangeStatus(true,true,false);
-            if(use_old_board)
+            if(use_old_board && myBoard)
                 myBoard->VLMBoard()->btn_Pilototo->setEnabled(true);
         }
         else if(isSelectingWP)
         {
             emit setChangeStatus(true,false,false);
-            if(use_old_board)
+            if(use_old_board && myBoard)
                 myBoard->VLMBoard()->btn_Pilototo->setEnabled(false);
         }
         else
         {
             emit setChangeStatus(status,!status,true);
-            if(use_old_board)
+            if(use_old_board && myBoard)
                 myBoard->VLMBoard()->btn_Pilototo->setEnabled(true);
         }
     }

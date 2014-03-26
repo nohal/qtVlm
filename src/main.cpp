@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
     QApplication * app=new QApplication(argc, argv);
     qsrand(QTime::currentTime().msec());
     QString appExeFolder=QApplication::applicationDirPath();
-#ifdef __ANDROID__
+#ifdef __ANDROID_QTVLM
     QDir::setCurrent("/storage/emulated/0/qtVlm");
 //    QFile testWrite;
 //    testWrite.setFileName("testWrite.txt");
@@ -172,8 +172,14 @@ int main(int argc, char *argv[])
     QFont def(Settings::getSetting(defaultFontName).toString());
     double fontSize=8.0+fontInc;
     def.setPointSizeF(fontSize);
+#ifdef __ANDROID_QTVLM
+    def=qApp->font();
+    fontSize=def.pointSizeF();
+#endif
 #ifndef DO_NOT_USE_STYLE
+#ifndef __ANDROID_QTVLM
     QApplication::setFont(def);
+#endif
     Settings::setSetting(applicationFontSize,fontSize);
 #else
     Settings::setSetting(applicationFontSize,qApp->font().pointSizeF());

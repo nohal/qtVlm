@@ -171,7 +171,7 @@ boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) :
     editAngle->setSingleStep(1.0);
 
     /* Etat du compass */
-#ifndef __ANDROID__
+#ifndef __ANDROID_QTVLM
     if(Settings::getSetting(boardVLMCompassShown).toInt()==1)
         windAngle->show();
     else

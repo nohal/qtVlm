@@ -108,6 +108,277 @@
     </message>
 </context>
 <context>
+    <name>BoardVlmMobile</name>
+    <message>
+        <source>VLM Command Board</source>
+        <translation>Tableau de bord VLM</translation>
+    </message>
+    <message>
+        <source>Compas</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>BS</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>TWS</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>TWD</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Details</source>
+        <translation>Détails</translation>
+    </message>
+    <message>
+        <source>Bateau</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Position</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>BS:</source>
+        <translation>BS:</translation>
+    </message>
+    <message>
+        <source>14.32kts</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>HDG:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>132.23d</source>
+        <translation>132.23d</translation>
+    </message>
+    <message>
+        <source>Moy:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Loch:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>WP</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Ortho:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>DNM:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Angle:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>VMG:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>25.25kts</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Wind</source>
+        <translation>Vent</translation>
+    </message>
+    <message>
+        <source>TWS:</source>
+        <translation>TWS:</translation>
+    </message>
+    <message>
+        <source>25.35kts</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>TWD:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Pres:</source>
+        <translation>Près:</translation>
+    </message>
+    <message>
+        <source>Port.:</source>
+        <translation>Portant:</translation>
+    </message>
+    <message>
+        <source>Race</source>
+        <translation>Course</translation>
+    </message>
+    <message>
+        <source>Fasnet gate</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Dist:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>B-VMG:</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Polaire</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation>FileName</translation>
+    </message>
+    <message>
+        <source> kts</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>°</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>TWA</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>VMG</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>HDG</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>VBVMG</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>ORT</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Pilototo</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>background-color: rgb(239, 243, 247);</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>VLM Sync</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>nm</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>deg</source>
+        <translation>°</translation>
+    </message>
+    <message>
+        <source>kts</source>
+        <translation>nds</translation>
+    </message>
+    <message>
+        <source>Meilleurs angles au pres/portant:</source>
+        <translation>Meilleurs angles au près/portant:</translation>
+    </message>
+    <message>
+        <source>pas de polaire chargee</source>
+        <translation>Pas de polaire chargée</translation>
+    </message>
+    <message>
+        <source>Max Speed:</source>
+        <translation>Vitesse max:</translation>
+    </message>
+    <message>
+        <source>at</source>
+        <translation>à</translation>
+    </message>
+    <message>
+        <source>Absolute&lt;br&gt;max speed:</source>
+        <translation>Vitesse max&lt;br&gt;absolue:</translation>
+    </message>
+    <message>
+        <source>TWA:</source>
+        <translation>TWA:</translation>
+    </message>
+    <message>
+        <source>Pas de WP</source>
+        <translation>Pas de WP actif</translation>
+    </message>
+    <message>
+        <source>Pas de WP actif</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>WP defini dans VLM (pas de POI correspondant)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>WP VLM</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>WP: </source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>WP defini dans VLM (</source>
+        <translation>WP défini dans VLM (</translation>
+    </message>
+    <message>
+        <source> dans qtVlm)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Le cap a suivre n&apos;est pas le meme</source>
+        <translation>Attention: le cap à suivre est différent</translation>
+    </message>
+    <message>
+        <source>WP defini dans VLM mais le mode de navigation n&apos;est pas coherent</source>
+        <translation>WP défini dans VLM mais le mode de navigation n&apos;est pas compatible</translation>
+    </message>
+    <message>
+        <source>Annuler</source>
+        <translation>Annuler</translation>
+    </message>
+    <message>
+        <source>AWA</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>AWS</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Confirmation a chaque ordre vers VLM</source>
+        <translation>Confirmation à chaque ordre vers VLM</translation>
+    </message>
+    <message>
+        <source>Confirmez-vous cet ordre?</source>
+        <translation>Confirmez-vous cet ordre?</translation>
+    </message>
+    <message>
+        <source>Derniere synchro</source>
+        <translation>Dernière synchro</translation>
+    </message>
+    <message>
+        <source>dd-MM-yyyy, HH:mm:ss</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
     <name>BoardVlmNew</name>
     <message>
         <source>VLM Command Board</source>
@@ -467,36 +738,93 @@
     </message>
 </context>
 <context>
-    <name>DialogChooseBarrierSet_ui</name>
+    <name>DialogChooseBarrierSet_pc_ui</name>
     <message>
         <source>Dialog</source>
-        <translation>Ensemble de barrières</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Barrier set:</source>
-        <translation>Ensemble de barrières:</translation>
+        <translation type="unfinished">Ensemble de barrières:</translation>
+    </message>
+    <message>
+        <source>Ok</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Annuler</translation>
+    </message>
+</context>
+<context>
+    <name>DialogChooseBarrierSet_ui</name>
+    <message>
+        <source>Dialog</source>
+        <translation type="vanished">Ensemble de barrières</translation>
+    </message>
+    <message>
+        <source>Barrier set:</source>
+        <translation type="vanished">Ensemble de barrières:</translation>
     </message>
 </context>
 <context>
     <name>DialogChooseMultipleBarrierSet_ui</name>
     <message>
         <source>Dialog</source>
-        <translation>Sélection d&apos;un ensemble de barrières</translation>
+        <translation type="vanished">Sélection d&apos;un ensemble de barrières</translation>
     </message>
     <message>
         <source>Available sets</source>
-        <translation>Ensembles disponibles</translation>
+        <translation type="vanished">Ensembles disponibles</translation>
     </message>
 </context>
 <context>
     <name>DialogChooseMultipleBoat_ui</name>
     <message>
         <source>Dialog</source>
-        <translation>Dialogue</translation>
+        <translation type="vanished">Dialogue</translation>
     </message>
     <message>
         <source>Available boats</source>
-        <translation>Bateaux disponibles</translation>
+        <translation type="vanished">Bateaux disponibles</translation>
+    </message>
+</context>
+<context>
+    <name>DialogChooseMultiple_ctrl</name>
+    <message>
+        <source>Choose boats</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Available boat</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Choose barrier set</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Available set</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DialogChooseMultiple_pc_ui</name>
+    <message>
+        <source>Dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TITLE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ok</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Annuler</translation>
     </message>
 </context>
 <context>
@@ -787,6 +1115,32 @@ La boîte à cocher trace partielle s&apos;active apres l&apos;entree d&apos;un 
     <message>
         <source>Isothermes :</source>
         <translation>Isotherme 0 C :</translation>
+    </message>
+</context>
+<context>
+    <name>DialogGribDate_pc_ui</name>
+    <message>
+        <source>Grib dates</source>
+        <translation type="unfinished">dates Grib</translation>
+    </message>
+    <message>
+        <source>M/d/yyyy hh:mm:ss</source>
+        <translation type="unfinished">dd/MM/yyyy hh:mm:ss</translation>
+    </message>
+    <message>
+        <source>Ok</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Annuler</translation>
+    </message>
+</context>
+<context>
+    <name>DialogGribDate_view_pc</name>
+    <message>
+        <source>None</source>
+        <translation type="unfinished">Aucun</translation>
     </message>
 </context>
 <context>
@@ -1978,7 +2332,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Ce bouton a 3 etats:&lt;br&gt;&lt;b&gt;Non coche:&lt;/b&gt; La route ne sera pas simplifiee.&lt;br&gt;&lt;b&gt;Partiellement coche:&lt;/b&gt; La route sera simplifiee en mode minimum, c&apos;est le meilleur mode.&lt;br&gt;&lt;b&gt;Completement coche:&lt;/b&gt; La route sera simplifiee au maximum. Ce mode peut degrader la qualite du routage.</source>
-        <translation>Ce bouton a 3 états:&lt;br&gt;&lt;b&gt;Non coché:&lt;/b&gt; La route ne sera pas simplifiée.&lt;br&gt;&lt;b&gt;Partiellement coché:&lt;/b&gt; La route sera simplifiée en mode minimum, c&apos;est le meilleur mode.&lt;br&gt;&lt;b&gt;Complètement coché:&lt;/b&gt; La route sera simplifiée au maximum. Ce mode peut dégrader la qualité de la route.</translation>
+        <translation type="vanished">Ce bouton a 3 états:&lt;br&gt;&lt;b&gt;Non coché:&lt;/b&gt; La route ne sera pas simplifiée.&lt;br&gt;&lt;b&gt;Partiellement coché:&lt;/b&gt; La route sera simplifiée en mode minimum, c&apos;est le meilleur mode.&lt;br&gt;&lt;b&gt;Complètement coché:&lt;/b&gt; La route sera simplifiée au maximum. Ce mode peut dégrader la qualité de la route.</translation>
     </message>
 </context>
 <context>
@@ -2075,6 +2429,25 @@ Etes-vous sur ?</source>
     </message>
 </context>
 <context>
+    <name>DialogVLMGrib_pc_ui</name>
+    <message>
+        <source>VLM grib download</source>
+        <translation type="unfinished">Téléchargement Grib VLM</translation>
+    </message>
+    <message>
+        <source>No grib file</source>
+        <translation type="unfinished">Pas de fichier Grib</translation>
+    </message>
+    <message>
+        <source>Download</source>
+        <translation type="unfinished">Téléchargement</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished">Annuler</translation>
+    </message>
+</context>
+<context>
     <name>DialogVLM_grib</name>
     <message>
         <source>Sauvegarde du fichier GRIB</source>
@@ -2093,19 +2466,19 @@ Etes-vous sur ?</source>
     <name>DialogVLM_grib_ui</name>
     <message>
         <source>VLM grib download</source>
-        <translation>Téléchargement Grib VLM</translation>
+        <translation type="vanished">Téléchargement Grib VLM</translation>
     </message>
     <message>
         <source>No grib file</source>
-        <translation>Pas de fichier Grib</translation>
+        <translation type="vanished">Pas de fichier Grib</translation>
     </message>
     <message>
         <source>Download</source>
-        <translation>Téléchargement</translation>
+        <translation type="vanished">Téléchargement</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Annuler</translation>
+        <translation type="vanished">Annuler</translation>
     </message>
 </context>
 <context>
@@ -2186,24 +2559,42 @@ Etes-vous sur ?</source>
 <context>
     <name>DialogVlmGrib</name>
     <message>
-        <source>VLM Grib</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Chargement de la liste de grib</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Sauvegarde du fichier GRIB</source>
-        <translation>Sauvegarde du fichier GRIB</translation>
+        <translation type="vanished">Sauvegarde du fichier GRIB</translation>
     </message>
     <message>
         <source>Erreur</source>
-        <translation>Erreur</translation>
+        <translation type="vanished">Erreur</translation>
     </message>
     <message>
         <source>Ecriture du fichier impossible.</source>
-        <translation>Ecriture du fichier impossible.</translation>
+        <translation type="vanished">Ecriture du fichier impossible.</translation>
+    </message>
+</context>
+<context>
+    <name>DialogVlmGrib_ctrl</name>
+    <message>
+        <source>Sauvegarde du fichier GRIB</source>
+        <translation type="unfinished">Sauvegarde du fichier GRIB</translation>
+    </message>
+    <message>
+        <source>Erreur</source>
+        <translation type="unfinished">Erreur</translation>
+    </message>
+    <message>
+        <source>Ecriture du fichier impossible.</source>
+        <translation type="unfinished">Ecriture du fichier impossible.</translation>
+    </message>
+</context>
+<context>
+    <name>DialogVlmGrib_view_pc</name>
+    <message>
+        <source>VLM Grib</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Chargement de la liste de grib</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2723,20 +3114,8 @@ Etes-vous sur ?</source>
         <translation type="obsolete">Le fichier &apos;benchmark.grb&apos; n&apos;existe pas dans le répertoire &apos;img&apos;</translation>
     </message>
     <message>
-        <source>Copier la route</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Supprimer la route</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Editer la route</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Zoom sur la route </source>
-        <translation>Zoom sur la route </translation>
+        <translation type="vanished">Zoom sur la route </translation>
     </message>
     <message>
         <source>File &apos;player_play.png&apos; cannot be find in img directory</source>
@@ -2753,14 +3132,6 @@ Etes-vous sur ?</source>
     <message>
         <source>loading POIs</source>
         <translation>Chargement des POIs</translation>
-    </message>
-    <message>
-        <source>Simplifier la route</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Optimiser la route</source>
-        <translation></translation>
     </message>
     <message>
         <source>Initializing status bar</source>
@@ -2784,7 +3155,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Montrer les POIs intermediaires de la route</source>
-        <translation>Montrer les pois intermédiaires de la route </translation>
+        <translation type="vanished">Montrer les pois intermédiaires de la route </translation>
     </message>
     <message>
         <source>New set</source>
@@ -3366,10 +3737,6 @@ Etes-vous sur ?</source>
         <translation></translation>
     </message>
     <message>
-        <source>Copier la route au format kml</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Coller une route</source>
         <translation></translation>
     </message>
@@ -3418,14 +3785,6 @@ Etes-vous sur ?</source>
         <translation></translation>
     </message>
     <message>
-        <source>Supprimer la route</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Editer la route</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Supprimer des marques</source>
         <translation></translation>
     </message>
@@ -3439,31 +3798,15 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Zoom sur la route </source>
-        <translation>Zoom sur la route </translation>
+        <translation type="vanished">Zoom sur la route </translation>
     </message>
     <message>
         <source>QtVlm forum</source>
         <translation>Forum qtVlm</translation>
     </message>
     <message>
-        <source>Simplifier la route</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Optimiser la route</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Montrer les POIs intermediaires de la route</source>
-        <translation>Montrer les pois intermédiaires de la route </translation>
-    </message>
-    <message>
-        <source>Maximum</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Minimum</source>
-        <translation></translation>
+        <translation type="vanished">Montrer les pois intermédiaires de la route </translation>
     </message>
     <message>
         <source>View</source>
@@ -3693,10 +4036,6 @@ Etes-vous sur ?</source>
         <translation type="obsolete">La destruction d&apos;une marque est définitive  Etes-vous sur?</translation>
     </message>
     <message>
-        <source>Routes</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Optimiser le placement sur la route</source>
         <translation></translation>
     </message>
@@ -3796,7 +4135,7 @@ Etes-vous sur ?</source>
     </message>
     <message>
         <source>Pre-selectionner pour le pilototo</source>
-        <translation>Préselectionner pour le pilototo</translation>
+        <translation type="vanished">Préselectionner pour le pilototo</translation>
     </message>
     <message>
         <source>1ere cible du pilototo</source>
@@ -3912,10 +4251,6 @@ Etes-vous sur de vouloir supprimer</translation>
         <translation></translation>
     </message>
     <message>
-        <source>Minimum</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Montrer les POIs intermediaires de la route </source>
         <translation>Montrer les pois intermédiaires de la route </translation>
     </message>
@@ -3978,6 +4313,22 @@ Etes-vous sur de vouloir supprimer</translation>
     <message>
         <source>Tracer un cerce orthodromique au bateau</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Poi menu</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Route</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Optimum</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5394,6 +5745,50 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
         <source>Resultat de l&apos;optimisation</source>
         <translation type="obsolete">Résultats de l&apos;optimisation</translation>
     </message>
+    <message>
+        <source>Route</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Editer la route</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Montrer les POIs intermediaires de la route</source>
+        <translation type="unfinished">Montrer les pois intermédiaires de la route </translation>
+    </message>
+    <message>
+        <source>Simplifier la route</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Maximum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Optimum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Optimiser la route</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copier la route au format kml</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Zoom sur la route </source>
+        <translation type="unfinished">Zoom sur la route </translation>
+    </message>
+    <message>
+        <source>Supprimer la route</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copier la route</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ROUTE_Editor_ui</name>
@@ -5452,10 +5847,6 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     <message>
         <source>Cacher les POIs intermediaires</source>
         <translation>Cacher les POIs intermédiaires</translation>
-    </message>
-    <message>
-        <source>Simplifie la route en supprimant les POIs qui ne changent pas l&apos;eta finale.</source>
-        <translation></translation>
     </message>
     <message>
         <source>Simplifier</source>
@@ -5527,10 +5918,6 @@ Voulez-vous egalement supprimer tous les POIs lui appartenant?</source>
     </message>
     <message>
         <source>Charger automatiquement</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Charger les POIs preselectionnes</source>
         <translation></translation>
     </message>
     <message>
@@ -5645,6 +6032,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>This route is not in BVMG-VLM mode so pilots orders timestamps and even route&apos;s way and trajectory might not be the same. </source>
         <translation>Cette route n&apos;est pas en mode VBVMG-VLM mode. Les horodatages des ordres du pilototo et même la trajectoire de la route peuvent être différents.</translation>
+    </message>
+    <message>
+        <source>Optimum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Maximum</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7582,7 +7977,7 @@ p, li { white-space: pre-wrap; }
     <name>dialog_gribDate_ui</name>
     <message>
         <source>Grib dates</source>
-        <translation>dates Grib</translation>
+        <translation type="vanished">dates Grib</translation>
     </message>
     <message>
         <source>Annuler</source>
@@ -7590,7 +7985,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>M/d/yyyy hh:mm:ss</source>
-        <translation>dd/MM/yyyy hh:mm:ss</translation>
+        <translation type="vanished">dd/MM/yyyy hh:mm:ss</translation>
     </message>
 </context>
 <context>
@@ -7803,10 +8198,6 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <source>WP%vent: </source>
-        <translation></translation>
-    </message>
-    <message>
         <source> nm</source>
         <translation></translation>
     </message>
@@ -7821,6 +8212,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Metres</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>WP vent: </source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

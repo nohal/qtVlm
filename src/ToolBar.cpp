@@ -49,7 +49,7 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     iconSize=QToolBar().iconSize();
     //qWarning()<<"iconSize="<<iconSize;
     QPixmap add("img/add.png");
-#ifdef __ANDROID__
+#ifdef __ANDROID_QTVLM
     add=add.scaled(iconSize,Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
 #endif
     add.save("img/addResized.png");
@@ -64,13 +64,13 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     toolBarList.append(mapToolBar);
 
     estimeToolBar=new MyToolBar("Estime",tr("Estime"),this,mainWindow);
-#ifndef __ANDROID__
+#ifndef __ANDROID_QTVLM
     toolBarList.append(estimeToolBar);
 #endif
     boatToolBar=new MyToolBar("Boat",tr("Boat"),this,mainWindow);
     toolBarList.append(boatToolBar);
     barrierToolBar=new MyToolBar("BarrierSet",tr("Barrier Set"),this,mainWindow);
-#ifndef __ANDROID__
+#ifndef __ANDROID_QTVLM
     toolBarList.append(barrierToolBar);
 #endif
     /* adding all toolBar to mainWindow dock */
@@ -138,14 +138,14 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     cbGribStep->setSizeAdjustPolicy(QComboBox::AdjustToContents);
     //FontManagement::setFontDialog(cbGribStep);
     cbGribStep->setCurrentIndex(Settings::getSetting(gribDateStep).toInt());
-#ifndef __ANDROID__
+#ifndef __ANDROID_QTVLM
     gribToolBar->addWidget(gribDwnld);
     gribToolBar->addAction(acOpenGrib);
     gribToolBar->addSeparator();
     gribToolBar->addAction(datesGrib_sel);
 #endif
     gribToolBar->addAction(datesGrib_now);
-#ifndef __ANDROID__
+#ifndef __ANDROID_QTVLM
     gribToolBar->addSeparator();
 #endif
     gribToolBar->addAction(acGrib_dialog);
@@ -157,7 +157,7 @@ ToolBar::ToolBar(MainWindow *mainWindow)
 
     /* Map toolBar */
 
-#ifndef __ANDROID__
+#ifndef __ANDROID_QTVLM
     acMap_Zoom_In = init_Action(tr("Augmenter l'echelle de la carte"), tr(""),
                               tr("Augmenter l'echelle de la carte"), appFolder.value("img")+"viewmag+.png",mapToolBar);
     acMap_Zoom_Out = init_Action( tr("Diminuer l'echelle de la carte"), tr(""),
@@ -173,17 +173,17 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     selectionMode->setCheckable(true);
     magnify = init_Action(tr("Loupe"),tr(""),tr(""),appFolder.value("img")+"magnify.png",mapToolBar);
     magnify->setCheckable(true);
-#ifndef __ANDROID__
+#ifndef __ANDROID_QTVLM
     mapToolBar->addAction(acMap_Zoom_In);
     mapToolBar->addAction(acMap_Zoom_Out);
 #endif
     mapToolBar->addAction(acMap_Zoom_Sel);
     mapToolBar->addAction(acMap_Zoom_All);
-#ifndef __ANDROID__
+#ifndef __ANDROID_QTVLM
     mapToolBar->addSeparator();
 #endif
     mapToolBar->addAction(selectionMode);
-#ifndef __ANDROID__
+#ifndef __ANDROID_QTVLM
     mapToolBar->addSeparator();
 #endif
     mapToolBar->addAction(magnify);
@@ -204,7 +204,7 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     chkEstime = new QCheckBox(estimeToolBar);
     chkEstime->setToolTip(tr("Si cette option est cochee<br>l'estime calcule la vitesse du bateau<br>a la prochaine vac.<br>Sinon elle utilise la vitesse du bateau<br>telle que donnee par VLM"));
     chkEstime->setChecked(Settings::getSetting(startSpeedEstime).toInt()==1);
-#ifndef __ANDROID__
+#ifndef __ANDROID_QTVLM
     estimeToolBar->addWidget(lbEstime);
     estimeToolBar->addWidget(spnEstime);
     estimeToolBar->addWidget(cbEstime);
@@ -216,7 +216,7 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     boatList->setSizeAdjustPolicy(QComboBox::AdjustToContents);
     boatToolBar->addAction(acLock);
     boatToolBar->addWidget((boatList));
-#ifndef __ANDROID__
+#ifndef __ANDROID_QTVLM
     /* BarrierSet toolBar */
     barrierAdd = init_Action(tr("Add Barrier"),tr(""),tr(""),appFolder.value("img")+"add_barrier.png",barrierToolBar);
     barrierAdd->setCheckable(true);
@@ -250,7 +250,7 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     connect(acGrib_play,SIGNAL(triggered()),this,SLOT(slot_gribPlay()));
 
     /* Map ToolBar */
-#ifndef __ANDROID__
+#ifndef __ANDROID_QTVLM
     connect(acMap_Zoom_In, SIGNAL(triggered()),centralWidget,  SLOT(slot_Zoom_In()));
     connect(acMap_Zoom_Out, SIGNAL(triggered()),centralWidget,  SLOT(slot_Zoom_Out()));
 #endif
@@ -260,7 +260,7 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     connect(magnify,SIGNAL(triggered()),centralWidget,SLOT(slot_magnify()));
 
     /* Estime ToolBar */
-#ifndef __ANDROID__
+#ifndef __ANDROID_QTVLM
     connect(spnEstime, SIGNAL(valueChanged(int)),this, SLOT(slot_estimeValueChanged(int)));
     connect(cbEstime,SIGNAL(currentIndexChanged(int)),this,SLOT(slot_estimeTypeChanged(int)));
     connect(chkEstime,SIGNAL(stateChanged(int)),this,SLOT(slot_estimeStartChanged(int)));
@@ -270,7 +270,7 @@ ToolBar::ToolBar(MainWindow *mainWindow)
     connect(mainWindow,SIGNAL(updateLockIcon(QString)),this,SLOT(slot_updateLockIcon(QString)));
     connect(boatList, SIGNAL(activated(int)),mainWindow, SLOT(slotChgBoat(int)));
 
-#ifndef __ANDROID__
+#ifndef __ANDROID_QTVLM
     /* BarrierSet ToolBar */
     connect(barrierAdd,SIGNAL(triggered()),mainWindow,SLOT(slot_barrierAddMenu()));
 #endif
@@ -280,7 +280,7 @@ ToolBar::ToolBar(MainWindow *mainWindow)
 void ToolBar::mySetIcon(QToolButton * button,QString iconFile)
 {
     QPixmap pix=QPixmap(iconFile);
-#ifdef __ANDROID__
+#ifdef __ANDROID_QTVLM
     pix=pix.scaled(iconSize,Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
 #endif
     button->setIconSize(iconSize);
@@ -289,7 +289,7 @@ void ToolBar::mySetIcon(QToolButton * button,QString iconFile)
 void ToolBar::mySetIcon(QAction * action,QString iconFile)
 {
     QPixmap pix=QPixmap(iconFile);
-#ifdef __ANDROID__
+#ifdef __ANDROID_QTVLM
     pix=pix.scaled(iconSize,Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
 #endif
     action->setIcon(QIcon(pix));
@@ -342,7 +342,7 @@ void ToolBar::load_settings(void) {
     for(int i=0;i<toolBarList.count();++i) {
         MyToolBar * toolBar = toolBarList.at(i);
         bool myVisible=true;
-#ifndef __ANDROID__
+#ifndef __ANDROID_QTVLM
         QString key = "TB_" + toolBar->get_name();
         myVisible=Settings::getSettingOld(key,true,"ToolBar").toBool();
 #endif
@@ -350,9 +350,7 @@ void ToolBar::load_settings(void) {
         toolBar->setEnabled(myVisible);
         toolBar->set_displayed(myVisible);
         toolBar->initCanHide();
-//#ifdef __ANDROID__
         mainWindow->addToolBar(Qt::TopToolBarArea,toolBar);
-//#endif
         manageToolbarBreak();
     }
 }
@@ -629,7 +627,7 @@ MyToolBar::MyToolBar(QString name,QString title,ToolBar *toolBar, QWidget *paren
     displayed=true;
     forceMenuHide=false;
     this->canHide=canHide;
-#ifdef __ANDROID__
+#ifdef __ANDROID_QTVLM
     this->canHide=false;
 #endif
 #ifdef __MAC_QTVLM

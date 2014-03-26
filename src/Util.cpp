@@ -250,7 +250,7 @@ void Util::setFontDialog(QDialog * o)
     int h,w,px,py;
     Settings::restoreGeometry(o,&h,&w,&px,&py);
     bool pureTactil=false;
-#ifdef __ANDROID__
+#ifdef __ANDROID_QTVLM
     pureTactil=true;
 #endif
     if(pureTactil || h<=0 || w<=0)
@@ -1001,7 +1001,7 @@ double Util::distToSegment(const QPointF point,const QLineF line) {
 int Util::getFingerSize()
 {
     QScreen * screen=QGuiApplication::primaryScreen();
-#ifdef __ANDROID__
+#ifdef __ANDROID_QTVLM
     int finger=6;
 #else
     int finger =10;

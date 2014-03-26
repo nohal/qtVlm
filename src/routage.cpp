@@ -3226,17 +3226,17 @@ void ROUTAGE::convertToRoute()
     }
     if(!multiRoutage)
     {
-#ifdef __ANDROID__
+#ifdef __ANDROID_QTVLM
         simplify.setChecked(false);
         deleteOther.setChecked(false);
 #endif
         int answ=msgBox.exec();
-        QApplication::processEvents();
         if(answ==QMessageBox::Cancel) return;
         waitBox = new QMessageBox(QMessageBox::Information,tr("Conversion d'un routage en route"),
                                   tr("Veuillez patienter..."));
         waitBox->setStandardButtons(QMessageBox::NoButton);
         waitBox->show();
+        QApplication::processEvents();
         parent->getMainWindow()->stopTimer();
         if(deleteOther.isChecked())
         {

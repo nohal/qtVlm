@@ -63,6 +63,8 @@ boatVLM::boatVLM(QString        pseudo, bool activated, int boatId, int playerId
     vacLen=300;
     doingSync=false;
     gatesLoaded=false;
+    nextVac=0;
+    prevVac=0;
     nWP=0;
     this->porteHidden=parent->get_shPor_st();
     firstSynch=false;

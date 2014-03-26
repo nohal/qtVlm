@@ -4,7 +4,7 @@ contains ( QT_VERSION, "^5.*"){
     warning("qt5 detected")
     DEFINES += QT_V5
     CONFIG += QT_V5
-    QT+=core gui widgets multimedia concurrent uitools
+    QT+=core gui widgets multimedia concurrent uitools positioning
 #    QT+= qml quick
 }
 CONFIG += qt
@@ -192,7 +192,10 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     Dialogs/view/DialogChooseMultiple_view.h \
     Dialogs/view/pc/DialogChooseMultiple_view_pc.h \
     Dialogs/ctrl/DialogChooseMultiple_ctrl.h \
-    InfoView.h
+    InfoView.h \
+    BoardTools.h \
+    GpsReceiver.h \
+    BoardVlmMobile.h
 
 
 FORMS += Ui/boatAccount_dialog.ui \
@@ -235,7 +238,8 @@ FORMS += Ui/boatAccount_dialog.ui \
     Ui/DialogChooseBarrierSet_pc.ui \
     Ui/RouteComparator.ui \
     Ui/DialogGribDrawing.ui \
-    Ui/DialogLanguageSelection.ui
+    Ui/DialogLanguageSelection.ui \
+    Ui/BoardVlmMobile.ui
 
 SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/DialogLoadGrib.cpp \
@@ -350,17 +354,16 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/view/DialogChooseMultiple_view.cpp \
     Dialogs/view/pc/DialogChooseMultiple_view_pc.cpp \
     Dialogs/ctrl/DialogChooseMultiple_ctrl.cpp \
-    InfoView.cpp
+    InfoView.cpp \
+    GpsReceiver.cpp \
+    BoardVlmMobile.cpp
 
 
 
 
-unix:!macx: DEFINES += _TTY_POSIX_ __TERRAIN_QIMAGE __UNIX_QTVLM
+unix:!macx:!android: DEFINES += _TTY_POSIX_ __TERRAIN_QIMAGE __UNIX_QTVLM
+android: DEFINES += _TTY_POSIX_ __TERRAIN_QIMAGE __ANDROID_QTVLM
 unix:!android: LIBS += -lgps
-!android {
-    HEADERS+=GpsReceiver.h
-    SOURCES+=GpsReceiver.cpp
-}
 unix:!android: INCLUDEPATH += libs/libgps
 
 win32:DEFINES += _TTY_WIN_ \

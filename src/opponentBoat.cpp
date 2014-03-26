@@ -193,7 +193,7 @@ QPainterPath opponent::shape() const
     if(isSelected())
         path.addEllipse(R1);
     else
-#ifdef __ANDROID__
+#ifdef __ANDROID_QTVLM
     {
         R1=QRectF(-sh/2,-sh/2,sh,sh);
         path.addEllipse(R1);
@@ -310,11 +310,9 @@ void opponent::drawOnMagnifier(Projection * myProj,QPainter * pnt)
     int boat_i,boat_j;
 
     Util::computePos(myProj,lat,lon,&boat_i,&boat_j);
-
-    boat_i-=3;
-    boat_j-=(height/2);
     if(isQtBoat || parentWindow->get_shOpp_st())
     {
+        hide();
         return;
     }
     if(name.isEmpty())
@@ -328,29 +326,42 @@ void opponent::drawOnMagnifier(Projection * myProj,QPainter * pnt)
             {
                 flag=flag.scaled(30,20,Qt::KeepAspectRatio);
                 drawFlag=true;
+                squareSize=QSize(30,20);
             }
             else
+            {
                 drawFlag=false;
+                squareSize=QSize(6,6);
+            }
         }
         else
         {
             drawFlag=true;
+            squareSize=QSize(30,20);
         }
     }
     else
     {
         drawFlag=false;
+        squareSize=QSize(6,6);
     }
-    int dy = height/2;
-
-    QFontMetrics fm(font());
-    QColor myColor_m=myColor;
-    myColor_m.setAlpha(255);
-    QPen pen(Qt::black);
-    pen.setWidth(1);
-    pnt->setPen(pen);
+    QFont font=(QFont(QApplication::font()));
+    pnt->setFont(font);
+    QFontMetrics fm(font);
+    width = fm.width(my_str) + 10 +2;
+    height = qMax(fm.height()+2,10);
     if(!labelHidden)
     {
+        if (this->isSelected())
+        {
+            QPen ps(Qt::white);
+            ps.setWidthF(3.0);
+            pnt->setBrush(Qt::NoBrush);
+            pnt->setPen(ps);
+            int fingerSize=Util::getFingerSize();
+            pnt->drawEllipse(QPoint(boat_i,boat_j),fingerSize,fingerSize);
+            pnt->setPen(Qt::NoPen);
+        }
         if(this->isReal)
         {
             if(myColor.name()=="#000000")
@@ -363,45 +374,32 @@ void opponent::drawOnMagnifier(Projection * myProj,QPainter * pnt)
             bgcolor=QColor(239,48,36,150);
         else
             bgcolor = QColor(255,255,255,150);
-        QColor bgcolor_m=bgcolor;
-        bgcolor_m.setAlpha(255);
-        pnt->setBrush(QBrush(bgcolor_m));
+        pnt->setPen(Qt::NoPen);
         if(!drawFlag)
-        {
-            pnt->fillRect(boat_i+9,boat_j+0, width-10,height-1,bgcolor_m);
-            pnt->setFont(font());
-            pnt->setBrush(Qt::NoBrush);
-            pnt->drawText(boat_i+10,boat_j+fm.height()-2,my_str);
-        }
+            pnt->fillRect(-squareSize.width()/2+boat_i,-squareSize.height()/2+boat_j,squareSize.width(),squareSize.height(),QBrush(myColor));
         else
-        {
-            pnt->fillRect(boat_i+21,boat_j+0, width-10,height-1,bgcolor_m);
-            pnt->setFont(font());
-            pnt->setBrush(Qt::NoBrush);
-            pnt->drawText(boat_i+22,boat_j+fm.height()-2,my_str);
-        }
-    }
-    if(!drawFlag)
-    {
-        pen.setWidth(4);
-        pnt->setPen(pen);
-        pnt->fillRect(boat_i+0,boat_j+dy-3,7,7, QBrush(myColor_m));
-    }
-    else
-    {
-        pnt->drawImage(boat_i-11,boat_j+dy-9,flag);
+            pnt->drawImage(-squareSize.width()/2+boat_i,-squareSize.height()/2+boat_j,flag);
+        pnt->setBrush(QBrush(bgcolor));
+        QPoint labelPos(squareSize.width()/2.0+2+boat_i,-height/2.0+boat_j);
+        QRect R=QRect(labelPos, QSize(width, height));
+        pnt->drawRect(R);
+        pnt->setBrush(Qt::NoBrush);
+        QPen p;
+        p.setColor(Qt::black);
+        pnt->setPen(p);
+        pnt->drawText(R,Qt::AlignVCenter|Qt::AlignHCenter,my_str);
     }
     int g = 60;
+    QPen pen;
     pen = QPen(QColor(g,g,g));
     pen.setWidth(1);
     pnt->setPen(pen);
+    QPoint labelPos(squareSize.width()/2.0+2+boat_i,-height/2.0+boat_j);
+    QRect R=QRect(labelPos, QSize(width, height));
     if(!labelHidden)
-    {
-        if(!drawFlag)
-            pnt->drawRect(boat_i+9,boat_j+0,width-10,height-1);
-        else
-            pnt->drawRect(boat_i+21,boat_j+0,width-10,height-1);
-    }
+        pnt->drawRect(R);
+    //pnt->drawRect(boundingRect());
+    //pnt->drawPath(shape());
 }
 
 void opponent::updatePosition()
@@ -410,8 +408,8 @@ void opponent::updatePosition()
 
     Util::computePos(proj,lat,lon,&boat_i,&boat_j);
 
-    boat_i-=3;
-    boat_j-=(height/2);
+//    boat_i-=3;
+//    boat_j-=(height/2);
 
     setPos(boat_i, boat_j);
     //if(!parentWindow->get_shOpp_st())

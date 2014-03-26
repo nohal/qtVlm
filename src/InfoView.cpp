@@ -19,7 +19,7 @@ InfoView::InfoView(myCentralWidget *parent) :
 }
 void InfoView::showView(const QString &text, const bool &animate, QList<QMenu*> *newMenu)
 {
-#ifndef __ANDROID__
+#ifndef __ANDROID_QTVLM
     Q_UNUSED(text);
     Q_UNUSED(animate);
     Q_UNUSED(newMenu);

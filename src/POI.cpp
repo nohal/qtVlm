@@ -93,6 +93,7 @@ POI::POI(const QString &name, const int &type, const double &lat, const double &
     this->sequence=0;
     this->autoRange = true;
     this->drawLineOrtho=true;
+    this->shift=false;
     useRouteTstamp=false;
     routeTimeStamp=-1;
     route=NULL;
@@ -184,8 +185,8 @@ QVariant POI::itemChange(GraphicsItemChange change, const QVariant &value)
         prepareGeometryChange();
         if(!isSelected())
         {
-            parent->showToolTip("");
             timerMoveable->stop();
+            parent->showToolTip("");
             this->setFlag(QGraphicsWidget::ItemIsMovable,false);
         }
         else
@@ -194,7 +195,10 @@ QVariant POI::itemChange(GraphicsItemChange change, const QVariant &value)
             this->showContextMenu(-1,-1,false);
             parent->showToolTip(toolTip(),true,&poiMenu);
             mainWin->slot_POIselected(this);
-            timerMoveable->start();
+            if(!shift)
+                timerMoveable->start();
+            else
+                slot_moveable();
         }
     }
     if (change==ItemPositionHasChanged)
@@ -216,16 +220,22 @@ QVariant POI::itemChange(GraphicsItemChange change, const QVariant &value)
         if(this->flags() & QGraphicsItem::ItemIsMovable)
             hasMoved=true;
     }
+    shift=false;
     return QGraphicsWidget::itemChange(change,value);
 }
 void POI::mousePressEvent(QGraphicsSceneMouseEvent *e)
 {
     qWarning()<<"mouse press detected in POI";
+    if(e->modifiers()==Qt::ShiftModifier)
+        shift=true;
+    else
+        shift=false;
     QGraphicsWidget::mousePressEvent(e);
     e->accept();
 }
 void POI::mouseMoveEvent(QGraphicsSceneMouseEvent *e)
 {
+    shift=false;
     if(isSelected() && (flags() & QGraphicsItem::ItemIsMovable))
         QGraphicsItem::mouseMoveEvent(e);
     else
@@ -240,6 +250,7 @@ void POI::mouseReleaseEvent(QGraphicsSceneMouseEvent *e)
     if(hasMoved && this->isWp)
         this->slot_setWP();
     hasMoved=false;
+    shift=false;
     QGraphicsWidget::mouseReleaseEvent(e);
     qWarning()<<"mouse release detected in POI";
 }
@@ -574,7 +585,7 @@ void POI::showContextMenu(const double &x, const double &y, const bool &popItUp)
             ac_zoomRoute->setVisible(false);
             ac_finePosit->setVisible(false);
             ac_setHorn->setVisible(false);
-#ifndef __ANDROID__
+#ifndef __ANDROID_QTVLM
             mn_route->setIcon(QIcon());
 #endif
         }
@@ -583,7 +594,7 @@ void POI::showContextMenu(const double &x, const double &y, const bool &popItUp)
             QPixmap iconI(parent->getIconSize());
             iconI.fill(route->getColor());
             QIcon icon(iconI);
-#ifndef __ANDROID__
+#ifndef __ANDROID_QTVLM
             mn_route->setIcon(icon);
 #endif
 //            if(routeSubMenu!=NULL)
@@ -1714,7 +1725,7 @@ QPainterPath POI::shape() const
     if(isSelected())
         path.addEllipse(R1);
     else
-#ifdef __ANDROID__
+#ifdef __ANDROID_QTVLM
     {
         R1=QRectF(-sh/2,-sh/2,sh,sh);
         path.addEllipse(R1);

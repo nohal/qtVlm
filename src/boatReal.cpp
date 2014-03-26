@@ -142,7 +142,6 @@ void boatReal::myCreatePopUpMenu(void)
 }
 
 void boatReal::startRead() {
-#ifndef __ANDROID__
     int curDeviceType=Settings::getSetting(deviceType).toInt();
     /* start loop */
     cnt=0;
@@ -168,8 +167,9 @@ void boatReal::startRead() {
             case GPS_FILE:
                 gpsReader = new FileReceiverThread(this);
                 break;
-
-
+            case GPS_INTERNAL:
+                gpsReader = new InternalReceiverThread(this);
+                break;
         }
     }
 
@@ -184,7 +184,6 @@ void boatReal::startRead() {
 
     if(!gpsReader->isRunning())
         gpsReader->start();
-#endif
 }
 
 void boatReal::stopRead()
@@ -247,6 +246,72 @@ void boatReal::updateBoat(GpsData info)
     previousLat=lat;
     this->setWP(WP,WPHd);
     emit(boatUpdated(this,false,false));
+}
+void boatReal::slot_internalPositionUpdated(QGeoPositionInfo g)
+{
+    if(!g.isValid())
+    {
+        qWarning()<<"invalid geoPosition received";
+        emit(boatUpdated(this,false,false));
+    }
+    else
+    {
+        qWarning()<<"position received";
+        if(g.hasAttribute(QGeoPositionInfo::MagneticVariation))
+        {
+            qWarning()<<"position has MagneticVariation";
+            info.declination=g.attribute(QGeoPositionInfo::MagneticVariation);
+        }
+        else
+            info.declination=0;
+        info.fix=3;
+        info.sig=3;
+        info.PDOP=0;
+        info.HDOP=0;
+        info.VDOP=0;
+        info.inuse=0;
+        info.inview=0;
+        info.time=g.timestamp();
+        this->fix=info.fix;
+        this->sig=info.sig;
+        if(info.declination!=0)
+            this->declinaison=info.declination;
+        else
+            this->declinaison=Settings::getSetting(boat_declinaison).toDouble();
+        this->pdop=info.PDOP;
+        info.latitude=g.coordinate().latitude();
+        info.longitude=g.coordinate().longitude();
+        info.elevation=g.coordinate().altitude();
+        if(g.hasAttribute(QGeoPositionInfo::Direction))
+        {
+            qWarning()<<"position has Direction";
+            info.direction=g.attribute(QGeoPositionInfo::Direction);
+        }
+        else
+            info.direction=0;
+        if(g.hasAttribute(QGeoPositionInfo::GroundSpeed))
+        {
+            qWarning()<<"position has GroundSpeed";
+            info.speed=g.attribute(QGeoPositionInfo::GroundSpeed);
+        }
+        else
+            info.direction=0;
+        this->lat=info.latitude;
+        this->lon=info.longitude;
+        this->lastUpdateTime=info.time.toTime_t();
+        if(previousLon!=lon || previousLat!=lat)
+            updateBoatData();
+        if(gotPosition && (previousLon!=lon || previousLat!=lat))
+        {
+            trace->addPoint(lat,lon);
+            trace->slot_showMe();
+        }
+        gotPosition=true;
+        previousLon=lon;
+        previousLat=lat;
+        this->setWP(WP,WPHd);
+        emit(boatUpdated(this,false,false));
+    }
 }
 
 void boatReal::setPosition(double lat, double lon)

@@ -303,6 +303,7 @@ private:
         void mySetPos(const double &X, const double &Y);
         QTimer * timerMoveable;
         QList<QMenu*> poiMenu;
+        bool shift;
 };
 Q_DECLARE_TYPEINFO(POI,Q_MOVABLE_TYPE);
 

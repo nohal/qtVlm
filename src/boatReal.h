@@ -79,7 +79,7 @@ class boatReal : public boat
         void slot_threadStartedOrFinished(void);
         void slot_chgPos(void);
         void updateBoat(GpsData info);
-
+        void slot_internalPositionUpdated(QGeoPositionInfo g);
     signals:
 
     protected:

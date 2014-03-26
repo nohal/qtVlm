@@ -224,6 +224,7 @@ signals:
         void accountListUpdated(Player*);
         void selectPOI(bool);
         void updateLockIcon(QString ic);
+        void geometryChanged();
 
 
     protected:

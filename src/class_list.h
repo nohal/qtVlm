@@ -50,7 +50,10 @@ class Player;
 class ReceiverThread;
 class FileReceiverThread;
 class SerialReceiverThread;
+#ifdef __UNIX_QTVLM
 class GPSdReceiverThread;
+#endif
+class InternalReceiverThread;
 struct SatData;
 struct GpsData;
 

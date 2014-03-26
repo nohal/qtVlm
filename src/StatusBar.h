@@ -53,7 +53,7 @@ signals:
                                 int mode, int levelType, int levelValue, double x, double y);
 
         QLabel       *labelGrib;
-#ifndef __ANDROID__
+#ifndef __ANDROID_QTVLM
         QLabel       *labelEta;
         QLabel       *labelOrtho;
         QLabel       *separator;

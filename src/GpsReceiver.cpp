@@ -65,7 +65,7 @@ bool ReceiverThread::initDevice(void) {
     return true;
 }
 
-void ReceiverThread::copyClipBoard() {
+void ReceiverThread::copyClipBoard(){
     QStringList liste;
     for (int i=0;i<listNMEA->count();++i)
         liste<<listNMEA->item(i)->text();
@@ -147,6 +147,52 @@ void FileReceiverThread::run(void) {
 
 bool FileReceiverThread::initDevice(void) {
     return ReceiverThread::initDevice();
+}
+
+/***************************
+ * Internal GPS instance   *
+ ***************************/
+
+InternalReceiverThread::InternalReceiverThread(boatReal * parent): ReceiverThread(parent) {
+    qWarning()<<"creating InternalReceiverThread";
+    deviceType=GPS_INTERNAL;
+    geoPositionInfoSource=NULL;
+}
+InternalReceiverThread::~InternalReceiverThread()
+{
+    if(geoPositionInfoSource)
+        delete geoPositionInfoSource;
+}
+bool InternalReceiverThread::initDevice()
+{
+    qWarning()<<"Available position sources:"<<QGeoPositionInfoSource::availableSources();
+    geoPositionInfoSource=QGeoPositionInfoSource::createDefaultSource(this);
+    if(geoPositionInfoSource)
+    {
+        qWarning()<<geoPositionInfoSource->sourceName()<<"initialized";
+        geoPositionInfoSource->setPreferredPositioningMethods(QGeoPositionInfoSource::AllPositioningMethods);
+        return true;
+    }
+    else
+    {
+        QMessageBox::critical (0,
+            tr("Activation du GPS"),
+            tr("Impossible d'activer une source interne"));
+        return false;
+    }
+}
+
+void InternalReceiverThread::run()
+{
+    if(!geoPositionInfoSource) exit();
+    geoPositionInfoSource->setUpdateInterval(qMax(3000,geoPositionInfoSource->minimumUpdateInterval()));
+    connect(geoPositionInfoSource,SIGNAL(positionUpdated(QGeoPositionInfo)),parent,SLOT(slot_internalPositionUpdated(QGeoPositionInfo)));
+    geoPositionInfoSource->startUpdates();
+    while(!parent->getPause())
+        this->msleep(3000);
+    delete geoPositionInfoSource;
+    geoPositionInfoSource=NULL;
+    exit();
 }
 
 /***************************
@@ -272,11 +318,11 @@ bool SerialReceiverThread::initDevice(void) {
 
     return ReceiverThread::initDevice();
 }
+#ifdef __UNIX_QTVLM
 
 /***************************
  * Gpsd instance         *
  ***************************/
-#ifdef __UNIX_QTVLM
 GPSdReceiverThread::GPSdReceiverThread(boatReal * parent): ReceiverThread(parent) {
     deviceType=GPS_GPSD;
     ok=false;

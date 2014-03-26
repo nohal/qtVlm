@@ -591,7 +591,7 @@ QPainterPath vlmLine::shape() const
     else
     {
         QPainterPathStroker stroker;
-#ifdef __ANDROID__
+#ifdef __ANDROID_QTVLM
         stroker.setWidth(Util::getFingerSize()/2.0);
 #else
         stroker.setWidth(4);
