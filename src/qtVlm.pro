@@ -86,7 +86,6 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     Dialogs/DialogPilototo.h \
     Dialogs/DialogPilototoParam.h \
     Dialogs/DialogPlayerAccount.h \
-    Dialogs/DialogRoutage.h \
     Dialogs/DialogSailDocs.h \
     Dialogs/DialogTwaLine.h \
     Dialogs/DialogWp.h \
@@ -195,7 +194,10 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     InfoView.h \
     BoardTools.h \
     GpsReceiver.h \
-    BoardVlmMobile.h
+    BoardVlmMobile.h \
+    Dialogs/view/DialogRoutage_view.h \
+    Dialogs/view/pc/DialogRoutage_view_pc.h \
+    Dialogs/ctrl/DialogRoutage_ctrl.h
 
 
 FORMS += Ui/boatAccount_dialog.ui \
@@ -214,7 +216,6 @@ FORMS += Ui/boatAccount_dialog.ui \
     Ui/inetConn_progessDialog.ui \
     Ui/poi_delete.ui \
     Ui/Route_Editor.ui \
-    Ui/Routage_Editor.ui \
     Ui/gribValidation.ui \
     Ui/finePosit.ui \
     Ui/dialoghorn.ui \
@@ -239,7 +240,8 @@ FORMS += Ui/boatAccount_dialog.ui \
     Ui/RouteComparator.ui \
     Ui/DialogGribDrawing.ui \
     Ui/DialogLanguageSelection.ui \
-    Ui/BoardVlmMobile.ui
+    Ui/BoardVlmMobile.ui \
+    Ui/DialogRoutage_pc.ui
 
 SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/DialogLoadGrib.cpp \
@@ -257,7 +259,6 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/DialogPilototo.cpp \
     Dialogs/DialogPilototoParam.cpp \
     Dialogs/DialogPlayerAccount.cpp \
-    Dialogs/DialogRoutage.cpp \
     Dialogs/DialogSailDocs.cpp \
     Dialogs/DialogTwaLine.cpp \
     Dialogs/DialogWp.cpp \
@@ -356,7 +357,10 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/ctrl/DialogChooseMultiple_ctrl.cpp \
     InfoView.cpp \
     GpsReceiver.cpp \
-    BoardVlmMobile.cpp
+    BoardVlmMobile.cpp \
+    Dialogs/view/DialogRoutage_view.cpp \
+    Dialogs/view/pc/DialogRoutage_view_pc.cpp \
+    Dialogs/ctrl/DialogRoutage_ctrl.cpp
 
 
 

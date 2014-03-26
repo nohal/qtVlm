@@ -82,7 +82,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogGribDate_ctrl.h"
 #include "DialogPoi.h"
 #include "DialogPlayerAccount.h"
-#include "DialogRoutage.h"
+#include "DialogRoutage_ctrl.h"
 #include "DialogRealBoatConfig.h"
 #include "DialogVlmLog.h"
 #include "DialogDownloadTracks.h"
@@ -4221,36 +4221,7 @@ void myCentralWidget::setPilototo(QList<POI *> poiList)
 
 void myCentralWidget::slot_editRoutage(ROUTAGE * routage,bool createMode,POI *endPOI)
 {
-    DialogRoutage *routage_editor=new DialogRoutage(routage,this,endPOI);
-    if(routage_editor->exec()!=QDialog::Accepted)
-    {
-        delete routage_editor;
-        if(createMode || routage->getIsNewPivot())
-        {
-            bool b=routage->getIsNewPivot();
-            delete routage;
-            routage_list.removeAll(routage);
-            routage=NULL;
-            nbRoutage--;
-            if(b)
-                update_menuRoutage();
-        }
-    }
-    else
-    {
-        delete routage_editor;
-        if(routage && (createMode || !routage->isConverted() || routage->getIsNewPivot()))
-        {
-            update_menuRoutage();
-            QApplication::processEvents();
-            if(routage && (createMode || routage->getIsNewPivot()))
-                routage->calculate();
-            else if(routage && routage->getI_iso() && !routage->getI_done() && !routage->isConverted())
-                routage->calculateInverse();
-            else if(routage && routage->getI_iso() && routage->getI_done() && !routage->isConverted())
-                routage->showIsoRoute();
-        }
-    }
+    DialogRoutage_ctrl::dialogRoutage(this,routage,endPOI,createMode);
 }
 void myCentralWidget::deleteRoute(ROUTE * route)
 {

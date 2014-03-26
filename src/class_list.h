@@ -219,8 +219,11 @@ class DialogVlmLog;
 /* routage.h */
 class ROUTAGE;
 
-/* DialogRoutage.h */
-class DialogRoutage;
+/* DialogRoutage */
+class DialogRoutage_ctrl;
+class DialogRoutage_view;
+class DialogRoutage_view_pc;
+struct RoutageData;
 
 /* route.h */
 class ROUTE;

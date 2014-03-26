@@ -30,7 +30,6 @@ Original code: virtual-winds.com
 #include "mycentralwidget.h"
 #include "vlmLine.h"
 #include "POI.h"
-#include "DialogRoutage.h"
 #include "boat.h"
 #include "Polar.h"
 #include "Point.h"

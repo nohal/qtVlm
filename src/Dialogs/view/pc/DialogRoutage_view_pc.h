@@ -18,45 +18,36 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
-#ifndef DIALOG_VIEW_PC_H
-#define DIALOG_VIEW_PC_H
+#ifndef DIALOGROUTAGE_VIEW_PC_H
+#define DIALOGROUTAGE_VIEW_PC_H
 
-#ifdef QT_V5
-#include <QtWidgets/QDialog>
-#include "QScroller"
-#else
-#include <QDialog>
-#endif
+#include "Dialog_view_pc.h"
+#include "DialogRoutage_view.h"
+#include "ui_DialogRoutage_pc.h"
 
 #include "class_list.h"
 
-#ifdef QT_V5
-#define INIT_DIALOG { \
-    setupUi(this); \
-    QScroller::grabGesture(this->scrollArea->viewport()); \
-    QScroller::grabGesture(this->scrollArea->viewport(),QScroller::LeftMouseButtonGesture); \
-    initDialog(); \
-}
-#else
-#define INIT_DIALOG { \
-    setupUi(this); \
-    initDialog(); \
-}
-#endif
-
-class Dialog_view_pc: public QDialog
+class DialogRoutage_view_pc: public Dialog_view_pc, public DialogRoutage_view, public Ui::DialogRoutage_pc_ui
 { Q_OBJECT
     public:
-        Dialog_view_pc(myCentralWidget * centralWidget);
-        ~Dialog_view_pc();
+        DialogRoutage_view_pc(myCentralWidget * centralWidget, DialogRoutage_ctrl *ctrl);
+        ~DialogRoutage_view_pc(void) { }
 
-        void initDialog(void);
+        void initDialogState(RoutageData *routageData);
+        void set_dialogVisibility(bool visible);
+
+        void closeEvent(QCloseEvent * );
 
     public slots:
-        void slot_screenResize(void);
+        void slot_default(void);
+        void GybeTack(int i);
+        void slot_ok();
+        void slot_cancel();
 
     private:
-        myCentralWidget * cWt;
+        RoutageData * routageData;
+
+        InputLineParams *inputTraceColor;
 };
 
-#endif // DIALOG_VIEW_PC_H
+#endif // DIALOGROUTAGE_VIEW_PC_H

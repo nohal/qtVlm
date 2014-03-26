@@ -18,45 +18,23 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 
-#ifndef DIALOG_VIEW_PC_H
-#define DIALOG_VIEW_PC_H
-
-#ifdef QT_V5
-#include <QtWidgets/QDialog>
-#include "QScroller"
-#else
-#include <QDialog>
-#endif
+#ifndef DIALOGROUTAGE_VIEW_H
+#define DIALOGROUTAGE_VIEW_H
 
 #include "class_list.h"
 
-#ifdef QT_V5
-#define INIT_DIALOG { \
-    setupUi(this); \
-    QScroller::grabGesture(this->scrollArea->viewport()); \
-    QScroller::grabGesture(this->scrollArea->viewport(),QScroller::LeftMouseButtonGesture); \
-    initDialog(); \
-}
-#else
-#define INIT_DIALOG { \
-    setupUi(this); \
-    initDialog(); \
-}
-#endif
-
-class Dialog_view_pc: public QDialog
-{ Q_OBJECT
+class DialogRoutage_view
+{
     public:
-        Dialog_view_pc(myCentralWidget * centralWidget);
-        ~Dialog_view_pc();
+        DialogRoutage_view(myCentralWidget *centralWidget,DialogRoutage_ctrl *ctrl);
+        virtual ~DialogRoutage_view(void) { }
 
-        void initDialog(void);
+        virtual void initDialogState(RoutageData * routageData) =0;
+        virtual void set_dialogVisibility(bool visible) = 0;
 
-    public slots:
-        void slot_screenResize(void);
-
-    private:
-        myCentralWidget * cWt;
+    protected:
+        myCentralWidget *centralWidget;
+        DialogRoutage_ctrl *ctrl;
 };
 
-#endif // DIALOG_VIEW_PC_H
+#endif // DIALOGROUTAGE_VIEW_H

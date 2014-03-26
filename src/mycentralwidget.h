@@ -148,6 +148,7 @@ class myCentralWidget : public QWidget
         MainWindow * getMainWindow(void) { return mainW; }
         MyView * getView() const {return this->view;}
         void removeRoute();
+        void removeRoutage(ROUTAGE * routage) {if(routage) { routage_list.removeAll(routage); nbRoutage--; }}
         FCT_GET(MenuBar *,menuBar)
 
         FCT_SETGET(ToolBar*,toolBar)
