@@ -247,6 +247,19 @@ void boatReal::updateBoat(GpsData info)
     this->setWP(WP,WPHd);
     emit(boatUpdated(this,false,false));
 }
+void boatReal::slot_internalInViewUpdated(QList<QGeoSatelliteInfo> listSat)
+{
+    info.inview=listSat.size();
+    satInView=listSat;
+    qWarning()<<"Satellites in view:"<<listSat.size();
+}
+void boatReal::slot_internalInUseUpdated(QList<QGeoSatelliteInfo> listSat)
+{
+    info.inuse=listSat.size();
+    satInUse=listSat;
+    qWarning()<<"Satellites in use:"<<listSat.size();
+}
+
 void boatReal::slot_internalPositionUpdated(QGeoPositionInfo g)
 {
     if(!g.isValid())

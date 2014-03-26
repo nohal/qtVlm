@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QFile>
 #include <QDateTime>
 #include <QGeoPositionInfoSource>
+#include <QGeoSatelliteInfoSource>
 #include <qextserialport.h>
 #include <nmea.h>
 
@@ -207,6 +208,6 @@ class InternalReceiverThread : public ReceiverThread
 
     private:
         QGeoPositionInfoSource * geoPositionInfoSource;
-        QGeoPositionInfo geoPositionInfo;
+        QGeoSatelliteInfoSource * geoSatelliteInfoSource;
 };
 #endif // GPSRECEIVER_H

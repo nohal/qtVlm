@@ -73,6 +73,8 @@ class boatReal : public boat
         bool getPause(){return pause;}
         bool get_useSkin() const{return false;}
         QString get_boardSkin() const{return QString();}
+        QList<QGeoSatelliteInfo>  getSatInView(){return satInView;}
+        QList<QGeoSatelliteInfo>  getSatInUse(){return satInUse;}
 
     public slots:
         void slot_selectBoat(void) { boat::slot_selectBoat(); }
@@ -80,7 +82,9 @@ class boatReal : public boat
         void slot_chgPos(void);
         void updateBoat(GpsData info);
         void slot_internalPositionUpdated(QGeoPositionInfo g);
-    signals:
+        void slot_internalInViewUpdated(QList<QGeoSatelliteInfo> listSat);
+        void slot_internalInUseUpdated(QList<QGeoSatelliteInfo> listSat);
+signals:
 
     protected:
         void  mousePressEvent(QGraphicsSceneMouseEvent * e);
@@ -90,7 +94,6 @@ class boatReal : public boat
         ReceiverThread * gpsReader;
         int gpsReaderType;
         int cnt;
-
         GpsData info;
 
         QString parseMask(int mask);
@@ -114,6 +117,8 @@ class boatReal : public boat
         time_t eta;
         bool displayNMEA;
         bool pause;
+        QList<QGeoSatelliteInfo> satInUse;
+        QList<QGeoSatelliteInfo> satInView;
 };
 
 Q_DECLARE_TYPEINFO(boatReal,Q_MOVABLE_TYPE);

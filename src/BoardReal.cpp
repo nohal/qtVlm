@@ -71,14 +71,6 @@ boardReal::boardReal(MainWindow * mainWin, board * parent) : QWidget(mainWin)
     ac_showHideCompass = new QAction(tr("Cacher compas"),popup);
     popup->addAction(ac_showHideCompass);
     connect(ac_showHideCompass,SIGNAL(triggered()),this,SLOT(slot_hideShowCompass()));
-    imgInfo=QPixmap(230,70);
-    pntImgInfo.begin(&imgInfo);
-    pntImgInfo.setRenderHint(QPainter::Antialiasing,true);
-    pntImgInfo.setRenderHint(QPainter::TextAntialiasing,true);
-    pntImgInfo.setPen(Qt::black);
-    QFont font=pntImgInfo.font();
-    font.setPointSize(6);
-    pntImgInfo.setFont(font);
     this->gpsInfo->hide();
     this->statusBtn->setEnabled(false);
     connect(this->declinaison,SIGNAL(clicked()),this,SLOT(paramChanged()));
@@ -227,16 +219,56 @@ void boardReal::boatUpdated(void)
     QString status;
     if(!myBoat->getPause() && !this->gpsInfo->isHidden())
     {
+        QPixmap imgInfo=QPixmap(gpsInfo->size());
+        QPainter pntImgInfo(&imgInfo);
+        pntImgInfo.setRenderHint(QPainter::Antialiasing,true);
+        pntImgInfo.setRenderHint(QPainter::TextAntialiasing,true);
+        pntImgInfo.setPen(Qt::black);
+        QFont font=pntImgInfo.font();
+        font.setPointSize(6);
+        pntImgInfo.setFont(font);
         GpsData info=myBoat->getInfo();
         imgInfo.fill(Qt::white);
-        for(int n=0;n<12;n++)
+        int curDeviceType=Settings::getSetting(deviceType).toInt();
+        int maxSat=12;
+        QList<QGeoSatelliteInfo> satInView,satInUse;
+        if(curDeviceType==GPS_INTERNAL)
         {
-            if(info.sat[n].in_use==0)
+            satInView=myBoat->getSatInView();
+            satInUse=myBoat->getSatInUse();
+            maxSat=satInView.size();
+        }
+        int wR=imgInfo.width()/maxSat-2;
+        int hR=imgInfo.height()-20;
+        if(curDeviceType!=GPS_INTERNAL)
+        {
+            for(int n=0;n<maxSat;n++)
+            {
+                if(info.sat[n].in_use==0)
+                    pntImgInfo.setBrush(Qt::red);
+                else
+                    pntImgInfo.setBrush(Qt::green);
+                pntImgInfo.drawRect(1+n*wR,hR,wR-3,-info.sat[n].sigQ*.7);
+                pntImgInfo.drawText(1+n*wR,hR+2,wR-3,wR-3,Qt::AlignHCenter | Qt::AlignVCenter,QString().setNum(info.sat[n].id));
+            }
+        }
+        else
+        {
+            for(int n=0;n<satInView.size();++n)
+            {
                 pntImgInfo.setBrush(Qt::red);
-            else
-                pntImgInfo.setBrush(Qt::green);
-            pntImgInfo.drawRect(1+n*19,50,16,-info.sat[n].sigQ*.7);
-            pntImgInfo.drawText(1+n*19,52,16,18,Qt::AlignHCenter | Qt::AlignVCenter,QString().setNum(info.sat[n].id));
+                for(int s=0;s<satInUse.size();++s)
+                {
+                    if(satInUse.at(s).satelliteIdentifier()==satInView.at(n).satelliteIdentifier())
+                    {
+                        pntImgInfo.setBrush(Qt::green);
+                        break;
+                    }
+                }
+                int columnH=-(imgInfo.height()-20)*(satInView.at(n).signalStrength()/100.0);
+                pntImgInfo.drawRect(1+n*wR,hR,wR-3,columnH);
+                pntImgInfo.drawText(1+n*wR,hR+2,wR-3,wR-3,Qt::AlignHCenter | Qt::AlignVCenter,QString().setNum(satInView.at(n).satelliteIdentifier()));
+            }
         }
         gpsInfo->setPixmap(imgInfo);
         status=tr("Running")+"<br>";

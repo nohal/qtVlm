@@ -65,8 +65,6 @@ signals:
 
         boatReal * currentBoat(void);
         time_t eta;
-        QPixmap imgInfo;
-        QPainter pntImgInfo;
 };
 
 #endif // BOARDREAL_H

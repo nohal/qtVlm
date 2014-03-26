@@ -157,11 +157,14 @@ InternalReceiverThread::InternalReceiverThread(boatReal * parent): ReceiverThrea
     qWarning()<<"creating InternalReceiverThread";
     deviceType=GPS_INTERNAL;
     geoPositionInfoSource=NULL;
+    geoSatelliteInfoSource=NULL;
 }
 InternalReceiverThread::~InternalReceiverThread()
 {
     if(geoPositionInfoSource)
         delete geoPositionInfoSource;
+    if(geoSatelliteInfoSource)
+        delete geoSatelliteInfoSource;
 }
 bool InternalReceiverThread::initDevice()
 {
@@ -171,6 +174,11 @@ bool InternalReceiverThread::initDevice()
     {
         qWarning()<<geoPositionInfoSource->sourceName()<<"initialized";
         geoPositionInfoSource->setPreferredPositioningMethods(QGeoPositionInfoSource::AllPositioningMethods);
+        geoSatelliteInfoSource=QGeoSatelliteInfoSource::createDefaultSource(this);
+        if(geoSatelliteInfoSource)
+            qWarning()<<"geoSatelliteInfoSource initialized";
+        else
+            qWarning()<<"geoSatelliteInfoSource initialization failed";
         return true;
     }
     else
@@ -188,9 +196,18 @@ void InternalReceiverThread::run()
     geoPositionInfoSource->setUpdateInterval(qMax(3000,geoPositionInfoSource->minimumUpdateInterval()));
     connect(geoPositionInfoSource,SIGNAL(positionUpdated(QGeoPositionInfo)),parent,SLOT(slot_internalPositionUpdated(QGeoPositionInfo)));
     geoPositionInfoSource->startUpdates();
+    if(geoSatelliteInfoSource)
+    {
+        geoSatelliteInfoSource->setUpdateInterval(qMax(3000,geoSatelliteInfoSource->minimumUpdateInterval()));
+        connect(geoSatelliteInfoSource,SIGNAL(satellitesInUseUpdated(QList<QGeoSatelliteInfo>)),parent,SLOT(slot_internalInUseUpdated(QList<QGeoSatelliteInfo>)));
+        connect(geoSatelliteInfoSource,SIGNAL(satellitesInViewUpdated(QList<QGeoSatelliteInfo>)),parent,SLOT(slot_internalInViewUpdated(QList<QGeoSatelliteInfo>)));
+        geoSatelliteInfoSource->startUpdates();
+    }
     while(!parent->getPause())
         this->msleep(3000);
     delete geoPositionInfoSource;
+    delete geoSatelliteInfoSource;
+    geoSatelliteInfoSource=NULL;
     geoPositionInfoSource=NULL;
     exit();
 }
