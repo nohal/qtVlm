@@ -169,12 +169,14 @@ InternalReceiverThread::~InternalReceiverThread()
 bool InternalReceiverThread::initDevice()
 {
     qWarning()<<"Available position sources:"<<QGeoPositionInfoSource::availableSources();
-    geoPositionInfoSource=QGeoPositionInfoSource::createDefaultSource(this);
+    if(!geoPositionInfoSource)
+        geoPositionInfoSource=QGeoPositionInfoSource::createDefaultSource(this);
     if(geoPositionInfoSource)
     {
         qWarning()<<geoPositionInfoSource->sourceName()<<"initialized";
         geoPositionInfoSource->setPreferredPositioningMethods(QGeoPositionInfoSource::AllPositioningMethods);
-        geoSatelliteInfoSource=QGeoSatelliteInfoSource::createDefaultSource(this);
+        if(!geoSatelliteInfoSource)
+            geoSatelliteInfoSource=QGeoSatelliteInfoSource::createDefaultSource(this);
         if(geoSatelliteInfoSource)
             qWarning()<<"geoSatelliteInfoSource initialized";
         else

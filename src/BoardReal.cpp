@@ -238,36 +238,41 @@ void boardReal::boatUpdated(void)
             satInUse=myBoat->getSatInUse();
             maxSat=satInView.size();
         }
-        int wR=imgInfo.width()/maxSat-2;
-        int hR=imgInfo.height()-20;
         if(curDeviceType!=GPS_INTERNAL)
         {
-            for(int n=0;n<maxSat;n++)
+            if(maxSat!=0)
             {
-                if(info.sat[n].in_use==0)
-                    pntImgInfo.setBrush(Qt::red);
-                else
-                    pntImgInfo.setBrush(Qt::green);
-                pntImgInfo.drawRect(1+n*wR,hR,wR-3,-info.sat[n].sigQ*.7);
-                pntImgInfo.drawText(1+n*wR,hR+2,wR-3,wR-3,Qt::AlignHCenter | Qt::AlignVCenter,QString().setNum(info.sat[n].id));
+                int wR=imgInfo.width()/maxSat-2;
+                int hR=imgInfo.height()-20;
+                for(int n=0;n<maxSat;++n)
+                {
+                    if(info.sat[n].in_use==0)
+                        pntImgInfo.setBrush(Qt::red);
+                    else
+                        pntImgInfo.setBrush(Qt::green);
+                    pntImgInfo.drawRect(1+n*wR,hR,wR-3,-info.sat[n].sigQ*.7);
+                    pntImgInfo.drawText(1+n*wR,hR+2,wR-3,wR-3,Qt::AlignHCenter | Qt::AlignVCenter,QString().setNum(info.sat[n].id));
+                }
             }
         }
         else
         {
+            int wR=(imgInfo.width()/maxSat);
+            int hR=imgInfo.height();
+            int maxSignal=0;
+            for(int n=0;n<satInView.size();++n)
+                maxSignal=qMax(maxSignal,satInView.at(n).signalStrength());
+            double scale=1.0;
+            if(maxSignal<50)
+                scale=2.0;
             for(int n=0;n<satInView.size();++n)
             {
-                pntImgInfo.setBrush(Qt::red);
-                for(int s=0;s<satInUse.size();++s)
-                {
-                    if(satInUse.at(s).satelliteIdentifier()==satInView.at(n).satelliteIdentifier())
-                    {
-                        pntImgInfo.setBrush(Qt::green);
-                        break;
-                    }
-                }
-                int columnH=-(imgInfo.height()-20)*(satInView.at(n).signalStrength()/100.0);
+                if(satInUse.contains(satInView.at(n)))
+                    pntImgInfo.setBrush(Qt::green);
+                else
+                    pntImgInfo.setBrush(Qt::red);
+                int columnH=-(imgInfo.height())*(satInView.at(n).signalStrength()*scale/100.0);
                 pntImgInfo.drawRect(1+n*wR,hR,wR-3,columnH);
-                pntImgInfo.drawText(1+n*wR,hR+2,wR-3,wR-3,Qt::AlignHCenter | Qt::AlignVCenter,QString().setNum(satInView.at(n).satelliteIdentifier()));
             }
         }
         gpsInfo->setPixmap(imgInfo);

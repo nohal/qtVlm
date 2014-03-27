@@ -25,6 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QTimer>
 #include <QThread>
 #include <QGraphicsWidget>
+#include <QGeoPositionInfoSource>
+#include <QGeoSatelliteInfoSource>
 
 #include <qextserialport.h>
 #include <nmea.h>
@@ -119,6 +121,9 @@ signals:
         bool pause;
         QList<QGeoSatelliteInfo> satInUse;
         QList<QGeoSatelliteInfo> satInView;
+        QGeoPositionInfoSource * geoPositionInfoSource;
+        QGeoSatelliteInfoSource * geoSatelliteInfoSource;
+        //QMutex mutex;
 };
 
 Q_DECLARE_TYPEINFO(boatReal,Q_MOVABLE_TYPE);

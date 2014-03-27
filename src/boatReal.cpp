@@ -51,7 +51,8 @@ boatReal::boatReal(QString pseudo, bool activated, Projection * proj,MainWindow 
 
     set_boatType(BOAT_REAL);
     setFont(QApplication::font());
-
+    geoPositionInfoSource=NULL;
+    geoSatelliteInfoSource=NULL;
     /* init thread */
     gpsReader = NULL;
     gpsReaderType=GPS_NONE;
@@ -151,7 +152,42 @@ void boatReal::startRead() {
         delete gpsReader;
         gpsReader=NULL;
     }
-
+    if(curDeviceType==GPS_INTERNAL)
+    {
+        qWarning()<<"Available position sources:"<<QGeoPositionInfoSource::availableSources();
+        if(!geoPositionInfoSource)
+            geoPositionInfoSource=QGeoPositionInfoSource::createDefaultSource(this);
+        if(geoPositionInfoSource)
+        {
+            qWarning()<<geoPositionInfoSource->sourceName()<<"initialized";
+            geoPositionInfoSource->setPreferredPositioningMethods(QGeoPositionInfoSource::AllPositioningMethods);
+            if(!geoSatelliteInfoSource)
+                geoSatelliteInfoSource=QGeoSatelliteInfoSource::createDefaultSource(this);
+            if(geoSatelliteInfoSource)
+                qWarning()<<"geoSatelliteInfoSource initialized";
+            else
+                qWarning()<<"geoSatelliteInfoSource initialization failed";
+        }
+        else
+        {
+            QMessageBox::critical (0,
+                tr("Activation du GPS"),
+                tr("Impossible d'activer une source interne"));
+            return;
+        }
+        geoPositionInfoSource->setUpdateInterval(qMax(3000,geoPositionInfoSource->minimumUpdateInterval()));
+        connect(geoPositionInfoSource,SIGNAL(positionUpdated(QGeoPositionInfo)),this,SLOT(slot_internalPositionUpdated(QGeoPositionInfo)));
+        geoPositionInfoSource->startUpdates();
+        if(geoSatelliteInfoSource)
+        {
+            geoSatelliteInfoSource->setUpdateInterval(qMax(3000,geoSatelliteInfoSource->minimumUpdateInterval()));
+            connect(geoSatelliteInfoSource,SIGNAL(satellitesInUseUpdated(QList<QGeoSatelliteInfo>)),this,SLOT(slot_internalInUseUpdated(QList<QGeoSatelliteInfo>)));
+            connect(geoSatelliteInfoSource,SIGNAL(satellitesInViewUpdated(QList<QGeoSatelliteInfo>)),this,SLOT(slot_internalInViewUpdated(QList<QGeoSatelliteInfo>)));
+            geoSatelliteInfoSource->startUpdates();
+        }
+        this->pause=false;
+        return;
+    }
     if(!gpsReader) {
         switch(curDeviceType) {
             case GPS_GPSD:
@@ -167,9 +203,9 @@ void boatReal::startRead() {
             case GPS_FILE:
                 gpsReader = new FileReceiverThread(this);
                 break;
-            case GPS_INTERNAL:
-                gpsReader = new InternalReceiverThread(this);
-                break;
+//            case GPS_INTERNAL:
+//                gpsReader = new InternalReceiverThread(this);
+//                break;
         }
     }
 
@@ -191,6 +227,18 @@ void boatReal::stopRead()
     this->pause=true;
     if(gpsReader)
         gpsReader->wait();
+    if(geoPositionInfoSource)
+    {
+        geoPositionInfoSource->stopUpdates();
+        delete geoPositionInfoSource;
+        geoPositionInfoSource=NULL;
+    }
+    if(geoSatelliteInfoSource)
+    {
+        geoSatelliteInfoSource->stopUpdates();
+        delete geoSatelliteInfoSource;
+        geoSatelliteInfoSource=NULL;
+    }
 }
 void boatReal::slot_threadStartedOrFinished()
 {
