@@ -83,7 +83,7 @@ class InputLineParams : public QWidget
                                                 double defaultWidth, QColor defaultColor,
 						QWidget *parent,
                                                 double minWidth=0.2, double maxWidth=6,int decimal=1,
-                                                bool useTestZone=true
+                                                bool useTestZone=true,bool vertical=false
         			);
         			
         double  getLineWidth() {return sbWidth->value();}

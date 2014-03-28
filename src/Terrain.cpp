@@ -140,7 +140,6 @@ Terrain::Terrain(myCentralWidget *centralWidget, Projection *proj_) : QGraphicsW
     updateGraphicsParameters();
     if(Settings::getSetting(enable_Gesture).toString()=="1")
     {
-        this->setAcceptTouchEvents(true);
         this->grabGesture(Qt::TapGesture);
         this->grabGesture(Qt::TapAndHoldGesture);
         this->grabGesture(Qt::PinchGesture);

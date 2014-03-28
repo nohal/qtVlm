@@ -122,13 +122,17 @@ void InputLineParams_testZone::mouseReleaseEvent(QMouseEvent * )
 //----------------------------------------------------------------------
 InputLineParams::InputLineParams(double width, QColor color,
                                                 double defaultWidth, QColor defaultColor, QWidget *parent,
-                                                double minWidth, double maxWidth,int decimal,bool useTestZone)
+                                                double minWidth, double maxWidth, int decimal, bool useTestZone, bool vertical)
 		: QWidget(parent)
 {
 	this->defaultWidth = defaultWidth;
 	this->defaultColor = defaultColor;
         this->useTestZone = useTestZone;
-	QHBoxLayout *layout = new QHBoxLayout;
+    QBoxLayout *layout;
+    if(!vertical)
+        layout = new QHBoxLayout;
+    else
+        layout = new QVBoxLayout;
 
     sbWidth = new QDoubleSpinBox(this);
 
@@ -139,12 +143,26 @@ InputLineParams::InputLineParams(double width, QColor color,
         else
                 sbWidth->setSingleStep(1);
         sbWidth->setValue(width);
-        layout->addWidget(sbWidth);
+        QHBoxLayout * hbox=NULL;
+        if(vertical)
+        {
+            hbox=new QHBoxLayout;
+            hbox->addWidget(sbWidth);
+        }
+        else
+            layout->addWidget(sbWidth);
         if(useTestZone)
         {
             testZone = new InputLineParams_testZone(width, color);
-            testZone->setMinimumSize(220, 20);
-            layout->addWidget(testZone);
+            testZone->setMinimumSize(100, 20);
+            if(vertical)
+            {
+                testZone->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::Preferred);
+                hbox->addWidget(testZone);
+                layout->addLayout(hbox);
+            }
+            else
+                layout->addWidget(testZone);
         }
 
         bdDefault = new QPushButton(tr("Valeurs par defauts"), this);

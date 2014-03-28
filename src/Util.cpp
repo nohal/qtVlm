@@ -281,6 +281,7 @@ void Util::setWidgetSize(QDialog *dialog)
     QList<QScrollArea *> scrolls=dialog->findChildren<QScrollArea *>(QString(),Qt::FindDirectChildrenOnly);
     if(!scrolls.isEmpty())
     {
+        qWarning()<<"inside setWidgetSize";
         QScrollArea * scrollarea=scrolls.at(0);
         int ws=scrollarea->horizontalScrollBar()->height();
         int ws1=scrollarea->verticalScrollBar()->height();
@@ -293,6 +294,7 @@ void Util::setWidgetSize(QDialog *dialog)
         if(s.width()>dialog->maximumWidth())
             s.setWidth(dialog->maximumWidth());
         dialog->resize(s);
+        qWarning()<<"end setWidgetSize";
     }
 #endif
 }

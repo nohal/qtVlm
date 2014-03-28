@@ -197,7 +197,8 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     BoardVlmMobile.h \
     Dialogs/view/DialogRoutage_view.h \
     Dialogs/view/pc/DialogRoutage_view_pc.h \
-    Dialogs/ctrl/DialogRoutage_ctrl.h
+    Dialogs/ctrl/DialogRoutage_ctrl.h \
+    Dialogs/view/pc/DialogRoutage_view_mobile.h
 
 
 FORMS += Ui/boatAccount_dialog.ui \
@@ -241,7 +242,8 @@ FORMS += Ui/boatAccount_dialog.ui \
     Ui/DialogGribDrawing.ui \
     Ui/DialogLanguageSelection.ui \
     Ui/BoardVlmMobile.ui \
-    Ui/DialogRoutage_pc.ui
+    Ui/DialogRoutage_pc.ui \
+    Ui/DialogRoutage_mobile.ui
 
 SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/DialogLoadGrib.cpp \
@@ -360,7 +362,8 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     BoardVlmMobile.cpp \
     Dialogs/view/DialogRoutage_view.cpp \
     Dialogs/view/pc/DialogRoutage_view_pc.cpp \
-    Dialogs/ctrl/DialogRoutage_ctrl.cpp
+    Dialogs/ctrl/DialogRoutage_ctrl.cpp \
+    Dialogs/view/pc/DialogRoutage_view_mobile.cpp
 
 
 
