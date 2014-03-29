@@ -12,7 +12,7 @@
 #include "Dialog_view_pc.h"
 
 #include "dataDef.h"
-
+#include <QDesktopWidget>
 DialogRoutage_view_mobile::DialogRoutage_view_mobile(myCentralWidget *centralWidget,DialogRoutage_ctrl * ctrl):
 Dialog_view_pc(centralWidget),
 DialogRoutage_view(centralWidget,ctrl)
@@ -23,6 +23,8 @@ DialogRoutage_view(centralWidget,ctrl)
 
     setWindowTitle(tr("Parametres Routage"));
     connect(this->Default,SIGNAL(clicked()),this,SLOT(slot_default()));
+    connect(buttonBox,SIGNAL(accepted()),this,SLOT(slot_ok()));
+    connect(buttonBox,SIGNAL(rejected()),this,SLOT(slot_cancel()));
 }
 
 DialogRoutage_view_mobile::~DialogRoutage_view_mobile()
@@ -224,6 +226,7 @@ void DialogRoutage_view_mobile::initDialogState(RoutageData * routageData) {
 
 
     Util::setWidgetSize(this);
+#if 1
     QList<QScrollArea *> scrolls=this->findChildren<QScrollArea *>(QString(),Qt::FindChildrenRecursively);
     if (scrolls.isEmpty())
         qWarning()<<"no scrollareas... bad luck";
@@ -231,11 +234,18 @@ void DialogRoutage_view_mobile::initDialogState(RoutageData * routageData) {
     {
         foreach(QScrollArea *s,scrolls)
         {
-            //if(s==this->scrollArea_reserved) continue;
+            s->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+            s->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
             QScroller::grabGesture(s->viewport());
             QScroller::grabGesture(s->viewport(),QScroller::LeftMouseButtonGesture);
         }
     }
+    QDesktopWidget * desktopWidget = QApplication::desktop();
+    QRect screenRect = desktopWidget->screenGeometry();
+    this->setMaximumHeight(screenRect.height()-50);
+    this->resize(this->width(),screenRect.height()-50);
+    this->move(1,screenRect.height()/2-this->height()/2);
+#endif
 }
 
 void DialogRoutage_view_mobile::set_dialogVisibility(bool visible) {
