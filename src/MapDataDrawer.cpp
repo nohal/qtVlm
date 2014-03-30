@@ -116,6 +116,7 @@ void MapDataDrawer::init_drawerInfo(void) {
     init_1D_data(drawerInfo[DATA_WAVES_MAX_DIR],&MapDataDrawer::getWavesColor);
     init_1D_data(drawerInfo[DATA_WAVES_PRIM_DIR],&MapDataDrawer::getWavesColor);
     init_1D_data(drawerInfo[DATA_WAVES_SEC_DIR],&MapDataDrawer::getWavesColor);
+    init_1D_data(drawerInfo[DATA_ICE_CONCENTRATION],&MapDataDrawer::getIceCoverColor);
 }
 
 dataDrawerInfo * MapDataDrawer::get_drawerInfo(int type) {
@@ -203,6 +204,10 @@ QRgb MapDataDrawer::getWavesColor(double v, bool smooth) {
 
 QRgb MapDataDrawer::getWavesWhiteCapColor(double v, bool smooth) {
     return DataColors::get_color("whitecap_prb",v,smooth);
+}
+
+QRgb  MapDataDrawer::getIceCoverColor(double v, bool smooth) {
+    return DataColors::get_color("iceCover_pc",v,smooth);
 }
 
 //--------------------------------------------------------------------------

@@ -42,7 +42,7 @@ Lecture mise en memoire d'un fichier GRIB
 
 #include "dataDef.h"
 
-//#define PRINT_WARNING
+#define PRINT_WARNING
 
 
 //===============================================================

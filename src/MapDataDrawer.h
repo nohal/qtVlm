@@ -200,6 +200,7 @@ private:
         QRgb   getHumidColor             (double v, bool smooth);
         QRgb   getPressureColor          (double v, bool smooth);
         QRgb   getBinaryColor            (double v, bool smooth);
+        QRgb   getIceCoverColor          (double v, bool smooth);
 
 
         bool grib_monoCpu;

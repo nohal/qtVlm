@@ -77,6 +77,9 @@ void GribRecord::unitConversion(void) {
         case DATA_CURRENT_VY:
             multiplyAllData(msToKts_cst);
             break;
+        case DATA_ICE_CONCENTRATION:
+            multiplyAllData(100);
+            break;
 
     }
     translateDataType();

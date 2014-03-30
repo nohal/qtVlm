@@ -112,6 +112,7 @@ QString Util::formatData(int type,double val1,double val2) {
         case DATA_HUMID_REL:
         case DATA_CLOUD_TOT:
         case DATA_WAVES_WHITE_CAP:
+    case DATA_ICE_CONCENTRATION:
             res=Util::formatPercentValue(val1);
             break;
         case DATA_PRECIP_RATE:
@@ -187,6 +188,7 @@ QString Util::formatSimpleData(int type,double val) {
         case DATA_HUMID_REL:
         case DATA_CLOUD_TOT:
         case DATA_WAVES_WHITE_CAP:
+        case DATA_ICE_CONCENTRATION:
             res=Util::formatPercentValue(val);
             break;
         case DATA_FRZRAIN_CATEG:
@@ -464,6 +466,7 @@ QString Util::formatPercentValue(double v)
     else if (v>100)
         v=100;
     r.sprintf("%d %%", (int)floor(v+0.5));
+    //qWarning() << "percent: " << v;
     return r;
 }
 //======================================================================

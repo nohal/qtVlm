@@ -308,6 +308,7 @@ enum {
     DATA_WAVES_MAX_DIR,       /* 33: deg */
     DATA_WAVES_MAX_HGT,       /* 34: m */
     DATA_WAVES_MAX_PERIOD,    /* 35: s */
+    DATA_ICE_CONCENTRATION,   /* 36: 1=ice, 0=no Ice */
     DATA_MAX
 
 };

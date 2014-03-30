@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 #include <stdlib.h>
+#include <QMessageBox>
 
 #include <QDebug>
 #include <QDateTime>
@@ -62,29 +63,55 @@ GribV1Record::GribV1Record(ZUFILE* file) : GribRecord()
     isFull = false;
     knownData = true;
 
+    //qWarning() << "[GV1 loading: SeekStart " << seekStart;
+
     ok = readGribSection0_IS(file);
 
     if (ok) {
         ok = readGribSection1_PDS(file);
         zu_seek(file, fileOffset1+sectionSize1, SEEK_SET);
     }
+    else {
+        qWarning() << "[GV loading: KO in section 0";
+        return ;
+    }
     if (ok) {
         ok = readGribSection2_GDS(file);
         zu_seek(file, fileOffset2+sectionSize2, SEEK_SET);
+    }
+    else {
+        qWarning() << "[GV loading: KO in section 1";
+        return ;
     }
     if (ok) {
         ok = readGribSection3_BMS(file);
         zu_seek(file, fileOffset3+sectionSize3, SEEK_SET);
     }
+    else {
+        qWarning() << "[GV loading: KO in section 2";
+        return ;
+    }
     if (ok) {
         ok = readGribSection4_BDS(file);
         zu_seek(file, fileOffset4+sectionSize4, SEEK_SET);
     }
+    else {
+        qWarning() << "[GV loading: KO in section 3";
+        return ;
+    }
     if (ok) {
         ok = readGribSection5_ES(file);
     }
+    else {
+        qWarning() << "[GV loading: KO in section 4";
+        return ;
+    }
     if (ok) {
         zu_seek(file, seekStart+totalSize, SEEK_SET);
+    }
+    else {
+        qWarning() << "[GV loading: KO in section 5";
+        return ;
     }
 
     if (ok) {
@@ -482,7 +509,7 @@ bool GribV1Record::readGribSection2_GDS(ZUFILE* file) {
     gridType = readChar(file); 		// byte 6
 
     if (gridType != 0) {
-        erreur("Record: unknown grid type GDS(6) : %d",gridType);
+        qWarning() << "Record: unknown grid type GDS(6) : " << gridType;
         ok = false;
     }
 
@@ -534,7 +561,7 @@ bool GribV1Record::readGribSection2_GDS(ZUFILE* file) {
             latMax = La1;
         }
         if (Ni<=1 || Nj<=1) {
-                erreur("Recordd: Ni=%u Nj=%u",Ni,Nj);
+                qWarning() << "Recordd: Ni=" << Ni << " Nj=" << Nj;
                 ok = false;
         }
         else {
@@ -901,6 +928,7 @@ void GribV1Record::init_conversionMatrix(void) {
     DATA_TO_GRBV1[DATA_PRECIP_TOT] = 61;
     DATA_TO_GRBV1[DATA_SNOW_DEPTH] = 66;
     DATA_TO_GRBV1[DATA_CLOUD_TOT] = 71;
+    DATA_TO_GRBV1[DATA_ICE_CONCENTRATION] = 91;
     DATA_TO_GRBV1[DATA_FRZRAIN_CATEG] = 141;
     DATA_TO_GRBV1[DATA_SNOW_CATEG] = 143;
     DATA_TO_GRBV1[DATA_CIN] = 156;

@@ -324,6 +324,33 @@
 			<color>50;200;200;240</color>
 			<color>70;240;240;240</color>
 			<color>100;255;255;255</color>
-		</colorData>		
+		</colorData>
+		<colorData>
+			<name>iceCover_pc</name>
+			<param>1;0</param>
+			<color>0;50;50;150</color>
+			<color>10;55;55;152</color>
+			<color>20;60;60;155</color>
+			<color>30;65;65;157</color>
+			<color>40;70;70;160</color>
+			<color>50;75;75;162</color>
+			<color>55;80;80;165</color>
+			<color>60;85;85;167</color>
+			<color>65;106;106;177</color>
+			<color>70;128;128;188</color>
+			<color>75;149;149;198</color>
+			<color>80;170;170;209</color>
+			<color>82;179;179;213</color>
+			<color>84;187;187;217</color>
+			<color>86;196;196;221</color>
+			<color>88;204;204;225</color>
+			<color>90;213;213;229</color>
+			<color>92;221;221;233</color>
+			<color>94;230;230;238</color>
+			<color>96;238;238;242</color>
+			<color>98;247;247;246</color>
+			<color>100;255;255;255</color>
+			
+		</colorData>
 	</colorDataConfig>
 </qtVLM_config>

@@ -425,6 +425,7 @@ void GribV2Record::init_conversionMatrix(void) {
     DATA_TO_GRBV2[DATA_SNOW_CATEG] = grb2DataType(0,1,195);
     DATA_TO_GRBV2[DATA_CIN] = grb2DataType(0,7,7);
     DATA_TO_GRBV2[DATA_CAPE] = grb2DataType(0,7,6);
+    DATA_TO_GRBV2[DATA_ICE_CONCENTRATION] = grb2DataType(10,2,0);
     // waves
     DATA_TO_GRBV2[DATA_WAVES_SIG_HGT_COMB] = grb2DataType(10,0,3);
     DATA_TO_GRBV2[DATA_WAVES_WND_DIR] = grb2DataType(10,0,4);
