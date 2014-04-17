@@ -33,7 +33,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDebug>
 #ifdef QT_V5
 #include <QUiLoader>
-#include <QScroller>
 #else
 #include <QtUiTools/QUiLoader>
 #endif
@@ -47,22 +46,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Player.h"
 #include "BoardInterface.h"
 #include "inetConnexion.h"
+#include <QScreen>
 
 DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDialog(parent)
 {
     centralWidget=parent;
     setupUi(this);
-#ifdef QT_V5
-    QScroller::grabGesture(this->scrollArea->viewport());
-#endif
     connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     connect(this,SIGNAL(resetTraceCache()),parent,SIGNAL(resetTraceCache()));
     connect(this,SIGNAL(paramVLMChanged()),main,SLOT(slotParamChanged()));
     connect(this, SIGNAL(inetUpdated()), main, SLOT(slotInetUpdated()));
     connect(this,SIGNAL(redrawGrib()),centralWidget,SIGNAL(redrawGrib()));
-    connect(this->resetDialogPosition,SIGNAL(clicked()),this,SLOT(slot_resetDialogPosition()));
 
+    connect(radioBtn_vac,SIGNAL(toggled(bool)),this,SLOT(radioBtn_vac_toggle(bool)));
+    connect(radioBtn_time,SIGNAL(toggled(bool)),this,SLOT(radioBtn_time_toggle(bool)));
+    connect(radioBtn_dist,SIGNAL(toggled(bool)),this,SLOT(radioBtn_dist_toggle(bool)));
+    connect(pushButton,SIGNAL(clicked()),this,SLOT(changeColor_POI()));
+    connect(pushButton_2,SIGNAL(clicked()),this,SLOT(changeColor_qtBoat()));
+    connect(pushButton_3,SIGNAL(clicked()),this,SLOT(changeColor_WP()));
+    connect(pushButton_4,SIGNAL(clicked()),this,SLOT(changeColor_qtBoat_sel()));
+    connect(pushButton_5,SIGNAL(clicked()),this,SLOT(changeColor_Marque_WP()));
+    connect(pushButton_6,SIGNAL(clicked()),this,SLOT(changeColor_Balise()));
+    connect(buttonBox,SIGNAL(accepted()),this,SLOT(accept()));
+    connect(buttonBox,SIGNAL(rejected()),this,SLOT(reject()));
+    connect(btn_browseGrib,SIGNAL(clicked()),this,SLOT(doBtn_browseGrib()));
+
+    connect(pushButton_7,SIGNAL(clicked()),this,SLOT(slot_chgMapFolder()));
+    connect(this->resetDialogPosition,SIGNAL(clicked()),this,SLOT(slot_resetDialogPosition()));
     /* Drawing / affichage */
     displayCoords->addItem( tr("dddegmm'ss\""), "dddegmm'ss");
     displayCoords->addItem( tr("dddegmm,mm'"), "dddegmm,mm'");
@@ -76,7 +87,6 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     cb_oppLabelType->addItem(tr("Nom"));
     cb_oppLabelType->addItem(tr("Numero"));
     cb_oppLabelType->setCurrentIndex(Settings::getSetting(opp_labelType).toInt());
-
     this->chkPavillon->setCheckState(Settings::getSetting(showFlag).toInt()==1?Qt::Checked:Qt::Unchecked);
     this->chkFusion->setChecked(Settings::getSetting(fusionStyle).toInt()==1);
 #ifndef QT_V5
@@ -224,7 +234,6 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
     {
         chk_scaleEstime->setChecked(true);
     }
-
      /* Grib */
 
     chk_askGribFolder->setCheckState(Settings::getSetting(askGribFolder).toInt()==1?Qt::Checked:Qt::Unchecked);
@@ -232,7 +241,6 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
 
     chk_gribZoomOnLoad->setCheckState(Settings::getSetting(gribZoomOnLoad).toInt()==1?Qt::Checked:Qt::Unchecked);
     chk_gribDelete->setChecked(Settings::getSetting(gribDelete).toInt()==1);
-
     chk_externalMail->setCheckState(Settings::getSetting(sDocExternalMail).toInt()==1?Qt::Checked:Qt::Unchecked);
     sailsDocPress->setCheckState(Settings::getSetting(sailsDoc_press).toInt()==1?Qt::Checked:Qt::Unchecked);
     forceWind->setChecked(Settings::getSetting(force_Wind).toInt()==1);
@@ -249,15 +257,13 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
          Settings::getSetting(enable_Gesture).toString()=="1"?Qt::Checked:Qt::Unchecked);
     serialName->setText(Settings::getSetting(gpsEmulSerialName).toString());
     spn_gpsDelay->setValue(Settings::getSetting(gpsEmulDelay).toInt());
-
     /* advanced */
 
-    chk_forceUserAgent->setCheckState(Settings::getSetting(forceUserAgent).toInt()==1?Qt::Checked:Qt::Unchecked);
+    chk_forceUserAgent->setChecked(Settings::getSetting(forceUserAgent).toInt()==1?true:false);
     txt_userAgent->setText(Settings::getSetting(userAgent).toString());
     txt_userAgent->setEnabled(Settings::getSetting(forceUserAgent).toInt()==1);
     defFontName->findText(Settings::getSetting(defaultFontName).toString());
     defFontSize->setValue(8.0+Settings::getSetting(defaultFontSizeInc).toDouble());
-
     for(int i=0;i<NB_URL;i++)
         url_list->addItem(url_name[i]+": "+url_str[i]);
     url_list->setCurrentIndex(Settings::getSetting(vlm_url).toInt());
@@ -280,10 +286,11 @@ DialogParamVlm::DialogParamVlm(MainWindow * main,myCentralWidget * parent) : QDi
 //#endif
 
     saveWinGeometry->setCheckState(Settings::getSetting(saveMainWindowGeometry).toInt()==1?Qt::Checked:Qt::Unchecked);
+    Util::setFontDialog(this);
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
 }
 void DialogParamVlm::slot_screenResize()
 {
-    Util::setWidgetSize(this);
 }
 
 void DialogParamVlm::initEstime(void) {
@@ -364,8 +371,6 @@ void DialogParamVlm::done(int result)
             Settings::setSetting(mapsFolderName,mapDir);
             centralWidget->loadGshhs();
         }
-
-
         /* colors */
 
         Settings::setSetting(POIColor,POI_color);
@@ -406,7 +411,6 @@ void DialogParamVlm::done(int result)
             Settings::setSetting(scalePolar,1);
         else
             Settings::setSetting(scalePolar,2);
-
         /* Route */
 
         Settings::setSetting(speedLoss_On_TackReal, QString().setNum(speedLossOnTackReal->value()));
@@ -438,8 +442,7 @@ void DialogParamVlm::done(int result)
         Settings::setSetting(enable_Gesture,this->enableGesture->checkState()==Qt::Checked?"1":"0");
         Settings::setSetting(gpsEmulSerialName, serialName->text());
         Settings::setSetting(gpsEmulDelay,spn_gpsDelay->value());
-
-        Settings::setSetting(forceUserAgent,chk_forceUserAgent->checkState()==Qt::Checked?1:0);
+        Settings::setSetting(forceUserAgent,chk_forceUserAgent->isChecked()?1:0);
         Settings::setSetting(userAgent,txt_userAgent->text());
 
         int oldUrl = Settings::getSetting(vlm_url).toInt();
@@ -457,7 +460,6 @@ void DialogParamVlm::done(int result)
             emit inetUpdated();
 
         Settings::setSetting(saveMainWindowGeometry,saveWinGeometry->checkState()==Qt::Checked?"1":"0");
-
         emit paramVLMChanged();
         emit redrawGrib();
     }
@@ -635,8 +637,8 @@ void DialogParamVlm::doBtn_browseSkin(void)
 void DialogParamVlm::slot_changeParam()
 {
     initEstime();
-    chk_showCompass->setCheckState(Settings::getSetting(showCompass).toInt()==1?Qt::Checked:Qt::Unchecked);
     bool real=centralWidget->getPlayer()->getType()!=BOAT_VLM;
+    chk_showCompass->setCheckState(Settings::getSetting(showCompass).toInt()==1?Qt::Checked:Qt::Unchecked);
     concurrent_box->setVisible(!real);
     newBoardShadow->setVisible(!real);
     label_skin->setVisible(!real);

@@ -37,6 +37,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "vlmPoint.h"
 #include "DataManager.h"
 #include "vlmLine.h"
+#include "vlmpointgraphic.h"
 
 #define NO_CROSS 1
 #define BOUNDED_CROSS 2
@@ -219,6 +220,7 @@ class ROUTAGE : public QObject
         static vlmPoint checkCoastCollision(const vlmPoint &point);
         static bool checkCoastCollision2(const vlmPoint &point1, const vlmPoint &point2);
         static QList<vlmPoint> pruneWakeThreaded(const QList<vlmPoint> &list);
+        QMenu *getContextMenu();
 public slots:
         void calculate();
         void slot_edit();
@@ -347,7 +349,7 @@ public slots:
         bool arrived;
         time_t eta, etaStart;
         QList<vlmLine *> isochrones;
-            QList<vlmLine *> segments;
+        QList<vlmLine *> segments;
         bool done;
         /*iso inversed*/
         bool i_iso;

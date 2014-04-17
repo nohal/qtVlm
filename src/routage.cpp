@@ -948,23 +948,28 @@ ROUTAGE::ROUTAGE(QString name, Projection *proj, DataManager *dataManager, mySce
 }
 ROUTAGE::~ROUTAGE()
 {
+    QTime t;
+    t.start();
     if(parent->get_terrain()->getRoutageGrib()==this)
-    {
         parent->get_terrain()->setRoutageGrib(NULL);
-    }
-    while(!isochrones.isEmpty())
-        delete isochrones.takeFirst();
-    while(!segments.isEmpty())
-        delete segments.takeFirst();
-    while(!i_isochrones.isEmpty())
-        delete i_isochrones.takeFirst();
-    while(!i_segments.isEmpty())
-        delete i_segments.takeFirst();
     if(result!=NULL)
         delete result;
-    while(!isoPointList.isEmpty())
-        delete isoPointList.takeFirst();
     delete way;
+    qDeleteAll(isochrones);
+    qDeleteAll(segments);
+    qDeleteAll(i_isochrones);
+    qDeleteAll(i_segments);
+    qDeleteAll(isoPointList);
+//    while(!isochrones.isEmpty())
+//        delete isochrones.takeFirst();
+//    while(!segments.isEmpty())
+//        delete segments.takeFirst();
+//    while(!i_isochrones.isEmpty())
+//        delete i_isochrones.takeFirst();
+//    while(!i_segments.isEmpty())
+//        delete i_segments.takeFirst();
+//    while(!isoPointList.isEmpty())
+//        delete isoPointList.takeFirst();
     if(this->popup && !parent->getAboutToQuit())
         delete popup;
     while(!isoRoutes.isEmpty())
@@ -977,7 +982,7 @@ ROUTAGE::~ROUTAGE()
     }
     parent->getMainWindow()->startTimer();
     QApplication::processEvents();
-    //qWarning()<<name<<"deleted";
+    qWarning()<<name<<"deleted"<<t.elapsed();
 }
 void ROUTAGE::setBoat(boat *myBoat)
 {
@@ -1357,7 +1362,6 @@ void ROUTAGE::slot_calculate()
         arrived=false;
     QList<vlmPoint> * list;
     //QList<vlmPoint> * previousList;
-    vlmLine * segment;
     QPen penSegment;
     QColor gray=Qt::gray;
     gray.setAlpha(230);
@@ -2258,7 +2262,7 @@ void ROUTAGE::slot_calculate()
                     vlmPointGraphic * vg=new vlmPointGraphic(this,nbIso+1,mmm,
                                                            tempPoints.at(n).lon,
                                                            tempPoints.at(n).lat,
-                                                           this->proj,this->myscene,
+                                                           this->proj,this->parent,
                                                            Z_VALUE_ISOPOINT);
                     vg->setParent(this);
                     ++mmm;
@@ -2337,17 +2341,23 @@ void ROUTAGE::slot_calculate()
             }
 #endif
 #if 1
-            segment=new vlmLine(proj,myscene,Z_VALUE_ROUTAGE);
+#define DONT_SHOW_SEGMENTS
+#endif
+            vlmPoint temp;
+#ifndef DONT_SHOW_SEGMENTS
+            vlmLine * segment=new vlmLine(proj,myscene,Z_VALUE_ROUTAGE);
             segment->setParent(this);
-            vlmPoint temp=* iso->getOrigin(n);
+            temp=* iso->getOrigin(n);
             temp.isBroken=false;
             segment->addVlmPoint(temp);
+#endif
             temp=list->at(n);
             if(showBestLive && temp.distArrival<newMinDist)
             {
                 pivotPoint=temp;
                 newMinDist=temp.distArrival;
             }
+#ifndef DONT_SHOW_SEGMENTS
             temp.isBroken=false;
             segment->addVlmPoint(temp);
 #if 0 //debug left-right balancing
@@ -3225,10 +3235,6 @@ void ROUTAGE::convertToRoute()
     }
     if(!multiRoutage)
     {
-#ifdef __ANDROID_QTVLM
-        simplify.setChecked(false);
-        deleteOther.setChecked(false);
-#endif
         int answ=msgBox.exec();
         if(answ==QMessageBox::Cancel) return;
         waitBox = new QMessageBox(QMessageBox::Information,tr("Conversion d'un routage en route"),
@@ -3310,7 +3316,7 @@ void ROUTAGE::convertToRoute()
        QString poiName;
        poiName.sprintf("%.5i",list->size()-n);
        poiName=poiPrefix+poiName;
-       POI * poi = parent->slot_addPOI(poiName,0,list->at(n).convertionLat,list->at(n).convertionLon,-1,false,false);
+       POI * poi = parent->slot_addPOI(poiName,0,list->at(n).convertionLat,list->at(n).convertionLon,-1);
        poi->setRoute(route);
        poi->setSequence(n*10);
        poi->setNotSimplificable(list->at(n).notSimplificable);
@@ -3328,9 +3334,9 @@ void ROUTAGE::convertToRoute()
     }
     if(!multiRoutage && routeStartBoat)
     {
-        if (!route->getPoiList().isEmpty() && route->getPoiList().at(0)->getRouteTimeStamp()!=-1)
+        if (!route->getPoiList().isEmpty() && route->getPoiList().at(0)->getEta()!=-1)
         {
-            if(qAbs(route->getPoiList().at(0)->getRouteTimeStamp()-myBoat->getPrevVac())<myBoat->getVacLen()*2.0 || (myBoat->get_boatType()==BOAT_VLM && myBoat->getLoch()<0.1))
+            if(qAbs(route->getPoiList().at(0)->getEta()-myBoat->getPrevVac())<myBoat->getVacLen()*2.0 || (myBoat->get_boatType()==BOAT_VLM && myBoat->getLoch()<0.1))
             {
                 POI * poi = route->getPoiList().at(0);
                 poi->setRoute(NULL);
@@ -4068,6 +4074,10 @@ void ROUTAGE::showContextMenu(const int &isoNb,const int &pointNb)
     if(isoNb>=isochrones.size()) return;
     pivotPoint=isochrones.at(isoNb)->getPoints()->at(pointNb);
     popup->exec(QCursor::pos());
+}
+QMenu* ROUTAGE::getContextMenu()
+{
+    return popup;
 }
 
 void ROUTAGE::slot_createPivot()

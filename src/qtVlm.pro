@@ -7,6 +7,7 @@ contains ( QT_VERSION, "^5.*"){
     QT+=core gui widgets multimedia concurrent uitools positioning
 #    QT+= qml quick
 }
+android: QT+=androidextras
 CONFIG += qt
 TEMPLATE = app
 TARGET = qtVlm
@@ -71,7 +72,6 @@ TRANSLATIONS = ../tr/qtVlm_en.ts \
     ../tr/qtVlm_es.ts
 RC_FILE = qtVlm.rc
 HEADERS += Dialogs/DialogGraphicsParams.h \
-    Dialogs/DialogLoadGrib.h \
     Dialogs/DialogProxy.h \
     Dialogs/DialogHorn.h \
     Dialogs/DialogRace.h \
@@ -191,14 +191,10 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     Dialogs/view/DialogChooseMultiple_view.h \
     Dialogs/view/pc/DialogChooseMultiple_view_pc.h \
     Dialogs/ctrl/DialogChooseMultiple_ctrl.h \
-    InfoView.h \
     BoardTools.h \
     GpsReceiver.h \
-    BoardVlmMobile.h \
-    Dialogs/view/DialogRoutage_view.h \
-    Dialogs/view/pc/DialogRoutage_view_pc.h \
-    Dialogs/ctrl/DialogRoutage_ctrl.h \
-    Dialogs/view/pc/DialogRoutage_view_mobile.h
+    Dialogs/DialogZygrib.h \
+    Dialogs/DialogRoutage.h
 
 
 FORMS += Ui/boatAccount_dialog.ui \
@@ -241,12 +237,10 @@ FORMS += Ui/boatAccount_dialog.ui \
     Ui/RouteComparator.ui \
     Ui/DialogGribDrawing.ui \
     Ui/DialogLanguageSelection.ui \
-    Ui/BoardVlmMobile.ui \
-    Ui/DialogRoutage_pc.ui \
-    Ui/DialogRoutage_mobile.ui
+    Ui/DialogZygrib.ui \
+    Ui/Routage_Editor.ui
 
 SOURCES += Dialogs/DialogGraphicsParams.cpp \
-    Dialogs/DialogLoadGrib.cpp \
     Dialogs/DialogProxy.cpp \
     Dialogs/DialogHorn.cpp \
     Dialogs/DialogRace.cpp \
@@ -357,21 +351,16 @@ SOURCES += Dialogs/DialogGraphicsParams.cpp \
     Dialogs/view/DialogChooseMultiple_view.cpp \
     Dialogs/view/pc/DialogChooseMultiple_view_pc.cpp \
     Dialogs/ctrl/DialogChooseMultiple_ctrl.cpp \
-    InfoView.cpp \
     GpsReceiver.cpp \
-    BoardVlmMobile.cpp \
-    Dialogs/view/DialogRoutage_view.cpp \
-    Dialogs/view/pc/DialogRoutage_view_pc.cpp \
-    Dialogs/ctrl/DialogRoutage_ctrl.cpp \
-    Dialogs/view/pc/DialogRoutage_view_mobile.cpp
+    Dialogs/DialogRoutage.cpp \
+    Dialogs/DialogZygrib.cpp
 
 
 
 
-unix:!macx:!android: DEFINES += _TTY_POSIX_ __TERRAIN_QIMAGE __UNIX_QTVLM
-android: DEFINES += _TTY_POSIX_ __TERRAIN_QIMAGE __ANDROID_QTVLM
-unix:!android: LIBS += -lgps
-unix:!android: INCLUDEPATH += libs/libgps
+unix:!macx: DEFINES += _TTY_POSIX_ __TERRAIN_QIMAGE __UNIX_QTVLM
+unix: LIBS += -lgps
+unix: INCLUDEPATH += libs/libgps
 
 win32:DEFINES += _TTY_WIN_ \
     QWT_DLL \
@@ -387,35 +376,5 @@ ICON = qtVlm.icns
 
 #DEFINES += __REAL_BOAT_ONLY
 
-OTHER_FILES += \
-#    qml_ui.qml \
-    android/AndroidManifest.xml \
-    android/res/layout/splash.xml \
-    android/res/values/libs.xml \
-    android/res/values/strings.xml \
-    android/res/values-de/strings.xml \
-    android/res/values-el/strings.xml \
-    android/res/values-es/strings.xml \
-    android/res/values-et/strings.xml \
-    android/res/values-fa/strings.xml \
-    android/res/values-fr/strings.xml \
-    android/res/values-id/strings.xml \
-    android/res/values-it/strings.xml \
-    android/res/values-ja/strings.xml \
-    android/res/values-ms/strings.xml \
-    android/res/values-nb/strings.xml \
-    android/res/values-nl/strings.xml \
-    android/res/values-pl/strings.xml \
-    android/res/values-pt-rBR/strings.xml \
-    android/res/values-ro/strings.xml \
-    android/res/values-rs/strings.xml \
-    android/res/values-ru/strings.xml \
-    android/res/values-zh-rCN/strings.xml \
-    android/res/values-zh-rTW/strings.xml \
-    android/src/org/kde/necessitas/ministro/IMinistro.aidl \
-    android/src/org/kde/necessitas/ministro/IMinistroCallback.aidl \
-    android/src/org/qtproject/qt5/android/bindings/QtActivity.java \
-    android/src/org/qtproject/qt5/android/bindings/QtApplication.java \
-    android/version.xml
 
-ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
+RESOURCES +=

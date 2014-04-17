@@ -76,13 +76,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogHorn.h"
 #include "DialogPoiDelete.h"
 #include "DialogRoute.h"
-#include "DialogLoadGrib.h"
+#include "DialogZygrib.h"
 #include "DialogRace.h"
 #include "DialogBoatAccount.h"
 #include "DialogGribDate_ctrl.h"
 #include "DialogPoi.h"
 #include "DialogPlayerAccount.h"
-#include "DialogRoutage_ctrl.h"
+#include "DialogRoutage.h"
 #include "DialogRealBoatConfig.h"
 #include "DialogVlmLog.h"
 #include "DialogDownloadTracks.h"
@@ -99,7 +99,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogChooseBarrierSet_ctrl.h"
 #include "DialogGribDrawing.h"
 #include "orthoSegment.h"
-#include "InfoView.h"
 
 /*******************/
 /*    myScene      */
@@ -442,12 +441,9 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
 
 
 
-    dialogLoadGrib = new DialogLoadGrib(this->mainW);
-    connect(dialogLoadGrib,SIGNAL(clearSelection()),this,SLOT(slot_clearSelection()));
-    connect(this,SIGNAL(geometryChanged()),dialogLoadGrib,SLOT(slot_screenResize()));
     connect(this,SIGNAL(geometryChanged()),mainW,SIGNAL(geometryChanged()));
-    dialogLoadGrib->checkQtvlmVersion();
-    connect(dialogLoadGrib, SIGNAL(signalGribFileReceived(QString)),parent,  SLOT(slot_gribFileReceived(QString)));
+    LoadGribFile *lgrib=new LoadGribFile();
+    lgrib->checkQtvlmVersion();
     connect(menuBar->acOptions_GraphicsParams, SIGNAL(triggered()), this, SLOT(slot_graphicParams()));
 
     /*Routes*/
@@ -470,8 +466,8 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     this->NSZ=NULL;
 
     connect(mainW,SIGNAL(addPOI_list(POI*)),this,SLOT(slot_addPOI_list(POI*)));
-    connect(mainW,SIGNAL(addPOI(QString,int,double,double,double,int,bool)),
-            this,SLOT(slot_addPOI(QString,int,double,double,double,int,bool)));
+    connect(mainW,SIGNAL(addPOI(QString,int,double,double,double)),
+            this,SLOT(slot_addPOI(QString,int,double,double,double)));
     connect(this,SIGNAL(POI_selectAborted(POI*)),mainW,SLOT(slot_POIselected(POI*)));
     connect(mainW,SIGNAL(moveBoat(double,double)),this,SLOT(slot_moveBoat(double,double)));
 
@@ -483,8 +479,6 @@ myCentralWidget::myCentralWidget(Projection * proj,MainWindow * parent,MenuBar *
     scene->addItem(barrierEditLine);
     barrierEditLine->setZValue(Z_VALUE_SELECTION);
     barrierEditLine->hide();
-    /* infoView */
-    infoView=new InfoView(this);
 
 }
 
@@ -677,10 +671,7 @@ void myCentralWidget::connectPois(void) {
 
 myCentralWidget::~myCentralWidget()
 {
-    bool test=false;
-    if(xmlData)
-        test=true;
-    qWarning()<<"inside ~myCentralWidget with noSave="<<noSave<<"and xmlData"<<test;
+    clearOtherSelected(NULL);
     if(!noSave && xmlData)
     {
         POI::write_POIData(poi_list,this);
@@ -1052,7 +1043,7 @@ void myCentralWidget::mouseDoubleClick(int x, int y, QGraphicsItem * )
     double lon, lat;
     proj->screen2map(x,y, &lon, &lat);
     //qWarning() << "Creating POI at: " << lat << "," << lon << " - " << Util::formatLatitude(lat) << "," << Util::formatLongitude(lon);
-    slot_addPOI("",POI_TYPE_POI,lat,lon,-1,-1,false);
+    slot_addPOI("",POI_TYPE_POI,lat,lon,-1);
 }
 
 void myCentralWidget::escapeKeyPressed(void)
@@ -1294,8 +1285,15 @@ void myCentralWidget::slot_fileLoad_GRIB() {
     double x0, y0, x1, y1;
 
     if (get_gribZone(&x0,&y0, &x1,&y1)) {
-        dialogLoadGrib->setZone(x0, y0, x1, y1);
-        dialogLoadGrib->exec();
+        qWarning()<<"before setZone";
+        DialogZygrib * dialogZygrib = new DialogZygrib(this->mainW);
+        connect(dialogZygrib,SIGNAL(clearSelection()),this,SLOT(slot_clearSelection()));
+        connect(dialogZygrib, SIGNAL(signalGribFileReceived(QString)),mainW,  SLOT(slot_gribFileReceived(QString)));
+        connect(this,SIGNAL(geometryChanged()),dialogZygrib,SLOT(slot_screenResize()));
+        dialogZygrib->setZone(x0, y0, x1, y1);
+        qWarning()<<"before zygrib exec";
+        dialogZygrib->exec();
+        dialogZygrib->deleteLater();
     }
     else {
         QMessageBox::warning (this,
@@ -1440,14 +1438,14 @@ void myCentralWidget::slotLoadSailsDocGrib(void) {
 /**************************/
 /* POI                    */
 /**************************/
-POI * myCentralWidget::slot_addPOI(QString name,const int &type,const double &lat,const double &lon, const double &wph, const int &timestamp, const bool &useTimeStamp)
+POI * myCentralWidget::slot_addPOI(QString name,const int &type,const double &lat,const double &lon, const double &wph)
 {
     POI * poi;
 
     if(name=="")
         name=QString(tr("POI"));
     poi = new POI(name,type,lat,lon, proj,
-                  mainW, this,wph,timestamp,useTimeStamp);
+                  mainW, this,wph);
 
     slot_addPOI_list(poi);
     //poi->show();
@@ -2158,7 +2156,7 @@ void myCentralWidget::slot_importRouteFromVlm()
     update_menuRoute();
     route->setFrozen(true);
     route->setTemp(true);
-    POI * poi = slot_addPOI(poiName+"0",0,boat->getWPLat(),boat->getWPLon(),boat->getWPHd(),false,false);
+    POI * poi = slot_addPOI(poiName+"0",0,boat->getWPLat(),boat->getWPLon(),boat->getWPHd());
     poi->setNavMode(0); //VBVMG
     if(boat->getPilotType()==3)
         poi->setNavMode(2); //ORTHO
@@ -2174,7 +2172,7 @@ void myCentralWidget::slot_importRouteFromVlm()
         if(parse.at(5)!="pending") continue;
         int mode  = parse.at (2).toInt();
         QStringList parse2 = parse.at(4).split("@");
-        poi = slot_addPOI(poiName+QString().setNum(++nPoi),0,parse.at(3).toDouble(),parse2.at(0).toDouble(),(parse2.length() == 2) ? parse2.at(1).toDouble() : -1,false,false);
+        poi = slot_addPOI(poiName+QString().setNum(++nPoi),0,parse.at(3).toDouble(),parse2.at(0).toDouble(),(parse2.length() == 2) ? parse2.at(1).toDouble() : -1);
         poi->setNavMode(0); //VBVMG
         if(mode==3)
             poi->setNavMode(2); //ORTHO
@@ -2328,11 +2326,11 @@ void myCentralWidget::slot_importRouteFromMenu(bool ortho)
                 double lon=p.value().x();
                 double lat=p.value().y();
                 QString poiName=route->getName()+QString().sprintf("%.5i",nPoi);
-                POI * poi = slot_addPOI(poiName,0,lat,lon,-1,false,false);
+                POI * poi = slot_addPOI(poiName,0,lat,lon,-1);
                 if(ortho)
                     poi->setNavMode(2);
                 poi->setRoute(route);
-                poi->setRouteTimeStamp(eta);
+                poi->setEta(eta);
             }
             route->setHidePois(true);
             route->setImported();
@@ -2529,11 +2527,11 @@ void myCentralWidget::slot_importRouteFromMenu(bool ortho)
             QString poiN;
             poiN.sprintf("%.5i",n);
             poiName=route->getName()+poiN;
-            POI * poi = slot_addPOI(poiName,0,lat,lon,-1,false,false);
+            POI * poi = slot_addPOI(poiName,0,lat,lon,-1);
             if(ortho)
                 poi->setNavMode(2);
             poi->setRoute(route);
-            poi->setRouteTimeStamp(start.toTime_t());
+            poi->setEta(start.toTime_t());
             line=stream.readLine();
         }
         routeFile.close();
@@ -2635,11 +2633,11 @@ void myCentralWidget::slot_importRouteFromMenu(bool ortho)
                 lat=trackPoint.firstChildElement("Coords").firstChildElement("Lat").firstChild().toText().data().toDouble();
                 poiN.sprintf("%.5i",n);
                 poiName="I"+poiN;
-                POI * poi = slot_addPOI(poiName,0,lat,lon,-1,false,false);
+                POI * poi = slot_addPOI(poiName,0,lat,lon,-1);
                 if(ortho)
                     poi->setNavMode(2);
                 poi->setRoute(route);
-                poi->setRouteTimeStamp(start.toTime_t());
+                poi->setEta(start.toTime_t());
                 trackPoint=trackPoint.nextSiblingElement("TrackPoint");
             }
             route->setHidePois(true);
@@ -2743,12 +2741,12 @@ void myCentralWidget::exportRouteFromMenu(ROUTE * route)
             }
             foreach(POI * poi, route->getPoiList())
             {
-                if(!poi->getUseRouteTstamp()) break;
+                if(poi->getEta()==-1) break;
                 if(!first)
                     stream<<",";
                 else
                     first=false;
-                stream<<"[\""<<poi->getRouteTimeStamp()<<"\",\""<<
+                stream<<"[\""<<poi->getEta()<<"\",\""<<
                         QString().sprintf("%.10f",poi->getLongitude()*1000.00)<<"\",\""<<
                         QString().sprintf("%.10f",poi->getLatitude()*1000.00)<<"\"]";
             }
@@ -2833,7 +2831,7 @@ void myCentralWidget::exportRouteFromMenu(ROUTE * route)
                 longitude=longitude+" E";
             list.append(latitude+"  "+longitude);
             QDateTime time;
-            time.setTime_t(poi->getRouteTimeStamp());
+            time.setTime_t(poi->getEta());
             time=time.toUTC();
             time.setTimeSpec(Qt::UTC);
             list.append(time.toString("dd/MM/yyyy hh:mm:ss"));
@@ -2990,7 +2988,7 @@ void myCentralWidget::importRouteFromMenuKML(QString fileName,bool toClipboard, 
             QStringList position=point.firstChildElement("coordinates").firstChild().toText().data().split(",");
             double lon=position.at(0).toDouble();
             double lat=position.at(1).toDouble();
-            POI * poi = slot_addPOI(name,0,lat,lon,-1,false,false);
+            POI * poi = slot_addPOI(name,0,lat,lon,-1);
             if(ortho)
                 poi->setNavMode(2);
             QDomElement extData=placeMark.firstChildElement("ExtendedData");
@@ -3170,8 +3168,8 @@ void myCentralWidget::exportRouteFromMenuKML(ROUTE * route,QString fileName,bool
         qd4.setAttribute("name","eta");
         QDomElement qd5=doc.createElement("value");
         qd4.appendChild(qd5);
-        if(pList.at(i)->getRouteTimeStamp()!=-1)
-            t=doc.createTextNode(QDateTime().fromTime_t(pList.at(i)->getRouteTimeStamp()).toUTC().toString("yyyy-MM-ddThh:mm:ssZ"));
+        if(pList.at(i)->getEta()!=-1)
+            t=doc.createTextNode(QDateTime().fromTime_t(pList.at(i)->getEta()).toUTC().toString("yyyy-MM-ddThh:mm:ssZ"));
         else
             t=doc.createTextNode("N/A");
         qd5.appendChild(t);
@@ -3191,11 +3189,11 @@ void myCentralWidget::exportRouteFromMenuKML(ROUTE * route,QString fileName,bool
                 break;
         }
         qd4.appendChild(t);
-        if(dataManager && dataManager->isOk() && pList.at(i)->getRouteTimeStamp()!=-1)
+        if(dataManager && dataManager->isOk() && pList.at(i)->getEta()!=-1)
         {
             double speed,angle;
             if(dataManager->getInterpolatedWind(pList.at(i)->getLongitude(), pList.at(i)->getLatitude(),
-                                                  pList.at(i)->getRouteTimeStamp(),&speed,&angle,INTERPOLATION_DEFAULT))
+                                                  pList.at(i)->getEta(),&speed,&angle,INTERPOLATION_DEFAULT))
             {
                 angle=radToDeg(angle);
                 qd4=doc.createElement("Data");
@@ -3214,7 +3212,7 @@ void myCentralWidget::exportRouteFromMenuKML(ROUTE * route,QString fileName,bool
                 t=doc.createTextNode(QString().sprintf("%.2f",angle)+tr("deg"));
                 qd5.appendChild(t);
                 if(dataManager->getInterpolatedCurrent(pList.at(i)->getLongitude(), pList.at(i)->getLatitude(),
-                                                      pList.at(i)->getRouteTimeStamp(),&speed,&angle,INTERPOLATION_DEFAULT))
+                                                      pList.at(i)->getEta(),&speed,&angle,INTERPOLATION_DEFAULT))
                 {
                     qd4=doc.createElement("Data");
                     qd3.appendChild(qd4);
@@ -3237,7 +3235,7 @@ void myCentralWidget::exportRouteFromMenuKML(ROUTE * route,QString fileName,bool
                     QList<QList<double> > * roadBook=route->getRoadMap();
                     for(int ind=0;ind<roadBook->count();++ind)
                     {
-                        if(roadBook->at(ind).at(0)==pList.at(i)->getRouteTimeStamp())
+                        if(roadBook->at(ind).at(0)==pList.at(i)->getEta())
                         {
                             if(roadBook->at(ind).at(4)!=-1)
                             {
@@ -3560,7 +3558,7 @@ void myCentralWidget::exportRouteFromMenuGPX(ROUTE * route,QString fileName,bool
             QString longitude=QString::number(poi->getLongitude());
             list.append("<rtept lat=\""+latitude+"\" lon=\""+longitude+"\">");
             QDateTime time;
-            time.setTime_t(poi->getRouteTimeStamp());
+            time.setTime_t(poi->getEta());
             time=time.toUTC();
             time.setTimeSpec(Qt::UTC);
             list.append( "<time>"+time.toString("yyyy-MM-ddThh:mm:ssZ")+"</time>");
@@ -3641,11 +3639,11 @@ void myCentralWidget::withdrawRouteFromBank(QString routeName,QList<QVariant> de
         double lon=p.value().x();
         double lat=p.value().y();
         QString poiName=route->getName()+QString().sprintf("%.5i",nPoi);
-        POI * poi = slot_addPOI(poiName,0,lat,lon,-1,false,false);
+        POI * poi = slot_addPOI(poiName,0,lat,lon,-1);
         if(ortho)
             poi->setNavMode(2);
         poi->setRoute(route);
-        poi->setRouteTimeStamp(eta);
+        poi->setEta(eta);
     }
     route->setHidePois(true);
     route->setImported();
@@ -3805,7 +3803,7 @@ void myCentralWidget::treatRoute(ROUTE* route)
             if(optimize)
             {
                 POI*    lastReachedPoi  = route->getLastReachedPoi();
-                time_t  ref_eta2        = lastReachedPoi ? lastReachedPoi->getRouteTimeStamp() : route->getEta();
+                time_t  ref_eta2        = lastReachedPoi ? lastReachedPoi->getEta() : route->getEta();
                 QString ref_lastPoiName = lastReachedPoi ? lastReachedPoi->getName() : (QString ("<em>%1</em>").arg (tr("aucun")));
                 poiCt=route->getPoiList().count();
                 QMessageBox * waitBox = new QMessageBox(QMessageBox::Information,tr("Optimisation en cours"),
@@ -3814,6 +3812,8 @@ void myCentralWidget::treatRoute(ROUTE* route)
                 connect(waitBox->button(QMessageBox::Abort),SIGNAL(clicked()),this,SLOT(slot_abortRequest()));
                 this->abortRequest=false;
                 connect(waitBox,SIGNAL(rejected()),this,SLOT(slot_abortRequest()));
+                connect(waitBox,SIGNAL(finished(int)),this,SLOT(slot_abortRequest()));
+                connect(waitBox,SIGNAL(accepted()),this,SLOT(slot_abortRequest()));
                 waitBox->show();
                 //bad trick because setFixWidth() is not working
                 QSpacerItem* dummy = new QSpacerItem(300,0,QSizePolicy::Minimum, QSizePolicy::Expanding);
@@ -3855,7 +3855,7 @@ void myCentralWidget::treatRoute(ROUTE* route)
                     if(abortRequest) break;
                     POI*    lastReachedPoi = route->getLastReachedPoi();
                     if(lastReachedPoi == NULL) break;
-                    time_t  ref_eta3       = lastReachedPoi->getRouteTimeStamp();
+                    time_t  ref_eta3       = lastReachedPoi->getEta();
                     double  ref_remain     = route->getRemain();
                     int     nPois          = route->getPoiList().count();
                     for (int poiN = route->getStartFromBoat() ? 0 : 1;poiN<route->getPoiList().count()-1;++poiN)
@@ -3869,8 +3869,8 @@ void myCentralWidget::treatRoute(ROUTE* route)
                     }
                     if(abortRequest) break;
                     if ((route->getLastReachedPoi() == lastReachedPoi)
-                        && ((lastReachedPoi->getRouteTimeStamp() > ref_eta3)
-                        || ((lastReachedPoi->getRouteTimeStamp() == ref_eta3) && (route->getRemain() > ref_remain))))
+                        && ((lastReachedPoi->getEta() > ref_eta3)
+                        || ((lastReachedPoi->getEta() == ref_eta3) && (route->getRemain() > ref_remain))))
                         qWarning()<<"wrong optimization!!";
                     if (route->getHas_eta() && simplify) {
                         time_t  ref_eta4 = route->getEta();
@@ -3879,7 +3879,7 @@ void myCentralWidget::treatRoute(ROUTE* route)
                             qWarning()<<"wrong simplification!!";
                     }
                     if ((lastReachedPoi == route->getLastReachedPoi())
-                        && (ref_eta3    == lastReachedPoi->getRouteTimeStamp())
+                        && (ref_eta3    == lastReachedPoi->getEta())
                         && (ref_remain  <= (route->getRemain() + 0.001)) // Should probably be configurable...
                         && (nPois       == route->getPoiList().count()))
                         break;
@@ -3929,7 +3929,7 @@ void myCentralWidget::treatRoute(ROUTE* route)
 
                     POI*    lastReachedPoi = route->getLastReachedPoi();
                     if (lastReachedPoi != NULL) {
-                        QDateTime   after = QDateTime::fromTime_t (lastReachedPoi->getRouteTimeStamp()).toUTC();
+                        QDateTime   after = QDateTime::fromTime_t (lastReachedPoi->getEta()).toUTC();
                         after.setTimeSpec (Qt::UTC);
                         result = result + "<br>" + (QString (tr("Dernier POI apres optimisation: %1 (ETA: %2)"))
                                                     .arg (lastReachedPoi->getName(), after.toString ("dd/MM/yy hh:mm:ss")));
@@ -3938,8 +3938,8 @@ void myCentralWidget::treatRoute(ROUTE* route)
                                                     .arg (QString ("<em>%1</em>").arg (tr("aucun")), "--/--/-- --:--:--"));
                     }
                 }
-                waitBox->close();
-                delete waitBox;
+                waitBox->hide();
+                waitBox->deleteLater();
                 QMessageBox::information(0,QString(QObject::tr("Resultat de l'optimisation")),result);
             }
             bool a=route->getDetectCoasts()!=detectCoast;
@@ -3965,6 +3965,7 @@ void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
         firstPOI=0;
     QList<POI*> pois=route->getPoiList();
     int ref_nbPois=pois.count();
+    route->slot_recalculate();
     time_t ref_eta=route->getEta();
     double ref_remain=route->getRemain();
     int nbDel=0;
@@ -3972,7 +3973,7 @@ void myCentralWidget::doSimplifyRoute(ROUTE * route, bool fast)
     QProgressDialog p("","",1,ref_nbPois-2);
     if(!fast)
     {
-        QString stringMaxMin=strongSimplify?tr(" (maximum)"):tr(" (minimum)");
+        QString stringMaxMin=strongSimplify?tr(" (maximum)"):tr(" (optimum)");
         p.setWindowTitle(tr("Simplification en cours")+stringMaxMin);
         p.setAutoClose(false);
         this->abortRequest=false;
@@ -4221,7 +4222,32 @@ void myCentralWidget::setPilototo(QList<POI *> poiList)
 
 void myCentralWidget::slot_editRoutage(ROUTAGE * routage,bool createMode,POI *endPOI)
 {
-    DialogRoutage_ctrl::dialogRoutage(this,routage,endPOI,createMode);
+    DialogRoutage *routage_editor=new DialogRoutage(routage,this,endPOI);
+    if(routage_editor->exec()!=QDialog::Accepted)
+    {
+        delete routage_editor;
+        if(createMode || routage->getIsNewPivot())
+        {
+            bool b=routage->getIsNewPivot();
+            delete routage;
+            routage_list.removeAll(routage);
+            routage=NULL;
+            nbRoutage--;
+            if(b)
+                update_menuRoutage();
+        }
+    }
+    else
+    {
+        delete routage_editor;
+        update_menuRoutage();
+        if(routage && (createMode || routage->getIsNewPivot()))
+            routage->calculate();
+        else if(routage && routage->getI_iso() && !routage->getI_done() && !routage->isConverted())
+            routage->calculateInverse();
+        else if(routage && routage->getI_iso() && routage->getI_done() && !routage->isConverted())
+            routage->showIsoRoute();
+    }
 }
 void myCentralWidget::deleteRoute(ROUTE * route)
 {
@@ -4868,19 +4894,4 @@ void myCentralWidget::clearOtherSelected(QGraphicsItem * i)
 QSize myCentralWidget::getIconSize() const
 {
     return this->toolBar->getIconSize() ;
-}
-void myCentralWidget::showToolTip(const QString &tt, const bool &animate, QList<QMenu*> *newMenu)
-{
-#if 1
-    infoView->showView(tt,animate,newMenu);
-
-#else
-#ifndef __ANDROID_QTVLM
-    infoView->showView(tt,animate,newMenu);
-#else
-    Q_UNUSED(tt);
-    Q_UNUSED(animate);
-    Q_UNUSED(newMenu);
-#endif
-#endif
 }

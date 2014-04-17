@@ -199,6 +199,8 @@ private:
     void drawScale(QPainter &pnt);
     void drawCartouche(QPainter &pnt);
     bool toBeRestarted;
+    bool tapAndHold;
+    QPointF tapAndHoldScenePos;
     ROUTAGE * routageGrib;
     QMutex mutex;
     QPoint scalePos;

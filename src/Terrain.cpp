@@ -63,6 +63,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 Terrain::Terrain(myCentralWidget *centralWidget, Projection *proj_) : QGraphicsWidget()
 {
     toBeRestarted=false;
+    tapAndHold=false;
     this->centralWidget=centralWidget;
     proj = proj_;
     this->routageGrib=NULL;
@@ -170,6 +171,13 @@ void Terrain::mouseReleaseEvent(QGraphicsSceneMouseEvent* e)
     QGraphicsWidget::mouseReleaseEvent(e);
     if(e->button()==Qt::LeftButton)
         emit mouseRelease(e);
+    if(tapAndHold)
+    {
+        int X=qRound(tapAndHoldScenePos.x());
+        int Y=qRound(tapAndHoldScenePos.y());
+        centralWidget->getMainWindow()->showContextualMenu(X,Y);
+    }
+    tapAndHold=false;
 }
 bool Terrain::sceneEvent(QEvent *event)
 {
@@ -201,11 +209,9 @@ bool Terrain::sceneEvent(QEvent *event)
                 {
                     QPointF tapCenter=gesture->hotSpot();
                     QPoint screenPos=tapCenter.toPoint();
-                    QPointF scenePos=centralWidget->mapFromGlobal(screenPos);
+                    tapAndHoldScenePos=centralWidget->mapFromGlobal(screenPos);
                     centralWidget->clearOtherSelected(NULL);
-                    int X=qRound(scenePos.x());
-                    int Y=qRound(scenePos.y());
-                    centralWidget->getMainWindow()->showContextualMenu(X,Y,screenPos);
+                    tapAndHold=true;
                 }
             }
             else if (gesture->gestureType()==Qt::PinchGesture)

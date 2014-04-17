@@ -36,9 +36,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogRoutage_view_pc.h"
 #include "DialogRoutage_view_mobile.h"
 
-DialogRoutage_ctrl::DialogRoutage_ctrl(myCentralWidget *centralWidget,ROUTAGE * routage,bool createMode) {
-    //view = new DialogRoutage_view_pc(centralWidget,this);
-    view = new DialogRoutage_view_mobile(centralWidget,this);
+DialogRoutage_ctrl::DialogRoutage_ctrl(myCentralWidget *centralWidget,ROUTAGE * routage,bool createMode)
+{
+    view = new DialogRoutage_view_pc(centralWidget,this);
     this->centralWidget=centralWidget;
     this->routage=routage;
     this->createMode=createMode;

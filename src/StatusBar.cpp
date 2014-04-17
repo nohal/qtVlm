@@ -67,7 +67,6 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
         labelGrib->setStyleSheet("color: rgb(255, 0, 0);");
     labelGrib->setFont(font);
     labelGrib->setTextFormat(Qt::RichText);
-#ifndef __ANDROID_QTVLM
     labelOrtho = new QLabel("Welcome in QtVlm", this);
 #ifdef QT_V5
     if(Settings::getSetting(fusionStyle).toInt()==1)
@@ -87,11 +86,7 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
     labelEta->setFont(font);
     labelEta->setTextFormat(Qt::RichText);
     labelEta->setAlignment(Qt::AlignRight);
-#endif
 
-#ifdef __ANDROID_QTVLM
-    this->addWidget(labelGrib,0);
-#else
     separator=new QLabel(" - ");
 #ifdef QT_V5
     if(Settings::getSetting(fusionStyle).toInt()==1)
@@ -106,8 +101,13 @@ StatusBar::StatusBar(MainWindow * mainWindow) : QStatusBar(mainWindow) {
 
     separator->setVisible(false);
     this->addPermanentWidget(labelEta,0);
-#endif
     mainWindow->setStatusBar(this);
+}
+void StatusBar::mousePressEvent(QMouseEvent *e)
+{
+    qWarning()<<"click on statubar detected";
+    QStatusBar::mousePressEvent(e);
+    e->accept();
 }
 
 void StatusBar::showGribData(double x,double y)
@@ -116,7 +116,6 @@ void StatusBar::showGribData(double x,double y)
     clearMessage();
     QString res;
 
-#ifndef __ANDROID_QTVLM
     bool hasGribData = false;
     QString label1= Util::pos2String(TYPE_LAT,y) + " " + Util::pos2String(TYPE_LON,x);
     if(mainWindow->getSelectedBoat())
@@ -126,7 +125,6 @@ void StatusBar::showGribData(double x,double y)
                 QString().sprintf(" %7.2fNM",oo.getDistance());
     }
     labelOrtho->setText(label1.replace(" ","&nbsp;"));
-#endif
     DataManager * dataManager=my_centralWidget->get_dataManager();
     Terrain * terrain=my_centralWidget->get_terrain();
     MapDataDrawer * mapDrawer=my_centralWidget->get_mapDataDrawer();
@@ -142,9 +140,7 @@ void StatusBar::showGribData(double x,double y)
 
         if(mode!=DATA_NOTDEF) {
             res = compute_dataTxt(dataManager,mapDrawer,dataManager->get_dataTypes(),mode,levelType,levelValue,x,y);
-#ifndef __ANDROID_QTVLM
             hasGribData=!res.isEmpty();
-#endif
         }
 
         /* frst arrow */
@@ -155,9 +151,7 @@ void StatusBar::showGribData(double x,double y)
         if(arwMode!=DATA_NOTDEF && (arwMode!=mode || arwLevelType!=levelType || arwLevelValue!=levelValue)) {
             QString s=compute_dataTxt(dataManager,mapDrawer,dataManager->get_arrowTypesFst(),arwMode,arwLevelType,arwLevelValue,x,y);
             if(!s.isEmpty()) {
-#ifndef __ANDROID_QTVLM
                 hasGribData=true;
-#endif
                 if(!res.isEmpty()) res += " - ";
                 res += s;
             }
@@ -171,9 +165,7 @@ void StatusBar::showGribData(double x,double y)
         if(arwMode!=DATA_NOTDEF && (arwMode!=mode || arwLevelType!=levelType || arwLevelValue!=levelValue)) {
             QString s=compute_dataTxt(dataManager,mapDrawer,dataManager->get_arrowTypesSec(),arwMode,arwLevelType,arwLevelValue,x,y);
             if(!s.isEmpty()) {
-#ifndef __ANDROID_QTVLM
                 hasGribData=true;
-#endif
                 if(!res.isEmpty()) res += " - ";
                 res += s;
             }
@@ -181,10 +173,7 @@ void StatusBar::showGribData(double x,double y)
     }
 
     labelGrib->setText("<b>"+res.replace(" ","&nbsp;")+"</b>");
-#ifndef __ANDROID_QTVLM
-    //qWarning() << "HasGribData="<< hasGribData;
     separator->setVisible(hasGribData);
-#endif
 }
 
 QString StatusBar::compute_dataTxt(DataManager * dataManager, MapDataDrawer* mapDrawer,
@@ -250,15 +239,12 @@ void StatusBar::showSelectedZone(double x0, double y0, double x1, double y1)
 /**********************************************************************/
 
 void StatusBar::clear_eta(void) {
-#ifndef __ANDROID_QTVLM
     labelEta->setText("<b>"+tr("No WP")+"</b>");
     this->labelEta->setMinimumSize(labelEta->sizeHint());
-#endif
 }
 
 void StatusBar::update_eta(QDateTime eta_dtm)
 {
-#ifndef __ANDROID_QTVLM
     int nbS,j,h,m;
     QString txt;
     eta_dtm.setTimeSpec(Qt::UTC);
@@ -277,7 +263,4 @@ void StatusBar::update_eta(QDateTime eta_dtm)
     myEta.replace(" ","&nbsp;");
     txt.replace(" ","&nbsp;");
     labelEta->setText("<b>"+myEta+" "+txt+"</b>");
-#else
-    Q_UNUSED(eta_dtm);
-#endif
 }

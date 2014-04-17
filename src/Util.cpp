@@ -44,6 +44,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QScreen>
+#include <QApplication>
 
 QString Util::generateKey(int size) {
     QString s;
@@ -243,25 +244,22 @@ void Util::setFontObject(QObject * o)
         Util::setFontObject(object); /*recursion*/
 #endif
 }
-void Util::setFontDialog(QDialog * o)
+void Util::setFontDialog(QDialog * o, const bool &dialogMobile )
 {
 #ifndef DO_NOT_USE_STYLE
     QObject *obj = qobject_cast<QObject *>(o);
     setFontObject(obj);
 #endif
+    if(dialogMobile) return;
     int h,w,px,py;
     Settings::restoreGeometry(o,&h,&w,&px,&py);
-    bool pureTactil=false;
-#ifdef __ANDROID_QTVLM
-    pureTactil=true;
-#endif
-    if(pureTactil || h<=0 || w<=0)
+    if(h<=0 || w<=0)
     {
         setWidgetSize(o);
     }
     else
         o->resize(w,h);
-    if(!pureTactil && px>-1 && py>-1)
+    if(px>-1 && py>-1)
     {
         o->move(px,py);
     }
@@ -283,7 +281,6 @@ void Util::setWidgetSize(QDialog *dialog)
     QList<QScrollArea *> scrolls=dialog->findChildren<QScrollArea *>(QString(),Qt::FindDirectChildrenOnly);
     if(!scrolls.isEmpty())
     {
-        qWarning()<<"inside setWidgetSize";
         QScrollArea * scrollarea=scrolls.at(0);
         int ws=scrollarea->horizontalScrollBar()->height();
         int ws1=scrollarea->verticalScrollBar()->height();
@@ -296,7 +293,6 @@ void Util::setWidgetSize(QDialog *dialog)
         if(s.width()>dialog->maximumWidth())
             s.setWidth(dialog->maximumWidth());
         dialog->resize(s);
-        qWarning()<<"end setWidgetSize";
     }
 #endif
 }
@@ -565,7 +561,7 @@ void Util::paramProxy(QNetworkAccessManager *inetManager,QString host)
 }
 
 /* format: LAT,LON@WPH,TSTAMP */
-bool Util::getWPClipboard(QString * name,double * lat,double * lon, double * wph, int * tstamp)
+bool Util::getWPClipboard(QString * name,double * lat,double * lon, double * wph)
 {
     QClipboard *clipboard = QApplication::clipboard();
     QString WP_txt = clipboard->text();
@@ -573,7 +569,7 @@ bool Util::getWPClipboard(QString * name,double * lat,double * lon, double * wph
     for(int i=0;i<lsval.size();i++)
         if(!lsval[i].isEmpty())
         {
-            if(convertPOI(lsval[i],name,lat,lon,wph,tstamp,0)) // default type of mark = POI
+            if(convertPOI(lsval[i],name,lat,lon,wph)) // default type of mark = POI
                 return true;
             else
                 qWarning() << "Bad string: " << i << " |" << lsval[i] << "|";
@@ -586,8 +582,8 @@ bool Util::getWPClipboard(QString * name,double * lat,double * lon, double * wph
 #define convertCheckInt(VAR1,VAR2) {bool _ok; double _val = VAR1.toInt(&_ok); if(_ok) *VAR2=_val; else return false; }
 
 
-bool Util::convertPOI(const QString & str,QString * name,double * lat,double * lon,double * wph,int * tstamp,
-                      int type)
+bool Util::convertPOI(const QString & str, QString * name, double * lat, double * lon, double * wph,
+                      const int &type)
 {
     QStringList lsval1,lsval2,lsval3;
     //double val;
@@ -623,11 +619,6 @@ bool Util::convertPOI(const QString & str,QString * name,double * lat,double * l
         switch(lsval3.size())
         {
             case 1:
-                if(tstamp) *tstamp=-1;
-                if(wph) convertCheckDouble(lsval3[0],wph)
-                break;
-            case 2:
-                if(tstamp) convertCheckInt(lsval3[1],tstamp)
                 if(wph) convertCheckDouble(lsval3[0],wph)
                 break;
             default:
@@ -646,7 +637,6 @@ bool Util::convertPOI(const QString & str,QString * name,double * lat,double * l
                 if(lat)     convertCheckDouble(lsval2[0],lat)
                 if(lon)     convertCheckDouble(lsval2[1],lon)
                 if(wph)     *wph=-1;
-                if(tstamp) *tstamp=-1;
                 return true;
             }
         }
@@ -1006,10 +996,6 @@ double Util::distToSegment(const QPointF point,const QLineF line) {
 int Util::getFingerSize()
 {
     QScreen * screen=QGuiApplication::primaryScreen();
-#ifdef __ANDROID_QTVLM
-    int finger=6;
-#else
     int finger =10;
-#endif
     return finger*screen->physicalDotsPerInch()*0.0393700787; //10mm approx size of a finger
 }

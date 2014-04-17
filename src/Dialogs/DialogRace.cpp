@@ -34,9 +34,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "MainWindow.h"
 #include "Orthodromie.h"
 #include "settings.h"
-#ifdef QT_V5
-#include <QScroller>
-#endif
 #define RACE_NO_REQUEST     0
 #define RACE_LIST_BOAT      1
 #define RESULT_LIST_BOAT    2
@@ -52,11 +49,7 @@ DialogRace::DialogRace(MainWindow * main,myCentralWidget * parent, inetConnexion
     this->somethingChanged=false;
     inetClient::setName("RaceDialog");
     setupUi(this);
-#ifdef QT_V5
-    QScroller::grabGesture(this->scrollArea->viewport());
-#endif
     connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
-    Util::setFontDialog(this);
 
     model= new QStandardItemModel(this);
     model->setColumnCount(11);
@@ -116,8 +109,6 @@ DialogRace::DialogRace(MainWindow * main,myCentralWidget * parent, inetConnexion
     ranking->header()->setDefaultAlignment(Qt::AlignCenter|Qt::AlignVCenter);;
     //ranking->viewOptions().decorationAlignment=Qt::AlignCenter|Qt::AlignVCenter;
     chooser_raceList->setInsertPolicy(QComboBox::InsertAlphabetically);
-    inputTraceColor =new InputLineParams(1,QColor(Qt::red),1.6,  QColor(Qt::red),this,0.1,5);
-    noSailZoneGroup->layout()->addWidget(inputTraceColor);
     connect(model,SIGNAL(itemChanged(QStandardItem*)),this,SLOT(itemChanged(QStandardItem*)));
     waitBox = new QMessageBox(QMessageBox::Information,tr("Parametrage des courses"),
                               tr("Chargement des courses et des bateaux"));
@@ -125,10 +116,24 @@ DialogRace::DialogRace(MainWindow * main,myCentralWidget * parent, inetConnexion
     connect(this->filterReal,SIGNAL(clicked()),this,SLOT(slotFilterReal()));
 
     connect(buttonBox->button(QDialogButtonBox::Apply), SIGNAL(clicked()), this, SLOT(doSynch()));
+
+    connect(chooser_raceList,SIGNAL(currentIndexChanged(int)),this,SLOT(chgRace(int)));
+    connect(buttonReal,SIGNAL(toggled(bool)),this,SLOT(showRealToggle(bool)));
+    connect(buttonNone,SIGNAL(toggled(bool)),this,SLOT(noneToggle(bool)));
+    connect(buttonMySelection,SIGNAL(toggled(bool)),this,SLOT(myListToggle(bool)));
+    connect(buttonBox,SIGNAL(accepted()),this,SLOT(accept()));
+    connect(buttonBox,SIGNAL(rejected()),this,SLOT(reject()));
+    connect(buttonAll,SIGNAL(toggled(bool)),this,SLOT(showAllToggle(bool)));
+    connect(button10ranking,SIGNAL(toggled(bool)),this,SLOT(tenFirstRankToggle(bool)));
+    connect(button10distance,SIGNAL(toggled(bool)),this,SLOT(tenFirstDistToggle(bool)));
+    connect(button10First,SIGNAL(toggled(bool)),this,SLOT(tenFirstToggle(bool)));
+
+
+    Util::setFontDialog(this);
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
 }
 void DialogRace::slot_screenResize()
 {
-    Util::setWidgetSize(this);
 }
 
 DialogRace::~DialogRace()
@@ -246,12 +251,6 @@ void DialogRace::initList(QList<boatVLM*> & boat_list_ptr,QList<raceData*> & rac
         this->filterReal->setEnabled(false);
     }
     getNextRace();
-}
-void DialogRace::NSZToggle(bool b)
-{
-    param_list[numRace]->displayNSZ=b;
-    param_list[numRace]->colorNSZ=inputTraceColor->getLineColor();
-    param_list[numRace]->widthNSZ=inputTraceColor->getLineWidth();
 }
 void DialogRace::myListToggle(bool b)
 {
@@ -584,8 +583,6 @@ void DialogRace::done(int result)
     Settings::saveGeometry(this);
     if(result == QDialog::Accepted)
     {
-        param_list[numRace]->colorNSZ=inputTraceColor->getLineColor();
-        param_list[numRace]->widthNSZ=inputTraceColor->getLineWidth();
         saveData(true); /* really saving, not only applying*/
     }
     else if(somethingChanged)
@@ -656,13 +653,6 @@ void DialogRace::chgRace(int id)
     if(numRace!=-1)
     {
         /* changement du select des boat */
-        param_list[numRace]->colorNSZ=inputTraceColor->getLineColor();
-        param_list[numRace]->widthNSZ=inputTraceColor->getLineWidth();
-        param_list[numRace]->displayNSZ=displayNSZ->isChecked();
-        if(nsNSZ->currentText()=="N")
-            param_list[numRace]->latNSZ=latNSZ->value();
-        else
-            param_list[numRace]->latNSZ=-latNSZ->value();
         if(this->buttonMySelection->isChecked())
             param_list[numRace]->showWhat=SHOW_MY_LIST;
         if(this->button10First->isChecked())
@@ -896,12 +886,6 @@ void DialogRace::chgRace(int id)
     modelResult->sort(0);
     this->boatSelect->setText(QString().setNum(nbSelected)+"/"+QString().setNum(RACE_MAX_BOAT));
     this->boatRacing->setText(QString().setNum(param_list[numRace]->boats.size()));
-    displayNSZ->setChecked(param_list[numRace]->displayNSZ);
-    latNSZ->setValue(qAbs(param_list[numRace]->latNSZ));
-    if(param_list[numRace]->latNSZ<0)
-        nsNSZ->setCurrentIndex(1);
-    else
-        nsNSZ->setCurrentIndex(0);
     if(param_list[numRace]->showWhat==SHOW_MY_LIST)
         this->buttonMySelection->setChecked(true);
     else if(param_list[numRace]->showWhat==SHOW_TEN_FIRST)
@@ -918,24 +902,11 @@ void DialogRace::chgRace(int id)
     this->buttonReal->setEnabled(param_list[numRace]->hasReal);
     this->filterReal->setEnabled(param_list[numRace]->hasReal);
 
-    noSailZoneGroup->layout()->removeWidget(inputTraceColor);
-    delete inputTraceColor;
-    inputTraceColor =new InputLineParams(param_list[numRace]->widthNSZ,param_list[numRace]->colorNSZ,2,  QColor(Qt::black),this,0.1,5);
-    noSailZoneGroup->layout()->addWidget( inputTraceColor);
-    latNSZ->setEnabled(param_list[numRace]->displayNSZ);
-    nsNSZ->setEnabled(param_list[numRace]->displayNSZ);
-    inputTraceColor->setEnabled(param_list[numRace]->displayNSZ);
     this->tab->setFocus();
     this->boatTotal->setText(QString().setNum(model->rowCount()+modelResult->rowCount()));
     this->boatArrived->setText(QString().setNum(modelResult->rowCount()));
 }
 
-void DialogRace::on_displayNSZ_clicked()
-{
-    latNSZ->setEnabled(displayNSZ->isChecked());
-    nsNSZ->setEnabled(displayNSZ->isChecked());
-    inputTraceColor->setEnabled(displayNSZ->isChecked());
-}
 void DialogRace::slotFilterReal()
 {
     bool ok;

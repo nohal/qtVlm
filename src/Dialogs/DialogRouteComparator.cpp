@@ -8,15 +8,9 @@
 #include "Orthodromie.h"
 #include "POI.h"
 #include "Util.h"
-#ifdef QT_V5
-#include <QScroller>
-#endif
 DialogRouteComparator::DialogRouteComparator(myCentralWidget *parent) : QDialog(parent)
 {
     setupUi(this);
-#ifdef QT_V5
-    QScroller::grabGesture(this->scrollArea->viewport());
-#endif
     Util::setFontDialog(this);
     connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     this->mcw=parent;

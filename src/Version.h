@@ -32,9 +32,6 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #ifdef __WIN_QTVLM
         #define QTVLM_OS "Windows"
 #endif
-#ifdef __ANDROID_QTVLM
-        #define QTVLM_OS "Android"
-#endif
 #ifdef __UNIX_QTVLM
         #define QTVLM_OS "Linux"
 #endif

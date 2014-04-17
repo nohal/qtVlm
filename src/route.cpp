@@ -97,7 +97,6 @@ ROUTE::ROUTE(QString name, Projection *proj, DataManager *dataManager, myScene *
 
     this->line=new vlmLine(proj,myscene,Z_VALUE_ROUTE);
     line->setRoute(this);
-    line->grabGesture(Qt::TapAndHoldGesture);
     line->setFlag(QGraphicsWidget::ItemIsSelectable,true);
     connect(line,SIGNAL(hovered()),this,SLOT(hovered()));
     connect(line,SIGNAL(unHovered()),this,SLOT(unHovered()));
@@ -315,11 +314,9 @@ void ROUTE::zoom()
 void ROUTE::setContextualMenu()
 {
     QIcon icon;
-#ifndef __ANDROID_QTVLM
     QPixmap iconI(parent->getIconSize());
     iconI.fill(this->getColor());
     icon=QIcon(iconI);
-#endif
     ac_editRoute->setText(tr("Editer la route")+" "+name);
     ac_editRoute->setIcon(icon);
     ac_poiRoute->setText(tr("Montrer les POIs intermediaires de la route")+" "+name);
@@ -345,6 +342,9 @@ void ROUTE::slot_recalculate(boat * boat)
         fastSpeed=NULL;
     }
     if(temp) return;
+    int precision=1;
+    if(this->getSimplify()&&!this->get_strongSimplify())
+        precision=5;
     QTime timeTotal;
     timeTotal.start();
     //QTime timeDebug;
@@ -419,11 +419,11 @@ void ROUTE::slot_recalculate(boat * boat)
                 if(myBoat->get_boatType()!=BOAT_VLM)
                     eta=((boatReal*)myBoat)->getLastUpdateTime();
                 else
-                    eta=((boatVLM*)myBoat)->getPrevVac()/*+((boatVLM*)myBoat)->getVacLen()*/;
+                    eta=((boatVLM*)myBoat)->getPrevVac()/*+(((boatVLM*)myBoat)->getVacLen()/precision)*/;
                 now = (QDateTime::currentDateTime()).toUTC().toTime_t();
 //#warning find a better way to identify a boat that has not yet started
 /*cas du boat inscrit depuis longtemps mais pas encore parti*/
-                //if(eta < now - 2*myBoat->getVacLen() && myBoat->get_boatType()==BOAT_VLM)
+                //if(eta < now - 2*(myBoat->getVacLen()/precision) && myBoat->get_boatType()==BOAT_VLM)
                 if(myBoat->getLoch()<0.01 && myBoat->get_boatType()==BOAT_VLM)
                     eta=now;
                 break;
@@ -454,11 +454,11 @@ void ROUTE::slot_recalculate(boat * boat)
             tip="<br>Starting point for route "+name;
 #if 0
             if(startTimeOption==3)
-                poi->setRouteTimeStamp((int)eta+myBoat->getVacLen()*multVac);
+                poi->setRouteTimeStamp((int)eta+(myBoat->getVacLen()/precision)*multVac);
             else
                 poi->setRouteTimeStamp((int)eta);
 #else
-            poi->setRouteTimeStamp((int)eta);
+            poi->setEta(eta);
 #endif
             poi->setTip(tip);
             lastReachedPoi = poi;
@@ -541,7 +541,7 @@ void ROUTE::slot_recalculate(boat * boat)
             {
                 tip=tr("<br>Route: ")+name;
                 tip=tip+"<br>Estimated ETA: No grib loaded" ;
-                poi->setRouteTimeStamp(-1);
+                poi->setEta(-1);
                 poi->setTip(tip);
                 has_eta=false;
 //                qWarning()<<"no grib loaded for route!!";
@@ -564,9 +564,9 @@ void ROUTE::slot_recalculate(boat * boat)
                 do
                 {
                     if(imported)
-                        eta=poi->getRouteTimeStamp();
+                        eta=poi->getEta();
                     else
-                        eta= eta + myBoat->getVacLen()*multVac;
+                        eta= eta + (myBoat->getVacLen()/precision)*multVac;
                     Eta=eta;
                     if(((dataManager->getInterpolatedWind(lon, lat,
                                               eta,&wind_speed,&wind_angle,INTERPOLATION_DEFAULT)
@@ -722,13 +722,13 @@ void ROUTE::slot_recalculate(boat * boat)
                             }
                             lastKnownSpeed=qMax(10e-4,newSpeed);
                             lastTwa=angle;
-                            distanceParcourue=newSpeed*myBoat->getVacLen()*multVac/3600.00;
+                            distanceParcourue=newSpeed*(myBoat->getVacLen()/precision)*multVac/3600.00;
 
                             if(!imported && nbToReach==0)
                             {
                                 if(distanceParcourue>remaining_distance)
                                 {
-                                    eta=eta-myBoat->getVacLen()*multVac;
+                                    eta=eta-(myBoat->getVacLen()/precision)*multVac;
                                     Eta=eta;
                                     if(!this->getSimplify() && poi==my_poiList.last())
                                     {
@@ -909,16 +909,16 @@ void ROUTE::slot_recalculate(boat * boat)
 //            qWarning()<<"newSpeed="<<newSpeed<<" wind_speed="<<wind_speed<<" angle="<<angle;
             line->setLastPointIsPoi();
             tip=tr("<br>Route: ")+name;
-            //time_t Eta=eta-myBoat->getVacLen();
+            //time_t Eta=eta-(myBoat->getVacLen()/precision);
             if(!has_eta)
             {
                 tip=tip+tr("<br>ETA: Non joignable avec ce fichier GRIB");
-                poi->setRouteTimeStamp(-1);
+                poi->setEta(-1);
             }
             else if(Eta-start<=0)
             {
                 tip=tip+tr("<br>ETA: deja atteint");
-                poi->setRouteTimeStamp(Eta);
+                poi->setEta(Eta);
             }
             else
             {
@@ -960,11 +960,11 @@ void ROUTE::slot_recalculate(boat * boat)
                     QString::number((int)mins)+" "+tr("minutes");
 #if 0
                 if(myBoat->get_boatType()==BOAT_REAL)
-                    poi->setRouteTimeStamp(Eta+myBoat->getVacLen());
+                    poi->setRouteTimeStamp(Eta+(myBoat->getVacLen()/precision));
                 else
                     poi->setRouteTimeStamp(Eta);
 #else
-                poi->setRouteTimeStamp(Eta);
+                poi->setEta(Eta);
 #endif
                 if(poi==this->my_poiList.last())
                     eta=Eta;
@@ -1031,7 +1031,7 @@ void ROUTE::slot_recalculate(boat * boat)
                                 tt="<br>"+tr("ETA depuis la date fixe")+" ("+tm.toString("dd MMM-hh:mm")+"):<br>";
                                 break;
                     }
-                    tm.setTime_t(poi->getRouteTimeStamp());
+                    tm.setTime_t(poi->getEta());
                     tip=tip+tt+tm.toString("dd MMM-hh:mm")+"<br>";
                     tip=tip+QString::number((int)days)+" "+tr("jours")+" "+QString::number((int)hours)+" "+tr("heures")+" "+
                         QString::number((int)mins)+" "+tr("minutes");
@@ -1041,7 +1041,7 @@ void ROUTE::slot_recalculate(boat * boat)
                     else
                         poi->setRouteTimeStamp(Eta);
 #else
-                    poi->setRouteTimeStamp(Eta);
+                    poi->setEta(Eta);
 #endif
                     if(poi==this->my_poiList.last())
                         eta=Eta;
@@ -1694,7 +1694,7 @@ void ROUTE::shiftEtas(QDateTime newStart)
     int timeDiff=newStart.toTime_t()-this->startTime.toTime_t();
     this->startTime=newStart;
     foreach(POI * poi,this->my_poiList)
-        poi->setRouteTimeStamp(poi->getRouteTimeStamp()+timeDiff);
+        poi->setEta(poi->getEta()+timeDiff);
     this->initialized=false;
     this->setFrozen2(false);
     this->setFrozen2(true);

@@ -47,8 +47,6 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "vlmLine.h"
 #include <QStyleFactory>
 #include "AngleUtil.h"
-#include <QGestureEvent>
-//#include <QToolTip>
 #include "Terrain.h"
 
 /**************************/
@@ -57,7 +55,7 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 POI::POI(const QString &name, const int &type, const double &lat, const double &lon,
                  Projection *proj, MainWindow *main, myCentralWidget *parentWindow,
-                 const double &wph,const int &tstamp, const bool &useTstamp)
+                 const double &wph)
     : QGraphicsWidget()
 {
     this->parent = parentWindow;
@@ -68,8 +66,6 @@ POI::POI(const QString &name, const int &type, const double &lat, const double &
     setLatitude(lat);
     setLongitude(lon);
     this->wph=wph;
-    this->timeStamp=tstamp;
-    this->useTstamp=useTstamp;
     this->type=type;
     this->typeMask=1<<type;
     this->myBoatId=-2;
@@ -94,8 +90,7 @@ POI::POI(const QString &name, const int &type, const double &lat, const double &
     this->autoRange = true;
     this->drawLineOrtho=true;
     this->shift=false;
-    useRouteTstamp=false;
-    routeTimeStamp=-1;
+    this->eta=-1;
     route=NULL;
     routeName="";
     this->labelHidden=parentWindow->get_shLab_st();
@@ -153,17 +148,6 @@ POI::POI(const QString &name, const int &type, const double &lat, const double &
     {
         this->slot_WPChanged(parent->getSelectedBoat()->getWPLat(),parent->getSelectedBoat()->getWPLon());
     }
-    if(Settings::getSetting(enable_Gesture).toString()=="1")
-    {
-        this->grabGesture(Qt::TapAndHoldGesture);
-        this->grabGesture(Qt::TapGesture);
-#if 0
-        this->grabGesture(Qt::SwipeGesture,Qt::ReceivePartialGestures);
-        this->grabGesture(Qt::PanGesture,Qt::ReceivePartialGestures);
-        this->grabGesture(Qt::CustomGesture,Qt::ReceivePartialGestures);
-        this->grabGesture(Qt::PinchGesture,Qt::ReceivePartialGestures);
-#endif
-    }
     this->setFlag(QGraphicsWidget::ItemSendsScenePositionChanges,true);
     this->setFlag(QGraphicsWidget::ItemIsSelectable,true);
     this->setFlag(QGraphicsWidget::ItemIsMovable,false);
@@ -171,29 +155,15 @@ POI::POI(const QString &name, const int &type, const double &lat, const double &
     timerMoveable->setSingleShot(true);
     timerMoveable->setInterval(500);
     connect(timerMoveable,SIGNAL(timeout()),this,SLOT(slot_moveable()));
-    QTapAndHoldGesture::setTimeout(2000);
 }
 QVariant POI::itemChange(GraphicsItemChange change, const QVariant &value)
 {
-    if(change==ItemToolTipHasChanged)
-    {
-        if(isSelected())
-            parent->showToolTip(toolTip(),false);
-    }
     if(change==ItemSelectedHasChanged)
     {
         prepareGeometryChange();
-        if(!isSelected())
-        {
-            timerMoveable->stop();
-            parent->showToolTip("");
-            this->setFlag(QGraphicsWidget::ItemIsMovable,false);
-        }
-        else
+        if(isSelected())
         {
             parent->clearOtherSelected(this);
-            this->showContextMenu(-1,-1,false);
-            parent->showToolTip(toolTip(),true,&poiMenu);
             mainWin->slot_POIselected(this);
             if(!shift)
                 timerMoveable->start();
@@ -255,33 +225,6 @@ void POI::mouseReleaseEvent(QGraphicsSceneMouseEvent *e)
     qWarning()<<"mouse release detected in POI";
 }
 
-bool POI::sceneEvent(QEvent *event)
-{
-    //qWarning()<<"event detected in POI"<<event->type();
-    if (event->type() == QEvent::Gesture)
-    {
-        QGraphicsWidget::sceneEvent(event);
-        event->accept();
-        QGestureEvent * gestureEvent=static_cast<QGestureEvent*>(event);
-        foreach (QGesture * gesture, gestureEvent->gestures())
-        {
-            gestureEvent->accept(gesture);
-            if(gesture->gestureType()==Qt::TapGesture)
-                qWarning()<<"tap gesture in POI"<<gesture->state();
-            else if (gesture->gestureType()==Qt::TapAndHoldGesture)
-            {
-                qWarning()<<"tapAndHold gesture in POI"<<gesture->state();
-                QTapAndHoldGesture *p=static_cast<QTapAndHoldGesture*>(gesture);
-                if(p->state()==Qt::GestureFinished && !hasMoved && this->scene()->mouseGrabberItem()==this)
-                    this->showContextMenu(p->position().x(),p->position().y());
-            }
-            else
-                qWarning()<<"unexpected gesture in POI:"<<gesture->gestureType()<<gesture->state();
-        }
-        return true;
-    }
-    return QGraphicsWidget::sceneEvent(event);
-}
 void POI::slot_moveable()
 {
     if(this->isSelected())
@@ -557,7 +500,7 @@ void POI::showContextMenu(const double &x, const double &y, const bool &popItUp)
     else
     {
         ac_setWp->setEnabled(!((MainWindow*)mainWin)->getBoatLockStatus());
-        ac_setGribDate->setEnabled(useTstamp || useRouteTstamp);
+        ac_setGribDate->setEnabled(eta!=-1);
         ac_edit->setEnabled(true);
         ac_delPoi->setEnabled(true);
         ac_copy->setEnabled(true);
@@ -585,20 +528,14 @@ void POI::showContextMenu(const double &x, const double &y, const bool &popItUp)
             ac_zoomRoute->setVisible(false);
             ac_finePosit->setVisible(false);
             ac_setHorn->setVisible(false);
-#ifndef __ANDROID_QTVLM
             mn_route->setIcon(QIcon());
-#endif
         }
         else
         {
             QPixmap iconI(parent->getIconSize());
             iconI.fill(route->getColor());
             QIcon icon(iconI);
-#ifndef __ANDROID_QTVLM
             mn_route->setIcon(icon);
-#endif
-//            if(routeSubMenu!=NULL)
-//                routeSubMenu->setIcon(icon);
             ac_delRoute->setVisible(true);
             ac_delRoute->setIcon(icon);
             ac_editRoute->setVisible(true);
@@ -758,20 +695,17 @@ void POI::setTip(QString tip)
 }
 void POI::update_myStr(void)
 {
+    if(route==NULL) eta=-1;
     QDateTime tm;
     tm.setTimeSpec(Qt::UTC);
-    tm.setTime_t(getTimeStamp());
-    if(route==NULL) useRouteTstamp=false;
-    if(useRouteTstamp || useTstamp)
-        if(useRouteTstamp)
-        {
-            if(this->routeTimeStamp==0)
+    tm.setTime_t(eta);
+    if(route!=NULL)
+    {
+            if(this->eta==-1)
                 my_str=name + " " + tr("Non joignable avec ce Grib");
             else
                 my_str=name + " " + tm.toString("dd MMM-hh:mm");
-        }
-        else
-            my_str=name + " " + tm.toString("dd MMM-hh:mm");
+    }
     else
         my_str=this->name;
     QFont myFont=(QFont(QApplication::font()));
@@ -782,21 +716,13 @@ void POI::update_myStr(void)
     height = qMax(fm.height()+2,10);
 }
 
-void POI::setTimeStamp(time_t date)
+void POI::setEta(time_t date)
 {
-    this->useTstamp=true;
-    this->timeStamp=date;
+    if(route==NULL)
+        eta=-1;
+    else
+        this->eta=date;
     update_myStr();
-
-}
-
-void POI::setRouteTimeStamp(time_t date)
-{
-    this->useRouteTstamp=(date!=-1);
-    if(useRouteTstamp) useTstamp=false;
-    this->routeTimeStamp=date;
-    update_myStr();
-    //update();
 }
 
 
@@ -863,7 +789,7 @@ void POI::setRoute(ROUTE *route)
     {
         this->route->insertPoi(this);
         if(this->route==NULL) /*route has rejected the poi for some reason*/
-            setRouteTimeStamp(false);
+            setEta(-1);
         else
         {
             this->routeName=route->getName();
@@ -873,7 +799,7 @@ void POI::setRoute(ROUTE *route)
     else
     {
         //this->notSimplificable=false;
-        setRouteTimeStamp(false);
+        setEta(-1);
     }
 }
 
@@ -1030,7 +956,7 @@ void POI::slotCompassLine()
 }
 void POI::slot_setHorn()
 {
-    QDateTime time=QDateTime::fromTime_t(this->routeTimeStamp).toUTC();
+    QDateTime time=QDateTime::fromTime_t(this->eta).toUTC();
     time.setTimeSpec(Qt::UTC);
 //    qWarning()<<"time before sub "<<time;
 //    time.addSecs(-600);
@@ -1126,8 +1052,7 @@ void POI::slot_allowToMove()
 
 void POI::slot_setGribDate()
 {
-    if (useRouteTstamp) emit setGribDate(routeTimeStamp);
-    else if(useTstamp) emit setGribDate(timeStamp);
+    if (eta!=-1) emit setGribDate(eta);
 }
 
 void POI::slot_delPoi()
@@ -1333,11 +1258,11 @@ void POI::slot_finePosit(bool silent)
         if (route->getHas_eta())
         {
             tm.setTime_t(route->getEta());
-            previousMe=new POI(tr("ETA du prochain POI: ")+tm.toString("dd MMM-hh:mm"),0,savedLat,savedLon,this->proj,this->mainWin,this->parent,0,0,false);
+            previousMe=new POI(tr("ETA du prochain POI: ")+tm.toString("dd MMM-hh:mm"),0,savedLat,savedLon,this->proj,this->mainWin,this->parent,0);
         }
         else
             previousMe=new POI(tr("Dist. restante du prochain POI: ")+r.sprintf("%.2f milles",route->getRemain()),
-                               0,savedLat,savedLon,this->proj,this->mainWin,this->parent,0,0,false);
+                               0,savedLat,savedLon,this->proj,this->mainWin,this->parent,0);
         parent->slot_addPOI_list(previousMe);
     }
 
@@ -1360,7 +1285,7 @@ void POI::slot_finePosit(bool silent)
         (P).eta     = route->getEta();                                      \
         (P).remain  = route->getRemain();                                   \
         (P).arrived = route->getHas_eta();                                  \
-        (P).reached = useRouteTstamp;                                       \
+        (P).reached = eta!=-1;                                       \
         double X,Y;                                                         \
         proj->map2screenDouble(lon, lat, &X, &Y);                           \
         mySetPos (X,Y);                                                       \
@@ -1378,7 +1303,7 @@ void POI::slot_finePosit(bool silent)
                         + QString().sprintf(" (%+.3f milles)",simplex[0].remain), \
                         0,                                              \
                         simplex[0].lat, simplex[0].lon,                 \
-                        this->proj, this->mainWin, this->parent, 0, 0, false); \
+                        this->proj, this->mainWin, this->parent, 0);    \
         parent->slot_addPOI_list (best);                                \
     } while (0)
 
@@ -1725,14 +1650,7 @@ QPainterPath POI::shape() const
     if(isSelected())
         path.addEllipse(R1);
     else
-#ifdef __ANDROID_QTVLM
-    {
-        R1=QRectF(-sh/2,-sh/2,sh,sh);
-        path.addEllipse(R1);
-    }
-#else
         path.addRect(-squareSize/2.0-1,-squareSize/2.0-1,squareSize+2,squareSize+2);
-#endif
     path.addRect(squareSize/2.0+2,-height/2.0-2,width+4,height+4);
     path.setFillRule(Qt::WindingFill);
     return path;
@@ -1831,7 +1749,7 @@ void POI::importZyGrib(myCentralWidget * centralWidget) {
 
         if(foundName && foundLat && foundLon) {
             qWarning() << "All data ok: " << curCode << " - " << name << " - " << lat << "," << lon;
-            POI * poi = new POI(name, POI_TYPE_POI,lat,lon,centralWidget->getProj(),centralWidget->getMainWindow(),centralWidget,-1,-1,false);
+            POI * poi = new POI(name, POI_TYPE_POI,lat,lon,centralWidget->getProj(),centralWidget->getMainWindow(),centralWidget,-1);
             centralWidget->slot_addPOI_list(poi);
             foundName=foundLon=foundLat=false;
             nbPOI++;
@@ -1898,7 +1816,7 @@ void POI::importGeoData(myCentralWidget * centralWidget) {
         }
         if(letter=="W") pLon=-pLon;
         QString pTime=list1[4];
-        POI * poi = new POI(pId, POI_TYPE_BALISE,pLat,pLon,centralWidget->getProj(),centralWidget->getMainWindow(),centralWidget,-1,-1,false);
+        POI * poi = new POI(pId, POI_TYPE_BALISE,pLat,pLon,centralWidget->getProj(),centralWidget->getMainWindow(),centralWidget,-1);
         poi->setTip(tr("Classement ")+pRank+"<br>"+pTime);
         centralWidget->slot_addPOI_list(poi);
         nbPOI++;
@@ -1929,8 +1847,7 @@ void POI::importGeoData(myCentralWidget * centralWidget) {
 #define LON_NAME_OLD      "Pass"
 #define WPH_NAME          "Wph"
 #define TYPE_NAME         "type"
-#define TSTAMP_NAME       "timeStamp"
-#define USETSTAMP_NAME    "useTimeStamp"
+#define POI_ETA           "eta"
 #define POI_ROUTE         "route"
 #define POI_NAVMODE       "NavMode"
 #define POI_LABEL_HIDDEN  "LabelHidden"
@@ -1969,14 +1886,13 @@ void POI::read_POIData(myCentralWidget * centralWidget) {
              double lon=-1, lat=-1,wph=-1;
              double lonConnected=-1, latConnected=-1;
              int type = -1;
-             int tstamp=-1;
-             bool useTstamp=false;
              bool labelHidden=false;
              int navMode=0;
              bool notSimplificable=false;
              QColor lineColor=Qt::blue;
              double lineWidth=2;
              int sequence=0;
+             time_t eta=-1;
              bool lineOrtho=false;
              int poiBoatId=-2;
 
@@ -2074,15 +1990,10 @@ void POI::read_POIData(myCentralWidget * centralWidget) {
                          sequence = dataNode.toText().data().toInt();
                   }
 
-                  if(subNode.toElement().tagName() == TSTAMP_NAME) {
+                  if(subNode.toElement().tagName() == POI_ETA) {
                       dataNode = subNode.firstChild();
                       if(dataNode.nodeType() == QDomNode::TextNode)
-                          tstamp = dataNode.toText().data().toInt();
-                  }
-                  if(subNode.toElement().tagName() == USETSTAMP_NAME) {
-                      dataNode = subNode.firstChild();
-                      if(dataNode.nodeType() == QDomNode::TextNode)
-                          useTstamp = dataNode.toText().data().toInt()==1;
+                          eta = dataNode.toText().data().toInt();
                   }
 
                   if(subNode.toElement().tagName() == POI_LABEL_HIDDEN) {
@@ -2113,8 +2024,9 @@ void POI::read_POIData(myCentralWidget * centralWidget) {
              }
              if(!name.isEmpty() && lat!=-1 && lon != -1) {
                   if(type==-1) type=POI_TYPE_POI;
-                  POI * poi = new POI(name,type,lat,lon,centralWidget->getProj(),centralWidget->getMainWindow(),centralWidget,wph,tstamp,useTstamp);
+                  POI * poi = new POI(name,type,lat,lon,centralWidget->getProj(),centralWidget->getMainWindow(),centralWidget,wph);
                   poi->setRouteName(routeName);
+                  poi->setEta(eta);
                   poi->setNavMode(navMode);
                   poi->setMyLabelHidden(labelHidden);
                   poi->setNotSimplificable(notSimplificable);
@@ -2246,14 +2158,9 @@ void POI::write_POIData(QList<POI*> & poi_list,myCentralWidget * /*centralWidget
          t = doc.createTextNode(QString().setNum(poi->getWph()));
          tag.appendChild(t);
 
-         tag = doc.createElement(TSTAMP_NAME);
+         tag = doc.createElement(POI_ETA);
          group.appendChild(tag);
-         t = doc.createTextNode(QString().setNum(poi->getTimeStamp()));
-         tag.appendChild(t);
-
-         tag = doc.createElement(USETSTAMP_NAME);
-         group.appendChild(tag);
-         t = doc.createTextNode(QString().setNum(poi->getUseTimeStamp()?1:0));
+         t = doc.createTextNode(QString().setNum(poi->getEta()));
          tag.appendChild(t);
 
          tag = doc.createElement(POI_LABEL_HIDDEN);

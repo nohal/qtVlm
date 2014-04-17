@@ -9,18 +9,12 @@
 #include "Util.h"
 #include <QMessageBox>
 #include "bsb.h"
-#ifdef QT_V5
-#include <QScroller>
-#endif
 dialogLoadImg::dialogLoadImg(loadImg * carte, myCentralWidget *parent)
     : QDialog(parent)
 {
     this->carte=carte;
     this->parent=parent;
     setupUi(this);
-#ifdef QT_V5
-    QScroller::grabGesture(this->scrollArea->viewport());
-#endif
     connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     this->alpha->setMaximum(100);
@@ -40,11 +34,11 @@ dialogLoadImg::dialogLoadImg(loadImg * carte, myCentralWidget *parent)
     timerResize->setSingleShot(true);
     timerResize->setInterval(300);
     connect(timerResize,SIGNAL(timeout()),this,SLOT(showSnapshot()));
-//    showSnapshot();
+    Util::setFontDialog(this);
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
 }
 void dialogLoadImg::slot_screenResize()
 {
-    Util::setWidgetSize(this);
 }
 void dialogLoadImg::resizeEvent(QResizeEvent *)
 {
@@ -63,7 +57,6 @@ void dialogLoadImg::showSnapshot()
         int OK=myCarte->setMyImgFileName(FileName->text(),false);
         if(OK!=0)
         {
-            snapShot->setPixmap(myCarte->getSnapshot(snapShot->size()));
             kapInfo->setText(tr("Name: ")+myCarte->getBsb()->name);
             kapInfo->append(tr("Projection: ")+myCarte->getBsb()->projection);
             if(myCarte->getBsb()->num_wpxs==0 || myCarte->getBsb()->num_wpys==0)
@@ -72,6 +65,9 @@ void dialogLoadImg::showSnapshot()
                 kapInfo->append(tr("Polynomials found in kap file"));
             kapInfo->append(tr("Pixel size: ")+QString().setNum(myCarte->getBsb()->width)+"x"+QString().setNum(myCarte->getBsb()->height));
             zoom->setEnabled(true);
+            kapInfo->adjustSize();
+            this->updateGeometry();
+            snapShot->setPixmap(myCarte->getSnapshot(snapShot->size()));
         }
         else
         {

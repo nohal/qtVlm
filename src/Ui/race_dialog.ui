@@ -146,7 +146,7 @@
        <item>
         <widget class="QTabWidget" name="tabWidget">
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="tab">
           <attribute name="title">
@@ -185,107 +185,6 @@
            </item>
           </layout>
          </widget>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="noSailZoneGroup">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>130</height>
-          </size>
-         </property>
-         <property name="title">
-          <string>Ligne de No Sail Zone</string>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_2">
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_5">
-            <item>
-             <widget class="QCheckBox" name="displayNSZ">
-              <property name="text">
-               <string>Afficher</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_3">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_4">
-              <property name="text">
-               <string>Latitude</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QDoubleSpinBox" name="latNSZ">
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-              <property name="suffix">
-               <string> deg</string>
-              </property>
-              <property name="decimals">
-               <number>1</number>
-              </property>
-              <property name="maximum">
-               <double>90.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>60.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="nsNSZ">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="currentIndex">
-               <number>1</number>
-              </property>
-              <item>
-               <property name="text">
-                <string>N</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>S</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_2">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-         </layout>
         </widget>
        </item>
        <item>
@@ -393,6 +292,9 @@
          <property name="standardButtons">
           <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
          </property>
+         <property name="centerButtons">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
       </layout>
@@ -404,9 +306,6 @@
  <tabstops>
   <tabstop>chooser_raceList</tabstop>
   <tabstop>ranking</tabstop>
-  <tabstop>displayNSZ</tabstop>
-  <tabstop>latNSZ</tabstop>
-  <tabstop>nsNSZ</tabstop>
   <tabstop>buttonMySelection</tabstop>
   <tabstop>button10distance</tabstop>
   <tabstop>buttonAll</tabstop>
@@ -418,184 +317,7 @@
   <tabstop>arrived</tabstop>
  </tabstops>
  <resources/>
- <connections>
-  <connection>
-   <sender>chooser_raceList</sender>
-   <signal>currentIndexChanged(int)</signal>
-   <receiver>race_dialog_ui</receiver>
-   <slot>chgRace(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>62</x>
-     <y>18</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>262</x>
-     <y>26</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>accepted()</signal>
-   <receiver>race_dialog_ui</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>412</x>
-     <y>536</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>127</x>
-     <y>277</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>rejected()</signal>
-   <receiver>race_dialog_ui</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>412</x>
-     <y>536</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>415</x>
-     <y>278</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>button10First</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>race_dialog_ui</receiver>
-   <slot>tenFirstToggle(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>217</x>
-     <y>496</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>372</x>
-     <y>340</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonMySelection</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>race_dialog_ui</receiver>
-   <slot>myListToggle(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>217</x>
-     <y>466</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>372</x>
-     <y>340</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>button10distance</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>race_dialog_ui</receiver>
-   <slot>tenFirstDistToggle(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>449</x>
-     <y>466</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>372</x>
-     <y>340</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>button10ranking</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>race_dialog_ui</receiver>
-   <slot>tenFirstRankToggle(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>449</x>
-     <y>496</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>372</x>
-     <y>340</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonNone</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>race_dialog_ui</receiver>
-   <slot>noneToggle(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>629</x>
-     <y>466</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>403</x>
-     <y>327</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>displayNSZ</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>race_dialog_ui</receiver>
-   <slot>NSZToggle(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>80</x>
-     <y>370</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>403</x>
-     <y>327</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonReal</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>race_dialog_ui</receiver>
-   <slot>showRealToggle(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>570</x>
-     <y>496</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>403</x>
-     <y>327</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonAll</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>race_dialog_ui</receiver>
-   <slot>showAllToggle(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>510</x>
-     <y>458</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>355</x>
-     <y>272</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
  <slots>
   <slot>chgRace(int)</slot>
   <slot>doSynch()</slot>

@@ -6,17 +6,11 @@
 #include "Util.h"
 #include "settings.h"
 #include "mycentralwidget.h"
-#ifdef QT_V5
-#include <QScroller>
-#endif
 DialogViewPolar::DialogViewPolar(myCentralWidget *parent) :
     QDialog(parent->getMainWindow())
 {
     myBoat=NULL;
     setupUi(this);
-#ifdef QT_V5
-    QScroller::grabGesture(this->scrollArea->viewport());
-#endif
     connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     QMap<QWidget *,QFont> exceptions;

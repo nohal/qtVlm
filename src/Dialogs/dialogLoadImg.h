@@ -5,8 +5,8 @@
 #include "class_list.h"
 #include "loadImg.h"
 #include "mycentralwidget.h"
+#include "dataDef.h"
 #include "ui_dialogLoadImg.h"
-
 class dialogLoadImg : public QDialog, public Ui::dialogLoadImg_ui
 { Q_OBJECT
     

@@ -28,9 +28,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Player.h"
 #include "settings.h"
 #include "Util.h"
-#ifdef QT_V5
-#include <QScroller>
-#endif
 #define VLM_RACE_INFO 2
 #define VLM_GET_TRACK 3
 #define VLM_GET_PARTIAL_TRACK 4
@@ -43,9 +40,6 @@ DialogDownloadTracks::DialogDownloadTracks(MainWindow * ,myCentralWidget * paren
 {
     this->parent=parent;
     ui->setupUi(this);
-#ifdef QT_V5
-    QScroller::grabGesture(this->ui->scrollArea->viewport());
-#endif
     connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     this->raceIsValid=false;

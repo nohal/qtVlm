@@ -27,8 +27,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "Util.h"
 #include "GshhsReader.h"
 #include "mycentralwidget.h"
-#include <QGestureEvent>
 #include "Terrain.h"
+#include <QtConcurrent>
 
 
 vlmLine::vlmLine(Projection * proj, myScene *myscene, double z_level) :
@@ -67,76 +67,18 @@ vlmLine::vlmLine(Projection * proj, myScene *myscene, double z_level) :
     this->coastDetection=false;
     if(myZvalue==Z_VALUE_ROUTE || myZvalue==Z_VALUE_BOAT || myZvalue==Z_VALUE_OPP || myZvalue==Z_VALUE_LINE_POI)
         this->setAcceptHoverEvents(true);
-    if(Settings::getSetting(enable_Gesture).toString()=="1")
-    {
-        this->grabGesture(Qt::TapGesture);
-    }
     this->setFlag(QGraphicsWidget::ItemIsSelectable,false);
     show();
 }
-bool vlmLine::event(QEvent *event)
-{
-//    if(this->zValue()==Z_VALUE_ROUTE)
-//        qWarning()<<"event in vlmLine (route)"<<event->type();
-    return QGraphicsWidget::event(event);
-}
-
-bool vlmLine::sceneEvent(QEvent *event)
-{
-//    if(this->zValue()==Z_VALUE_ROUTE)
-//        qWarning()<<"sceneEvent in vlmLine (route)"<<event->type();
-    if (event->type() == QEvent::Gesture)
-    {
-        QGraphicsWidget::sceneEvent(event);
-        event->accept();
-        QGestureEvent * gestureEvent=static_cast<QGestureEvent*>(event);
-        foreach (QGesture * gesture, gestureEvent->gestures())
-        {
-            gestureEvent->accept(gesture);
-            if(gesture->gestureType()==Qt::TapGesture)
-                qWarning()<<"tap gesture in vlmLine"<<gesture->state();
-            else if (gesture->gestureType()==Qt::TapAndHoldGesture)
-            {
-                qWarning()<<"tapAndHold gesture in vlmLine"<<gesture->state();
-                QTapAndHoldGesture *p=static_cast<QTapAndHoldGesture*>(gesture);
-                if(p->state()==Qt::GestureFinished && this->scene()->mouseGrabberItem()==this)
-                {
-                    QPointF tapCenter=gesture->hotSpot();
-                    QPoint screenPos=tapCenter.toPoint();
-                    QPointF scenePos=mcp->mapFromGlobal(screenPos);
-                    mcp->clearOtherSelected(NULL);
-                    int X=qRound(scenePos.x());
-                    int Y=qRound(scenePos.y());
-                    hover(true);
-                    mcp->getMainWindow()->showContextualMenu(X,Y,screenPos);
-                    hover(false);
-                }
-            }
-            else
-                qWarning()<<"unexpected gesture in vlmLine:"<<gesture->gestureType()<<gesture->state();
-        }
-        return true;
-    }
-    return QGraphicsWidget::sceneEvent(event);
-}
 QVariant vlmLine::itemChange(GraphicsItemChange change, const QVariant &value)
 {
-    if(change==ItemToolTipHasChanged)
-    {
-        if(isSelected())
-            mcp->showToolTip(toolTip(),false);
-    }
     if(change==ItemSelectedHasChanged)
     {
         if(!isSelected())
-        {
-            mcp->showToolTip("");
             hover(false);
-        }
         else
         {
             mcp->clearOtherSelected(this);
-            mcp->showToolTip(toolTip(),true,route?route->getRouteMenu():NULL);
             hover(true);
         }
     }
@@ -171,6 +113,7 @@ void vlmLine::set_zValue(const double &z)
 vlmLine::~vlmLine()
 {
     setSelected(false);
+    //QtConcurrent::blockingMap(polyList,vlmLine::deletePoly);
     qDeleteAll(polyList);
     polyList.clear();
 }
@@ -591,11 +534,7 @@ QPainterPath vlmLine::shape() const
     else
     {
         QPainterPathStroker stroker;
-#ifdef __ANDROID_QTVLM
-        stroker.setWidth(Util::getFingerSize()/2.0);
-#else
         stroker.setWidth(4);
-#endif
         stroker.setJoinStyle(Qt::BevelJoin);
         path=stroker.createStroke(myPath);
         path.setFillRule(Qt::WindingFill);

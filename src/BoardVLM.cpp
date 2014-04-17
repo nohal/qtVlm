@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef QT_V5
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QMessageBox>
-#include <QScroller>
 #else
 #include <QWidget>
 #include <QMessageBox>
@@ -55,7 +54,6 @@ boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) :
     setupUi(this);
     board::setFontDialog(this);
 #ifdef QT_V5
-    QScroller::grabGesture(this->scrollArea->viewport());
     if(Settings::getSetting(fusionStyle).toInt()==1)
     {
         editAngle->setStyleSheet("background-color: rgb(53, 53, 53);");
@@ -171,11 +169,9 @@ boardVLM::boardVLM(MainWindow * mainWin, inetConnexion * inet, board * parent) :
     editAngle->setSingleStep(1.0);
 
     /* Etat du compass */
-#ifndef __ANDROID_QTVLM
     if(Settings::getSetting(boardVLMCompassShown).toInt()==1)
         windAngle->show();
     else
-#endif
         windAngle->hide();
     this->editHeading->installEventFilter(this);
     this->editAngle->installEventFilter(this);

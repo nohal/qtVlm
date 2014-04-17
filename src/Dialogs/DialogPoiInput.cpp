@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 #ifdef QT_V5
 #include <QtWidgets/QWidget>
-#include <QScroller>
 #else
 #include <QWidget>
 #endif
@@ -30,13 +29,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 DialogPoiInput::DialogPoiInput(myCentralWidget * parent) : QDialog(parent)
 {
     setupUi(this);
-#ifdef QT_V5
-    QScroller::grabGesture(this->scrollArea->viewport());
-#endif
     connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
-    connect(this,SIGNAL(addPOI(QString,int,double,double,double,int,bool)),
-            parent,SLOT(slot_addPOI(QString,int,double,double,double,int,bool)));
+    connect(this,SIGNAL(addPOI(QString,int,double,double,double)),
+            parent,SLOT(slot_addPOI(QString,int,double,double,double)));
 }
 void DialogPoiInput::slot_screenResize()
 {
@@ -82,12 +78,11 @@ void DialogPoiInput::done(int result)
         QStringList lsbuf;
         QString name;
         double lat,lon,wph;
-        int tstamp;
         lsbuf = POI_list->toPlainText().split("\n");
         for (int i=0; i < lsbuf.size(); i++)
         {
-            if(Util::convertPOI(lsbuf.at(i),&name,&lat,&lon,&wph,&tstamp,type->currentIndex()))
-                emit addPOI(name,type->currentIndex(),lat,lon,wph,tstamp,tstamp!=-1);
+            if(Util::convertPOI(lsbuf.at(i),&name,&lat,&lon,&wph,type->currentIndex()))
+                emit addPOI(name,type->currentIndex(),lat,lon,wph);
         }
     }
     POI_list->clear();

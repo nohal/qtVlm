@@ -167,7 +167,7 @@ class ROUTE : public QObject
         static void read_routeData(myCentralWidget * centralWidget);
         static void write_routeData(QList<ROUTE*>& route_list,myCentralWidget * centralWidget);
         static void cleanFile(QString fname);
-        QList<QMenu*> * getRouteMenu(){return &routeMenu;}
+        QList<QMenu*> getRouteMenu(){return routeMenu;}
 
 public slots:
         void slot_recalculate(boat * boat=NULL);

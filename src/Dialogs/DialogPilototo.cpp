@@ -32,9 +32,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogPilototo.h"
 #include "DialogPilototoParam.h"
 #include "settings.h"
-#ifdef QT_V5
-#include <QScroller>
-#endif
 DialogPilototo::DialogPilototo(MainWindow *main,myCentralWidget * parent,inetConnexion * inet):QDialog(parent), inetClient(inet)
 {
     this->parent=parent;
@@ -42,9 +39,6 @@ DialogPilototo::DialogPilototo(MainWindow *main,myCentralWidget * parent,inetCon
     navModeToDo=false;
     this->move(250,100);
     setupUi(this);
-#ifdef QT_V5
-    QScroller::grabGesture(this->scrollArea->viewport());
-#endif
     connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     QMap<QWidget *,QFont> exceptions;
@@ -828,7 +822,6 @@ bool DialogPilototoInstruction::chkHasChanged(void)
 bool DialogPilototoInstruction::checkPIP(bool savChange,bool chgColor)
 {
     double lat_val,lon_val,wph_val;
-    int tstamp_int;
     double angle_val=0;
     bool ok;
     bool res=false;
@@ -865,7 +858,7 @@ bool DialogPilototoInstruction::checkPIP(bool savChange,bool chgColor)
         case 2:
         case 3:
         case 4:
-            if(!Util::convertPOI(instructionText->text(),NULL,&lat_val,&lon_val,&wph_val,&tstamp_int,0))
+            if(!Util::convertPOI(instructionText->text(),NULL,&lat_val,&lon_val,&wph_val))
             {
                 if(chgColor)
                 {
@@ -887,8 +880,6 @@ bool DialogPilototoInstruction::checkPIP(bool savChange,bool chgColor)
                     setLat(lat_val);
                     setLon(lon_val);
                     setWph(wph_val);
-                    if(tstamp_int!=-1)
-                        tstamp_scr.setTime_t(tstamp_int);
 
                     if(wph_val<0 || wph_val > 360)
                         setWph(-1);
@@ -1054,16 +1045,13 @@ void DialogPilototoInstruction::editInstruction(void)
 void DialogPilototoInstruction::pastePOI(void)
 {
     double lat,lon,wph;
-    int tstamp_int;
-    if(!Util::getWPClipboard(NULL,&lat,&lon,&wph,&tstamp_int))
+    if(!Util::getWPClipboard(NULL,&lat,&lon,&wph))
 	return;
 
     this->lat_scr = lat;
     this->lon_scr = lon;
     mode_scr=2; /*default mode : ortho */
 
-    if(tstamp_int!=-1)
-        tstamp_scr.setTime_t(tstamp_int);
 
     if(wph_scr<0 || wph_scr > 360)
         this->wph_scr=-1;

@@ -27,18 +27,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogPilototo.h"
 #include "POI.h"
 #include "settings.h"
-#ifdef QT_V5
-#include <QScroller>
-#endif
 #define EDT_LAT 1
 #define EDT_LON 2
 
 DialogPilototoParam::DialogPilototoParam(myCentralWidget *parent) : QDialog(parent->getMainWindow())
 {
     setupUi(this);
-#ifdef QT_V5
-    QScroller::grabGesture(this->scrollArea->viewport());
-#endif
     connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     instruction=NULL;
@@ -155,7 +149,7 @@ void DialogPilototoParam::pastePOI(void)
 {
     double lat,lon,wph;
 
-    if(!Util::getWPClipboard(NULL,&lat,&lon,&wph,NULL))
+    if(!Util::getWPClipboard(NULL,&lat,&lon,&wph))
         return;
 
     setValue(EDT_LON,lon);

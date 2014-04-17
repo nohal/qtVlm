@@ -23,26 +23,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifdef QT_V5
 #include <QtWidgets/QDialog>
-#include "QScroller"
 #else
 #include <QDialog>
 #endif
 
 #include "class_list.h"
 
-#ifdef QT_V5
-#define INIT_DIALOG { \
-    setupUi(this); \
-    QScroller::grabGesture(this->scrollArea->viewport()); \
-    QScroller::grabGesture(this->scrollArea->viewport(),QScroller::LeftMouseButtonGesture); \
-    initDialog(); \
-}
-#else
 #define INIT_DIALOG { \
     setupUi(this); \
     initDialog(); \
 }
-#endif
 
 class Dialog_view_pc: public QDialog
 { Q_OBJECT
@@ -55,7 +45,7 @@ class Dialog_view_pc: public QDialog
     public slots:
         void slot_screenResize(void);
 
-    private:
+    protected:
         myCentralWidget * cWt;
 };
 

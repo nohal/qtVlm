@@ -45,7 +45,7 @@ class POI : public QGraphicsWidget
         /* constructeurs, destructeurs */
         POI(const QString &name, const int &type, const double &lat, const double &lon,
                     Projection *proj, MainWindow *ownerMeteotable, myCentralWidget *parentWindow,
-                    const double &wph, const int &tstamp, const bool &useTstamp);
+                    const double &wph);
 
         ~POI();
 
@@ -55,10 +55,7 @@ class POI : public QGraphicsWidget
         double    getLongitude(void)    {return lon;}
         double    getLatitude(void)     {return lat;}
         double    getWph(void)          {return wph;}
-        int      getTimeStamp(void)    {if(useRouteTstamp && !useTstamp) return routeTimeStamp; else return timeStamp;}
-        bool     getUseTimeStamp(void) {if(timeStamp==-1) return false; else return useTstamp;}
-        bool     getUseRouteTstamp(void) {if(routeTimeStamp==-1) return false; else return useRouteTstamp;}
-        time_t   getRouteTimeStamp(void){return this->routeTimeStamp;}
+        time_t   getEta(void)           {return this->eta;}
         int      getType(void)         {return type; }
         int      getTypeMask(void)     {return typeMask; }
         bool     getIsWp(void)         {return isWp;}
@@ -73,7 +70,7 @@ class POI : public QGraphicsWidget
                                                   return type_str[index];}
         QString  getTypeStr(void)      {return getTypeStr(type); }
         int     getNavMode(){return this->navMode;}
-        bool    getHas_eta(void)        {return useRouteTstamp;}
+        bool    getHas_eta(void)        {return eta!=-1;}
         double getLonConnected(){return lonConnected;}
         double getLatConnected(){return latConnected;}
         bool    getAutoRange(void)  { return autoRange; }
@@ -83,9 +80,7 @@ class POI : public QGraphicsWidget
         void setLongitude      (double lon);
         void setLatitude       (double lat);
         void setWph            (double wph);
-        void setTimeStamp      (time_t tstamp);
-        void setRouteTimeStamp (time_t date);
-        void setUseTimeStamp   (bool state){this->useTstamp=state;}
+        void setEta            (time_t tstamp);
         void setType           (int type) {this->type=type;this->typeMask=(1<<type);}
         void setTip            (QString tip);
         void setRoute          (ROUTE *route);
@@ -194,7 +189,6 @@ signals:
         void mouseMoveEvent(QGraphicsSceneMouseEvent *e);
         void mouseReleaseEvent(QGraphicsSceneMouseEvent * e);
         void contextMenuEvent(QGraphicsSceneContextMenuEvent * event);
-        bool sceneEvent(QEvent * event);
         QVariant itemChange(GraphicsItemChange change, const QVariant &value);
         void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
 private:
@@ -215,10 +209,7 @@ private:
         double   previousLon,previousLat;
         double   wph;
         double   WPlon,WPlat;
-        time_t      timeStamp;
-        time_t      routeTimeStamp;
-        bool     useTstamp;
-        bool     useRouteTstamp;
+        time_t      eta;
         bool     isWp;
         int      type;
         int      typeMask;

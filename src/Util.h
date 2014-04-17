@@ -39,6 +39,8 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <QSettings>
 #include <QLocale>
 #include <QNetworkAccessManager>
+#include <QToolBox>
+#include <QScrollArea>
 
 #include "class_list.h"
 #include "dataDef.h"
@@ -53,7 +55,7 @@ class Util
     //-------------------------------------------------
     static void setFontObject(QObject * o);
     //static void setFontDialog(QWidget * o);
-    static void setFontDialog(QDialog * o);
+    static void setFontDialog(QDialog * o, const bool &dialogMobile=false);
     static void setSpecificFont(QMap<QWidget *, QFont> widgets);
     static QString formatDegres(const double &x);           // 123.4 -> 123°24.00'
     static QString formatPosition(const double &x, const double &y);    // 123°24.00'W 45°67.89'N
@@ -89,10 +91,10 @@ class Util
     static QPointF calculateSumVect(const double &angle1, const double &length1, const double &angle2, const double &length2);
 
     static void paramProxy(QNetworkAccessManager *inetManager,QString host);
-    static bool getWPClipboard(QString *,double * lat,double * lon, double * wph, int * tStamp);
+    static bool getWPClipboard(QString *, double * lat, double * lon, double * wph);
     static void setWPClipboard(double lat,double lon, double wph);
-    static bool convertPOI(const QString & str,QString * name,double * lat,double * lon,double * wph,int * tstamp,
-                           int type);
+    static bool convertPOI(const QString & str, QString * name, double * lat, double * lon, double * wph,
+                           const int &type=0);
     static void getCoordFromDistanceAngle(const double &latitude, const double &longitude,
              const double &distance, const double &heading, double * res_lat, double * res_lon);
     static void getCoordFromDistanceLoxo(const double &latitude, const double &longitude,

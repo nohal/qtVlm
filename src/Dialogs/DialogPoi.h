@@ -29,25 +29,24 @@ class POI_Editor;
 
 #include "POI.h"
 #include "Projection.h"
-#include "ui_POI_editor.h"
 #include "MainWindow.h"
 #include "mycentralwidget.h"
 #include "route.h"
 
 //===================================================================
+#include "ui_POI_editor.h"
 class DialogPoi : public QDialog, public Ui::POI_editor_ui
 { Q_OBJECT
     public:
-        DialogPoi(MainWindow * main,myCentralWidget * parent);
+        DialogPoi(MainWindow * main, myCentralWidget * parent, POI *poi, const bool &creationMode);
         void done(int result);
-        void initPOI(POI *poi, const bool &creationMode);
+        void initPOI();
 
     public slots:
         void btDeleteClicked();
         void btPasteClicked();
         void btCopyClicked();
         void btSaveWPClicked();
-        void chkTStamp_chg(int);
         void nameHasChanged(QString);
         void latLonChg(double);
         void latLonSignChg(int);

@@ -75,15 +75,7 @@ int main(int argc, char *argv[])
     QApplication * app=new QApplication(argc, argv);
     qsrand(QTime::currentTime().msec());
     QString appExeFolder=QApplication::applicationDirPath();
-#ifdef __ANDROID_QTVLM
-    QDir::setCurrent("/storage/emulated/0/qtVlm");
-//    QFile testWrite;
-//    testWrite.setFileName("testWrite.txt");
-//    if(testWrite.open(QIODevice::WriteOnly | QIODevice::Text ))
-//        qWarning()<<"test write succesfull";
-//    else
-//        qWarning()<<"test write failed";
-#elif defined (__UNIX_QTVLM)
+#ifdef __UNIX_QTVLM
     QString curDir=QDir::currentPath();
     qWarning() << "currentPath returns: " << curDir << "applicationDirPath returns: " << appExeFolder;
     if ( QString::compare(curDir,appExeFolder,Qt::CaseSensitive)!=0 )
@@ -152,44 +144,18 @@ int main(int argc, char *argv[])
 #endif
     fileSettings=NULL;
     Settings::initSettings();
-//    if(Settings::getSetting(fusionStyle).toInt()==1)
-//    {
-//        qWarning()<<"setting up Black fusion style";
-//        app->setStyle(QStyleFactory::create("Fusion"));
-//        QPalette p;
-//        p = app->palette();
-//        p.setColor(QPalette::Window, QColor(53,53,53));
-//        p.setColor(QPalette::Button, QColor(53,53,53));
-//        p.setColor(QPalette::Highlight, QColor(142,45,197));
-//        p.setColor(QPalette::ButtonText, QColor(255,255,255));
-//        p.setColor(QPalette::WindowText, QColor(255,255,255));
-//        app->setPalette(p);
-//    }
-    //qApp->setAttribute(Qt::AA_SynthesizeMouseForUnhandledTouchEvents,false);
     double fontInc=Settings::getSetting(defaultFontSizeInc).toDouble();
     if(Settings::getSetting(defaultFontName).toString()=="-1")
         Settings::setSetting(defaultFontName,Settings::getSettingDefault(defaultFontName));
     QFont def(Settings::getSetting(defaultFontName).toString());
     double fontSize=8.0+fontInc;
     def.setPointSizeF(fontSize);
-#ifdef __ANDROID_QTVLM
-    def=qApp->font();
-    fontSize=def.pointSizeF();
-#endif
 #ifndef DO_NOT_USE_STYLE
-#ifndef __ANDROID_QTVLM
     QApplication::setFont(def);
-#endif
     Settings::setSetting(applicationFontSize,fontSize);
 #else
     Settings::setSetting(applicationFontSize,qApp->font().pointSizeF());
 #endif
-//#ifdef __MAC_QTVLM
-//    QString style=QString().sprintf("QPushButton { font: %.2fpx} QLabel { font: %.2fpx} QLineEdit { font: %.2fpx}  QCheckBox { font: %.2fpx} QGroupBox { font: %.2fpx} QComboBox { font: %.2fpx} QListWidget { font: %.2fpx} QRadioButton { font: %.2fpx} QTreeView { font: %.2fpx}",
-//                                    fontSize,fontSize,fontSize,fontSize,fontSize,fontSize,fontSize,fontSize,fontSize);
-//    qApp->setStyleSheet(style);
-
-//#endif
 
     QTranslator translator;
     QTranslator translatorQt;

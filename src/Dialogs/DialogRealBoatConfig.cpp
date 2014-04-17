@@ -30,17 +30,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "GpsReceiver.h"
 #include "Player.h"
 #include "Util.h"
-#ifdef QT_V5
-#include <QScroller>
-#endif
 DialogRealBoatConfig::DialogRealBoatConfig(myCentralWidget *parent) : QDialog(parent)
 {
     this->parent=parent;
     connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     setupUi(this);
-#ifdef QT_V5
-    QScroller::grabGesture(this->scrollArea->viewport());
-#endif
     Util::setFontDialog(this);
 }
 void DialogRealBoatConfig::slot_screenResize()

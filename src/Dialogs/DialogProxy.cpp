@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***********************************************************************/
 #ifdef QT_V5
 #include <QtWidgets/QDialog>
-#include <QScroller>
 #else
 #include <QDialog>
 #endif
@@ -35,9 +34,6 @@ DialogProxy::DialogProxy(myCentralWidget * parent) : QDialog(parent->getMainWind
     connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     setupUi(this);
     Util::setFontDialog(this);
-#ifdef QT_V5
-    QScroller::grabGesture(this->scrollArea->viewport());
-#endif
     lineProxyHostname->setText(Settings::getSetting(httpProxyHostname).toString());
     lineProxyPort->setText(Settings::getSetting(httpProxyPort).toString());
     lineProxyUsername->setText(Settings::getSetting(httpProxyUsername).toString());

@@ -82,8 +82,8 @@ class InputColor_testZone;
 class InputColor;
 class DialogGraphicsParams;
 
-/* DialogLoadGrib.h */
-class DialogLoadGrib;
+/* DialogZygrib.h */
+class DialogZygrib;
 
 /* DialogProxy.h */
 class DialogProxy;
@@ -230,6 +230,7 @@ class ROUTE;
 
 /* DialogRoute.h */
 class DialogRoute;
+class DialogRouteLog;
 class DialogRouteComparator;
 
 /* selectionWidget.h */

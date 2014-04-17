@@ -215,7 +215,6 @@ public:
     QAction *acRace;
 
     void setPlayerType(const int &type);
-    void setNewMenu(QList<QMenu*> *newMenu);
 public slots:
     void slot_updateLockIcon(QString ic);
     void slot_setChangeStatus(bool status,bool pilototo,bool syncBtn);
@@ -253,8 +252,6 @@ private:
     QMenu *menuPOI;
     QMenu *menuHelp;
     QList<QMenu*> mainMenu;
-    QList<QMenu*> * currentMenu;
-    //QMenu * boardMenu;
     QMenu * toolBarMenu;
 
     //std::vector<time_t> listGribDates;

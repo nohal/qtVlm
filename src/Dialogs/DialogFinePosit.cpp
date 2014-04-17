@@ -23,9 +23,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "mycentralwidget.h"
 #include "settings.h"
 #include "Util.h"
-#ifdef QT_V5
-#include <QScroller>
-#endif
 
 DialogFinePosit::DialogFinePosit(POI * poi,myCentralWidget *parent)
     : QDialog(parent)
@@ -33,9 +30,6 @@ DialogFinePosit::DialogFinePosit(POI * poi,myCentralWidget *parent)
     this->poi=poi;
     this->parent=parent;
     setupUi(this);
-#ifdef QT_V5
-    QScroller::grabGesture(this->scrollArea->viewport());
-#endif
     connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     setWindowTitle(tr("Parametres du positionnement automatique"));

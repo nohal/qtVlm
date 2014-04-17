@@ -380,29 +380,8 @@ MenuBar::MenuBar(MainWindow *parent)
         Util::setFontObject(act);
     }
     acFile_Quit->setMenuRole(QAction::QuitRole);
-    currentMenu=NULL;
-    setNewMenu(&mainMenu);
     for(int n=0;n<mainMenu.size();++n)
         this->addMenu(mainMenu.at(n));
-    currentMenu=&mainMenu;
-}
-void MenuBar::setNewMenu(QList<QMenu *> *newMenu)
-{
-#ifndef __ANDROID_QTVLM
-    Q_UNUSED(newMenu);
-    return;
-#else
-    if(currentMenu)
-    {
-        for (int n=0;n<currentMenu->size();++n)
-            this->removeAction(currentMenu->at(n)->menuAction());
-    }
-    if(newMenu==NULL || newMenu->isEmpty())
-        newMenu=&mainMenu;
-    for(int n=0;n<newMenu->size();++n)
-        this->addMenu(newMenu->at(n));
-    currentMenu=newMenu;
-#endif
 }
 
 void MenuBar::setRules(QAction * act)
@@ -452,6 +431,8 @@ QMenu * MenuBar::createPopupBtRight(QWidget *parent)
     ac_moveBoat = addAction(popup, tr("Deplacer le bateau ici"),tr(""),tr(""),"");
 
     ac_pasteRoute=addAction(popup,tr("Coller une route"),"","","");
+//    popup->setStyle(qApp->style());
+//    popup->setStyleSheet(qApp->styleSheet());
     return popup;
 }
 

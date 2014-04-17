@@ -24,9 +24,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "settings.h"
 #include "MapDataDrawer.h"
 #include "Terrain.h"
-#ifdef QT_V5
-#include <QScroller>
-#endif
 routeInfo::routeInfo(myCentralWidget *parent, ROUTE *route) :
     QDialog(parent)
 {
@@ -34,9 +31,6 @@ routeInfo::routeInfo(myCentralWidget *parent, ROUTE *route) :
     this->route=route;
     this->parent=parent;
     setupUi(this);
-#ifdef QT_V5
-    QScroller::grabGesture(this->scrollArea->viewport());
-#endif
     connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     this->setWindowTitle(QObject::tr("Information au point d'interpolation pour ")+route->getName());

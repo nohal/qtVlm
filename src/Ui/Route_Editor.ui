@@ -550,6 +550,12 @@ p, li { white-space: pre-wrap; }
              </item>
              <item>
               <widget class="QLabel" name="warning_text">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="maximumSize">
                 <size>
                  <width>400</width>
@@ -696,14 +702,7 @@ p, li { white-space: pre-wrap; }
             </layout>
            </item>
            <item>
-            <widget class="QTreeView" name="roadMap">
-             <property name="sortingEnabled">
-              <bool>true</bool>
-             </property>
-             <attribute name="headerStretchLastSection">
-              <bool>false</bool>
-             </attribute>
-            </widget>
+            <widget class="QTableView" name="roadMap"/>
            </item>
            <item>
             <widget class="QGroupBox" name="groupBox">

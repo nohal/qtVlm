@@ -127,30 +127,15 @@ void opponent::init(QColor color,bool isQtBoat,QString idu,QString race, double 
     this->rank=0;
     updatePosition();
     trace_drawing->setHidden(Settings::getSetting(hideTrace).toInt()==1);
-    if(Settings::getSetting(enable_Gesture).toString()=="1")
-    {
-        this->grabGesture(Qt::TapAndHoldGesture);
-        this->grabGesture(Qt::TapGesture);
-    }
     this->setFlag(QGraphicsWidget::ItemIsSelectable,true);
 }
 QVariant opponent::itemChange(GraphicsItemChange change, const QVariant &value)
 {
-    if(change==ItemToolTipHasChanged)
-    {
-        if(isSelected())
-            parentWindow->showToolTip(toolTip(),false);
-    }
     if(change==ItemSelectedHasChanged)
     {
         prepareGeometryChange();
-        if(!isSelected())
-            parentWindow->showToolTip("");
-        else
-        {
+        if(isSelected())
             parentWindow->clearOtherSelected(this);
-            parentWindow->showToolTip(toolTip());
-        }
     }
     return QGraphicsWidget::itemChange(change,value);
 }
@@ -193,14 +178,7 @@ QPainterPath opponent::shape() const
     if(isSelected())
         path.addEllipse(R1);
     else
-#ifdef __ANDROID_QTVLM
-    {
-        R1=QRectF(-sh/2,-sh/2,sh,sh);
-        path.addEllipse(R1);
-    }
-#else
         path.addRect(-squareSize.width()/2.0-1,-squareSize.height()/2.0-1,squareSize.width()+2,squareSize.height()+2);
-#endif
     path.addRect(squareSize.width()/2.0+2,-height/2.0-2,width+4,height+4);
     path.setFillRule(Qt::WindingFill);
     return path;
@@ -866,9 +844,20 @@ void opponentList::getNxtOppData()
 {
     int listSize = opponent_list.size();
     QString idu;
-    if(showWhat==SHOW_ALL || currentOpponent>=listSize)
+    if(currentOpponent>=listSize)
     {
         parent->update();
+        return;
+    }
+    if(showWhat==SHOW_ALL && !showReal)
+    {
+        parent->update();
+        return;
+    }
+    if(showWhat==SHOW_ALL && !opponent_list[currentOpponent]->getIsReal())
+    {
+        ++currentOpponent;
+        getNxtOppData();
         return;
     }
 
@@ -962,6 +951,7 @@ void opponentList::requestFinished (QByteArray res_byte)
     {
         case OPP_BOAT_REAL:
         {
+            qWarning()<<"case OPP_BOAT_REAL";
             QVariantMap result;
             if (!inetClient::JSON_to_map(res_byte,&result)) {
                 return;
@@ -1222,6 +1212,7 @@ void opponentList::requestFinished (QByteArray res_byte)
                     }
                     if(this->showReal && !parent->getIsStartingUp())
                     {
+                        qWarning()<<"launching real recup";
                         QString page;
                         QTextStream(&page)
                                             << "/ws/raceinfo/reals.php?idr="
@@ -1322,7 +1313,7 @@ void opponentList::requestFinished (QByteArray res_byte)
         }
         case OPP_INFO_REAL:
         {
-            //qWarning()<<"inside OPP_INFO_REAL";
+            qWarning()<<"inside OPP_INFO_REAL";
             QVariantMap result;
             if (!inetClient::JSON_to_map(res_byte,&result))
                 return;

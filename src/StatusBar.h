@@ -40,6 +40,8 @@ class StatusBar : public QStatusBar
 
         void update_eta(QDateTime eta_dtm);
         void clear_eta();
+protected:
+        void mousePressEvent(QMouseEvent *e);
 signals:
     
     public slots:
@@ -53,12 +55,9 @@ signals:
                                 int mode, int levelType, int levelValue, double x, double y);
 
         QLabel       *labelGrib;
-#ifndef __ANDROID_QTVLM
         QLabel       *labelEta;
         QLabel       *labelOrtho;
         QLabel       *separator;
-#endif
-    
 };
 
 #endif // STATUSBAR_H

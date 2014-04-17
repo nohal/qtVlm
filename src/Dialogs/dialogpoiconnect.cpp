@@ -3,16 +3,10 @@
 #include <QMessageBox>
 #include "Util.h"
 #include "settings.h"
-#ifdef QT_V5
-#include <QScroller>
-#endif
 DialogPoiConnect::DialogPoiConnect(POI * poi,myCentralWidget *parent) :
     QDialog(parent)
 {
     setupUi(this);
-#ifdef QT_V5
-    QScroller::grabGesture(this->scrollArea->viewport());
-#endif
     connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     Util::setFontDialog(this);
     this->poi=poi;

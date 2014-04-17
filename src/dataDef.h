@@ -99,11 +99,6 @@ FCT_GET_CST(TYPE,VARNAME)
 #define BOAT_ANY  2
 #define BOAT_NOBOAT -1
 
-/* styles */
-#ifdef __ANDROID_QTVLM
-#define DO_NOT_USE_STYLE
-#endif
-
 /* XML file type */
 #define DOM_FILE_TYPE     "qtVLM_config"
 

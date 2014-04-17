@@ -98,10 +98,10 @@ class MainWindow: public MainWindowInterface
         QColor getWindColorStatic(const double &v, const bool &smooth=true);
         QVariant getSettingApp(const int &key) const;
         QString get_folder(QString str) const;
-        void showContextualMenu(const int &xPos, const int &yPos, QPoint screenPos=QPoint(0,0));
+        void showContextualMenu(const double &xPos, const double &yPos);
         QPalette getOriginalPalette() const;
         void setting_saveGeometry(QWidget * obj);
-        bool getWPClipboard(QString *,double * lat,double * lon, double * wph, int * tStamp);
+        bool getWPClipboard(QString *, double * lat, double * lon, double * wph);
         void setWPClipboard(double lat,double lon, double wph);
         QString pos2String(const int &type,const double &value);
         QString formatLongitude(const double &x);
@@ -211,7 +211,7 @@ signals:
         void updateInet(void);
         void showCompassLine(double,double);
         void addPOI_list(POI*);
-        void addPOI(QString name,int type,double lat,double lon, double wph,int timestamp,bool useTimeStamp);
+        void addPOI(QString name,int type,double lat,double lon, double wph);
         void updateRoute(boat * boat);
         void showCompassCenterBoat();
         void showCompassCenterWp();

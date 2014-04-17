@@ -245,7 +245,6 @@ class myCentralWidget : public QWidget
         Magnifier * getMagnifier(){return this->magnifier;}        
 
         void imgKap_open(const QString &kapname);
-        void showToolTip(const QString &tt, const bool &animate=true, QList<QMenu *> *newMenu=NULL);
         void clearOtherSelected(QGraphicsItem *i);
 public slots :
         /* Zoom & position */
@@ -264,7 +263,7 @@ public slots :
         void slot_magnify();
 
         /* POI */
-        POI * slot_addPOI(QString name, const int &type, const double &lat, const double &lon, const double &wph, const int &timestamp, const bool &useTimeStamp);
+        POI * slot_addPOI(QString name, const int &type, const double &lat, const double &lon, const double &wph);
         void slot_addPOI_list(POI * poi);
         void slot_delPOI_list(POI * poi);
         void slot_POISave(void);
@@ -450,7 +449,6 @@ signals:
         DialogBoatAccount * boatAcc;
         DialogPlayerAccount * playerAcc;
         DialogRace * raceDialog;
-        DialogLoadGrib  * dialogLoadGrib;
         DialogRealBoatConfig * realBoatConfig;
         DialogVlmLog * vlmLogViewer;
         DialogDownloadTracks * vlmTrackRetriever;
@@ -518,7 +516,6 @@ signals:
         bool selectionTool;
         Magnifier * magnifier;
         bool noSave;
-        InfoView * infoView;
 };
 
 #endif // MYCENTRALWIDGET_H

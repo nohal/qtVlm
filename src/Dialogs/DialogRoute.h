@@ -27,12 +27,14 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 
 #include "class_list.h"
 
-#include "ui_Route_Editor.h"
 #include <QStandardItemModel>
 #include <QStyledItemDelegate>
 #include <QTimer>
+#include "dataDef.h"
+#include "mycentralwidget.h"
 
 //===================================================================
+#include "ui_Route_Editor.h"
 class DialogRoute : public QDialog, public Ui::ROUTE_Editor_ui
 { Q_OBJECT
     public:
@@ -40,6 +42,9 @@ class DialogRoute : public QDialog, public Ui::ROUTE_Editor_ui
         ~DialogRoute();
         void done(int result);
         void fillPilotView();
+        QStandardItemModel * getRmModel(){return rmModel;}
+        MainWindow * getMain(){return parent->getMainWindow();}
+        ROUTE * getRoute(){return route;}
 
 public slots:
         void slot_hideShowWarning();
@@ -69,10 +74,6 @@ private:
         InputLineParams *inputTraceColor;
         QStandardItemModel * model;
         QList<POI*> listPois;
-        int tabWidthRatio;
-        int roadMapWidthRatio;
-        int tabWidth;
-        int roadMapWidth;
         QPainterPath drawBoat;
         void drawWindArrowWithBarbs(QPainter &pnt,
                                     int i, int j, double vkn, double ang,

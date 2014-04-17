@@ -92,12 +92,6 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include "DialogRouteComparator.h"
 #include "DialogWp.h"
 #include <QStyleFactory>
-//#define __ANDROID1__
-#ifdef __ANDROID1__
-#include "BoardVlmMobile.h"
-#endif
-//#include <QtQuick/QQuickView>
-//#include <QPluginLoader>
 int INTERPOLATION_DEFAULT=INTERPOLATION_HYBRID;
 
 
@@ -239,166 +233,7 @@ MainWindow::MainWindow(QWidget *parent) :timer(NULL), selectedBoat(NULL)
     originalPalette=QApplication::palette();
     loadVLM_grib=NULL;
     qWarning()<<"Available styles:"<<QStyleFactory::keys();
-//#ifndef DO_NOT_USE_STYLE
-#if 1
 #ifdef QT_V5
-#ifdef __ANDROID_QTVLM
-    if(QStyleFactory::keys().contains("Android",Qt::CaseInsensitive))
-    {
-        qWarning()<<"loading android style";
-        QStyle * android=QStyleFactory::create("Android");
-        qApp->setStyle(android);
-    }
-#if 0
-    QPalette p=qApp->palette();
-    p.setColor(QPalette::Window, QColor(53,53,53));
-    p.setColor(QPalette::Button, QColor(53,53,53));
-    p.setColor(QPalette::Base, QColor(53,53,53));
-    p.setColor(QPalette::Highlight, QColor(142,45,197));
-    p.setColor(QPalette::ButtonText, QColor(234,221,21));
-    p.setColor(QPalette::WindowText, QColor(255,255,255));
-    p.setColor(QPalette::Text, QColor(255,255,255));
-    p.setColor(QPalette::AlternateBase,QColor(100,100,100));
-    QBrush brush = p.window();
-    brush.setColor(brush.color().light(300));
-    QColor dis=brush.color();
-    p.setColor(QPalette::Disabled, QPalette::Text, dis); // color menu item base
-    p.setColor(QPalette::Disabled, QPalette::Light, QColor(53,53,53));
-    p.setColor(QPalette::Disabled, QPalette::WindowText, dis);
-    qApp->setPalette(p);
-    QString myColor1="#323232"; // dark grey
-    QString myColor2="#5a5712"; // yellow dark
-    QString myColor3="#6b0b86"; // violet legerement fonce
-    QString myColor4="#b1b1b1"; // grey
-    QString myColor5="#ebe300"; // yellow light
-    QString myColor6="#d7d017"; // yellow
-    QString myColor7="#ffffff"; // white
-    QString customStyle=""
-            "QProgressBar{"
-                "text-align: center;}"
-
-            "QProgressBar::chunk{"
-                "background-color: myColor6;}"
-
-            "QWidget:item:hover{"
-                "background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 myColor6, stop: 0.7 myColor2, stop: 1 myColor6);"
-                "color: myColor7;}"
-
-            "QRadioButton::indicator:checked, QRadioButton::indicator:unchecked{"
-                "color: myColor4;"
-                "background-color: myColor1;"
-                "border: solid myColor4;}"
-
-            "QRadioButton::indicator:checked{"
-                "background-color: qradialgradient("
-                    "cx: 0.5, cy: 0.5,"
-                    "fx: 0.5, fy: 0.5,"
-                    "radius: 1.0,"
-                    "stop: 0.25 myColor6,"
-                    "stop: 0.3 myColor1);}"
-
-            "QCheckBox::indicator, QGroupBox::indicator, QTreeView::indicator{"
-                "color: myColor4;"
-                "background-color: myColor1;"
-                "border: solid myColor4;}"
-
-            "QCheckBox::indicator:indeterminate, QGroupBox::indicator:indeterminate, QTreeView::indicator:indeterminate{"
-                "color: myColor4;"
-                "background-color:  myColor6;"
-                "border: solid myColor4;}"
-
-
-            "QRadioButton::indicator:hover, QCheckBox::indicator:hover, QGroupBox::indicator:hover, QTreeView::indicator:hover{"
-                "border: solid myColor6;}"
-
-
-            "QCheckBox::indicator:disabled, QGroupBox::indicator:disabled, QRadioButton::indicator:disabled,  QTreeView::indicator:disabled{"
-                "border: solid #444;}"
-
-    "QTabBar::tab {"
-        "color: myColor4;"
-        "border: solid #444;"
-        "border-bottom-style: none;"
-        "background-color: myColor1;}"
-
-    "QTabWidget::pane {"
-        "border: solid #444;}"
-
-    "QTabBar::tab:!selected{"
-        "color: myColor4;"
-        "border-bottom-style: solid;"
-        "background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:1 #212121, stop:.4 #343434);}"
-
-    "QTabBar::tab:selected{"
-        "color: myColor6;}"
-
-    "QTabBar::tab:!selected:hover{"
-        "background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:1 #212121, stop:0.4 #343434, stop:0.2 #343434, stop:0.1 myColor6);}"
-
-
-            "QScrollBar:horizontal {"
-                 "border: solid #222222;"
-                 "background: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0.0 #121212, stop: 0.2 #282828, stop: 1 #484848);}"
-
-            "QScrollBar::handle:horizontal{"
-                  "background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 myColor5, stop: 0.5 myColor2, stop: 1 myColor5);}"
-
-            "QScrollBar::add-line:horizontal {"
-                  "border: solid #1b1b19;"
-                  "background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 myColor5, stop: 1 myColor2);"
-                  "subcontrol-position: right;"
-                  "subcontrol-origin: margin;}"
-
-            "QScrollBar::sub-line:horizontal {"
-                  "border: solid #1b1b19;"
-                  "background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 myColor5, stop: 1 myColor2);"
-                  "subcontrol-position: left;"
-                  "subcontrol-origin: margin;}"
-
-            "QScrollBar::right-arrow:horizontal, QScrollBar::left-arrow:horizontal{"
-                  "border: solid black;"
-                  "background: white;}"
-
-            "QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal{"
-                  "background: none;}"
-
-            "QScrollBar:vertical{"
-                  "background: QLinearGradient( x1: 0, y1: 0, x2: 1, y2: 0, stop: 0.0 #121212, stop: 0.2 #282828, stop: 1 #484848);"
-                  "border: solid #222222;}"
-
-            "QScrollBar::handle:vertical{"
-                  "background: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 myColor5, stop: 0.5 myColor2, stop: 1 myColor5);}"
-
-            "QScrollBar::add-line:vertical{"
-                  "border: solid #1b1b19;"
-                  "background: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 myColor5, stop: 1 myColor2);"
-                  "subcontrol-position: bottom;"
-                  "subcontrol-origin: margin;}"
-
-            "QScrollBar::sub-line:vertical{"
-                  "border: solid #1b1b19;"
-                  "background: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 myColor2, stop: 1 myColor5);"
-                  "subcontrol-position: top;"
-                  "subcontrol-origin: margin;}"
-
-            "QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical{"
-                  "border: solid black;"
-                  "background: white;}"
-
-
-            "QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical{"
-                  "background: none;}";
-
-    customStyle.replace("myColor1",myColor1);
-    customStyle.replace("myColor2",myColor2);
-    customStyle.replace("myColor3",myColor3);
-    customStyle.replace("myColor4",myColor4);
-    customStyle.replace("myColor5",myColor5);
-    customStyle.replace("myColor6",myColor6);
-    customStyle.replace("myColor7",myColor7);
-    qApp->setStyleSheet(customStyle);
-#endif
-#else
     if(Settings::getSetting(fusionStyle).toInt()==1)
     {
         qWarning()<<"setting up Black fusion style";
@@ -624,8 +459,6 @@ MainWindow::MainWindow(QWidget *parent) :timer(NULL), selectedBoat(NULL)
     double fontSize=8.0+fontInc;
     def.setPointSizeF(fontSize);
     QApplication::setFont(def);
-#endif
-#endif
 #endif
     isStartingUp=true;
     finishStart=true;
@@ -872,9 +705,6 @@ QString MainWindow::get_OSVersion(void) {
 #ifdef __UNIX_QTVLM
     ver=" (UNIX)";
 #endif
-#ifdef __ANDROID_QTVLM
-    ver=" (ANDROID)";
-#endif
 #ifdef __WIN_QTVLM
     QString OS_versionName;
     int windowsVersion=QSysInfo::windowsVersion();
@@ -987,10 +817,6 @@ void MainWindow::loadBoard()
     use_old_board=true;
     if(my_centralWidget->getPlayer() && my_centralWidget->getPlayer()->getType()==BOAT_VLM && Settings::getSetting(vlmBoardType).toString()!="0")
         use_old_board=false;
-#ifdef __ANDROID_QTVLM
-    if(my_centralWidget->getPlayer() && my_centralWidget->getPlayer()->getType()==BOAT_VLM)
-        use_old_board=false;
-#endif
     if(use_old_board && myBoard)
     {
         myBoard->playerChanged(my_centralWidget->getPlayer());
@@ -1038,7 +864,6 @@ void MainWindow::loadBoard()
     }
     else
     {
-#ifndef __ANDROID1__
         QFile       uiFile (Settings::getSetting(vlmBoardType).toString());
         // Load the associated resources if they exist
         QFileInfo   uiFileInfo (uiFile);
@@ -1063,11 +888,6 @@ void MainWindow::loadBoard()
            Settings::setSetting(vlmBoardType,"0");
            loadBoard();
         }
-#else
-        qWarning()<<"loading boardVlmMobile";
-        boardPlugin=new BoardVlmMobile();
-        boardPlugin->initBoard(this);
-#endif
     }
     this->showDashBoard();
 }
@@ -1304,13 +1124,8 @@ void MainWindow::closeProgress(void)
     }
     statusBar->show();
     this->showDashBoard();
-//    QQuickView *qml = new QQuickView;
-//    qml->setSource(QUrl::fromLocalFile("src/qml_ui.qml"));
-//    qml->show();
-#ifndef __ANDROID_QTVLM
     this->setMenuBar(menuBar);
     menuBar->show();
-#endif
 }
 
 //-------------------------------------------------
@@ -1945,14 +1760,18 @@ void MainWindow::slotShowContextualMenu(QGraphicsSceneContextMenuEvent * e)
 {
     showContextualMenu(e->scenePos().x(),e->scenePos().y());
 }
-void MainWindow::showContextualMenu(const int &xPos, const int &yPos, QPoint screenPos)
+void MainWindow::showContextualMenu(const double &xPos, const double &yPos)
 {
+    QPointF scenePos(xPos,yPos);
+    QPoint viewPoint=my_centralWidget->getView()->mapFromScene(scenePos);
+    QPoint screenPos=my_centralWidget->getView()->mapToGlobal(viewPoint);
+    qWarning()<<"screenPos="<<screenPos;
     if(screenPos==QPoint(0,0))
     {
         screenPos=QCursor::pos();
     }
-    mouseClicX = xPos;
-    mouseClicY = yPos;
+    mouseClicX = qRound(xPos);
+    mouseClicY = qRound(yPos);
 
     int compassMode = my_centralWidget->getCompassMode(mouseClicX,mouseClicY);
     my_centralWidget->set_cursorPositionOnPopup(QPoint(mouseClicX,mouseClicY));
@@ -2578,13 +2397,12 @@ void MainWindow::slotChgWP(double lat,double lon, double wph)
 void MainWindow::slotpastePOI()
 {
     double lon, lat,wph;
-    int tstamp;
     QString name;
 
-    if(!Util::getWPClipboard(&name,&lat,&lon,&wph,&tstamp))
+    if(!Util::getWPClipboard(&name,&lat,&lon,&wph))
         return;
 
-    emit addPOI(name,POI_TYPE_POI,lat,lon,wph,tstamp,tstamp!=-1);
+    emit addPOI(name,POI_TYPE_POI,lat,lon,wph);
 }
 
 void MainWindow::slotBoatLockStatusChanged(boat* boat,bool status)
@@ -2666,11 +2484,11 @@ void MainWindow::setPilototoFromRoute(ROUTE *route)
     for (int n=0;n<route->getPoiList().count() && n<=5;++n)
     {
         POI * poi=route->getPoiList().at(n);
-        if(poi->getRouteTimeStamp()==-1)
+        if(poi->getEta()==-1)
             break;
-        if(poi->getRouteTimeStamp()+30<=(int)QDateTime().currentDateTimeUtc().toTime_t()) continue;
+        if(poi->getEta()+30<=(int)QDateTime().currentDateTimeUtc().toTime_t()) continue;
         if(n>0)
-            poi->setPiloteDate(route->getPoiList().at(n-1)->getRouteTimeStamp());
+            poi->setPiloteDate(route->getPoiList().at(n-1)->getEta());
         pois.append(poi);
     }
     route->setPilototo(false);
@@ -2973,10 +2791,9 @@ void MainWindow::slot_showPOI_input(POI* poi, const bool &fromMenu)
         else
             proj->screen2map(mouseClicX,mouseClicY, &lon, &lat);
         poi=new POI(tr("POI"), POI_TYPE_POI,lat, lon, proj, this,
-                    my_centralWidget, -1,-1,false);
+                    my_centralWidget, -1);
     }
-    DialogPoi dp(this,my_centralWidget);
-    dp.initPOI(poi,creationMode);
+    DialogPoi dp(this,my_centralWidget,poi,creationMode);
     dp.exec();
 }
 
@@ -3041,8 +2858,8 @@ void MainWindow::setting_saveGeometry(QWidget * obj) {
     Settings::saveGeometry(obj);
 }
 
-bool MainWindow::getWPClipboard(QString * str,double * lat,double * lon, double * wph, int * tStamp) {
-    return Util::getWPClipboard(str,lat,lon,wph,tStamp);
+bool MainWindow::getWPClipboard(QString * str,double * lat,double * lon, double * wph) {
+    return Util::getWPClipboard(str,lat,lon,wph);
 }
 
 void MainWindow::setWPClipboard(double lat,double lon, double wph) {

@@ -50,7 +50,8 @@ class selectionWidget : public QGraphicsWidget
         void slot_protect();
         void slot_unprotect();
 
-    protected:
+        void reset();
+protected:
         void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
         void contextMenuEvent(QGraphicsSceneContextMenuEvent *e);
 

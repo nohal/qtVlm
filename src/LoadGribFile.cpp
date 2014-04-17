@@ -189,7 +189,11 @@ void LoadGribFile::requestFinished ( QNetworkReply* inetReply)
     QString page;
     if (inetReply->error() != QNetworkReply::NoError) {
         qWarning()<<"inetReply error from LoadGribFile";
-        if(inetReply==step_checkVersion) return;
+        if(inetReply==step_checkVersion)
+        {
+            this->deleteLater();
+            return;
+        }
         emit signalGribLoadError(QString("Http error: %1 (step=%2)").arg(inetReply->error()).arg(step));
     }
     else if(inetReply == step_checkVersion)
@@ -199,7 +203,11 @@ void LoadGribFile::requestFinished ( QNetworkReply* inetReply)
         vers.append(".");
         vers.append(QTVLM_SUB_VERSION_NUM);
         vers.remove("+");
-        if(vers.contains("beta") && strbuf.contains("3.4.3")) return;
+        if(vers.contains("beta") && strbuf.contains("3.4.3"))
+        {
+            this->deleteLater();
+            return;
+        }
         if(vers.left(strbuf.size())!=strbuf)
         {
             QString m=tr("Vous n'utilisez pas la derniere version de qtVlm: ")+strbuf;
@@ -213,6 +221,7 @@ void LoadGribFile::requestFinished ( QNetworkReply* inetReply)
                 tr("qtVlm version"),
                 m);
         }
+        this->deleteLater();
 
     }
     else if(inetReply == step1_InetReply)

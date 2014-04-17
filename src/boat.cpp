@@ -37,10 +37,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogChooseMultiple_ctrl.h"
 #include "BarrierSet.h"
 #include "Projection.h"
-#include <QGestureEvent>
-#ifndef QT_V5
-#include <QTapAndHoldGesture>
-#endif
 boat::boat(QString      pseudo, bool activated,
            Projection * proj,MainWindow * main,myCentralWidget * parent):
    boatType (BOAT_NOBOAT),
@@ -142,11 +138,6 @@ boat::boat(QString      pseudo, bool activated,
 
     connect(this,SIGNAL(releasePolar(QString)),main,SLOT(releasePolar(QString)));
     connect(parent,SIGNAL(shTrace(bool)),this,SLOT(slot_shTrace(bool)));
-    if(Settings::getSetting(enable_Gesture).toString()=="1")
-    {
-        this->grabGesture(Qt::TapAndHoldGesture);
-        this->grabGesture(Qt::TapGesture);
-    }
     this->setFlag(QGraphicsWidget::ItemIsSelectable,true);
 }
 
@@ -615,14 +606,7 @@ QPainterPath boat::shape() const
     if(isSelected())
         path.addEllipse(R1);
     else
-#ifdef __ANDROID_QTVLM
-    {
-        R1=QRectF(-sh/2,-sh/2,sh,sh);
-        path.addEllipse(R1);
-    }
-#else
         path.addRect(-squareSize.width()/2.0-1,-squareSize.height()/2.0-1,squareSize.width()+2,squareSize.height()+2);
-#endif
     path.addRect(squareSize.width()/2.0+2,-height/2.0-2,width+4,height+4);
     path.setFillRule(Qt::WindingFill);
     return path;
@@ -980,49 +964,32 @@ bool boat::cross(QLineF line) {
 
 QVariant boat::itemChange(GraphicsItemChange change, const QVariant &value)
 {
-    if(change==ItemToolTipHasChanged)
-    {
-        if(isSelected())
-            parent->showToolTip(toolTip(),false);
-    }
     if(change==ItemSelectedHasChanged)
     {
         prepareGeometryChange();
-        if(!isSelected())
-            parent->showToolTip("");
-        else
-        {
+        if(isSelected())
             parent->clearOtherSelected(this);
-            parent->showToolTip(toolTip());
-        }
     }
     return QGraphicsWidget::itemChange(change,value);
 }
 void boat::mousePressEvent(QGraphicsSceneMouseEvent* e)
 {
-    qWarning()<<"mouse press event in boat detected";
     QGraphicsWidget::mousePressEvent(e);
     e->accept();
-//    parent->get_terrain()->ungrabGesture(Qt::TapGesture);
-//    parent->get_terrain()->ungrabGesture(Qt::TapAndHoldGesture);
     return;
 }
 void boat::mouseReleaseEvent(QGraphicsSceneMouseEvent* e)
 {
     QGraphicsWidget::mouseReleaseEvent(e);
-//    parent->get_terrain()->grabGesture(Qt::TapGesture);
-//    parent->get_terrain()->grabGesture(Qt::TapAndHoldGesture);
     return;
 }
 
 void boat::contextMenuEvent(QGraphicsSceneContextMenuEvent * )
 {
-    qWarning()<<"inside contextMenuEvent (boat)";
     this->showContextualMenu(QCursor::pos().x(),QCursor::pos().y());
 }
-void boat::showContextualMenu(const int &xPos, const int &yPos)
+void boat::showContextualMenu(const int &xPos, const int &yPos, const bool &doIt)
 {
-    qWarning()<<"inside showContextualMenu (boat)";
     bool onlyLineOff = false;
 
     switch(parent->getCompassMode(this->x(),this->y()))
@@ -1060,34 +1027,8 @@ void boat::showContextualMenu(const int &xPos, const int &yPos)
         ac_select->setEnabled(!mainWindow->get_selPOI_instruction());
         ac_estime->setEnabled(!selected);
     }
-    popup->exec(QPoint(xPos,yPos));
-}
-bool boat::sceneEvent(QEvent *event)
-{
-    //qWarning()<<"event detected in BOAT"<<event->type();
-    if (event->type() == QEvent::Gesture)
-    {
-        QGraphicsWidget::sceneEvent(event);
-        event->accept();
-        QGestureEvent * gestureEvent=static_cast<QGestureEvent*>(event);
-        foreach (QGesture * gesture, gestureEvent->gestures())
-        {
-            gestureEvent->accept(gesture);
-            if(gesture->gestureType()==Qt::TapGesture)
-                qWarning()<<"tap gesture in boat"<<gesture->state();
-            else if (gesture->gestureType()==Qt::TapAndHoldGesture)
-            {
-                qWarning()<<"tapAndHold gesture in boat"<<gesture->state();
-                QTapAndHoldGesture *p=static_cast<QTapAndHoldGesture*>(gesture);
-                if(p->state()==Qt::GestureFinished && this->scene()->mouseGrabberItem()==this)
-                    this->showContextualMenu(p->position().x(),p->position().y());
-            }
-            else
-                qWarning()<<"unexpected gesture in boat:"<<gesture->gestureType()<<gesture->state();
-        }
-        return true;
-    }
-    return QGraphicsWidget::sceneEvent(event);
+    if(doIt)
+        popup->exec(QPoint(xPos,yPos));
 }
 QList<vlmLine*> boat::getGates()
 {

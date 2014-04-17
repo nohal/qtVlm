@@ -505,7 +505,7 @@ void Polar::loadPolar_xml(QFile * file,int /*fileType*/,QString /*fname*/) {
                     QDomNode polarItem=polarCurve.firstChild();
                     int idx_twa=0;
                     bool hasAngle=true;
-                    double val;
+                    double val=0;
                     bool hasVal=false;
                     while(!polarItem.isNull()) {
                         if(polarItem.toElement().tagName()=="Angle") {

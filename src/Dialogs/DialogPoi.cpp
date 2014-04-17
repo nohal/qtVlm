@@ -25,7 +25,6 @@ Copyright (C) 2008 - Jacques Zaninetti - http://zygrib.free.fr
 #include <cmath>
 #ifdef QT_V5
 #include <QtWidgets/QMessageBox>
-#include <QScroller>
 #else
 #include <QMessageBox>
 #endif
@@ -39,30 +38,23 @@ class POI_Editor;
 #include "boatVLM.h"
 #include <QDesktopWidget>
 #include "settings.h"
+#include <QScreen>
 #define POI_EDT_LAT 1
 #define POI_EDT_LON 2
 
 //-------------------------------------------------------
 // POI_Editor: Constructor for edit an existing POI
 //-------------------------------------------------------
-DialogPoi::DialogPoi(MainWindow * main,myCentralWidget * parent)
+DialogPoi::DialogPoi(MainWindow * main,myCentralWidget * parent, POI* poi, const bool &creationMode)
     : QDialog(parent)
 {
     setupUi(this);
-#ifdef QT_V5
-    QScroller::grabGesture(this->scrollArea->viewport());
-#endif
-    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
-    Util::setFontDialog(this);
-//    int minSize=qMax(this->lat_sig->width(),this->lon_sig->width());
-//    lat_sig->setMinimumWidth(minSize);
-//    lon_sig->setMinimumWidth(minSize);
-    this->poi = NULL;
+    this->poi = poi;
     this->parent=parent;
     this->main=main;
 
     lock=true;
-    modeCreation=false;
+    modeCreation=creationMode;
 
     connect(this,SIGNAL(addPOI_list(POI*)),parent,SLOT(slot_addPOI_list(POI*)));
     connect(this,SIGNAL(delPOI_list(POI*)),parent,SLOT(slot_delPOI_list(POI*)));
@@ -74,10 +66,32 @@ DialogPoi::DialogPoi(MainWindow * main,myCentralWidget * parent)
     navMode->addItem("VB-VMG");
     navMode->addItem("B-VMG");
     navMode->addItem("Ortho");
+    connect(POI_type_liste,SIGNAL(currentIndexChanged(int)),this,SLOT(type_chg(int)));
+    connect(btCancel,SIGNAL(clicked()),this,SLOT(reject()));
+    connect(btCopy,SIGNAL(clicked()),this,SLOT(btCopyClicked()));
+    connect(btDelete,SIGNAL(clicked()),this,SLOT(btDeleteClicked()));
+    connect(btOk,SIGNAL(clicked()),this,SLOT(accept()));
+    connect(btPaste,SIGNAL(clicked()),this,SLOT(btPasteClicked()));
+    connect(btSaveWP,SIGNAL(clicked()),this,SLOT(btSaveWPClicked()));
+    connect(editName,SIGNAL(textChanged(QString)),this,SLOT(nameHasChanged(QString)));
+    connect(lat_deg,SIGNAL(valueChanged(double)),this,SLOT(latLonChg(double)));
+    connect(lat_min,SIGNAL(valueChanged(double)),this,SLOT(latLonChg(double)));
+    connect(lat_sec,SIGNAL(valueChanged(double)),this,SLOT(latLonChg(double)));
+    connect(lat_deg,SIGNAL(valueChanged(double)),this,SLOT(latLonChg(double)));
+    connect(lat_val,SIGNAL(valueChanged(double)),this,SLOT(latLonChg(double)));
+    connect(lon_deg,SIGNAL(valueChanged(double)),this,SLOT(latLonChg(double)));
+    connect(lon_min,SIGNAL(valueChanged(double)),this,SLOT(latLonChg(double)));
+    connect(lon_sec,SIGNAL(valueChanged(double)),this,SLOT(latLonChg(double)));
+    connect(lon_deg,SIGNAL(valueChanged(double)),this,SLOT(latLonChg(double)));
+    connect(lon_val,SIGNAL(valueChanged(double)),this,SLOT(latLonChg(double)));
+    connect(lat_sig,SIGNAL(currentIndexChanged(int)),this,SLOT(latLonSignChg(int)));
+    connect(lon_sig,SIGNAL(currentIndexChanged(int)),this,SLOT(latLonSignChg(int)));
+    initPOI();
+    Util::setFontDialog(this);
+    connect(parent,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
 }
 void DialogPoi::slot_screenResize()
 {
-    Util::setWidgetSize(this);
 }
 void DialogPoi::formatLatLon()
 {
@@ -99,10 +113,8 @@ void DialogPoi::formatLatLon()
     lon_sec->setValue(0);
 }
 
-void DialogPoi::initPOI(POI * poi,const bool &creationMode)
+void DialogPoi::initPOI()
 {
-    this->poi=poi;
-    this->modeCreation=creationMode;
     if(modeCreation)
     {
         setWindowTitle(tr("Nouvelle marque"));
@@ -117,10 +129,13 @@ void DialogPoi::initPOI(POI * poi,const bool &creationMode)
     QString unit = (tunit=="") ? "dddegmm'ss" : tunit;
     formatWithSeconds=unit=="dddegmm'ss";
     this->formatLatLon();
-    editName->setText(poi->getName());
-    this->sequence->setValue(poi->getSequence());
-    oldType=poi->getType();
-    POI_type_liste->setCurrentIndex(oldType);
+    if(poi)
+    {
+        editName->setText(poi->getName());
+        this->sequence->setValue(poi->getSequence());
+        oldType=poi->getType();
+        POI_type_liste->setCurrentIndex(oldType);
+    }
     QListIterator<ROUTE*> i (parent->getRouteList());
     cb_routeList->clear();
     cb_routeList->addItem("Not in a route");
@@ -133,38 +148,21 @@ void DialogPoi::initPOI(POI * poi,const bool &creationMode)
         QIcon icon(iconI);
         cb_routeList->addItem(icon,route->getName());
     }
-    if(poi->getRoute()!=NULL)
+    if(poi && poi->getRoute()!=NULL)
         cb_routeList->setCurrentIndex(cb_routeList->findText(((ROUTE*) poi->getRoute())->getName()));
-    if(poi->getWph()==-1)
+    if(!poi || poi->getWph()==-1)
         editWph->setText(QString());
     else
         editWph->setText(QString().setNum(poi->getWph()));
 
     btSaveWP->setEnabled(!main->getBoatLockStatus());
-
-    setValue(POI_EDT_LON,poi->getLongitude());
-    setValue(POI_EDT_LAT,poi->getLatitude());
-
-    if(poi->getTimeStamp()!=-1)
+    if(poi)
     {
-        QDateTime tm;
-        tm.setTimeSpec(Qt::UTC);
-        tm.setTime_t(poi->getTimeStamp());
-        editTStamp->setDateTime(tm);
-        editTStamp->setTimeSpec(Qt::UTC);
+        setValue(POI_EDT_LON,poi->getLongitude());
+        setValue(POI_EDT_LAT,poi->getLatitude());
+        navMode->setCurrentIndex(poi->getNavMode());
+        this->notSimplicable->setChecked(poi->getNotSimplificable());
     }
-    else
-    {
-        QDateTime tm = QDateTime::currentDateTime().toUTC();
-        editTStamp->setDateTime(tm);
-    }
-    navMode->setCurrentIndex(poi->getNavMode());
-
-    chk_tstamp->setCheckState(poi->getUseTimeStamp()?Qt::Checked:Qt::Unchecked);
-    editTStamp->setEnabled(poi->getUseTimeStamp());
-    editName->setEnabled(!poi->getUseTimeStamp());
-    this->notSimplicable->setChecked(poi->getNotSimplificable());
-
     boat * ptr=parent->getSelectedBoat();
     if(ptr)
     {
@@ -185,11 +183,7 @@ void DialogPoi::done(int result)
     if(result == QDialog::Accepted)
     {
         poi->setPartOfTwa(false);
-        QDateTime tm = editTStamp->dateTime();
         poi->setNotSimplificable(this->notSimplicable->checkState()==Qt::Checked);
-        tm.setTimeSpec(Qt::UTC);
-        poi->setTimeStamp(tm.toTime_t());
-        poi->setUseTimeStamp(chk_tstamp->checkState()==Qt::Checked);
         poi->setSequence(this->sequence->value());
 
         poi->setLongitude(getValue(POI_EDT_LON));
@@ -263,28 +257,12 @@ void DialogPoi::btPasteClicked()
 {
     double lat,lon,wph;
     QString name;
-    int tstamp;
-    if(!Util::getWPClipboard(&name,&lat,&lon,&wph,&tstamp))
+    if(!Util::getWPClipboard(&name,&lat,&lon,&wph))
         return;
 
     setValue(POI_EDT_LON,lon);
     setValue(POI_EDT_LAT,lat);
 
-    if(tstamp==-1)
-    {
-        QDateTime tm = QDateTime::currentDateTime().toUTC();
-        editTStamp->setDateTime(tm);
-        chk_tstamp->setCheckState(Qt::Unchecked);
-    }
-    else
-    {
-        QDateTime tm;
-        tm.setTimeSpec(Qt::UTC);
-        tm.setTime_t(tstamp);
-        editTStamp->setDateTime(tm);
-        editTStamp->setTimeSpec(Qt::UTC);
-        chk_tstamp->setCheckState(Qt::Checked);
-    }
 
     if(name!="")
         editName->setText(name);
@@ -312,11 +290,6 @@ void DialogPoi::btSaveWPClicked()
     done(QDialog::Accepted);
 }
 
-void DialogPoi::chkTStamp_chg(int state)
-{
-    editTStamp->setEnabled(state==Qt::Checked);
-    editName->setEnabled(state!=Qt::Checked);
-}
 
 void DialogPoi::nameHasChanged(QString newName)
 {

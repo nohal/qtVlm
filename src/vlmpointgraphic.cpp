@@ -5,10 +5,11 @@
 
 #include "routage.h"
 
-vlmPointGraphic::vlmPointGraphic(ROUTAGE * routage,int isoNb, int pointIsoNb,double lon, double lat, Projection * proj, QGraphicsScene * myScene,int z_level) : QGraphicsWidget()
+vlmPointGraphic::vlmPointGraphic(ROUTAGE * routage,int isoNb, int pointIsoNb,double lon, double lat, Projection * proj,  myCentralWidget * mcp,int z_level) : QGraphicsWidget()
 {
     this->proj=proj;
-    this->myScene=myScene;
+    this->myScene=mcp->getScene();
+    this->mcp=mcp;
     this->lon=lon;
     this->lat=lat;
     connect(proj,SIGNAL(projectionUpdated()),this,SLOT(slot_showMe()));
@@ -21,8 +22,25 @@ vlmPointGraphic::vlmPointGraphic(ROUTAGE * routage,int isoNb, int pointIsoNb,dou
     setData(0,7);
     show();
 }
+QVariant vlmPointGraphic::itemChange(GraphicsItemChange change, const QVariant &value)
+{
+    if(change==ItemSelectedHasChanged)
+    {
+        //prepareGeometryChange();
+        if(!isSelected())
+            routage->eraseWay();
+        else
+        {
+            mcp->clearOtherSelected(this);
+            routage->setPivotPoint(this->isoNb,this->pointIsoNb);
+            routage->slot_drawWay();
+        }
+    }
+    return QGraphicsWidget::itemChange(change,value);
+}
 vlmPointGraphic::~vlmPointGraphic()
 {
+    setSelected(false);
 //    if(myScene!=NULL)
 //        myScene->removeItem(this);
 }
@@ -62,6 +80,7 @@ void vlmPointGraphic::slot_updateTip(int i,int n, QString t)
 void  vlmPointGraphic::setAcceptHover()
 {
     this->setAcceptHoverEvents(true);
+    this->setFlag(ItemIsSelectable,true);
 }
 
 void  vlmPointGraphic::hoverLeaveEvent ( QGraphicsSceneHoverEvent * )

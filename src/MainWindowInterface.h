@@ -14,7 +14,7 @@ class MainWindowInterface: public QMainWindow
         virtual QString get_folder(QString str) const =0;
         virtual QPalette getOriginalPalette() const =0;
         virtual void setting_saveGeometry(QWidget * obj) =0;
-        virtual bool getWPClipboard(QString *,double * lat,double * lon, double * wph, int * tStamp) =0;
+        virtual bool getWPClipboard(QString *,double * lat,double * lon, double * wph) =0;
         virtual void setWPClipboard(double lat,double lon, double wph) =0;
         virtual QString pos2String(const int &type,const double &value) =0;
         virtual QString formatLongitude(const double &x) =0;

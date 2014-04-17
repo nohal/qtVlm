@@ -21,7 +21,8 @@ Magnifier::Magnifier(myCentralWidget *parent)
     drawMask();
     this->setFlags(QGraphicsWidget::ItemIsMovable |
                    QGraphicsWidget::ItemIgnoresTransformations |
-                   QGraphicsWidget::ItemSendsScenePositionChanges);
+                   QGraphicsWidget::ItemSendsScenePositionChanges |
+                   QGraphicsWidget::ItemIsSelectable);
     QGraphicsDropShadowEffect * effect=new QGraphicsDropShadowEffect();
     QColor color=effect->color();
     color.setAlpha(100);
@@ -104,10 +105,16 @@ Magnifier::Magnifier(myCentralWidget *parent)
     parent->getScene()->addItem(this);
     this->drawMe();
     show();
-//    reader->clearCells();
+}
+void Magnifier::paint (QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+        QStyleOptionGraphicsItem myoption = (*option);
+        myoption.state &= !QStyle::State_Selected;
+        QGraphicsPixmapItem::paint(painter, &myoption, widget);
 }
 Magnifier::~Magnifier()
 {
+    setSelected(false);
     delete myProj;
 }
 void Magnifier::contextMenuEvent(QGraphicsSceneContextMenuEvent *)
@@ -116,20 +123,31 @@ void Magnifier::contextMenuEvent(QGraphicsSceneContextMenuEvent *)
 }
 QVariant Magnifier::itemChange(GraphicsItemChange change, const QVariant &value)
 {
+    if(change==ItemSelectedHasChanged)
+    {
+        if(isSelected())
+            parent->clearOtherSelected(this);
+        drawMe();
+    }
     if(change==QGraphicsWidget::ItemPositionHasChanged)
     {
         double X=this->pos().x();
         double Y=this->pos().y();
         X=qBound(0.0-sizeMagnifier.width()/2.0,X,(double)parent->getProj()->getW()-sizeMagnifier.width()/2.0);
         Y=qBound(0.0-sizeMagnifier.height()/2.0,Y,(double)parent->getProj()->getH()-sizeMagnifier.height()/2.0);
-        setPos(X,Y);
+        if(X!=pos().x() || Y!=pos().y())
+        {
+            this->setFlag(ItemSendsScenePositionChanges,false);
+            setPos(X,Y);
+            this->setFlag(ItemSendsScenePositionChanges,true);
+        }
         drawMe();
     }
     return value;
 }
 void Magnifier::drawMask()
 {
-    int c=12-Settings::getSetting(magnifierSize).toInt();
+    int c=qMax(2,12-Settings::getSetting(magnifierSize).toInt());
 
     sizeMagnifier=QSize(parent->getProj()->getW()/c,parent->getProj()->getW()/c);
     imgMask=QPixmap(sizeMagnifier);
@@ -183,6 +201,8 @@ void Magnifier::drawMe()
     pnt.fillPath(path,Qt::transparent);
     QColor color=Qt::black;
     color.setAlpha(100);
+    if(isSelected())
+        color=Qt::white;
     QPen pen(color);
     pen.setWidth(2);
     QPainterPath path_bis;

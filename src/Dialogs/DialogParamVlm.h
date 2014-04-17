@@ -24,11 +24,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define PARAM_VLM_H
 
 #include <QDialog>
-
+#include "dataDef.h"
 #include "class_list.h"
-
 #include "ui_paramVLM.h"
-
 class DialogParamVlm : public QDialog, public Ui::VLM_param_ui
 {
     Q_OBJECT
@@ -72,7 +70,7 @@ signals:
         QColor getColor(int type);
 
         myCentralWidget * centralWidget;
-
+        QSize optimumSize;
         QString POI_color,Marque_WP_color,qtBoat_color,qtBoat_sel_color,WP_color,Balise_color;
 
 private slots:

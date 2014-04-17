@@ -29,8 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDialog>
 #include <QMessageBox>
 #endif
-#include "ui_race_dialog.h"
-
+#include "dataDef.h"
 #include "class_list.h"
 
 #include "inetClient.h"
@@ -38,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <dataDef.h>
 
 
-
+#include "ui_race_dialog.h"
 class DialogRace : public QDialog, public Ui::race_dialog_ui, public inetClient
 {
     Q_OBJECT
@@ -62,7 +61,6 @@ class DialogRace : public QDialog, public Ui::race_dialog_ui, public inetClient
         void tenFirstRankToggle(bool b);
         void noneToggle(bool b);
         void showRealToggle(bool b);
-        void NSZToggle(bool b);
         void slotFilterReal();
 
         void showAllToggle(bool b);
@@ -100,7 +98,6 @@ signals:
         QString currentFilterReal;
         QColor currentColorNSZ;
         int currentShowWhat;
-        InputLineParams *inputTraceColor;
         int showWhat;
         MainWindow *main;
         myCentralWidget *parent;
@@ -113,7 +110,6 @@ signals:
         bool somethingChanged;
 
 private slots:
-    void on_displayNSZ_clicked();
 };
 
 #endif

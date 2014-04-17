@@ -41,7 +41,7 @@ class DialogPoiInput : public QDialog, public Ui::POI_input_ui
         
         void slot_screenResize();
 signals:
-        void addPOI(QString,int,double,double,double,int,bool);
+        void addPOI(QString,int,double,double,double);
 };
 
 

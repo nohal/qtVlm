@@ -10,7 +10,7 @@
 class vlmPointGraphic : public QGraphicsWidget
 { Q_OBJECT
 public:
-    vlmPointGraphic(ROUTAGE * routage,int isoNb, int pointIsoNb, double lon, double lat, Projection * proj, QGraphicsScene * myScene,int z_level);
+    vlmPointGraphic(ROUTAGE * routage, int isoNb, int pointIsoNb, double lon, double lat, Projection * proj, myCentralWidget *mcp, int z_level);
     ~vlmPointGraphic();
     void setIsoNb(int n){this->isoNb=n;}
     void setPointIsoNb(int n){this->pointIsoNb=n;}
@@ -27,11 +27,13 @@ protected:
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 
+    QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 public slots:
     void slot_showMe(void);
     void slot_updateTip(int i,int n, QString t);
 private:
     QGraphicsScene * myScene;
+    myCentralWidget * mcp;
     Projection * proj;
     ROUTAGE * routage;
     int isoNb;

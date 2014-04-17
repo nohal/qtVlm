@@ -28,9 +28,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "dataDef.h"
 #include "settings.h"
 #include "DataManager.h"
-#ifdef QT_V5
-#include <QScroller>
-#endif
 #ifdef __QTVLM_WITH_TEST
 //extern int nbWarning;
 #endif
@@ -38,9 +35,6 @@ DialogGribValidation::DialogGribValidation(myCentralWidget * my_centralWidget,Ma
 {
     setupUi(this);
     Util::setFontDialog(this);
-#ifdef QT_V5
-    QScroller::grabGesture(this->scrollArea->viewport());
-#endif
     connect(my_centralWidget,SIGNAL(geometryChanged()),this,SLOT(slot_screenResize()));
     this->my_centralWidget=my_centralWidget;
     this->mainWindow=mainWindow;

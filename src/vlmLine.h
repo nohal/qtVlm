@@ -100,9 +100,8 @@ protected:
         void hoverEnterEvent(QGraphicsSceneHoverEvent *e);
         void hoverLeaveEvent(QGraphicsSceneHoverEvent *e);
         QVariant itemChange(GraphicsItemChange change, const QVariant &value);
-        bool sceneEvent(QEvent *e);
         void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
-        bool event(QEvent *event);
+        static void deletePoly(QPolygon * p){delete p;}
 public slots:
         void slot_compassLineToggle(bool b);
         void slot_showMe(void);
