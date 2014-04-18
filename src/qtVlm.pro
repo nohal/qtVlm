@@ -156,6 +156,7 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     BoardReal.h \
     BoardVLM.h \
     BoardVLM_tools.h \
+    BoardTools.h \
     BarrierSet.h \
     Barrier.h \
     Dialogs/DialogEditBarrier.h \
