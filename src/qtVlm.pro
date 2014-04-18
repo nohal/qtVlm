@@ -156,7 +156,6 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     BoardReal.h \
     BoardVLM.h \
     BoardVLM_tools.h \
-    BoardTools.h \
     BarrierSet.h \
     Barrier.h \
     Dialogs/DialogEditBarrier.h \
@@ -192,7 +191,6 @@ HEADERS += Dialogs/DialogGraphicsParams.h \
     Dialogs/view/DialogChooseMultiple_view.h \
     Dialogs/view/pc/DialogChooseMultiple_view_pc.h \
     Dialogs/ctrl/DialogChooseMultiple_ctrl.h \
-    BoardTools.h \
     GpsReceiver.h \
     Dialogs/DialogZygrib.h \
     Dialogs/DialogRoutage.h
