@@ -60,16 +60,11 @@ boatReal::boatReal(QString pseudo, bool activated, Projection * proj,MainWindow 
     this->lat=0;
     this->lon=0;
     this->vacLen=300;
-    trace=new vlmLine(proj,parent->getScene(),Z_VALUE_ESTIME);
     previousLon=lon;
     previousLat=lat;
-    QPen penTrace;
-    penTrace.setColor(Qt::red);
-    penTrace.setBrush(Qt::red);
-    penTrace.setWidthF(0.5);
-    trace->setNbVacPerHour(3600/this->getVacLen());
-    trace->setLinePen(penTrace);
-    trace->slot_showMe();
+    selColor=Qt::red;
+    myColor=Qt::red;
+    updateTraceColor();
     gotPosition=false;
     WP=QPointF(0,0);
     this->speed=0;
@@ -101,11 +96,6 @@ boatReal::~boatReal() {
 
     if(gpsReader) delete gpsReader;
 
-    if( !parent->getAboutToQuit() )
-        if(trace) {
-            parent->getScene()->removeItem(trace);
-            delete trace;
-        }
 }
 
 void boatReal::setWP(QPointF point,double w) {
@@ -142,7 +132,10 @@ void boatReal::myCreatePopUpMenu(void)
     connect(ac_chgPos,SIGNAL(triggered()),this,SLOT(slot_chgPos()));
 }
 
-void boatReal::startRead() {
+void boatReal::startRead()
+{
+    trace_drawing->getPoints()->clear();
+    updateTraceColor();
     int curDeviceType=Settings::getSetting(deviceType).toInt();
     /* start loop */
     cnt=0;
@@ -259,9 +252,9 @@ void boatReal::updateBoat(GpsData info)
     this->info=info;
     QDateTime now;
     now=now.currentDateTime();
-    QString s=now.toString("hh:mm:ss");
-    qWarning()<<s<<"speed:"<<info.speed<<"cap:"<<info.direction<<"lat:"<<info.latitude<<"lon:"<<info.longitude;
-    qWarning()<<s<<"sig:" << info.sig << "fix:" << info.fix;
+//    QString s=now.toString("hh:mm:ss");
+//    qWarning()<<s<<"speed:"<<info.speed<<"cap:"<<info.direction<<"lat:"<<info.latitude<<"lon:"<<info.longitude;
+//    qWarning()<<s<<"sig:" << info.sig << "fix:" << info.fix;
     this->fix=info.fix;
     this->sig=info.sig;
     if(info.declination!=0)
@@ -282,14 +275,12 @@ void boatReal::updateBoat(GpsData info)
     this->lat=info.latitude;
     this->lon=info.longitude;
     this->lastUpdateTime=QDateTime().currentDateTimeUtc().toTime_t();
-    if(previousLon!=lon || previousLat!=lat)
-        updateBoatData();
-    if(gotPosition && (previousLon!=lon || previousLat!=lat))
+    updateBoatData();
+    if(trace_drawing->getPoints()->isEmpty() || trace_drawing->getPoints()->last().lon!=lon || trace_drawing->getPoints()->last().lat!=lat)
     {
-        trace->addPoint(lat,lon);
-        trace->slot_showMe();
+        trace_drawing->addPoint(lat,lon);
+        updateTraceColor();
     }
-    gotPosition=true;
     previousLon=lon;
     previousLat=lat;
     this->setWP(WP,WPHd);
@@ -313,15 +304,17 @@ void boatReal::slot_internalPositionUpdated(QGeoPositionInfo g)
     if(!g.isValid())
     {
         qWarning()<<"invalid geoPosition received";
+        gotPosition=false;
         emit(boatUpdated(this,false,false));
     }
     else
     {
         qWarning()<<"position received";
+        gotPosition=true;
         if(g.hasAttribute(QGeoPositionInfo::MagneticVariation))
         {
-            qWarning()<<"position has MagneticVariation";
             info.declination=g.attribute(QGeoPositionInfo::MagneticVariation);
+            qWarning()<<"position has MagneticVariation"<<info.declination;
         }
         else
             info.declination=0;
@@ -345,35 +338,25 @@ void boatReal::slot_internalPositionUpdated(QGeoPositionInfo g)
         info.elevation=g.coordinate().altitude();
         if(g.hasAttribute(QGeoPositionInfo::Direction))
         {
-            qWarning()<<"position has Direction";
             info.direction=g.attribute(QGeoPositionInfo::Direction);
+            qWarning()<<"position has Direction"<<info.direction;
         }
         else
             info.direction=0;
         if(g.hasAttribute(QGeoPositionInfo::GroundSpeed))
         {
-            qWarning()<<"position has GroundSpeed";
-            info.speed=g.attribute(QGeoPositionInfo::GroundSpeed);
+            info.speed=g.attribute(QGeoPositionInfo::GroundSpeed)*3.6/1.852; /* m/s to knots */
+            qWarning()<<"position has GroundSpeed"<<info.speed;
         }
         else
             info.direction=0;
-        this->lat=info.latitude;
-        this->lon=info.longitude;
         this->lastUpdateTime=info.time.toTime_t();
-        if(previousLon!=lon || previousLat!=lat)
-            updateBoatData();
-        if(gotPosition && (previousLon!=lon || previousLat!=lat))
-        {
-            trace->addPoint(lat,lon);
-            trace->slot_showMe();
-        }
-        gotPosition=true;
-        previousLon=lon;
-        previousLat=lat;
+        updateBoat(info);
         this->setWP(WP,WPHd);
         emit(boatUpdated(this,false,false));
     }
 }
+
 
 void boatReal::setPosition(double lat, double lon)
 {

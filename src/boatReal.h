@@ -102,7 +102,6 @@ signals:
 
         void updateBoatString(void);
         void updateHint(void);
-        vlmLine *trace;
         double previousLon;
         double previousLat;
         bool gotPosition;
