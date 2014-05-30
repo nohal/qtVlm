@@ -214,10 +214,7 @@ QRgb ColorElement::get_color(double v, bool smooth) {
 
     }
     else {
-        if(v-(it-1).key()<it.key()-v)
-            return (it).value();
-        else
-            return (it-1).value();
+        return (it-1).value();
     }
 
 }
