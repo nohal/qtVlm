@@ -93,6 +93,7 @@ class vlmLine : public QGraphicsWidget
         void set_zValue(const double &z);
         void drawInMagnifier(QPainter *pnt, Projection *tempProj);
         void setRoute(ROUTE * r){this->route=r;}
+        FCT_SETGET_CST(bool, crossOnce)
 protected:
         void paint(QPainter * pnt, const QStyleOptionGraphicsItem * , QWidget * );
         QRectF boundingRect() const;
@@ -147,6 +148,7 @@ public slots:
         QString myToolTip;
         void hover(const bool &isHovered);
         ROUTE * route;
+        bool crossOnce;
 };
 Q_DECLARE_TYPEINFO(vlmLine,Q_MOVABLE_TYPE);
 

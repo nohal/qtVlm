@@ -30,6 +30,7 @@ class DialogInetProgess : public QDialog, public Ui::inetConn_progressDialog_ui
         DialogInetProgess(QWidget * parent = 0);
         void showDialog(QString name);
         void hideDialog(void);
+        ~DialogInetProgess();
 
     public slots:
         void updateProgress(qint64 bytesReceived, qint64 bytesTotal);

@@ -192,6 +192,7 @@ void inetConnexion::slot_requestFinished(QNetworkReply * currentReply)
             disconnect(currentReply,SIGNAL(downloadProgress(qint64,qint64)),this,SLOT(slot_progess(qint64,qint64)));
             if(progressDialog)
             {
+                qWarning()<<"deleting progressDialog";
                 delete progressDialog;
                 progressDialog=NULL;
             }

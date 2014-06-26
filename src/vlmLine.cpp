@@ -68,6 +68,7 @@ vlmLine::vlmLine(Projection * proj, myScene *myscene, double z_level) :
     if(myZvalue==Z_VALUE_ROUTE || myZvalue==Z_VALUE_BOAT || myZvalue==Z_VALUE_OPP || myZvalue==Z_VALUE_LINE_POI)
         this->setAcceptHoverEvents(true);
     this->setFlag(QGraphicsWidget::ItemIsSelectable,false);
+    this->crossOnce=false;
     show();
 }
 QVariant vlmLine::itemChange(GraphicsItemChange change, const QVariant &value)

@@ -709,6 +709,7 @@ void boatVLM::requestFinished (QByteArray res_byte)
                             tip=tip+tr("<br>Il est autorise de couper cette ligne plusieurs fois");
                     }
                     porte->setTip(tip);
+                    porte->set_crossOnce(crossOnce);
                     porte->setFlag(QGraphicsWidget::ItemIsSelectable,true);
                     gates.append(porte);
 
@@ -852,7 +853,16 @@ void boatVLM::showNextGates()
         }
         porte->show();
         ++j;
-        if(j<nWP)
+        if(j==nWP-1 && porte->get_crossOnce())
+        {
+            porte->setZValue(Z_VALUE_NEXT_GATE);
+            QPen penLine(Qt::red);
+            penLine.setWidthF(Settings::getSetting(gateLineWidth).toDouble());
+            porte->setLinePen(penLine);
+            porte->setHidden(false);
+            porte->slot_showMe();
+        }
+        else if(j<nWP)
         {
             porte->setHidden(true);
             porte->slot_showMe();

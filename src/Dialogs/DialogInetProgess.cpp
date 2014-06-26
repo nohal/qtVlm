@@ -44,6 +44,10 @@ void DialogInetProgess::hideDialog()
 {
     if(this->isVisible()) hide();
 }
+DialogInetProgess::~DialogInetProgess()
+{
+    qWarning()<<"inside dialogInetProgress destructor";
+}
 
 void DialogInetProgess::updateProgress(qint64 bytesReceived, qint64 bytesTotal)
 {
