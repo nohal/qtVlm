@@ -2,7 +2,8 @@
 
 TARGET = "release"
 
-prefix = ~/qtVlm
+prefix_bin = /usr/local/qtVlm
+prefix_data = ~/.qtVlm
 
 ifdef SystemRoot
 	RM = del /Q
@@ -86,14 +87,15 @@ libgps_clean:
 
 install: all
 	@echo "***********************************************************"
-	@echo "* Installing qtVlm in " $(prefix)
+	@echo "* Installing qtVlm in " $(prefix_bin) " - " $(prefix_data)
 	@echo "***********************************************************"
-	mkdir -p $(prefix)
-	cp -Rf qtVlm tr/ $(prefix)
-	cp -Rf base_dir/icon base_dir/img base_dir/polar base_dir/dataColors.dat base_dir/boards $(prefix)
-	mkdir -p $(prefix)/grib
-	mkdir -p $(prefix)/maps
+	mkdir -p $(prefix_bin)
+	cp -Rf qtVlm tr/ $(prefix_bin)
+	cp -Rf base_dir/icon base_dir/img base_dir/dataColors.dat base_dir/boards $(prefix_bin)
+#	cp -Rf base_dir/polar $(prefix_data)
+#	mkdir -p $(prefix_data)/grib
+#	mkdir -p $(prefix_data)/maps
 	@echo "***********************************************************"
-	@echo "* Install done (" $(prefix) ")"
+	@echo "* Install done (" $(prefix_bin) " - " $(prefix_data) ")"
 	@echo "***********************************************************"
 	

@@ -75,6 +75,8 @@ int main(int argc, char *argv[])
     QApplication * app=new QApplication(argc, argv);
     qsrand(QTime::currentTime().msec());
     QString appExeFolder=QApplication::applicationDirPath();
+    QString homeDir="";
+    
 #ifdef __UNIX_QTVLM
     QString curDir=QDir::currentPath();
     qWarning() << "currentPath returns: " << curDir << "applicationDirPath returns: " << appExeFolder;
@@ -84,11 +86,14 @@ int main(int argc, char *argv[])
         curDir=QDir::currentPath();
         qWarning() << "currentPath modified: " << curDir << "applicationDirPath returns: " << appExeFolder;
     }
+    homeDir = QDir::homePath();
+    homeDir += "/.qtVlm";
 #endif
+
     appExeFolder=Util::currentPath();
     qWarning()<<"Current app path"<<appExeFolder;
     // home folder
-    QString homeDir="";
+    
 #ifdef Q_WS_WIN
     qWarning() << "Home path: " << QDir::homePath();
     QSettings settings(QSettings::UserScope, "Microsoft", "Windows");
@@ -107,10 +112,15 @@ int main(int argc, char *argv[])
     QDir::setCurrent(appExeFolder);
 #endif
     /* setting dataDir to app exe dir */
+
+#ifdef __UNIX_QTVLM
+    QString dataDir = homeDir;
+#else    
     QString dataDir = appExeFolder;
+#endif
 
-
-    appFolder.insert("home",appExeFolder);
+    appFolder.insert("home",appExeFolder+"/");
+    appFolder.insert("userFiles",dataDir+"/");
     appFolder.insert("img",appExeFolder+"/img/");
     appFolder.insert("flags",dataDir+"/img/flags/");
     appFolder.insert("boatsImg",dataDir+"/img/boats/");
@@ -119,7 +129,6 @@ int main(int argc, char *argv[])
     appFolder.insert("polar",dataDir+"/polar/");
     appFolder.insert("tr",appExeFolder+"/tr/");
     appFolder.insert("tracks",dataDir+"/tracks/");
-    appFolder.insert("userFiles",dataDir+"/");
     appFolder.insert("icon",appExeFolder+"/icon/");
 
     qWarning() << "[main]: appFoloder for polar: " << appFolder.value("polar");

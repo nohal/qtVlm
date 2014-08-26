@@ -76,7 +76,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "DialogHorn.h"
 #include "DialogPoiDelete.h"
 #include "DialogRoute.h"
-#include "DialogZygrib.h"
+#include "DialogZyGrib.h"
 #include "DialogRace.h"
 #include "DialogBoatAccount.h"
 #include "DialogGribDate_ctrl.h"

@@ -525,7 +525,7 @@ void MainWindow::continueSetup()
 
 
     QFile testWrite;
-    testWrite.setFileName("testWrite.txt");
+    testWrite.setFileName(appFolder.value("userFiles")+"testWrite.txt");
     if(testWrite.open(QIODevice::WriteOnly | QIODevice::Text ))
         testWrite.remove();
     else

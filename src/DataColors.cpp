@@ -59,7 +59,7 @@ ColorElement * DataColors::get_colorElement(QString type) {
 
 
 void DataColors::load_colors(int transparence) {
-    QString fileName = appFolder.value("userFiles")+"dataColors.dat";
+    QString fileName = appFolder.value("home")+"/dataColors.dat";
     QString  errorStr;
     int errorLine;
     int errorColumn;
